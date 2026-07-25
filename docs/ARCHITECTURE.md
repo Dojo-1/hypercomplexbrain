@@ -1,18 +1,27 @@
-# AION-Ω^Q / QΣ-R
+# AION-Ω^Q / QΣ-R²
 
 **An audited almost-all-quantum polycosmic brain.**
 
+> **Revision note (R²).** QΣ-R killed an additive scalar and then installed a
+> different scalar in the same slot. Peer audit found this and four concrete
+> defects besides. All are fixed below; the corrections are listed in §0.5 with
+> what changed and why. Nothing was defended that measurement contradicted.
+
 QΣ∞ asked for an architecture as close to 100% quantum as possible. This revision
-does not raise that number. It makes the number *mean* something, and then reports
-what it actually is.
+does not raise that number. It makes the number *mean* something, reports what it
+actually is, and then shows why no single number was ever going to carry the
+question.
 
 The single structural change:
 
 > QΣ∞ measured quantumness by counting edges written as unitaries.
-> QΣ-R measures it by what a classical simulator is forced to pay.
+> QΣ-R measured it by what a classical simulator can be *shown* to pay.
+> QΣ-R² stops measuring it with one number at all.
 >
 > Under the first definition the architecture is already at 1.00 and always was.
-> Under the second it is at 0.088 on random cores, and the gap is the design work.
+> Under the second it is at 0.088 on random cores. Under the third it is a
+> section of a bundle over free theories, and the promotion gate is cognitive
+> gain, not hardness.
 
 Every number in this document is computed by `experiments/run_audit.py` and locked
 by `tests/test_architecture.py`. None is asserted.
@@ -32,20 +41,24 @@ Fuzzing 150 random cognitive cores across width 4–12, depth 2–8 and T-densit
 0.00–0.25 (`experiments/acaf_sweep.py`):
 
 ```
-Q_naive : mean 1.0000   min 1.0000   max 1.0000
-Q_cert  : mean 0.0880   min 0.0000   max 0.7423
-gap     : mean 0.9120
+Q_naive     : mean 1.0000   min 1.0000   max 1.0000
+q_sim_upper : mean 0.0880   min 0.0000   max 0.7423
+gap         : mean 0.9175
 ```
 
-`Q_naive` is not merely optimistic. Its minimum equals its maximum. **It is a
-constant function of the architecture** — every core built out of unitaries scores
-1.00, so it cannot rank two designs, cannot detect a regression, and cannot be
-optimised against. 63 of the 150 cores scored a perfect 1.00 while being *exactly*
-classically simulable.
+`Q_naive` is not merely optimistic. Its minimum equals its maximum. **It is
+constant on all-unitary cores** — every such core scores 1.00, so it cannot rank
+two designs, cannot detect a regression, and cannot be optimised against. 63 of
+the 150 cores scored a perfect 1.00 while being *exactly* classically simulable.
+
+*Scope of that claim:* this generator emits only H/S/T/CX and no measurements,
+resets or classical control, so `Q_naive = 1` is largely guaranteed by the
+generator rather than discovered by it. That is still enough to retire the
+metric, because scoring unitary-notation cores was its entire purpose.
 
 Two independent ways to reach 1.00 with zero quantum content:
 
-| core | Q_naive | Q_cert |
+| core | Q_naive | q_sim_upper |
 |---|---:|---:|
 | classical reversible (CX/CCX/X/SWAP) | 1.0000 | 0.0000 |
 | GHZ — maximal entanglement, zero magic | 1.0000 | 0.0000 |
@@ -62,7 +75,144 @@ A sum of locally quantum-looking transitions can be globally classical.
 
 ---
 
-## 1. The corrected primitive: certified residency
+## 0.5 What the peer audit corrected
+
+Five defects, all confirmed by inspection or measurement before being fixed.
+
+**D1 — `Q_cert` was a misnomer, and the prose contradicted the code.**
+The module docstring correctly called it an upper bound on classical hardness.
+The architecture document called it "the fraction of the Hilbert-space exponent a
+classical simulator is *forced* to pay" — a lower-bound claim, the opposite
+direction. Exhibiting a good simulation strategy bounds cost from *above*;
+proving none better exists is a different and much harder problem.
+**Fix:** renamed `q_sim_upper`, and the reported object is now an interval
+`[q_sim_lower, q_sim_upper]` with `q_sim_lower = 0` and an explicit
+`lower_justification` field reading `"none: no lower-bound technology applied"`.
+`certified_residency` remains as a deprecated alias that warns.
+
+**D2 — the metric was gameable by syntax.** `H T T† H` is exactly the identity
+and scored **0.4568**. Verified before fixing.
+**Fix:** a compiler portfolio (optimization levels 0–3) now runs before counting
+and the minimum T-count is taken; the per-level breakdown is reported so
+compiler-dependence is visible rather than hidden. All three equivalence attacks
+in the sweep now score 0.0000. This is *not* a solution to circuit equivalence,
+which is intractable in general — it catches what some optimiser in the portfolio
+can see, and the residual is declared.
+
+**D3 — `"rccx": 0` was wrong.** Qiskit's `RCCXGate` definition is
+`H T CX T† CX T CX T† H` — four T/T† operations. Relative phase reduces T-cost
+inside a larger construction; it does not make the isolated gate magic-free.
+**Fix:** `"rccx": 4`, with a regression test.
+
+**D4 — kill condition K2 was tautological.** It tested whether the clipped score
+lay in `[0,1]`, which the clip itself enforces. It could never fire.
+**Fix:** K2 now inspects `raw_exponent`, computed before clipping. Measured range
+across the sweep: `[0.000, 0.533]`.
+
+**D5 — `rank(G)` is not "identity capacity".** The Gram construction proves that
+`rank(G)` is the dimension of the represented holonomy feature span. Calling it
+identity capacity was interpretive overreach: robustness also needs spectral
+conditioning, code distance, recoverability, process memory and stability under
+*admissible* frame changes.
+**Fix:** renamed `holonomy_span_dimension`; added `effective_rank`
+(`exp` of the spectral entropy, continuous under noise) and `condition_number`.
+
+Two further claims were **over-broad and are retired**, with counterexamples now
+in the test suite:
+
+**D6 — "self-tomography is impossible" is false.** Stabilizer syndrome extraction
+reads a protected register, extracts 2 bits about which error occurred, and
+leaves the logical state at fidelity **exactly 1.000000** for every error
+location. The architecture *depends* on this — a blanket ban on self-measurement
+would forbid its own homeostasis. Löb and no-cloning are not weaker and stronger
+versions of one theorem; they obstruct different closures. The surviving claim is
+bounded: *a single unknown quantum self cannot obtain a complete, non-disturbing
+classical description of itself from one specimen.*
+
+**D7 — "magic is the resource that survives frame change" is unqualified.** Magic
+is defined relative to a free theory. Under a non-Clifford frame change a
+stabilizer state can become a magic state. Replacing entanglement with magic
+without naming the free theory just trades one unqualified resource for another.
+See §1.
+
+Also corrected: the ACAF generator emits only H/S/T/CX with no measurements,
+resets or classical control, so `Q_naive = 1` is largely *guaranteed by the
+generator* rather than discovered by it. The honest claim is that `Q_naive` is
+constant on all-unitary cores — still enough to retire it, since scoring
+unitary-notation cores was its entire purpose.
+
+---
+
+## 1. The Quantum Necessity Atlas: quantumness is not a scalar
+
+The deepest audit finding is that QΣ-R repeated the original error one level up.
+Four inequivalent things were being collapsed onto one axis:
+
+```
+classical simulation upper bound
+    ≠ certified quantum necessity
+    ≠ physical quantum residency
+    ≠ cognitive advantage
+```
+
+Two organs the scalar orders wrongly, both computed in `experiments/run_audit.py`:
+
+| organ | q_phys | q_logical | q_sim | q_causal | verdict |
+|---|---:|---:|---|---:|---|
+| Clifford fault-tolerant memory | 1.00 | 1.00 | [0.00, 0.00] | 0.40 | **PROMOTE** |
+| syntactically magic identity circuit | 0.20 | 0.00 | [0.00, 0.68] | 0.00 | **HOLD** |
+
+A Clifford FT memory is not "zero quantum". It is genuinely quantum tissue whose
+current dynamics happen to admit an efficient classical description. A padded
+identity circuit is hard-ish to simulate and does no work. **Neither dominates
+the other** — the atlas is a partial order, not a ranking.
+
+The replacement object has eight coordinates and three structural features, each
+forced by a specific defect rather than chosen for ornament:
+
+**(a) Interval-valued, not point-valued** — because upper and lower bounds are
+different problems (D1).
+
+**(b) A section of a bundle, not a vector.** Resource monotones are defined only
+over a named free theory, so `q_resource` is a fiber over a base of free
+theories. Measured (`aionq.atlas.resource_over`):
+
+| state | over classical-reversible | over stabilizer | over separable |
+|---|---:|---:|---:|
+| \|+⟩ | 1.0000 | 0.0000 | — |
+| T-state | 1.0000 | 0.4150 | — |
+| GHZ₃ | 1.0000 | 0.0000 | 1.0000 |
+
+Same state, different answers. **"How quantum is it" is not a well-posed question
+until a base point is named.** Each Reality Cell now carries
+`(free_states, free_operations, admissible_group, monotone)`, and resource claims
+do not transport outside the admissible group.
+
+**(c) A hyperbolic base — worth 1.02× today.** Free theories are ordered by
+containment and that order branches; tree-like hierarchies embed with bounded
+distortion in hyperbolic space and unbounded distortion in fixed-dimension
+Euclidean space. Measured worst-case distortion against the true tree metric:
+
+| depth | nodes | hyperbolic | euclidean | advantage |
+|---:|---:|---:|---:|---:|
+| 1 | 3 | 1.00 | 1.00 | 1.00× |
+| 2 | 7 | 2.04 | 2.08 | **1.02×** |
+| 4 | 31 | 4.67 | 7.55 | 1.62× |
+| 6 | 127 | 13.35 | 30.03 | 2.25× |
+
+**Honest reading: at the current two-level free-theory hierarchy the hyperbolic
+base buys essentially nothing.** It becomes decisive only as resource theories
+nest deeper. Stated rather than oversold — a curved base that is not yet earning
+its curvature is decoration, and decoration is what this programme is for
+removing.
+
+**The promotion gate is `q_causal > 0`** against a matched free-theory control.
+Hardness never promotes on its own. This is the bridge from "hard to simulate" to
+"helps cognition", and it is the coordinate the architecture still cannot fill in.
+
+---
+
+## 2. One coordinate: the simulation-cost interval
 
 Let `C_sim` be the best known classical cost of simulating the causal core, and `n`
 the logical qubits it spans, so dense simulation costs `2^n`. Define
@@ -71,8 +221,9 @@ the logical qubits it spans, so dense simulation costs `2^n`. Define
 Q_cert = log2(C_sim) / n         clipped to [0,1]
 ```
 
-**Q_cert is the fraction of the Hilbert-space exponent a classical simulator is
-forced to pay.** A classical simulator picks the cheapest available strategy, so
+**`q_sim_upper` is the fraction of the Hilbert-space exponent that the best
+simulation strategy implemented here is known to pay.** It is an upper bound on
+classical hardness, never a certificate of it. A classical simulator picks the cheapest available strategy, so
 `C_sim` is a *minimum* over strategies — basis-permutation, stabilizer, stabilizer
 rank. Implemented in `src/aionq/residency.py`:
 
@@ -85,14 +236,18 @@ generic core                →  Q_cert = 1
 
 Three properties the draft metric lacked:
 
-- **Non-gameable.** Rewriting a classical process in unitary notation moves nothing.
+- **Resistant, not non-gameable.** Rewriting a classical process in unitary
+  notation moves nothing, and the compiler portfolio defeats the cancellation
+  attacks in the sweep. Circuit equivalence is intractable in general, so
+  residual gaming vectors exist and the score is compiler-dependent by
+  construction.
 - **Global.** Computed on the whole core; simulation strategy validity is checked
   across the circuit, not per gate.
 - **Falsifiable downward.** A better classical algorithm lowers `C_sim` and therefore
   lowers `Q_cert`. The metric can only ever be revised *down* by classical progress,
   never inflated by notation. That asymmetry is the point.
 
-### 1.1 What 100% actually costs
+### 2.1 What 100% actually costs
 
 `Q_cert = α·t/n` inverts to a hardware budget the draft never wrote down:
 
@@ -116,7 +271,7 @@ operation is spent on distillation.
 
 ---
 
-## 2. Corrections to the eight subsystems
+## 3. Corrections to the eight subsystems
 
 ### C1 — Coherentization relocates classicality; it does not remove it
 
@@ -291,7 +446,7 @@ superposed causal order is not part of the load-bearing design.
 
 ---
 
-## 3. The architecture that survives
+## 4. The architecture that survives
 
 ```
 B = (R, P, W, F, I, M, C, H, E, [R])
@@ -338,7 +493,7 @@ more of the system in unitary notation.
 
 ---
 
-## 4. Falsification programme
+## 5. Falsification programme
 
 Kill conditions. Each names the matched control that would retire the component.
 
@@ -353,13 +508,18 @@ Kill conditions. Each names the matched control that would retire the component.
 | K7 | breathing is forced | a coherent core with unbounded horizon at finite hardware | **survived** |
 | K8 | indefinite order helps | randomized definite-order mixture matches at equal resources | **untested — demoted** |
 | K9 | entanglement measures quantumness | a frame-invariant entanglement-based residency measure exists | **falsified** (C3) |
+| K10 | the metric resists equivalence attacks | an identity circuit scores > 0 | **survived after fix** (was 0.4568, now 0.0000) |
+| K11 | the raw exponent is sound | pre-clip exponent negative or non-finite | **survived** (range [0.000, 0.533]) |
+| K12 | self-measurement is impossible | a non-disturbing informative self-measurement exists | **falsified** — syndrome extraction, fidelity 1.000000 |
+| K13 | the hyperbolic base earns its curvature | Euclidean matches it on the live hierarchy | **failed at current depth** (1.02×); survives only asymptotically |
+| K14 | resource content is base-independent | same state, same monotone, different free theories | **falsified** (§1) |
 
 Two of the draft's own components are falsified by its own stated standards (K3, K9)
 and one is demoted for lack of evidence (K8). That is the programme working.
 
 ---
 
-## 5. Evidence ledger
+## 6. Evidence ledger
 
 **P — mathematically established.** Stinespring dilation; Gottesman–Knill; Bravyi–Gosset
 stabilizer rank; stabilizer Rényi entropy as a magic monotone; Bennett reversible
@@ -384,18 +544,23 @@ measuring it high makes it *think better*. That gap is the largest one remaining
 cognitive gerbe, quantum identity ecology. Retained as scaffolding, load-bearing
 nowhere.
 
-**R — retired.** Additive `Q_causal`; entanglement as a quantumness measure;
+**R — retired.** Additive `Q_causal`; the name and point-valued form of `Q_cert`;
+"self-tomography is impossible"; "magic is the frame-invariant resource";
+`rank(G)` as "identity capacity"; exhalation as necessarily measurement;
+entanglement as a quantumness measure;
 coherentization as a residency gain; breathing as an aesthetic choice; the external
 membrane as a governance choice; indefinite causal order as a primitive; identity
 capacity as a count of holonomies.
 
 ---
 
-## 6. Phased programme
+## 7. Phased programme
 
 | phase | content | gate |
 |---|---|---|
-| QΣ-R0 | this repository: metric, audit, falsification harness | ✅ 22/22 tests |
+| QΣ-R0 | metric, audit, falsification harness | ✅ superseded |
+| QΣ-R0.5 | peer audit fixes; atlas replaces the scalar | ✅ 38/38 tests, 3/3 attacks defeated |
+| QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network / matchgate / low-treewidth families not yet covered |
 | QΣ-R1 | four-cell organ (self/other/memory/auditor) at measured `Q_cert` | `Q_cert > 0.5` on hardware-sized cores |
 | QΣ-R2 | per-edge process-tensor budgeting from measured `N` | beats matched Markovian control |
 | QΣ-R3 | fusion cortex with gated F/R data | coherence gate + order-sensitivity gain |
@@ -409,7 +574,7 @@ and nothing here should be read as assuming otherwise.
 
 ---
 
-## 7. The remainder
+## 8. The remainder
 
 `[R]` is non-empty and three parts of it are load-bearing:
 

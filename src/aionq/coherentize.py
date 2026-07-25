@@ -36,7 +36,7 @@ from qiskit import QuantumCircuit, QuantumRegister
 from qiskit.circuit import ControlFlowOp, Measure
 from qiskit.quantum_info import Kraus, Operator, Stinespring
 
-from .residency import ResidencyReport, certified_residency
+from .residency import ResidencyReport, simulation_residency
 
 __all__ = ["coherentize", "coherentization_audit", "CoherentizationAudit",
            "stinespring_dilation"]
@@ -116,7 +116,7 @@ class CoherentizationAudit:
 
     @property
     def cert_delta(self) -> float:
-        return self.after.q_cert - self.before.q_cert
+        return self.after.q_sim_upper - self.before.q_sim_upper
 
     @property
     def monotone(self) -> bool:
@@ -127,10 +127,10 @@ class CoherentizationAudit:
         return "\n".join([
             f"Q_naive : {self.before.q_naive:.4f} -> {self.after.q_naive:.4f}  "
             f"(delta {self.naive_delta:+.4f})",
-            f"Q_cert  : {self.before.q_cert:.4f} -> {self.after.q_cert:.4f}  "
+            f"q_sim+  : {self.before.q_sim_upper:.4f} -> {self.after.q_sim_upper:.4f}  "
             f"(delta {self.cert_delta:+.4f})",
             f"ancillas retained : +{self.ancillas_added}",
-            f"raised certified residency : {self.monotone}",
+            f"raised simulation hardness : {self.monotone}",
         ])
 
 
@@ -138,7 +138,7 @@ def coherentization_audit(circuit: QuantumCircuit) -> CoherentizationAudit:
     """Coherentize `circuit` and report what it bought and what it cost."""
     after_circuit = coherentize(circuit)
     return CoherentizationAudit(
-        before=certified_residency(circuit),
-        after=certified_residency(after_circuit),
+        before=simulation_residency(circuit),
+        after=simulation_residency(after_circuit),
         ancillas_added=after_circuit.num_qubits - circuit.num_qubits,
     )

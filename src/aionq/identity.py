@@ -88,24 +88,35 @@ class GramReport:
     hermitian_defect: float
     min_eigenvalue: float
     frame_defect: float
+    effective_rank: float = 0.0
+    condition_number: float = float("inf")
 
     @property
     def psd(self) -> bool:
         return self.min_eigenvalue > -1e-9
 
     @property
-    def identity_capacity(self) -> int:
-        """Independent identity structures, as opposed to restatements."""
+    def holonomy_span_dimension(self) -> int:
+        """Dimension of the represented holonomy feature span.
+
+        This is what the Gram construction actually proves.  It is *not*
+        "identity capacity": robustness of identity also depends on spectral
+        conditioning, code distance, recoverability after noise, process memory
+        and stability under admissible frame changes.  Calling rank(G) the
+        identity capacity was an interpretive overreach and has been retired.
+        """
         return self.rank
 
     def __str__(self) -> str:  # pragma: no cover - display only
         return "\n".join([
-            f"holonomies supplied  : {self.gram.shape[0]}",
-            f"identity capacity    : {self.rank} (rank of G)",
-            f"hermitian defect     : {self.hermitian_defect:.3e}",
-            f"min eigenvalue       : {self.min_eigenvalue:.3e}",
-            f"positive semidefinite: {self.psd}",
-            f"frame-change defect  : {self.frame_defect:.3e}",
+            f"holonomies supplied     : {self.gram.shape[0]}",
+            f"holonomy span dimension : {self.rank} (rank of G)",
+            f"effective rank          : {self.effective_rank:.3f} (noise-robust)",
+            f"condition number        : {self.condition_number:.3e} (fragility)",
+            f"hermitian defect        : {self.hermitian_defect:.3e}",
+            f"min eigenvalue          : {self.min_eigenvalue:.3e}",
+            f"positive semidefinite   : {self.psd}",
+            f"frame-change defect     : {self.frame_defect:.3e}",
         ])
 
 
@@ -124,6 +135,20 @@ def analyse_identity(rho: np.ndarray, holonomies: list[np.ndarray],
         mat = rng.normal(size=(dim, dim)) + 1j * rng.normal(size=(dim, dim))
         frame, _ = np.linalg.qr(mat)
 
+    # Effective rank: exp of the Shannon entropy of the normalised spectrum.
+    # Unlike rank it is continuous under noise, so it does not jump when a
+    # vanishing eigenvalue crosses a threshold.
+    pos = np.clip(evals, 0.0, None)
+    total = float(pos.sum())
+    if total > 0:
+        probs = np.clip(pos / total, 1e-18, None)
+        eff_rank = float(np.exp(-np.sum(probs * np.log(probs))))
+    else:
+        eff_rank = 0.0
+
+    nonzero = pos[pos > tol * max(1.0, float(np.max(pos)) if pos.size else 1.0)]
+    cond = float(np.max(nonzero) / np.min(nonzero)) if nonzero.size else float("inf")
+
     return GramReport(
         gram=g,
         eigenvalues=evals,
@@ -131,4 +156,6 @@ def analyse_identity(rho: np.ndarray, holonomies: list[np.ndarray],
         hermitian_defect=herm_defect,
         min_eigenvalue=float(np.min(evals)),
         frame_defect=frame_invariance_defect(rho, holonomies, frame),
+        effective_rank=eff_rank,
+        condition_number=cond,
     )

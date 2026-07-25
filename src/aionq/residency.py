@@ -69,6 +69,7 @@ __all__ = [
     "TransitionClass",
     "ResidencyReport",
     "classify_instruction",
+    "simulation_residency",
     "certified_residency",
     "naive_residency",
     "stabilizer_renyi_entropy",
@@ -93,7 +94,11 @@ _KNOWN_T_COUNT = {
     "csdg": 3,
     "ccx": 7,
     "ccz": 7,
-    "rccx": 0,      # relative-phase Toffoli is Clifford+T-free up to phase
+    # Relative-phase Toffoli.  Qiskit's RCCXGate definition is
+    # H T CX Tdg CX T CX Tdg H: four T/Tdg operations.  Relative phase reduces
+    # T-cost inside a larger construction; it does not make the isolated gate
+    # Clifford or magic-free.
+    "rccx": 4,
     "cswap": 7,
 }
 
@@ -120,32 +125,50 @@ class TransitionClass:
 
 @dataclass
 class ResidencyReport:
-    """Result of a residency audit."""
+    """Result of a residency audit.
+
+    ``q_sim_upper`` is an upper bound on classical simulation cost, normalised by
+    the Hilbert-space exponent.  ``q_sim_lower`` is a *certified* lower bound and
+    is 0.0 unless a genuine lower-bound argument is supplied: proving that no
+    classical algorithm can do better is a different and much harder problem than
+    exhibiting one that does this well.  The honest object is the interval.
+    """
 
     n_qubits: int
     t_count: float
     opaque_exponent: float
-    q_cert: float
+    q_sim_upper: float
     q_naive: float
     log2_sim_cost: float
+    raw_exponent: float = 0.0        # pre-clipping, so soundness is testable
+    q_sim_lower: float = 0.0
+    lower_justification: str = "none: no lower-bound technology applied"
+    portfolio: dict = field(default_factory=dict)
     class_counts: dict = field(default_factory=dict)
     notes: list = field(default_factory=list)
 
     @property
+    def interval(self) -> tuple[float, float]:
+        return (self.q_sim_lower, self.q_sim_upper)
+
+    @property
     def gap(self) -> float:
-        """How much the naive metric overstates quantum residency."""
-        return self.q_naive - self.q_cert
+        """How much the draft metric overstates relative to the upper bound."""
+        return self.q_naive - self.q_sim_upper
 
     def __str__(self) -> str:  # pragma: no cover - display only
         lines = [
             f"qubits             : {self.n_qubits}",
-            f"T-count            : {self.t_count:.1f}",
-            f"log2 C_sim         : {self.log2_sim_cost:.2f}",
-            f"Q_cert  (certified): {self.q_cert:.4f}",
+            f"T-count (best)     : {self.t_count:.1f}",
+            f"log2 C_sim (upper) : {self.log2_sim_cost:.2f}",
+            f"q_sim interval     : [{self.q_sim_lower:.4f}, {self.q_sim_upper:.4f}]",
             f"Q_naive (draft def): {self.q_naive:.4f}",
             f"overstatement gap  : {self.gap:+.4f}",
-            f"classes            : {self.class_counts}",
+            f"lower bound        : {self.lower_justification}",
         ]
+        if self.portfolio:
+            lines.append(f"compiler portfolio : {self.portfolio}")
+        lines.append(f"classes            : {self.class_counts}")
         lines.extend(f"note: {n}" for n in self.notes)
         return "\n".join(lines)
 
@@ -305,12 +328,56 @@ def _walk(circuit: QuantumCircuit):
             yield op
 
 
-def certified_residency(
+CLIFFORD_T_BASIS = ["h", "s", "sdg", "x", "y", "z", "cx", "cz", "swap", "t", "tdg"]
+
+
+def _portfolio_t_count(circuit: QuantumCircuit, eps: float,
+                       levels=(0, 1, 2, 3)) -> tuple[float, dict]:
+    """Minimum T-count over a portfolio of compilations.
+
+    A syntactic audit of leaf instructions is gameable: ``H T Tdg H`` is exactly
+    the identity yet contains two T gates.  Running the circuit through a
+    compiler portfolio and taking the minimum defends against cancellation
+    attacks that any optimiser in the portfolio can see.
+
+    It is *not* a solution to circuit equivalence, which is not tractable in
+    general.  The returned figure is therefore compiler-dependent, and the
+    per-level breakdown is reported so that dependence is visible rather than
+    hidden inside a single number.
+    """
+    from qiskit import transpile
+
+    results: dict[str, float] = {}
+    best = math.inf
+    for level in levels:
+        try:
+            compiled = transpile(circuit, basis_gates=CLIFFORD_T_BASIS,
+                                 optimization_level=level, seed_transpiler=11)
+        except Exception:
+            continue
+        total = 0.0
+        for op in _walk(compiled):
+            cls, cost = classify_instruction(op, eps=eps)
+            if cls != TransitionClass.OPAQUE:
+                total += cost
+        results[f"opt{level}"] = total
+        best = min(best, total)
+
+    return (best if best < math.inf else float("nan")), results
+
+
+def simulation_residency(
     circuit: QuantumCircuit,
     eps: float = DEFAULT_EPS,
     alpha: float = ALPHA_BG,
+    portfolio: bool = True,
 ) -> ResidencyReport:
-    """Audit a circuit and return certified vs. naive quantum residency."""
+    """Audit a circuit and return the q_sim interval vs. the draft metric.
+
+    Renamed from ``certified_residency``: nothing here is certified.  The upper
+    end of the interval is the best bound the implemented simulation strategies
+    can produce; the lower end is 0 absent a real lower-bound argument.
+    """
     n = circuit.num_qubits
     t_total = 0.0
     opaque_exponent = 0.0
@@ -341,7 +408,14 @@ def certified_residency(
         elif isinstance(op, (Measure, Reset)) or isinstance(op, ControlFlowOp):
             total_edges += 1
 
-    # Strategy A: stabilizer-rank decomposition, cost 2^(alpha * T).
+    # Strategy A: stabilizer-rank decomposition, cost 2^(alpha * T).  Take the
+    # cheapest compilation available, so that syntactic padding and cancelling
+    # non-Clifford blocks do not inflate the score.
+    portfolio_counts: dict = {}
+    if portfolio:
+        best_t, portfolio_counts = _portfolio_t_count(circuit, eps)
+        if best_t == best_t:  # not NaN
+            t_total = min(t_total, best_t)
     log2_stabrank = alpha * t_total + opaque_exponent
     # Strategy B: basis permutation.  Valid only if the core never leaves the
     # computational basis, in which case a basis input stays a phased basis
@@ -350,7 +424,8 @@ def certified_residency(
     # A classical simulator picks whichever strategy is cheaper.
     log2_cost = min(float(n), log2_stabrank, log2_basis)
 
-    q_cert = 0.0 if n == 0 else max(0.0, min(1.0, log2_cost / n))
+    raw = 0.0 if n == 0 else min(log2_stabrank, log2_basis) / n
+    q_upper = 0.0 if n == 0 else max(0.0, min(1.0, log2_cost / n))
     q_naive = 0.0 if total_edges == 0 else quantum_edges / total_edges
 
     notes = []
@@ -371,16 +446,24 @@ def certified_residency(
             "core is entirely stabilizer/permutation simulable (Gottesman-Knill): "
             "Q_cert = 0 regardless of depth, width or entanglement."
         )
-    if q_cert >= 1.0:
-        notes.append("core saturates the Hilbert-space exponent; classically intractable.")
+    if q_upper >= 1.0:
+        notes.append("no implemented strategy simulates this core below dense cost; "
+                     "this is an upper bound, not a hardness certificate.")
+    if portfolio_counts and len(set(portfolio_counts.values())) > 1:
+        notes.append(f"T-count is compiler-dependent across the portfolio: "
+                     f"{portfolio_counts}. The reported figure is the minimum.")
 
     return ResidencyReport(
         n_qubits=n,
         t_count=t_total,
         opaque_exponent=opaque_exponent,
-        q_cert=q_cert,
+        q_sim_upper=q_upper,
         q_naive=q_naive,
         log2_sim_cost=log2_cost,
+        raw_exponent=raw,
+        q_sim_lower=0.0,
+        lower_justification="none: no lower-bound technology applied",
+        portfolio=portfolio_counts,
         class_counts=counts,
         notes=notes,
     )
@@ -388,7 +471,7 @@ def certified_residency(
 
 def naive_residency(circuit: QuantumCircuit) -> float:
     """The draft QSigma-infinity metric, kept for comparison."""
-    return certified_residency(circuit).q_naive
+    return simulation_residency(circuit, portfolio=False).q_naive
 
 
 # --------------------------------------------------------------------------
@@ -453,3 +536,17 @@ def max_bipartite_entanglement(state: Statevector | np.ndarray) -> float:
         probs = probs / probs.sum()
         best = max(best, float(-np.sum(probs * np.log2(probs))))
     return best
+
+
+def certified_residency(*args, **kwargs) -> ResidencyReport:
+    """Deprecated alias for :func:`simulation_residency`.
+
+    The original name overclaimed: an upper bound on the cost of the simulation
+    strategies implemented here is not a certificate that no cheaper classical
+    algorithm exists.  Kept so existing call sites keep working.
+    """
+    import warnings
+    warnings.warn("certified_residency is a misnomer; use simulation_residency. "
+                  "The quantity is an upper bound, not a certificate.",
+                  DeprecationWarning, stacklevel=2)
+    return simulation_residency(*args, **kwargs)

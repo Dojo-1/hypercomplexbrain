@@ -24,9 +24,13 @@ from aionq.fusion import verify_coherence
 from aionq.identity import analyse_identity
 from aionq.process import non_markovianity
 from aionq.qrf import compare_frames
-from aionq.residency import (certified_residency, max_bipartite_entanglement,
+from aionq.residency import (simulation_residency, max_bipartite_entanglement,
                              stabilizer_renyi_entropy)
-from aionq.selfknowledge import copies_for_self_tomography, self_knowledge_tradeoff
+from aionq.atlas import (CLASSICAL, SEPARABLE, STABILIZER, UNIVERSAL, Interval,
+                         QuantumNecessityAtlas, embed_hierarchy,
+                         hierarchy_distortion, poincare_distance, resource_over)
+from aionq.selfknowledge import (copies_for_self_tomography, self_knowledge_tradeoff,
+                                syndrome_extraction_disturbance)
 
 
 def rule(title: str) -> None:
@@ -34,7 +38,7 @@ def rule(title: str) -> None:
 
 
 def claim_1_metric_is_gameable() -> None:
-    rule("CLAIM 1  The draft Q_causal metric is gameable; Q_cert is not")
+    rule("CLAIM 1  The draft Q_causal metric is gameable; q_sim_upper resists")
 
     cases: list[tuple[str, QuantumCircuit]] = []
 
@@ -71,11 +75,11 @@ def claim_1_metric_is_gameable() -> None:
         grover.h(range(8))
     cases.append(("Hadamard + Toffoli (Grover-shaped)", grover))
 
-    print(f"{'core':<44}{'Q_naive':>9}{'Q_cert':>9}{'gap':>9}")
+    print(f"{'core':<44}{'Q_naive':>9}{'q_sim+':>9}{'gap':>9}")
     print("-" * 72)
     for name, qc in cases:
-        r = certified_residency(qc)
-        print(f"{name:<44}{r.q_naive:>9.4f}{r.q_cert:>9.4f}{r.gap:>+9.4f}")
+        r = simulation_residency(qc)
+        print(f"{name:<44}{r.q_naive:>9.4f}{r.q_sim_upper:>9.4f}{r.gap:>+9.4f}")
 
     print("\nEntanglement is not quantum residency:")
     sv = Statevector(ghz)
@@ -109,7 +113,7 @@ def claim_2_coherentization() -> None:
     audit = coherentization_audit(qc)
     print(audit)
     print(f"\n  draft metric credits coherentization with {audit.naive_delta:+.4f}")
-    print(f"  certified gain is             {audit.cert_delta:+.4f}"
+    print(f"  measured gain is              {audit.cert_delta:+.4f}"
           f"  ({100 * audit.cert_delta / max(1e-9, audit.naive_delta):.1f}% of advertised)")
     print("  and it is bought by spending MORE non-Clifford resource")
     print(f"  (T-count {audit.before.t_count:.0f} -> {audit.after.t_count:.0f}), not by new capability.")
@@ -151,7 +155,7 @@ def claim_5_fusion_coherence() -> None:
 
 
 def claim_6_identity_gram() -> None:
-    rule("CLAIM 6  Identity Gram is PSD, frame-invariant, and rank-limited")
+    rule("CLAIM 6  Identity Gram is PSD and frame-invariant; rank is span, not capacity")
     rng = np.random.default_rng(3)
     d = 4
 
@@ -168,27 +172,95 @@ def claim_6_identity_gram() -> None:
 
     rep = analyse_identity(rho, holos)
     print(rep)
-    print(f"\n  {len(holos)} holonomies supplied, identity capacity = {rep.identity_capacity}.")
-    print("  Rank, not count, is the identity capacity: duplicated loops add nothing.")
+    print(f"\n  {len(holos)} holonomies supplied, span dimension = {rep.holonomy_span_dimension},")
+    print(f"  effective rank = {rep.effective_rank:.3f}, condition number = {rep.condition_number:.2e}.")
+    print("  Rank is the HOLONOMY SPAN DIMENSION, not 'identity capacity': robustness")
+    print("  also needs conditioning, code distance, recoverability and process memory.")
 
 
 def claim_7_self_knowledge() -> None:
-    rule("CLAIM 7  Self-tomography is impossible: no-cloning is sharper than Loeb")
+    rule("CLAIM 7  Self-knowledge is bounded -- but NOT impossible")
     print("  strength   self-knowledge   identity fidelity")
     print("  " + "-" * 46)
     for p in self_knowledge_tradeoff():
         print(f"  {p.strength:>7.2f}   {p.info_gain_bits:>10.4f} bits   {p.fidelity_retained:>10.4f}")
     n = copies_for_self_tomography(2 ** 6, 0.01)
-    print(f"\n  A 6-qubit identity register needs {n:,} copies to certify to eps=0.01.")
-    print("  No-cloning forbids the brain from producing them from itself.")
-    print("  The evidence membrane is external for physical reasons, not governance ones.")
+    print(f"\n  Full tomography of a 6-qubit identity register: ~{n:,} copies at eps=0.01")
+    print("  (rank-dependent; this is the worst case, not a universal law).")
+    print("\n  COUNTEREXAMPLE -- structured self-measurement disturbs nothing:")
+    for e in (None, 0, 1, 2):
+        r = syndrome_extraction_disturbance(error_qubit=e)
+        where = "no error" if e is None else f"X error on qubit {e}"
+        print(f"    {where:<18} {r}")
+    print("\n  Syndrome extraction reads a protected register, extracts 2 bits, and")
+    print("  leaves the logical state at fidelity EXACTLY 1. The architecture depends")
+    print("  on this: a blanket ban on self-measurement would forbid its own homeostasis.")
+    print("  Correct bounded claim: a single unknown quantum self cannot obtain a")
+    print("  COMPLETE, NON-DISTURBING classical description of itself from one specimen.")
+    print("  Loeb and no-cloning obstruct different closures; neither supersedes the other.")
 
 
 def claim_8_frames() -> None:
     rule("CLAIM 8  Entanglement is frame-relative, so it cannot be an invariant")
     print(compare_frames())
     print("\n  The same physical situation: product state in A's frame,")
-    print("  maximally entangled in B's. This is why Q_cert ignores entanglement.")
+    print("  maximally entangled in B's. This is why q_sim ignores entanglement.")
+
+
+def claim_9_atlas_not_scalar() -> None:
+    rule("CLAIM 9  Quantumness is not a scalar: a resource needs a free theory")
+
+    plus = np.array([1, 1], dtype=complex) / math.sqrt(2)
+    tstate = np.array([1, complex(math.cos(math.pi / 4), math.sin(math.pi / 4))],
+                      dtype=complex) / math.sqrt(2)
+    ghz3 = np.zeros(8, dtype=complex)
+    ghz3[0] = ghz3[7] = 1 / math.sqrt(2)
+
+    print("  the SAME state has different resource content over different base points:")
+    print(f"    {'state':<20}{'classical-rev':>15}{'stabilizer':>13}{'separable':>12}")
+    for label, st in [("|+>", plus), ("T-state", tstate), ("GHZ3", ghz3)]:
+        sep = resource_over(st, SEPARABLE) if len(st) >= 4 else float("nan")
+        print(f"    {label:<20}{resource_over(st, CLASSICAL):>15.4f}"
+              f"{resource_over(st, STABILIZER):>13.4f}{sep:>12.4f}")
+    print("\n  'How quantum is it' has no answer until a free theory is named.")
+
+    print("\n  two organs the old scalar ordered WRONGLY:")
+    memory = QuantumNecessityAtlas(
+        organ="Clifford fault-tolerant memory", base=STABILIZER,
+        q_phys=1.0, q_coh=0.0, q_resource=0.0, q_process=0.0, q_logical=1.0,
+        q_sim=Interval(0.0, 0.0, "stabilizer-simulable"), q_causal=0.4, q_audit=0.8)
+    padded = QuantumNecessityAtlas(
+        organ="syntactically magic identity circuit", base=STABILIZER,
+        q_phys=0.2, q_coh=0.0, q_resource=1.2, q_process=0.0, q_logical=0.0,
+        q_sim=Interval(0.0, 0.68, "upper bound only"), q_causal=0.0, q_audit=0.1)
+    for a in (memory, padded):
+        print("\n" + "  " + str(a).replace("\n", "\n  "))
+    print(f"\n  neither dominates the other: "
+          f"memory>padded={memory.dominates(padded)}, padded>memory={padded.dominates(memory)}")
+    print("  A partial order, not a ranking. Hardness alone never promotes.")
+
+
+def claim_10_hyperbolic_base() -> None:
+    rule("CLAIM 10  The base is hyperbolic -- and here is what that is worth")
+    coords = embed_hierarchy()
+    print("  free-theory containment hierarchy, euclidean vs hyperbolic separation:")
+    for a, b in [("stabilizer", "matchgate / free-fermion"),
+                 ("stabilizer", "universal"),
+                 ("classical-reversible", "universal")]:
+        eu = float(np.linalg.norm(coords[a] - coords[b]))
+        hy = poincare_distance(coords[a], coords[b])
+        print(f"    {a:<22} <-> {b:<24} euclid {eu:.3f}  hyperbolic {hy:.3f}  {hy/eu:.2f}x")
+
+    print("\n  worst-case distortion against the true tree metric, by depth:")
+    print(f"    {'depth':>6}{'nodes':>7}{'hyperbolic':>13}{'euclidean':>12}{'advantage':>12}")
+    for d in range(1, 7):
+        r = hierarchy_distortion(d)
+        adv = r["euclidean_distortion"] / r["hyperbolic_distortion"]
+        print(f"    {r['depth']:>6}{r['nodes']:>7}{r['hyperbolic_distortion']:>13.2f}"
+              f"{r['euclidean_distortion']:>12.2f}{adv:>11.2f}x")
+    print("\n  HONEST READING: at the current 2-level free-theory hierarchy the")
+    print("  hyperbolic base buys ~1.02x -- essentially nothing. It becomes decisive")
+    print("  only as resource theories nest deeper. Claimed here, not oversold.")
 
 
 def main() -> int:
@@ -202,6 +274,8 @@ def main() -> int:
     claim_6_identity_gram()
     claim_7_self_knowledge()
     claim_8_frames()
+    claim_9_atlas_not_scalar()
+    claim_10_hyperbolic_base()
     print("\n" + "=" * 72)
     print("audit complete")
     print("=" * 72)

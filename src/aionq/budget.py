@@ -107,9 +107,29 @@ def pebbles_for_horizon(horizon: int) -> int:
     return max(1, math.ceil(math.log2(max(2, horizon))))
 
 
+# Exhalation is entropy export, and measurement is only one channel for it.
+# Equating the two was an overreach: the general statement is that finite
+# coherent computation eventually requires uncomputation, resource expansion or
+# entropy export -- not that cognition must periodically measure itself on one
+# Bennett-derived period.
+EXHALATION_CHANNELS = (
+    "uncompute",        # reversible, costs time (Bennett)
+    "measure",          # irreversible, costs coherence
+    "reset",            # irreversible, costs a thermodynamic kT ln2 per bit
+    "swap_out",         # move to colder/slower storage, costs bandwidth
+    "dissipate",        # engineered dissipation to an attractor
+    "compress",         # lossy re-encoding into fewer logical qubits
+    "error_correct",    # export entropy as syndrome, preserves logical state
+)
+
+
 @dataclass
 class BreathSchedule:
-    """A forced inhale/exhale cycle."""
+    """A forced inhale/exhale cycle.
+
+    ``exhale_period`` is when *some* entropy-export channel must fire, not when
+    a measurement must.  See :data:`EXHALATION_CHANNELS`.
+    """
 
     horizon: int              # decisions deferrable before allocation failure
     pebbles: int              # ancillas available for uncomputation

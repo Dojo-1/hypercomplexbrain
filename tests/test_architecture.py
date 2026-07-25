@@ -22,9 +22,13 @@ from aionq.fusion import associator_defect, hexagon_defect, pentagon_defect, ver
 from aionq.identity import analyse_identity, holonomy_gram
 from aionq.process import non_markovianity
 from aionq.qrf import compare_frames
-from aionq.residency import (certified_residency, max_bipartite_entanglement,
+from aionq.atlas import (CLASSICAL, SEPARABLE, STABILIZER, Interval,
+                         QuantumNecessityAtlas, embed_hierarchy,
+                         hierarchy_distortion, poincare_distance, resource_over)
+from aionq.residency import (simulation_residency, max_bipartite_entanglement,
                              stabilizer_renyi_entropy)
-from aionq.selfknowledge import copies_for_self_tomography, self_knowledge_tradeoff
+from aionq.selfknowledge import (copies_for_self_tomography, self_knowledge_tradeoff,
+                                syndrome_extraction_disturbance)
 
 
 # --------------------------------------------------------------------------
@@ -38,16 +42,16 @@ def test_classical_reversible_core_scores_zero():
         qc.cx(i, i + 1)
     qc.ccx(0, 1, 2)
     qc.x(range(8))
-    r = certified_residency(qc)
+    r = simulation_residency(qc)
     assert r.q_naive == pytest.approx(1.0)
-    assert r.q_cert == pytest.approx(0.0)
+    assert r.q_sim_upper == pytest.approx(0.0)
 
 
 def test_clifford_core_scores_zero_at_any_depth():
     """Gottesman-Knill: depth does not buy quantum residency."""
     for seed in (1, 7, 42):
         qc = random_clifford(8, seed=seed).to_circuit()
-        assert certified_residency(qc).q_cert == pytest.approx(0.0)
+        assert simulation_residency(qc).q_sim_upper == pytest.approx(0.0)
 
 
 def test_entanglement_is_not_quantum_residency():
@@ -59,7 +63,7 @@ def test_entanglement_is_not_quantum_residency():
     sv = Statevector(qc)
     assert max_bipartite_entanglement(sv) == pytest.approx(1.0)
     assert stabilizer_renyi_entropy(sv) == pytest.approx(0.0, abs=1e-9)
-    assert certified_residency(qc).q_cert == pytest.approx(0.0)
+    assert simulation_residency(qc).q_sim_upper == pytest.approx(0.0)
 
 
 def test_t_state_magic_is_exact():
@@ -71,18 +75,34 @@ def test_t_state_magic_is_exact():
 
 
 def test_residency_scales_with_t_count():
-    """Q_cert = alpha * t / n until it saturates."""
+    """q_sim_upper = alpha * t / n until it saturates.
+
+    T gates are separated by Hadamards.  Without that separation two T gates on
+    the same qubit merge into S, which is Clifford and free -- the compiler
+    portfolio spots this and the score correctly *drops*.  That behaviour is the
+    metric working, so the test must not accidentally rely on it.
+    """
     n = 8
     prev = -1.0
-    for t in (0, 5, 15, 35):
+    for layers in (0, 1, 3, 7):
         qc = QuantumCircuit(n)
         qc.h(range(n))
-        for k in range(t):
-            qc.t(k % n)
-        cur = certified_residency(qc).q_cert
+        for _ in range(layers):
+            qc.t(range(n))
+            qc.h(range(n))
+        cur = simulation_residency(qc).q_sim_upper
         assert cur >= prev
         prev = cur
     assert prev == pytest.approx(1.0, abs=0.01)
+
+
+def test_merged_t_gates_are_correctly_recognised_as_clifford():
+    """T followed by T on the same qubit is S: Clifford, hence free."""
+    qc = QuantumCircuit(1)
+    qc.h(0)
+    qc.t(0)
+    qc.t(0)
+    assert simulation_residency(qc).q_sim_upper == pytest.approx(0.0, abs=1e-9)
 
 
 def test_residency_is_bounded():
@@ -90,8 +110,8 @@ def test_residency_is_bounded():
     qc.h(range(4))
     for k in range(500):
         qc.t(k % 4)
-    r = certified_residency(qc)
-    assert 0.0 <= r.q_cert <= 1.0
+    r = simulation_residency(qc)
+    assert 0.0 <= r.q_sim_upper <= 1.0
 
 
 # --------------------------------------------------------------------------
@@ -225,11 +245,18 @@ def test_gram_is_frame_invariant():
     assert rep.frame_defect < 1e-9
 
 
-def test_duplicated_holonomies_add_no_identity_capacity():
+def test_duplicated_holonomies_add_no_span_dimension():
     rho, holos, _ = _random_setup()
-    base = analyse_identity(rho, holos).identity_capacity
+    base = analyse_identity(rho, holos).holonomy_span_dimension
     padded = analyse_identity(rho, holos + [h.copy() for h in holos])
-    assert padded.identity_capacity == base
+    assert padded.holonomy_span_dimension == base
+
+
+def test_effective_rank_is_continuous_and_bounded_by_rank():
+    rho, holos, _ = _random_setup()
+    rep = analyse_identity(rho, holos)
+    assert 0.0 < rep.effective_rank <= rep.rank + 1e-9
+    assert rep.condition_number >= 1.0
 
 
 # --------------------------------------------------------------------------
@@ -261,3 +288,121 @@ def test_entanglement_is_frame_dependent():
     assert cmp_.entropy_in_a == pytest.approx(0.0, abs=1e-9)
     assert cmp_.entropy_in_b == pytest.approx(1.0, abs=1e-9)
     assert cmp_.frame_dependent
+
+
+# --------------------------------------------------------------------------
+# Claim 1b: the metric must resist equivalence attacks
+# --------------------------------------------------------------------------
+
+def test_identity_circuit_scores_zero():
+    """H T Tdg H is exactly the identity and must not score as quantum."""
+    from qiskit.quantum_info import Operator
+    qc = QuantumCircuit(1)
+    qc.h(0); qc.t(0); qc.tdg(0); qc.h(0)
+    assert np.allclose(Operator(qc).data, np.eye(2), atol=1e-9)
+    assert simulation_residency(qc).q_sim_upper == pytest.approx(0.0, abs=1e-9)
+
+
+def test_cancelling_pairs_do_not_inflate_score():
+    plain = QuantumCircuit(3)
+    plain.h(range(3)); plain.ccx(0, 1, 2)
+    padded = QuantumCircuit(3)
+    padded.h(range(3)); padded.ccx(0, 1, 2)
+    for _ in range(8):
+        padded.t(0); padded.tdg(0)
+    assert (simulation_residency(padded).q_sim_upper
+            <= simulation_residency(plain).q_sim_upper + 1e-9)
+
+
+def test_rccx_is_not_magic_free():
+    """RCCX contains four T/Tdg operations; scoring it 0 was a bug."""
+    from aionq.residency import _KNOWN_T_COUNT
+    assert _KNOWN_T_COUNT["rccx"] == 4
+
+
+def test_report_is_an_interval_with_honest_lower_bound():
+    qc = QuantumCircuit(4)
+    qc.h(range(4))
+    for k in range(10):
+        qc.t(k % 4)
+    r = simulation_residency(qc)
+    lo, hi = r.interval
+    assert lo == 0.0                      # no lower-bound technology applied
+    assert hi >= lo
+    assert "none" in r.lower_justification
+
+
+# --------------------------------------------------------------------------
+# Claim 7b: structured self-measurement is non-disturbing
+# --------------------------------------------------------------------------
+
+def test_syndrome_extraction_disturbs_nothing():
+    for err in (None, 0, 1, 2):
+        rep = syndrome_extraction_disturbance(error_qubit=err)
+        assert rep.logical_fidelity == pytest.approx(1.0, abs=1e-9)
+
+
+def test_syndrome_carries_information():
+    assert syndrome_extraction_disturbance(error_qubit=1).information_bits > 0
+    seen = {syndrome_extraction_disturbance(error_qubit=e).syndrome
+            for e in (None, 0, 1, 2)}
+    assert len(seen) == 4        # syndromes distinguish all four cases
+
+
+# --------------------------------------------------------------------------
+# Claim 9/10: the atlas is not a scalar and its base is not Euclidean
+# --------------------------------------------------------------------------
+
+def test_resource_depends_on_the_free_theory():
+    """|+> is a resource over classical-reversible and free over stabilizer."""
+    plus = np.array([1, 1], dtype=complex) / math.sqrt(2)
+    assert resource_over(plus, CLASSICAL) == pytest.approx(1.0)
+    assert resource_over(plus, STABILIZER) == pytest.approx(0.0, abs=1e-9)
+
+
+def test_ghz_is_free_over_stabilizer_but_not_over_separable():
+    ghz = np.zeros(8, dtype=complex)
+    ghz[0] = ghz[7] = 1 / math.sqrt(2)
+    assert resource_over(ghz, STABILIZER) == pytest.approx(0.0, abs=1e-9)
+    assert resource_over(ghz, SEPARABLE) == pytest.approx(1.0)
+
+
+def test_hardness_alone_does_not_promote():
+    padded = QuantumNecessityAtlas(
+        organ="magic identity", base=STABILIZER, q_resource=1.2,
+        q_sim=Interval(0.0, 0.68), q_causal=0.0)
+    assert not padded.promote().promoted
+
+
+def test_clifford_memory_is_not_zero_quantum():
+    memory = QuantumNecessityAtlas(
+        organ="Clifford FT memory", base=STABILIZER, q_phys=1.0, q_logical=1.0,
+        q_sim=Interval(0.0, 0.0), q_causal=0.4)
+    assert memory.q_sim.upper == 0.0
+    assert memory.promote().promoted
+
+
+def test_atlas_is_a_partial_order_not_a_ranking():
+    memory = QuantumNecessityAtlas("m", STABILIZER, q_phys=1.0, q_logical=1.0,
+                                   q_sim=Interval(0.0, 0.0), q_causal=0.4)
+    padded = QuantumNecessityAtlas("p", STABILIZER, q_resource=1.2,
+                                   q_sim=Interval(0.0, 0.68), q_causal=0.0)
+    assert not memory.dominates(padded)
+    assert not padded.dominates(memory)
+
+
+def test_interval_rejects_inverted_bounds():
+    with pytest.raises(ValueError):
+        Interval(0.9, 0.1)
+
+
+def test_hyperbolic_beats_euclidean_only_as_depth_grows():
+    shallow = hierarchy_distortion(1)
+    deep = hierarchy_distortion(6)
+    assert shallow["euclidean_distortion"] / shallow["hyperbolic_distortion"] < 1.1
+    assert deep["euclidean_distortion"] / deep["hyperbolic_distortion"] > 2.0
+
+
+def test_poincare_distance_rejects_points_outside_the_ball():
+    with pytest.raises(ValueError):
+        poincare_distance(np.array([1.5, 0.0]), np.array([0.0, 0.0]))

@@ -25,7 +25,7 @@ from qiskit import QuantumCircuit
 
 sys.path.insert(0, "src")
 
-from aionq.residency import certified_residency
+from aionq.residency import simulation_residency
 
 
 @dataclass
@@ -35,6 +35,7 @@ class Sample:
     depth: int
     q_naive: float
     q_cert: float
+    raw: float = 0.0
 
     @property
     def gap(self) -> float:
@@ -87,8 +88,8 @@ def main() -> int:
 
     samples: list[Sample] = []
     for n, td, d, qc in amb.sweep(samples_per_config=2):
-        r = certified_residency(qc)
-        samples.append(Sample(n, td, d, r.q_naive, r.q_cert))
+        r = simulation_residency(qc)
+        samples.append(Sample(n, td, d, r.q_naive, r.q_sim_upper, r.raw_exponent))
 
     gaps = np.array([s.gap for s in samples])
     certs = np.array([s.q_cert for s in samples])
@@ -111,18 +112,69 @@ def main() -> int:
             print(f"    n = {n:<3d} -> Q_cert {np.mean(sel):.4f}")
 
     k1_fail = bool(np.allclose(gaps, 0.0, atol=1e-6))
-    k2_fail = bool(np.any(certs > 1.0 + 1e-9) or np.any(certs < -1e-9))
 
+    # K2 must inspect the RAW exponent, before clipping.  The previous version
+    # tested the clipped value against the bounds the clip itself enforces --
+    # a tautology that could never fire.
+    raws = np.array([s.raw for s in samples])
+    k2_fail = bool(np.any(~np.isfinite(raws)) or np.any(raws < -1e-9))
     print("\n  kill conditions")
-    print(f"    K1 (correction does no work)  : {'FAILED' if k1_fail else 'survived'}"
+    print(f"    K1 (correction does no work)   : {'FAILED' if k1_fail else 'survived'}"
           f"   mean gap {gaps.mean():.4f}")
-    print(f"    K2 (metric out of bounds)     : {'FAILED' if k2_fail else 'survived'}")
+    print(f"    K2 (raw exponent unsound)      : {'FAILED' if k2_fail else 'survived'}"
+          f"   raw range [{np.nanmin(raws):.3f}, {np.nanmax(raws):.3f}] (pre-clip)")
+
+    k3_fail = _equivalence_attacks()
 
     zero_cert = sum(1 for s in samples if s.q_cert < 1e-9)
-    print(f"\n  {zero_cert}/{len(samples)} cores scored Q_naive = 1.00 but Q_cert = 0.00")
+    print(f"\n  {zero_cert}/{len(samples)} cores scored Q_naive = 1.00 but q_sim_upper = 0.00")
     print("  (fully stabilizer-simulable cores wearing full quantum notation)")
+    print("\n  NOTE: this generator emits only H/S/T/CX and no measurements, resets,")
+    print("  classical control or low-treewidth families. Q_naive = 1 is therefore")
+    print("  largely guaranteed by the generator rather than discovered by it.")
+    print("  The honest claim is that Q_naive is constant on all-unitary cores.")
 
-    return 1 if (k1_fail or k2_fail) else 0
+    return 1 if (k1_fail or k2_fail or k3_fail) else 0
+
+
+def _equivalence_attacks() -> bool:
+    """Circuits that are the identity but may be scored as quantum.
+
+    A syntactic audit cannot see cancellation.  The compiler portfolio catches
+    the cases some optimiser in the portfolio can see; this is not a solution to
+    circuit equivalence, which is intractable in general.  Any surviving row is
+    a live gaming vector and is reported as such.
+    """
+    from qiskit.quantum_info import Operator
+
+    attacks: list[tuple[str, QuantumCircuit]] = []
+
+    a1 = QuantumCircuit(1)
+    a1.h(0); a1.t(0); a1.tdg(0); a1.h(0)
+    attacks.append(("H T Tdg H", a1))
+
+    a2 = QuantumCircuit(2)
+    a2.h(0); a2.cx(0, 1)
+    for _ in range(4):
+        a2.t(1); a2.tdg(1)
+    a2.cx(0, 1); a2.h(0)
+    attacks.append(("entangle, 4 cancelling T pairs, disentangle", a2))
+
+    a3 = QuantumCircuit(3)
+    a3.h(range(3)); a3.ccx(0, 1, 2); a3.ccx(0, 1, 2); a3.h(range(3))
+    attacks.append(("H CCX CCX H", a3))
+
+    print("\n  K3 equivalence attacks (identity circuits scored as quantum?)")
+    failed = False
+    for name, qc in attacks:
+        is_identity = np.allclose(Operator(qc).data,
+                                  np.eye(2 ** qc.num_qubits), atol=1e-9)
+        score = simulation_residency(qc).q_sim_upper
+        bad = is_identity and score > 1e-9
+        failed = failed or bad
+        print(f"    {name:<44} identity={is_identity}  q_sim_upper={score:.4f}"
+              f"  {'GAMED' if bad else 'ok'}")
+    return failed
 
 
 if __name__ == "__main__":
