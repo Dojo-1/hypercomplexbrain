@@ -697,6 +697,24 @@ and one is demoted for lack of evidence (K8). That is the programme working.
 
 ## 6. Evidence ledger
 
+> **Lattice updated (R³ᵈ).** This ledger used P/M/H/S/R. The Manifold Research
+> Atlas v0.1 uses P/**A**/M/H/S/R, where **A — AXIOMATIZED** marks an artifact
+> that passes because a bridge is an axiom or because the check is a *weaker
+> surrogate* than the claim. Applying that tier honestly moved five claims out of
+> P/M, including the headline metric. The lattice is now enforced in code by
+> `aionq.governance`, and the full retagging is in
+> [`SOURCES_DIGEST.md`](SOURCES_DIGEST.md).
+
+**A — Axiomatized: passes a surrogate weaker than the claim.**
+`q_sim_upper`'s gaming-resistance (a compiler portfolio is not circuit
+equivalence); `α_BG = 0.2284` (an asymptotic exponent used at finite t); the
+forced breath period (an ad-hoc interpolation, not Bennett's theorem); the
+self-tomography copy count (worst-case `d²/ε²`, not rank-dependent truth); and
+the section-only holonomy defect of ∞ (an artifact of this module's transport
+rule, which nulls base-relative coordinates because no free-conversion map is
+implemented). In every case the qualitative result survives and the tier does
+not.
+
 **P — mathematically established.** Stinespring dilation; Gottesman–Knill; Bravyi–Gosset
 stabilizer rank; stabilizer Rényi entropy as a magic monotone; Bennett reversible
 pebbling; no-cloning and no-deleting; state-tomography copy complexity; process

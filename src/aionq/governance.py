@@ -1,0 +1,368 @@
+"""Executable epistemic governance: the evidence lattice as CI policy.
+
+Imported from the Manifold Research Atlas v0.1 (Vilela, 25 July 2026), which
+consolidates Rounds 30-185 and lists under "Epistemic governance" the open
+bridge: *institutionalize as executable CI policy*.  This module closes that
+bridge for this repository.
+
+Three things come across from the Atlas, and each fixes a real defect here.
+
+**1. The A tier.**  This repository's ledger used P / M / H / S / R.  The Atlas
+uses P / **A** / M / H / S / R, where
+
+    A - AXIOMATIZED: the artifact compiles or passes because a bridge is an
+        explicit axiom, or because the formalization encodes a *weaker
+        surrogate*.  Never describe it as the external claim being proved.
+
+That tier is exactly what was missing.  Several headline numbers here are
+verified by a check strictly weaker than the claim they support -- a compiler
+portfolio is not circuit equivalence, an asymptotic exponent is not a finite-t
+cost -- and calling them M overstated them.  :data:`CLAIMS` retags them.
+
+**2. Typed remainders.**  The Atlas formal queue: *"Give [R] a type every time
+it appears: cohomology class, empirical residual, scalar constant, or semantic
+remainder.  Prohibit untyped transport between them."*  This repository carried
+``Transport.remainder`` as a bare string.  :class:`Remainder` types it and
+:meth:`Remainder.transport_to` refuses conversions between kinds.
+
+**3. Preservation, not overwrite.**  The Atlas artifact contract: *"A corrected
+object receives a new version, not an overwritten history."*  The self-review in
+this repository rewrote docstrings in place, destroying the record of what the
+claim used to say.  :class:`Claim` carries ``supersedes`` / ``superseded_by``
+and a correction list, and the registry refuses to delete.
+
+The publication gate is the Atlas's: a paper may cite only P, A, M and H objects
+with their tags visible; S may appear in motivation; R only in correction
+history.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+
+__all__ = [
+    "EvidenceTag", "PROMOTION_RULES", "Claim", "Remainder", "RemainderKind",
+    "UntypedTransportError", "GovernanceError", "Registry", "CLAIMS", "registry",
+]
+
+
+class GovernanceError(Exception):
+    """Raised when a governance rule is violated."""
+
+
+class UntypedTransportError(GovernanceError):
+    """Raised when a remainder is moved between incompatible kinds."""
+
+
+class EvidenceTag:
+    """The Atlas evidence lattice."""
+
+    PROVED = "P"        # kernel-checked / exactly computed, with explicit assumptions
+    AXIOMATIZED = "A"   # passes via an explicit axiom or a weaker surrogate check
+    MEASURED = "M"      # numerical result with code, seeds, controls, instrument
+    HYPOTHESIS = "H"    # bridge or scaling conjecture; needs prereg + kill condition
+    SEMANTIC = "S"      # productive metaphor; cannot inherit theorem status
+    RETIRED = "R"       # demoted by correction, bug, matched null or stronger control
+
+    ALL = (PROVED, AXIOMATIZED, MEASURED, HYPOTHESIS, SEMANTIC, RETIRED)
+    CITABLE = (PROVED, AXIOMATIZED, MEASURED, HYPOTHESIS)
+
+
+PROMOTION_RULES = {
+    EvidenceTag.PROVED: "May be used as a premise, but only with its exact formal statement.",
+    EvidenceTag.AXIOMATIZED: "Never describe as the external mathematical claim being proved. "
+                             "State the surrogate and the gap it leaves.",
+    EvidenceTag.MEASURED: "Report sample size, null, effect and scope.",
+    EvidenceTag.HYPOTHESIS: "Requires pre-registration and a kill condition.",
+    EvidenceTag.SEMANTIC: "May guide model design; cannot inherit theorem status.",
+    EvidenceTag.RETIRED: "Preserve in the ledger; never silently delete.",
+}
+
+
+# --------------------------------------------------------------------------
+# Typed remainders
+# --------------------------------------------------------------------------
+
+class RemainderKind:
+    """The four types [R] is allowed to have.  Transport between them is illegal."""
+
+    COHOMOLOGY = "cohomology_class"
+    EMPIRICAL = "empirical_residual"
+    SCALAR = "scalar_constant"
+    SEMANTIC = "semantic_remainder"
+
+    ALL = (COHOMOLOGY, EMPIRICAL, SCALAR, SEMANTIC)
+
+
+@dataclass(frozen=True)
+class Remainder:
+    """A typed [R].
+
+    The Atlas prohibits untyped transport between remainder kinds: an empirical
+    residual is not a cohomology class, and neither is a semantic leftover.
+    Conflating them is how a measured shortfall silently becomes an obstruction
+    theory.
+    """
+
+    kind: str
+    statement: str
+    magnitude: float | None = None
+
+    def __post_init__(self) -> None:
+        if self.kind not in RemainderKind.ALL:
+            raise GovernanceError(
+                f"untyped remainder: {self.kind!r} is not one of {RemainderKind.ALL}")
+
+    def transport_to(self, kind: str) -> "Remainder":
+        """Refuse to reinterpret a remainder as a different kind."""
+        if kind != self.kind:
+            raise UntypedTransportError(
+                f"cannot transport a {self.kind} into a {kind}: the Atlas formal "
+                "queue prohibits untyped transport between remainder types. "
+                "Re-derive it in the target type or keep them separate.")
+        return self
+
+    def __str__(self) -> str:  # pragma: no cover - display only
+        mag = f" (|R| = {self.magnitude})" if self.magnitude is not None else ""
+        return f"[{self.kind}] {self.statement}{mag}"
+
+
+# --------------------------------------------------------------------------
+# Claims
+# --------------------------------------------------------------------------
+
+_ID_RE = re.compile(r"^[A-Z]{2,6}-[A-Z0-9]{2,8}-[A-Z0-9_]{2,40}$")
+
+
+@dataclass
+class Claim:
+    """One registered artifact, with provenance that survives correction."""
+
+    id: str
+    tag: str
+    statement: str
+    artifact: str = ""              # file / function that carries it
+    surrogate: str = ""             # for A: what is actually checked
+    assumptions: tuple = ()
+    kill_condition: str = ""
+    corrections: tuple = ()
+    supersedes: str | None = None
+    superseded_by: str | None = None
+
+    def __post_init__(self) -> None:
+        if not _ID_RE.match(self.id):
+            raise GovernanceError(
+                f"bad artifact id {self.id!r}: expected DOMAIN-ROUND-NAME, "
+                "e.g. METRIC-R3-QSIM_UPPER")
+        if self.tag not in EvidenceTag.ALL:
+            raise GovernanceError(f"unknown evidence tag {self.tag!r}")
+        if self.tag == EvidenceTag.AXIOMATIZED and not self.surrogate:
+            raise GovernanceError(
+                f"{self.id}: an A-tagged claim must state the surrogate actually "
+                "checked, so the gap to the external claim stays visible")
+        if self.tag == EvidenceTag.HYPOTHESIS and not self.kill_condition:
+            raise GovernanceError(
+                f"{self.id}: an H-tagged claim requires a kill condition")
+
+    @property
+    def citable(self) -> bool:
+        return self.tag in EvidenceTag.CITABLE
+
+    def __str__(self) -> str:  # pragma: no cover - display only
+        s = f"[{self.tag}] {self.id}: {self.statement}"
+        if self.surrogate:
+            s += f"\n      surrogate: {self.surrogate}"
+        if self.kill_condition:
+            s += f"\n      kill: {self.kill_condition}"
+        return s
+
+
+class Registry:
+    """Holds claims and enforces the promotion and publication rules."""
+
+    def __init__(self, claims=()) -> None:
+        self._claims: dict[str, Claim] = {}
+        for c in claims:
+            self.add(c)
+
+    def add(self, claim: Claim) -> Claim:
+        if claim.id in self._claims:
+            raise GovernanceError(f"duplicate artifact id {claim.id}")
+        self._claims[claim.id] = claim
+        return claim
+
+    def __getitem__(self, cid: str) -> Claim:
+        return self._claims[cid]
+
+    def __len__(self) -> int:
+        return len(self._claims)
+
+    def by_tag(self, tag: str) -> list:
+        return [c for c in self._claims.values() if c.tag == tag]
+
+    def supersede(self, old_id: str, new: Claim) -> Claim:
+        """Correct a claim by adding a new version. History is never deleted."""
+        old = self._claims[old_id]
+        if old.superseded_by:
+            raise GovernanceError(f"{old_id} is already superseded by {old.superseded_by}")
+        new.supersedes = old_id
+        self.add(new)
+        old.superseded_by = new.id
+        return new
+
+    def cite(self, cid: str, section: str = "results") -> Claim:
+        """The Atlas publication gate.
+
+        Results may cite only P, A, M, H with tags visible.  S belongs in
+        motivation or design.  R belongs only in correction history.
+        """
+        c = self._claims[cid]
+        if section == "correction_history":
+            return c
+        if c.tag == EvidenceTag.RETIRED:
+            raise GovernanceError(
+                f"{cid} is RETIRED and may appear only in correction history")
+        if c.tag == EvidenceTag.SEMANTIC and section not in ("motivation", "design"):
+            raise GovernanceError(
+                f"{cid} is SEMANTIC and may appear only in motivation or design, "
+                f"not in {section}")
+        if not c.citable and c.tag != EvidenceTag.SEMANTIC:
+            raise GovernanceError(f"{cid} is not citable in {section}")
+        return c
+
+    def audit(self) -> dict:
+        """Summary for CI."""
+        counts = {t: len(self.by_tag(t)) for t in EvidenceTag.ALL}
+        return {
+            "total": len(self),
+            "counts": counts,
+            "superseded": [c.id for c in self._claims.values() if c.superseded_by],
+            "untestable_hypotheses": [c.id for c in self.by_tag(EvidenceTag.HYPOTHESIS)
+                                      if not c.kill_condition],
+        }
+
+
+# --------------------------------------------------------------------------
+# This repository's claims, retagged honestly against the Atlas lattice
+# --------------------------------------------------------------------------
+
+CLAIMS = [
+    # --- P: exactly computed or two-line proofs -----------------------------
+    Claim("MATH-R1-GRAM_PSD", EvidenceTag.PROVED,
+          "G_rs = Tr(rho H_r^dag H_s) is Hermitian PSD; rank = holonomy span dimension.",
+          artifact="aionq.identity.analyse_identity",
+          assumptions=("rho is a density operator", "H_r are bounded operators")),
+    Claim("MATH-R1-FUSION_COHERENCE", EvidenceTag.PROVED,
+          "Fibonacci F/R data satisfy pentagon and hexagon; associator is nonzero.",
+          artifact="aionq.fusion.verify_coherence",
+          assumptions=("canonical Fibonacci category",)),
+    Claim("MATH-R1-TSTATE_MAGIC", EvidenceTag.PROVED,
+          "Single T-state stabilizer Renyi magic M2 = log2(4/3), computed exactly.",
+          artifact="aionq.residency.stabilizer_renyi_entropy"),
+    Claim("MATH-R2-FRAME_ENTANGLEMENT", EvidenceTag.PROVED,
+          "Entanglement is frame-relative: 0 bits in A's frame, 1 bit in B's.",
+          artifact="aionq.qrf.compare_frames"),
+    Claim("MATH-R2-SYNDROME_NONDISTURBING", EvidenceTag.PROVED,
+          "Stabilizer syndrome extraction yields 2 bits at logical fidelity exactly 1.",
+          artifact="aionq.selfknowledge.syndrome_extraction_disturbance",
+          assumptions=("3-qubit bit-flip code", "single bit-flip error model")),
+
+    # --- A: passes a surrogate weaker than the claim -------------------------
+    Claim("METRIC-R3-QSIM_UPPER", EvidenceTag.AXIOMATIZED,
+          "q_sim_upper resists gaming by syntax and cannot be inflated by notation.",
+          artifact="aionq.residency.simulation_residency",
+          surrogate="a compiler portfolio at optimization levels 0-3, which is "
+                    "strictly weaker than circuit equivalence (intractable in "
+                    "general). Residual gaming vectors exist and are undetected.",
+          assumptions=("Bravyi-Gosset alpha applies at finite t",
+                       "Ross-Selinger slope 3 log2(1/eps) is exact")),
+    Claim("METRIC-R3-ALPHA_BG", EvidenceTag.AXIOMATIZED,
+          "Simulation cost of a Clifford+t-T core is 2^(0.2284 t).",
+          artifact="aionq.residency.ALPHA_BG",
+          surrogate="an ASYMPTOTIC stabilizer-rank exponent applied at finite t; "
+                    "the finite-t constant is not established here."),
+    Claim("BUDGET-R2-BENNETT", EvidenceTag.AXIOMATIZED,
+          "The forced breath period follows from Bennett reversible pebbling.",
+          artifact="aionq.budget.bennett_time_cost",
+          surrogate="an ad-hoc interpolation horizon^(log2(3)/f), not Bennett's "
+                    "theorem. The 1.0x-22.2x overheads inherit that status.",
+          assumptions=("irreversible_fraction is supplied externally, not derived",)),
+    Claim("SELF-R2-TOMOGRAPHY_COST", EvidenceTag.AXIOMATIZED,
+          "Self-certifying a 6-qubit identity register needs ~4.1e7 copies.",
+          artifact="aionq.selfknowledge.copies_for_self_tomography",
+          surrogate="the worst-case d^2/eps^2 bound; true sample complexity is "
+                    "rank-dependent and varies with the measurement model."),
+    Claim("STACK-R3-HOLONOMY_LOSSY", EvidenceTag.AXIOMATIZED,
+          "Section-only transport around a free-theory loop is lossy (defect inf).",
+          artifact="aionq.stack.transport_loop",
+          surrogate="follows from THIS module's transport rule, which nulls "
+                    "base-relative coordinates because no free-conversion map is "
+                    "implemented. With a real d_conv the loss would likely be "
+                    "partial, not total. The qualitative asymmetry survives; the "
+                    "infinity does not."),
+
+    # --- M: measured with code, seeds and controls ---------------------------
+    Claim("EXP-R1-QNAIVE_CONSTANT", EvidenceTag.MEASURED,
+          "Q_naive is constant at 1.0000 (min = max) over 150 random all-unitary cores.",
+          artifact="experiments/acaf_sweep.py",
+          assumptions=("generator emits only H/S/T/CX",
+                       "no measurements, resets or classical control sampled")),
+    Claim("EXP-R1-COHERENTIZATION_GAIN", EvidenceTag.MEASURED,
+          "Coherentization delivers +0.019 against an advertised +0.36, and raises "
+          "T-count 3 -> 5.",
+          artifact="aionq.coherentize.coherentization_audit"),
+    Claim("EXP-R3-REAL_BASE_NOT_TREELIKE", EvidenceTag.MEASURED,
+          "The live free-theory structure has Gromov delta/diameter = 0.5, the "
+          "maximum possible for any metric space.",
+          artifact="aionq.atlas.compare_embeddings_on_real_hierarchy"),
+    Claim("EXP-R2-PROCESS_MEMORY", EvidenceTag.MEASURED,
+          "Process-tensor non-Markovianity rises 0.000 -> 2.000 bits with coupling.",
+          artifact="aionq.process.non_markovianity"),
+
+    # --- H: bridges with kill conditions -------------------------------------
+    Claim("BRIDGE-R3-QCAUSAL", EvidenceTag.HYPOTHESIS,
+          "Some quantum organ shows a causal advantage inside a pre-registered cone.",
+          artifact="aionq.advantage.promote",
+          kill_condition="Pr(DeltaY in K) < 1-alpha against a matched free-theory "
+                         "control at compute, parameter and sampling parity."),
+    Claim("BRIDGE-R1-RANK_ROBUSTNESS", EvidenceTag.HYPOTHESIS,
+          "Holonomy span dimension predicts identity robustness under drift.",
+          artifact="aionq.identity.analyse_identity",
+          kill_condition="effective rank and conditioning predict robustness as "
+                         "well or better at matched cost."),
+
+    # --- S: scaffolding ------------------------------------------------------
+    Claim("SEM-R0-BREATHING", EvidenceTag.SEMANTIC,
+          "Inhalation/exhalation as a description of code expansion and entropy export.",
+          artifact="aionq.budget"),
+    Claim("SEM-R0-REALITY_CELL", EvidenceTag.SEMANTIC,
+          "Reality Cell, polycosmos, weave/deweave as design vocabulary.",
+          artifact="docs/ARCHITECTURE.md"),
+
+    # --- R: retired, preserved --------------------------------------------
+    Claim("RET-R1-QCAUSAL_ADDITIVE", EvidenceTag.RETIRED,
+          "Additive Q_causal over edges measures quantumness.",
+          corrections=("constant on all-unitary cores; permutation and Clifford "
+                       "cores score 1.00 while classically simulable",)),
+    Claim("RET-R2-QCERT_CERTIFICATE", EvidenceTag.RETIRED,
+          "Q_cert is the fraction a classical simulator is forced to pay.",
+          corrections=("upper bound, not a certificate; renamed q_sim_upper",)),
+    Claim("RET-R3-HYPERBOLIC_BASE", EvidenceTag.RETIRED,
+          "The free-theory base is hyperbolic and the Poincare ball is its geometry.",
+          corrections=("delta/diameter = 0.5 on the live diamond DAG: maximally "
+                       "non-tree-like; no geometry assigned",)),
+    Claim("RET-R2-SELF_TOMOGRAPHY_IMPOSSIBLE", EvidenceTag.RETIRED,
+          "No-cloning makes self-tomography impossible.",
+          corrections=("syndrome extraction: 2 bits at logical fidelity 1.0",)),
+    Claim("RET-R3-SCALAR_PROMOTION", EvidenceTag.RETIRED,
+          "q_causal > 0 is the promotion gate.",
+          corrections=("replaced by a pre-registered advantage cone; the scalar "
+                       "gate was still the live code path until D14c",)),
+    Claim("RET-R1-ENTANGLEMENT_QUANTUMNESS", EvidenceTag.RETIRED,
+          "Entanglement measures quantum residency.",
+          corrections=("GHZ: 1.0 bit entanglement, zero magic, q_sim_upper 0.0; "
+                       "and entanglement is frame-relative",)),
+]
+
+registry = Registry(CLAIMS)

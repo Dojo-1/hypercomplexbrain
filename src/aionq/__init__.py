@@ -11,6 +11,7 @@ Modules
 atlas         Quantum Necessity Atlas: intervals, free-theory bundle, transport
 advantage     causal advantage cone: promotion is a region, not a scalar
 stack         typed quantities and transport holonomy around free-theory loops
+governance    the P/A/M/H/S/R evidence lattice as executable CI policy
 residency     simulation-cost interval (one coordinate of the atlas)
 coherentize   Stinespring coherentization and what it actually buys
 budget        the coherence budget: why exhalation is forced, not chosen
@@ -21,8 +22,8 @@ selfknowledge bounds on self-knowledge, and the syndrome counterexample to them
 qrf           quantum reference frames: entanglement is frame-relative
 """
 
-from . import (advantage, atlas, budget, coherentize, fusion, identity, process,
-               qrf, residency, selfknowledge, stack)
+from . import (advantage, atlas, budget, coherentize, fusion, governance,
+               identity, process, qrf, residency, selfknowledge, stack)
 
 __version__ = "0.1.0"
 
@@ -32,6 +33,7 @@ __all__ = [
     "budget",
     "coherentize",
     "fusion",
+    "governance",
     "identity",
     "process",
     "qrf",

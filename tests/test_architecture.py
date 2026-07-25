@@ -617,3 +617,69 @@ def test_loop_profile_is_genuinely_base_dependent():
     assert resource_over(t, STABILIZER) == pytest.approx(math.log2(4 / 3), abs=1e-4)
     assert resource_over(t, ALL_FREE) == pytest.approx(0.0)
     assert resource_over(t, CLASSICAL) == pytest.approx(1.0)
+
+
+# --------------------------------------------------------------------------
+# Claim 16: epistemic governance is executable, not aspirational
+# --------------------------------------------------------------------------
+
+def test_every_claim_is_tagged_and_wellformed():
+    """Construction enforces the lattice; a malformed claim cannot exist."""
+    from aionq.governance import registry, EvidenceTag
+    assert len(registry) > 20
+    for tag, n in registry.audit()["counts"].items():
+        assert tag in EvidenceTag.ALL
+        assert n >= 0
+
+
+def test_axiomatized_claims_must_state_their_surrogate():
+    from aionq.governance import Claim, EvidenceTag, GovernanceError
+    with pytest.raises(GovernanceError):
+        Claim("METRIC-R9-BAD", EvidenceTag.AXIOMATIZED, "passes a check")
+
+
+def test_hypotheses_must_carry_a_kill_condition():
+    from aionq.governance import Claim, EvidenceTag, GovernanceError
+    with pytest.raises(GovernanceError):
+        Claim("BRIDGE-R9-BAD", EvidenceTag.HYPOTHESIS, "something improves")
+
+
+def test_retired_claims_cannot_be_cited_in_results():
+    from aionq.governance import registry, GovernanceError
+    with pytest.raises(GovernanceError):
+        registry.cite("RET-R3-HYPERBOLIC_BASE", section="results")
+    assert registry.cite("RET-R3-HYPERBOLIC_BASE", section="correction_history")
+
+
+def test_semantic_claims_cannot_be_cited_in_results():
+    from aionq.governance import registry, GovernanceError
+    with pytest.raises(GovernanceError):
+        registry.cite("SEM-R0-BREATHING", section="results")
+    assert registry.cite("SEM-R0-BREATHING", section="motivation")
+
+
+def test_correction_supersedes_rather_than_deletes():
+    from aionq.governance import Claim, EvidenceTag, Registry
+    r = Registry([Claim("MATH-R1-OLD", EvidenceTag.MEASURED, "old reading")])
+    r.supersede("MATH-R1-OLD", Claim("MATH-R2-NEW", EvidenceTag.MEASURED, "new reading"))
+    assert r["MATH-R1-OLD"].superseded_by == "MATH-R2-NEW"
+    assert r["MATH-R2-NEW"].supersedes == "MATH-R1-OLD"
+    assert len(r) == 2                      # history preserved, not overwritten
+
+
+def test_remainders_are_typed_and_do_not_transport():
+    from aionq.governance import Remainder, RemainderKind, UntypedTransportError, GovernanceError
+    r = Remainder(RemainderKind.EMPIRICAL, "unexplained residual", 0.03)
+    assert r.transport_to(RemainderKind.EMPIRICAL) is r
+    with pytest.raises(UntypedTransportError):
+        r.transport_to(RemainderKind.COHOMOLOGY)
+    with pytest.raises(GovernanceError):
+        Remainder("vibes", "untyped leftover")
+
+
+def test_headline_metric_is_axiomatized_not_measured():
+    """q_sim_upper is verified by a surrogate weaker than the claim it supports."""
+    from aionq.governance import registry, EvidenceTag
+    c = registry["METRIC-R3-QSIM_UPPER"]
+    assert c.tag == EvidenceTag.AXIOMATIZED
+    assert "weaker than circuit equivalence" in c.surrogate

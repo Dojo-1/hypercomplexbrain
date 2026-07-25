@@ -90,7 +90,7 @@ pip install qiskit numpy scipy pytest
 
 python3 experiments/run_audit.py      # every claim, computed
 python3 experiments/acaf_sweep.py     # 150-core falsification sweep
-python3 -m pytest tests/ -q           # 59 tests
+python3 -m pytest tests/ -q           # 67 tests
 ```
 
 ## Layout
@@ -108,6 +108,7 @@ src/aionq/
   identity.py       polyholonomic identity, Gram PSD theorem, frame invariance
   selfknowledge.py  bounds on self-knowledge, and the syndrome counterexample
   qrf.py            quantum reference frames
+  governance.py     P/A/M/H/S/R evidence lattice as executable CI policy
 experiments/        audit and ACAF sweep
 tests/              one test per falsifiable claim
 docs/ARCHITECTURE.md
@@ -130,5 +131,12 @@ supplied. The base is still a containment graph rather than a measured
 free-conversion metric, so no geometry is assigned to it. The base category is
 still one axis where it should be six. The architecture is auditable; it is not
 justified.
+
+The evidence lattice (P/A/M/H/S/R) is enforced in code: an A-tagged claim cannot
+exist without stating its surrogate, an H-tagged claim cannot exist without a kill
+condition, retired claims cannot be cited in results, and corrections supersede
+rather than overwrite. Applying the **A** tier moved five claims — including
+`q_sim_upper` — out of P/M, because their checks are weaker than the claims they
+support. See [`docs/SOURCES_DIGEST.md`](docs/SOURCES_DIGEST.md).
 
 Not a consciousness claim, not an AGI claim, not a completed proof.
