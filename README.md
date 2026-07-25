@@ -1,4 +1,4 @@
-# hypercomplexbrain — AION-Ω^Q / QΣ-R²
+# hypercomplexbrain — AION-Ω^Q / QΣ-R³
 
 An audited almost-all-quantum polycosmic brain architecture, and the harness that
 grades it.
@@ -32,12 +32,22 @@ coordinate **Quantum Necessity Atlas**:
 - **a section of a bundle** — a resource monotone is defined only over a named
   free theory. Same state, different answers: |+⟩ scores **1.0000** over
   classical-reversible and **0.0000** over stabilizer.
-- **hyperbolic base** — free theories branch under containment. Worth **1.02× at
-  the current two-level hierarchy** (i.e. nothing), rising to 2.25× at depth 6.
-  Stated, not oversold.
-- **promotion gate is `q_causal > 0`** — hardness alone never promotes. A Clifford
-  fault-tolerant memory has `q_sim_upper = 0` and is *not* "zero quantum"; a
-  padded identity circuit is hard-ish to simulate and does no work.
+- **transport before comparison** — sections over different free theories raise
+  rather than compare. 1.2 bits of magic is not 0.9 bits of entanglement merely
+  because both are floats. `transport_to()` declares what is preserved,
+  transformed, lost, and why.
+- **promotion is a cone, not a scalar** — a pre-registered region over eight
+  outcome dimensions. A Clifford fault-tolerant memory has `q_sim_upper = 0` and
+  is *not* "zero quantum"; a padded identity circuit is hard-ish to simulate and
+  does no work.
+
+**Third:** a second audit found three flattenings still inside the atlas and one
+monarchic scalar on top of it — and the fix **falsifies this project's own
+hyperbolic base**. Measured on the live free-theory structure (a diamond DAG, not
+a tree): **Gromov δ/diameter = 0.5, the maximum possible for any metric space.**
+The Poincaré base does not earn its curvature on the structure it actually
+carries, and is retired. The earlier 1.02×/2.25× figures described a *synthetic*
+binary tree, not this base.
 
 ## What this buys
 
@@ -72,14 +82,15 @@ pip install qiskit numpy scipy pytest
 
 python3 experiments/run_audit.py      # every claim, computed
 python3 experiments/acaf_sweep.py     # 150-core falsification sweep
-python3 -m pytest tests/ -q           # 38 tests
+python3 -m pytest tests/ -q           # 48 tests
 ```
 
 ## Layout
 
 ```
 src/aionq/
-  atlas.py          Quantum Necessity Atlas: intervals, free-theory bundle, hyperbolic base
+  atlas.py          Quantum Necessity Atlas: intervals, free-theory bundle, transport
+  advantage.py      causal advantage cone: promotion is a region, not a scalar
   residency.py      simulation-cost interval (one coordinate of the atlas)
   coherentize.py    Stinespring coherentization and what it actually buys
   budget.py         coherence budget, forced breath schedule, magic budget
@@ -103,9 +114,10 @@ so residual gaming vectors exist. A better classical algorithm lowers the bound.
 That direction is correct: it can only be revised downward by classical progress,
 never inflated by notation.
 
-Nothing here connects any coordinate to cognitive performance: `q_causal` is
-defined and cannot yet be filled in. The architecture is now
-auditable; it is not yet justified. That gap is stated in
-[`docs/ARCHITECTURE.md` §8](docs/ARCHITECTURE.md).
+Nothing here connects any coordinate to cognitive performance. The advantage cone
+is now the right *shape* to receive an answer; no experiment has produced one. The
+base is still a containment graph rather than a measured free-conversion metric,
+so no geometry should be assigned to it yet. The coordinates are still untyped
+floats. The architecture is auditable; it is not justified.
 
 Not a consciousness claim, not an AGI claim, not a completed proof.

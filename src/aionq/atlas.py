@@ -62,6 +62,13 @@ from .residency import max_bipartite_entanglement, stabilizer_renyi_entropy
 __all__ = [
     "FreeTheory",
     "FREE_THEORIES",
+    "ALL_FREE",
+    "MINIMAL_FREE",
+    "IncomparableFibersError",
+    "Transport",
+    "free_theory_graph_metric",
+    "gromov_delta",
+    "compare_embeddings_on_real_hierarchy",
     "poincare_distance",
     "embed_hierarchy",
     "resource_over",
@@ -159,16 +166,32 @@ SEPARABLE = FreeTheory(
     contains=("classical-reversible",),
 )
 
-UNIVERSAL = FreeTheory(
-    name="universal",
-    free_states="none",
-    free_operations="none",
+# Formerly named UNIVERSAL with free_states="none" and free_operations="none",
+# which was semantically inverted: if nothing is free then almost everything is a
+# resource, yet resource_over returned 0.  The containment order also requires
+# this node to be the *largest* free set, since free sets grow upward
+# (stabilizer states are a subset of all states).  Corrected to ALL_FREE.
+ALL_FREE = FreeTheory(
+    name="all-free",
+    free_states="all states",
+    free_operations="all unitaries and measurements",
     admissible_group="full unitary group",
-    monotone="(no nontrivial monotone)",
+    monotone="(none: every monotone vanishes when everything is free)",
     contains=("stabilizer", "matchgate / free-fermion", "separable"),
 )
 
-FREE_THEORIES = (CLASSICAL, STABILIZER, MATCHGATE, SEPARABLE, UNIVERSAL)
+# The opposite orientation, kept explicit so the inversion cannot recur.
+MINIMAL_FREE = FreeTheory(
+    name="minimal-free",
+    free_states="a single fiducial state",
+    free_operations="identity only",
+    admissible_group="trivial group",
+    monotone="(almost every state carries resource)",
+)
+
+UNIVERSAL = ALL_FREE   # backwards-compatible alias
+
+FREE_THEORIES = (CLASSICAL, STABILIZER, MATCHGATE, SEPARABLE, ALL_FREE)
 
 
 # --------------------------------------------------------------------------
@@ -316,12 +339,46 @@ def resource_over(state: np.ndarray, theory: FreeTheory) -> float:
     if theory.name == MATCHGATE.name:
         # Placeholder: a real non-Gaussianity monotone is not implemented.
         return float("nan")
-    return 0.0  # universal: nothing is free, so nothing is a resource
+    if theory.name == ALL_FREE.name:
+        return 0.0      # everything is free, so nothing is a resource
+    if theory.name == MINIMAL_FREE.name:
+        # Almost nothing is free, so almost every state carries resource.  Use
+        # distance from the fiducial |0...0>.
+        vec = np.asarray(state, dtype=complex).ravel()
+        vec = vec / np.linalg.norm(vec)
+        return float(1.0 - abs(vec[0]) ** 2)
+    return float("nan")  # unknown theory: refuse to invent a number
 
 
 # --------------------------------------------------------------------------
 # The atlas
 # --------------------------------------------------------------------------
+
+class IncomparableFibersError(TypeError):
+    """Raised when two sections over different free theories are compared."""
+
+
+@dataclass
+class Transport:
+    """A section moved between charts, with a typed account of the move."""
+
+    section: "QuantumNecessityAtlas"
+    preserved: tuple
+    transformed: tuple
+    lost: tuple
+    remainder: str
+    evidence: str
+
+    def __str__(self) -> str:  # pragma: no cover - display only
+        return "\n".join([
+            f"transported to : {self.section.base.name}",
+            f"  preserved    : {', '.join(self.preserved) or '-'}",
+            f"  transformed  : {', '.join(self.transformed) or '-'}",
+            f"  lost         : {', '.join(self.lost) or '-'}",
+            f"  remainder    : {self.remainder}",
+            f"  evidence     : {self.evidence}",
+        ])
+
 
 @dataclass
 class PromotionVerdict:
@@ -366,10 +423,56 @@ class QuantumNecessityAtlas:
                                        "advantage over the matched control")
 
     def dominates(self, other: "QuantumNecessityAtlas") -> bool:
-        """Partial order: better in every coordinate, worse in none."""
+        """Partial order, valid only within one fiber.
+
+        Raises if the two sections lie over different free theories.  Comparing
+        1.2 bits of magic against 0.9 bits of entanglement because both are
+        Python floats is exactly the flattening this object exists to prevent:
+        the monotones measure different things and are not commensurable.
+        Transport one section into the other's chart first -- see
+        :meth:`transport_to` -- and read the declared remainder before comparing.
+        """
+        if self.base.name != other.base.name:
+            raise IncomparableFibersError(
+                f"cannot compare a section over '{self.base.name}' "
+                f"(monotone: {self.base.monotone}) with one over "
+                f"'{other.base.name}' (monotone: {other.base.monotone}). "
+                "Transport to a common chart first; see transport_to()."
+            )
         mine = self._vector()
         theirs = other._vector()
         return all(a >= b - 1e-12 for a, b in zip(mine, theirs)) and mine != theirs
+
+    def transport_to(self, target: FreeTheory) -> "Transport":
+        """Move this section into another chart, declaring what is lost.
+
+        Base-relative coordinates do not survive a change of free theory.  This
+        returns the transported section together with a typed account of what
+        was preserved, transformed, lost, and what remainder the transport
+        leaves -- never a silently rebased number.
+        """
+        if target.name == self.base.name:
+            return Transport(self, preserved=("all",), transformed=(), lost=(),
+                             remainder="none: identity transport",
+                             evidence="same base point")
+
+        moved = QuantumNecessityAtlas(
+            organ=self.organ, base=target,
+            q_phys=self.q_phys, q_coh=self.q_coh,
+            q_resource=float("nan"),          # not transportable without recompute
+            q_process=self.q_process, q_logical=self.q_logical,
+            q_sim=self.q_sim, q_causal=float("nan"), q_audit=self.q_audit)
+
+        return Transport(
+            moved,
+            preserved=("q_phys", "q_process", "q_logical", "q_sim", "q_audit"),
+            transformed=(),
+            lost=("q_resource", "q_causal"),
+            remainder=(f"q_resource must be recomputed as {target.monotone}; "
+                       f"q_causal is task- and control-relative and does not "
+                       f"transport with the base"),
+            evidence="no free conversion between these theories is implemented",
+        )
 
     def _vector(self) -> tuple:
         return (self.q_phys, self.q_coh, self.q_resource, self.q_process,
@@ -394,3 +497,98 @@ class QuantumNecessityAtlas:
             f"  q_audit    : {self.q_audit:.3f}      external certification",
             f"verdict      : {self.promote()}",
         ])
+
+
+# --------------------------------------------------------------------------
+# The geometry of the ACTUAL base, not a synthetic tree
+# --------------------------------------------------------------------------
+
+def free_theory_graph_metric(theories=FREE_THEORIES) -> tuple:
+    """Shortest-path metric on the real containment structure.
+
+    :func:`hierarchy_distortion` measures a *synthetic complete binary tree*.
+    The live free-theory structure is not that tree: classical-reversible sits
+    below three separate parents, so the Hasse diagram contains a diamond and is
+    a DAG rather than a tree.  Any geometric claim about "the hierarchy" must be
+    tested against this graph, not against the synthetic one.
+
+    Returns ``(names, distance_matrix)``.
+    """
+    names = [t.name for t in theories]
+    index = {n: i for i, n in enumerate(names)}
+    n = len(names)
+
+    inf = float("inf")
+    dist = np.full((n, n), inf)
+    np.fill_diagonal(dist, 0.0)
+    for t in theories:
+        for child in t.contains:
+            if child in index:
+                i, j = index[t.name], index[child]
+                dist[i, j] = dist[j, i] = 1.0
+
+    for k in range(n):                      # Floyd-Warshall
+        dist = np.minimum(dist, dist[:, k][:, None] + dist[None, k, :])
+    return names, dist
+
+
+def gromov_delta(dist: np.ndarray) -> float:
+    """Gromov four-point hyperbolicity constant of a finite metric.
+
+    For every quadruple, form the three pairings S1, S2, S3 and sort them; the
+    local defect is (S_max - S_mid)/2.  delta = 0 exactly for tree metrics, and
+    grows as the space becomes less tree-like.  A hyperbolic embedding is only
+    indicated when delta is small relative to the diameter.
+    """
+    n = dist.shape[0]
+    worst = 0.0
+    for a in range(n):
+        for b in range(a + 1, n):
+            for c in range(b + 1, n):
+                for d in range(c + 1, n):
+                    sums = sorted([
+                        dist[a, b] + dist[c, d],
+                        dist[a, c] + dist[b, d],
+                        dist[a, d] + dist[b, c],
+                    ])
+                    worst = max(worst, (sums[2] - sums[1]) / 2.0)
+    return float(worst)
+
+
+def compare_embeddings_on_real_hierarchy() -> dict:
+    """Test the hyperbolic base against the structure it actually has to carry.
+
+    Reports the Gromov delta of the live free-theory graph, its diameter, and
+    the normalised ratio delta/diameter.  A tree gives 0.  Values near 0.5 mean
+    the structure is not tree-like and hyperbolic embedding is not indicated --
+    in which case the Poincare base is decoration and should be retired for this
+    base, whatever it may be worth for deeper hierarchies.
+    """
+    names, dist = free_theory_graph_metric()
+    finite = dist[np.isfinite(dist)]
+    diameter = float(finite.max())
+    delta = gromov_delta(dist)
+
+    coords = embed_hierarchy()
+    hyp, euc, tru = [], [], []
+    for i, a in enumerate(names):
+        for j, b in enumerate(names):
+            if j <= i or not np.isfinite(dist[i, j]):
+                continue
+            tru.append(dist[i, j])
+            hyp.append(poincare_distance(coords[a], coords[b]))
+            euc.append(float(np.linalg.norm(coords[a] - coords[b])))
+
+    def distortion(emb) -> float:
+        ratios = [e / t for e, t in zip(emb, tru) if t > 0 and e > 0]
+        return max(ratios) / min(ratios) if ratios else float("inf")
+
+    return {
+        "nodes": len(names),
+        "diameter": diameter,
+        "gromov_delta": delta,
+        "delta_over_diameter": delta / diameter if diameter else float("nan"),
+        "tree_like": delta < 1e-9,
+        "hyperbolic_distortion": distortion(hyp),
+        "euclidean_distortion": distortion(euc),
+    }

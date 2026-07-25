@@ -8,7 +8,9 @@ algorithms.
 
 Modules
 -------
-residency     certified quantum residency Q_cert (replaces the additive metric)
+atlas         Quantum Necessity Atlas: intervals, free-theory bundle, transport
+advantage     causal advantage cone: promotion is a region, not a scalar
+residency     simulation-cost interval (one coordinate of the atlas)
 coherentize   Stinespring coherentization and what it actually buys
 budget        the coherence budget: why exhalation is forced, not chosen
 process       process tensors and measurable temporal memory
@@ -18,11 +20,14 @@ selfknowledge the no-cloning bound on self-tomography (quantum Anti-Loeb)
 qrf           quantum reference frames: entanglement is frame-relative
 """
 
-from . import budget, coherentize, fusion, identity, process, qrf, residency, selfknowledge
+from . import (advantage, atlas, budget, coherentize, fusion, identity, process,
+               qrf, residency, selfknowledge)
 
 __version__ = "0.1.0"
 
 __all__ = [
+    "advantage",
+    "atlas",
     "budget",
     "coherentize",
     "fusion",

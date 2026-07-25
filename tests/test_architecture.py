@@ -406,3 +406,113 @@ def test_hyperbolic_beats_euclidean_only_as_depth_grows():
 def test_poincare_distance_rejects_points_outside_the_ball():
     with pytest.raises(ValueError):
         poincare_distance(np.array([1.5, 0.0]), np.array([0.0, 0.0]))
+
+
+# --------------------------------------------------------------------------
+# Claim 11: fibers are not comparable without transport
+# --------------------------------------------------------------------------
+
+def test_cross_fiber_comparison_is_refused():
+    """1.2 bits of magic is not 0.9 bits of entanglement."""
+    from aionq.atlas import IncomparableFibersError
+    magic = QuantumNecessityAtlas("magic", STABILIZER, q_resource=1.2)
+    ent = QuantumNecessityAtlas("entangled", SEPARABLE, q_resource=0.9)
+    with pytest.raises(IncomparableFibersError):
+        magic.dominates(ent)
+
+
+def test_transport_declares_what_it_loses():
+    magic = QuantumNecessityAtlas("magic", STABILIZER, q_resource=1.2, q_causal=0.5)
+    moved = magic.transport_to(SEPARABLE)
+    assert "q_resource" in moved.lost
+    assert "q_causal" in moved.lost
+    assert math.isnan(moved.section.q_resource)
+    assert moved.remainder and moved.evidence
+
+
+def test_identity_transport_preserves_everything():
+    magic = QuantumNecessityAtlas("magic", STABILIZER, q_resource=1.2)
+    moved = magic.transport_to(STABILIZER)
+    assert moved.lost == ()
+    assert moved.section.q_resource == pytest.approx(1.2)
+
+
+def test_free_theory_orientation_is_consistent():
+    """all-free -> nothing is a resource; minimal-free -> almost everything is."""
+    from aionq.atlas import ALL_FREE, MINIMAL_FREE
+    ghz = np.zeros(8, dtype=complex)
+    ghz[0] = ghz[7] = 1 / math.sqrt(2)
+    assert resource_over(ghz, ALL_FREE) == pytest.approx(0.0)
+    assert resource_over(ghz, MINIMAL_FREE) > 0.0
+    assert "all states" in ALL_FREE.free_states
+
+
+# --------------------------------------------------------------------------
+# Claim 12: the real hierarchy is not tree-like
+# --------------------------------------------------------------------------
+
+def test_real_free_theory_structure_is_not_tree_like():
+    """Measured on the live DAG, not a synthetic binary tree."""
+    from aionq.atlas import compare_embeddings_on_real_hierarchy
+    r = compare_embeddings_on_real_hierarchy()
+    assert not r["tree_like"]
+    assert r["gromov_delta"] > 0.0
+    # delta/diameter = 0.5 is the maximum possible for any metric space
+    assert r["delta_over_diameter"] == pytest.approx(0.5, abs=1e-9)
+
+
+def test_gromov_delta_is_zero_on_a_tree():
+    from aionq.atlas import gromov_delta
+    # path graph 0-1-2-3 is a tree
+    d = np.array([[0., 1, 2, 3], [1, 0, 1, 2], [2, 1, 0, 1], [3, 2, 1, 0]])
+    assert gromov_delta(d) == pytest.approx(0.0, abs=1e-9)
+
+
+# --------------------------------------------------------------------------
+# Claim 13: promotion is a cone, not a scalar
+# --------------------------------------------------------------------------
+
+def _cone():
+    from aionq.advantage import AdvantageCone, Direction
+    return AdvantageCone(
+        name="K", constraints={"generalization": Direction.IMPROVE,
+                               "robustness": Direction.IMPROVE,
+                               "neg_latency": Direction.NO_WORSE},
+        margins={"generalization": 0.02, "robustness": 0.02}, tolerance=0.05)
+
+
+def _effect(**kw):
+    from aionq.advantage import OUTCOME_DIMENSIONS, EffectPosterior
+    dims = {d: i for i, d in enumerate(OUTCOME_DIMENSIONS)}
+    v = [0.0] * len(OUTCOME_DIMENSIONS)
+    for k, x in kw.items():
+        v[dims[k]] = x
+    return EffectPosterior(np.array(v), np.eye(len(OUTCOME_DIMENSIONS)) * 4e-4)
+
+
+def test_genuine_gain_promotes():
+    from aionq.advantage import promote
+    assert promote(_effect(generalization=.09, robustness=.07), _cone()).promoted
+
+
+def test_gain_bought_with_latency_does_not_promote():
+    from aionq.advantage import promote
+    d = promote(_effect(generalization=.09, robustness=.07, neg_latency=-.15), _cone())
+    assert not d.promoted
+
+
+def test_gain_below_margin_does_not_promote():
+    from aionq.advantage import promote
+    assert not promote(_effect(generalization=.012, robustness=.011), _cone()).promoted
+
+
+def test_parity_and_audit_are_not_tradeable_against_effect_size():
+    from aionq.advantage import promote
+    strong = _effect(generalization=.09, robustness=.07)
+    no_parity = promote(strong, _cone(), compute_parity=False)
+    no_audit = promote(strong, _cone(), audit=0.2)
+    assert not no_parity.promoted and not no_audit.promoted
+    # the effect itself was fine in both cases; the blocker is separate
+    assert no_parity.probability > 0.95
+    assert any("parity" in b for b in no_parity.blockers)
+    assert any("audit" in b for b in no_audit.blockers)

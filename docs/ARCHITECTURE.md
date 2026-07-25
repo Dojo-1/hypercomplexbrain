@@ -1,11 +1,14 @@
-# AION-Ω^Q / QΣ-R²
+# AION-Ω^Q / QΣ-R³
 
 **An audited almost-all-quantum polycosmic brain.**
 
-> **Revision note (R²).** QΣ-R killed an additive scalar and then installed a
-> different scalar in the same slot. Peer audit found this and four concrete
-> defects besides. All are fixed below; the corrections are listed in §0.5 with
-> what changed and why. Nothing was defended that measurement contradicted.
+> **Revision note (R³).** QΣ-R killed an additive scalar and installed another.
+> QΣ-R² built an atlas to replace it — and left three flattenings inside the
+> atlas, plus one last monarchic scalar sitting on top of it. A second peer audit
+> found all four. They are fixed in §0.6, and one of them **falsifies the
+> hyperbolic base this architecture introduced one revision earlier.** Nothing is
+> defended that measurement contradicts, including when the measurement is
+> against the previous revision's own headline idea.
 
 QΣ∞ asked for an architecture as close to 100% quantum as possible. This revision
 does not raise that number. It makes the number *mean* something, reports what it
@@ -140,6 +143,107 @@ resets or classical control, so `Q_naive = 1` is largely *guaranteed by the
 generator* rather than discovered by it. The honest claim is that `Q_naive` is
 constant on all-unitary cores — still enough to retire it, since scoring
 unitary-notation cores was its entire purpose.
+
+---
+
+## 0.6 The second audit: flattenings inside the atlas
+
+The R² atlas claimed to be a bundle and then behaved like a vector space. Four
+defects, all confirmed against the running code before being fixed.
+
+**D8 — `dominates()` compared different fibers with no transport.** Confirmed:
+a section carrying 1.2 bits of *magic* over the stabilizer theory returned
+`dominates() == True` against 0.9 bits of *entanglement* over the separable
+theory. The monotones measure different things; they were commensurable only
+because both are Python floats. That is precisely the flattening the bundle was
+introduced to prevent.
+**Fix:** `dominates()` now raises `IncomparableFibersError` across base points,
+and `transport_to()` returns a typed account —
+`(preserved, transformed, lost, remainder, evidence)`. Transporting a stabilizer
+section to the separable chart preserves `q_phys, q_process, q_logical, q_sim,
+q_audit`, **loses** `q_resource` and `q_causal`, and says why: `q_resource` must
+be recomputed as entanglement entropy, and `q_causal` is task- and
+control-relative so it does not travel with the base.
+
+**D9 — the top free theory was semantically inverted.** `UNIVERSAL` declared
+`free_states="none"`, `free_operations="none"` — and `resource_over` returned
+`0.0`. If nothing is free then *almost everything* is a resource. The containment
+order also demands this node be the **largest** free set, since free sets grow
+upward (stabilizer states are a subset of all states).
+**Fix:** renamed `ALL_FREE` with `free_states="all states"`, for which every
+monotone correctly vanishes; `MINIMAL_FREE` added as the explicit opposite
+orientation so the inversion cannot recur. Measured: GHZ scores **0.0000** over
+`all-free` and **0.5000** over `minimal-free`.
+
+**D10 — the hyperbolic base was validated against a tree it does not have.**
+`hierarchy_distortion` measures a synthetic *complete binary tree*. The live
+free-theory structure is not that: `classical-reversible` sits below three
+separate parents, so the Hasse diagram is a **diamond DAG**. Measured on the real
+structure (`compare_embeddings_on_real_hierarchy`):
+
+| quantity | value |
+|---|---:|
+| nodes | 5 |
+| diameter | 2.0 |
+| Gromov δ | 1.0 |
+| **δ / diameter** | **0.5** |
+| tree-like | **False** |
+| hyperbolic distortion | 5.29 |
+| Euclidean distortion | 6.64 |
+
+**δ/diameter = 0.5 is the maximum possible for any metric space.** The live base
+is maximally non-tree-like, so hyperbolic embedding is not indicated for it.
+
+> **K13 is falsified on the real base.** The Poincaré base — introduced in R² as
+> the answer to "don't flatten to a Euclidean scalar" — does not earn its
+> curvature on the structure it actually has to carry. It is retired here and
+> kept only as a hypothesis for deeper hierarchies, where it must be re-earned by
+> measurement of an actual conversion metric rather than by depth labels.
+
+The 1.02×/2.25× figures in §1 remain correct *about the synthetic tree* and are
+now labelled as such. They were never evidence about this architecture's base.
+
+**D11 — `q_causal > 0` was the last monarch.** The atlas escaped one scalar and
+left another sovereign over it. Cognitive benefit is not one axis: an organ may
+improve generalisation and robustness while worsening latency, energy,
+calibration and recovery. Collapsing that to one number picks a weighting in
+secret.
+**Fix:** `aionq.advantage` replaces the gate with a **pre-registered advantage
+cone** over eight outcome dimensions:
+
+```
+Promote_τ(O)  iff  Pr( ΔY_τ ∈ K_τ ) ≥ 1 − α
+              and  audit ≥ η
+              and  compute parity holds
+              and  no safety or resource constraint is violated
+```
+
+Measured behaviour — five cases, one promotion, four refusals for four *different*
+reasons:
+
+| case | Pr(ΔY ∈ K) | verdict | blocker |
+|---|---:|---|---|
+| genuine relational gain | 0.982 | **PROMOTE** | — |
+| same gain, bought with latency | 0.000 | HOLD | effect outside cone |
+| gain below pre-registered margin | 0.108 | HOLD | effect size |
+| gain without compute parity | 0.976 | HOLD | parity not established |
+| gain without external audit | 0.976 | HOLD | audit strength |
+
+**A single `q_causal > 0` would have promoted all five.** Effect size, latency
+cost, parity and audit are not tradeable against one another by a weighting
+chosen after the fact. The cone must be declared before the experiment; choosing
+it afterwards is the same failure as choosing the scalar afterwards.
+
+### Still not done
+
+- `q_causal` remains unmeasured. The cone is now the right *shape* to receive an
+  answer; no experiment has produced one.
+- The base metric is still a containment graph, not a measured free-conversion
+  metric `d(F_i,F_j) = −log sup p_succ`. Until that is measured, no geometry —
+  hyperbolic, Euclidean or otherwise — should be assigned to the base.
+- The coordinates are still floats. They carry different units, uncertainties and
+  base-relativity, and are not yet typed.
+- QΣ-R³B (the four-cell causal organ test) is specified and not run.
 
 ---
 
@@ -511,7 +615,9 @@ Kill conditions. Each names the matched control that would retire the component.
 | K10 | the metric resists equivalence attacks | an identity circuit scores > 0 | **survived after fix** (was 0.4568, now 0.0000) |
 | K11 | the raw exponent is sound | pre-clip exponent negative or non-finite | **survived** (range [0.000, 0.533]) |
 | K12 | self-measurement is impossible | a non-disturbing informative self-measurement exists | **falsified** — syndrome extraction, fidelity 1.000000 |
-| K13 | the hyperbolic base earns its curvature | Euclidean matches it on the live hierarchy | **failed at current depth** (1.02×); survives only asymptotically |
+| K13 | the hyperbolic base earns its curvature | Euclidean matches it on the live hierarchy | **FALSIFIED on the real base** — δ/diam = 0.5, maximally non-tree-like |
+| K15 | fibers are comparable without transport | a cross-fiber comparison succeeds | **falsified**, now raises |
+| K16 | promotion is one-dimensional | one scalar reproduces the cone's five verdicts | **falsified** — 1 promote, 4 distinct refusals |
 | K14 | resource content is base-independent | same state, same monotone, different free theories | **falsified** (§1) |
 
 Two of the draft's own components are falsified by its own stated standards (K3, K9)
@@ -560,7 +666,10 @@ capacity as a count of holonomies.
 |---|---|---|
 | QΣ-R0 | metric, audit, falsification harness | ✅ superseded |
 | QΣ-R0.5 | peer audit fixes; atlas replaces the scalar | ✅ 38/38 tests, 3/3 attacks defeated |
+| QΣ-R0.6 | second audit: transport, orientation, real-base geometry, advantage cone | ✅ 48/48 tests |
 | QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network / matchgate / low-treewidth families not yet covered |
+| QΣ-R3A | measured free-conversion metric; re-test base geometry against it | not started |
+| QΣ-R3B | four-cell causal organ (self/other/memory/auditor), ΔY with uncertainty | specified, not run |
 | QΣ-R1 | four-cell organ (self/other/memory/auditor) at measured `Q_cert` | `Q_cert > 0.5` on hardware-sized cores |
 | QΣ-R2 | per-edge process-tensor budgeting from measured `N` | beats matched Markovian control |
 | QΣ-R3 | fusion cortex with gated F/R data | coherence gate + order-sensitivity gain |

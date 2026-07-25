@@ -18,6 +18,8 @@ from qiskit.quantum_info import Statevector, random_clifford
 
 sys.path.insert(0, "src")
 
+from aionq.advantage import (OUTCOME_DIMENSIONS, AdvantageCone, Direction,
+                             EffectPosterior, promote)
 from aionq.budget import CoherenceBudget
 from aionq.coherentize import coherentization_audit
 from aionq.fusion import verify_coherence
@@ -26,9 +28,11 @@ from aionq.process import non_markovianity
 from aionq.qrf import compare_frames
 from aionq.residency import (simulation_residency, max_bipartite_entanglement,
                              stabilizer_renyi_entropy)
-from aionq.atlas import (CLASSICAL, SEPARABLE, STABILIZER, UNIVERSAL, Interval,
+from aionq.atlas import (ALL_FREE, CLASSICAL, MINIMAL_FREE, SEPARABLE, STABILIZER,
+                         IncomparableFibersError, Interval,
                          QuantumNecessityAtlas, embed_hierarchy,
-                         hierarchy_distortion, poincare_distance, resource_over)
+                         compare_embeddings_on_real_hierarchy, hierarchy_distortion,
+                         poincare_distance, resource_over)
 from aionq.selfknowledge import (copies_for_self_tomography, self_knowledge_tradeoff,
                                 syndrome_extraction_disturbance)
 
@@ -245,8 +249,8 @@ def claim_10_hyperbolic_base() -> None:
     coords = embed_hierarchy()
     print("  free-theory containment hierarchy, euclidean vs hyperbolic separation:")
     for a, b in [("stabilizer", "matchgate / free-fermion"),
-                 ("stabilizer", "universal"),
-                 ("classical-reversible", "universal")]:
+                 ("stabilizer", "all-free"),
+                 ("classical-reversible", "all-free")]:
         eu = float(np.linalg.norm(coords[a] - coords[b]))
         hy = poincare_distance(coords[a], coords[b])
         print(f"    {a:<22} <-> {b:<24} euclid {eu:.3f}  hyperbolic {hy:.3f}  {hy/eu:.2f}x")
@@ -258,9 +262,88 @@ def claim_10_hyperbolic_base() -> None:
         adv = r["euclidean_distortion"] / r["hyperbolic_distortion"]
         print(f"    {r['depth']:>6}{r['nodes']:>7}{r['hyperbolic_distortion']:>13.2f}"
               f"{r['euclidean_distortion']:>12.2f}{adv:>11.2f}x")
-    print("\n  HONEST READING: at the current 2-level free-theory hierarchy the")
-    print("  hyperbolic base buys ~1.02x -- essentially nothing. It becomes decisive")
-    print("  only as resource theories nest deeper. Claimed here, not oversold.")
+    print("\n  CAVEAT: this table measures a SYNTHETIC complete binary tree, not the")
+    print("  live free-theory structure. See CLAIM 12 for the real one, where the")
+    print("  hyperbolic base fails outright.")
+
+
+def claim_11_fibers_need_transport() -> None:
+    rule("CLAIM 11  Sections over different free theories are not comparable")
+
+    magic = QuantumNecessityAtlas("magic organ", STABILIZER, q_resource=1.2)
+    entangled = QuantumNecessityAtlas("entangled organ", SEPARABLE, q_resource=0.9)
+    print(f"  organ A: {magic.q_resource} over {magic.base.name} ({magic.base.monotone})")
+    print(f"  organ B: {entangled.q_resource} over {entangled.base.name} "
+          f"({entangled.base.monotone})")
+    try:
+        magic.dominates(entangled)
+        print("  BUG: comparison succeeded across fibers")
+    except IncomparableFibersError:
+        print("  comparison correctly REFUSED: 1.2 bits of magic is not 0.9 bits")
+        print("  of entanglement merely because both are floats.")
+
+    print("\n  transport declares what it costs:")
+    print("  " + str(magic.transport_to(SEPARABLE)).replace("\n", "\n  "))
+
+    print("\n  free-theory orientation (previously inverted):")
+    ghz = np.zeros(8, dtype=complex)
+    ghz[0] = ghz[7] = 1 / math.sqrt(2)
+    print(f"    GHZ over {ALL_FREE.name:<14} = {resource_over(ghz, ALL_FREE):.4f}"
+          f"   (everything free -> nothing is a resource)")
+    print(f"    GHZ over {MINIMAL_FREE.name:<14} = {resource_over(ghz, MINIMAL_FREE):.4f}"
+          f"   (almost nothing free -> almost everything is)")
+
+
+def claim_12_real_hierarchy_is_not_hyperbolic() -> None:
+    rule("CLAIM 12  The hyperbolic base FAILS on the structure it actually carries")
+    r = compare_embeddings_on_real_hierarchy()
+    for k, v in r.items():
+        print(f"    {k:<24} {v}")
+    print("\n  delta/diameter = 0.5 is the MAXIMUM possible for any metric space.")
+    print("  The live free-theory structure is a diamond DAG, not a tree: it is")
+    print("  maximally non-tree-like, so hyperbolic embedding is not indicated.")
+    print("  The 1.02x/2.25x figures reported earlier describe a SYNTHETIC complete")
+    print("  binary tree, not this structure. K13 is falsified on the real base.")
+    print("  The Poincare base is retired here and kept only as a hypothesis for")
+    print("  deeper hierarchies, where it must be re-earned by measurement.")
+
+
+def claim_13_promotion_is_a_cone() -> None:
+    rule("CLAIM 13  Promotion is a region, not a scalar")
+
+    cone = AdvantageCone(
+        name="K_relational",
+        constraints={"generalization": Direction.IMPROVE,
+                     "robustness": Direction.IMPROVE,
+                     "accuracy": Direction.NO_WORSE,
+                     "neg_energy": Direction.NO_WORSE,
+                     "neg_latency": Direction.NO_WORSE},
+        margins={"generalization": 0.02, "robustness": 0.02},
+        tolerance=0.05)
+    print(f"  pre-registered cone: {cone}\n")
+
+    dims = {d: i for i, d in enumerate(OUTCOME_DIMENSIONS)}
+
+    def effect(**kw):
+        v = [0.0] * len(OUTCOME_DIMENSIONS)
+        for k, x in kw.items():
+            v[dims[k]] = x
+        return EffectPosterior(np.array(v), np.eye(len(OUTCOME_DIMENSIONS)) * 4e-4)
+
+    cases = [
+        ("genuine relational gain", effect(generalization=.09, robustness=.07, accuracy=.02), 1.0, True),
+        ("same gain, bought with latency", effect(generalization=.09, robustness=.07, neg_latency=-.15), 1.0, True),
+        ("gain below the pre-registered margin", effect(generalization=.012, robustness=.011), 1.0, True),
+        ("gain without compute parity", effect(generalization=.09, robustness=.07), 1.0, False),
+        ("gain without external audit", effect(generalization=.09, robustness=.07), 0.2, True),
+    ]
+    for label, post, aud, parity in cases:
+        d = promote(post, cone, audit=aud, compute_parity=parity)
+        print(f"  {label}")
+        print("    " + str(d).replace("\n", "\n    "))
+    print("\n  A single scalar q_causal > 0 would have promoted all five.")
+    print("  Latency cost, effect size, parity and audit are not tradeable against")
+    print("  each other by a weighting chosen after the fact.")
 
 
 def main() -> int:
@@ -276,6 +359,9 @@ def main() -> int:
     claim_8_frames()
     claim_9_atlas_not_scalar()
     claim_10_hyperbolic_base()
+    claim_11_fibers_need_transport()
+    claim_12_real_hierarchy_is_not_hyperbolic()
+    claim_13_promotion_is_a_cone()
     print("\n" + "=" * 72)
     print("audit complete")
     print("=" * 72)
