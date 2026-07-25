@@ -17,7 +17,7 @@ budget        the coherence budget: why exhalation is forced, not chosen
 process       process tensors and measurable temporal memory
 fusion        Fibonacci fusion grammar with pentagon/hexagon verification
 identity      polyholonomic identity, Gram PSD theorem, frame invariance
-selfknowledge the no-cloning bound on self-tomography (quantum Anti-Loeb)
+selfknowledge bounds on self-knowledge, and the syndrome counterexample to them
 qrf           quantum reference frames: entanglement is frame-relative
 """
 

@@ -40,9 +40,9 @@ __all__ = ["CoherenceBudget", "BreathSchedule", "bennett_time_cost",
 
 @dataclass
 class MagicBudget:
-    """What a certified quantum residency target actually costs in magic.
+    """What a simulation-hardness target actually costs in magic.
 
-    Q_cert = alpha * t / n, so demanding residency q over n logical qubits
+    q_sim_upper = alpha * t / n, so demanding hardness q over n logical qubits
     requires t = q n / alpha non-Clifford operations per coherent episode.
     Dividing a machine's total operation budget by that gives the number of
     coherent cognitive episodes the machine can support.
@@ -57,7 +57,7 @@ class MagicBudget:
     def __str__(self) -> str:  # pragma: no cover - display only
         return "\n".join([
             f"logical qubits             : {self.logical_qubits}",
-            f"target Q_cert              : {self.target_residency:.2f}",
+            f"target q_sim_upper         : {self.target_residency:.2f}",
             f"non-Clifford ops / episode : {self.t_per_episode:,.0f}",
             f"machine operation budget   : {self.total_operations:,.0f}",
             f"coherent episodes supported: {self.episodes:,.0f}",

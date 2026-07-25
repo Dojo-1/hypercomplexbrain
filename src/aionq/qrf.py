@@ -13,7 +13,7 @@ implemented by the discrete translation
 
 A state that is a product in A's perspective becomes maximally entangled in B's
 perspective.  Entanglement therefore cannot be an invariant of the architecture,
-and cannot be what Q_cert measures.  See :mod:`aionq.residency`.
+and cannot be what q_sim_upper measures.  See :mod:`aionq.residency`.
 """
 
 from __future__ import annotations

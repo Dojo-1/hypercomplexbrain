@@ -243,7 +243,10 @@ def claim_9_atlas_not_scalar() -> None:
         print("\n" + "  " + str(a).replace("\n", "\n  "))
     print(f"\n  neither dominates the other: "
           f"memory>padded={memory.dominates(padded)}, padded>memory={padded.dominates(memory)}")
-    print("  A partial order, not a ranking. Hardness alone never promotes.")
+    print("  A partial order, not a ranking.")
+    print("\n  Note that BOTH now hold: the stored q_causal values above are")
+    print("  assertions, not effects measured against a matched control, and the")
+    print("  scalar promotion gate is retired. See CLAIM 13 for the real gate.")
 
 
 def claim_10_hyperbolic_base() -> None:

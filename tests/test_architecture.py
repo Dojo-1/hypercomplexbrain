@@ -375,11 +375,34 @@ def test_hardness_alone_does_not_promote():
 
 
 def test_clifford_memory_is_not_zero_quantum():
+    """q_sim_upper = 0 does not mean "zero quantum": q_phys and q_logical are 1."""
     memory = QuantumNecessityAtlas(
         organ="Clifford FT memory", base=STABILIZER, q_phys=1.0, q_logical=1.0,
         q_sim=Interval(0.0, 0.0), q_causal=0.4)
     assert memory.q_sim.upper == 0.0
-    assert memory.promote().promoted
+    assert memory.q_phys == 1.0 and memory.q_logical == 1.0
+
+
+def test_asserted_q_causal_no_longer_promotes():
+    """The scalar gate is retired: a stored float is an assertion, not a measurement."""
+    memory = QuantumNecessityAtlas(
+        organ="Clifford FT memory", base=STABILIZER, q_phys=1.0, q_logical=1.0,
+        q_sim=Interval(0.0, 0.0), q_causal=0.4)
+    verdict = memory.promote()
+    assert not verdict.promoted
+    assert "cone" in verdict.reason
+
+
+def test_promotion_delegates_to_the_cone_when_supplied():
+    from aionq.advantage import AdvantageCone, Direction, EffectPosterior, OUTCOME_DIMENSIONS
+    cone = AdvantageCone(name="K", constraints={"generalization": Direction.IMPROVE},
+                         margins={"generalization": 0.02})
+    dims = {d: i for i, d in enumerate(OUTCOME_DIMENSIONS)}
+    v = [0.0] * len(OUTCOME_DIMENSIONS)
+    v[dims["generalization"]] = 0.09
+    post = EffectPosterior(np.array(v), np.eye(len(OUTCOME_DIMENSIONS)) * 4e-4)
+    organ = QuantumNecessityAtlas("organ", STABILIZER, q_audit=1.0)
+    assert organ.promote(posterior=post, cone=cone).promoted
 
 
 def test_atlas_is_a_partial_order_not_a_ranking():

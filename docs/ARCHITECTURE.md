@@ -1,4 +1,4 @@
-# AION-Ω^Q / QΣ-R³ʙ
+# AION-Ω^Q / QΣ-R³ᶜ
 
 **An audited almost-all-quantum polycosmic brain.**
 
@@ -275,6 +275,31 @@ from.
 That is the architecture's self-reflection result stated as a measurement rather
 than a metaphor, and it is the one place where the Gödelian framing earns a
 number instead of a gesture.
+
+### D14 — self-review: three fixes that were only half-applied
+
+A review of this repository against its own ledger found three places where a
+correction was *documented* as done and only *partly* done. All three are the
+same failure: the fix was applied to the code path and not to the claim, or to
+the claim and not to the code path.
+
+| # | claimed fixed | actually still present | now |
+|---|---|---|---|
+| D14a | D1 (`Q_cert` overclaim) | `residency.py` module docstring still read *"Q_cert is the fraction of the Hilbert-space exponent that a classical simulator is **actually forced to pay**"* — the exact lower-bound phrasing D1 retired | rewritten to `q_sim_upper`, upper-bound-only, compiler-dependence stated |
+| D14b | D10 (hyperbolic base retired) | `atlas.py` module docstring still asserted *"Its base is hyperbolic, not Euclidean"* with the full justification | rewritten: **no geometry is assigned**; δ/diam = 0.5 recorded; `poincare_distance` retained as instrument, not commitment |
+| D14c | D11 (scalar promotion retired) | `advantage.py` was added **in parallel and never wired in**. `QuantumNecessityAtlas.promote()` still ran `q_causal > threshold` — the retired monarch was the live code path | `promote()` now requires a posterior and a cone, delegates to `aionq.advantage.promote`, and returns **HOLD** without one |
+
+D14c was the substantive one: the previous revision announced the scalar gate's
+retirement and shipped it still running. `promote()` no longer falls back to a
+scalar, because a stored `q_causal` float is an assertion, not an effect measured
+against a matched control. Both demonstration organs in §1 now correctly HOLD.
+
+Also fixed: `coherentize.py` claimed coherentization *"does not move Q_cert at
+all"*, contradicted by this repository's own measurement of **+0.019**; stale
+`Q_cert` naming in `budget.py`, `qrf.py` and `residency.py` note strings; an
+`if/else` in `classify_instruction` whose two branches were identical; dead
+`_BASIS_LEAVING`, `BasePoint` and `del c, s`; and a README that still claimed
+*"the coordinates are still untyped floats"* two commits after they were typed.
 
 ### Still not done
 
@@ -662,6 +687,7 @@ Kill conditions. Each names the matched control that would retire the component.
 | K16 | promotion is one-dimensional | one scalar reproduces the cone's five verdicts | **falsified** — 1 promote, 4 distinct refusals |
 | K17 | coordinates are commensurable | bits and audit-strength compare without error | **falsified**, now raises |
 | K18 | transport holonomy is trivial | section-only loop returns to its start | **falsified** — defect ∞ vs 0.0 state-anchored |
+| K19 | the scalar promotion gate is retired | `promote()` still promotes from a stored float | **was live until D14c**; now HOLD without a cone |
 | K14 | resource content is base-independent | same state, same monotone, different free theories | **falsified** (§1) |
 
 Two of the draft's own components are falsified by its own stated standards (K3, K9)
@@ -712,6 +738,7 @@ capacity as a count of holonomies.
 | QΣ-R0.5 | peer audit fixes; atlas replaces the scalar | ✅ 38/38 tests, 3/3 attacks defeated |
 | QΣ-R0.6 | second audit: transport, orientation, real-base geometry, advantage cone | ✅ 48/48 tests |
 | QΣ-R0.7 | typed quantities; transport holonomy measured | ✅ 57/57 tests |
+| QΣ-R0.8 | self-review: half-applied fixes completed; cone wired into `promote()` | ✅ 59/59 tests |
 | QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network / matchgate / low-treewidth families not yet covered |
 | QΣ-R3A | measured free-conversion metric; re-test base geometry against it | not started |
 | QΣ-R3B | four-cell causal organ (self/other/memory/auditor), ΔY with uncertainty | specified, not run |

@@ -65,13 +65,11 @@ def weak_measurement(strength: float) -> list[np.ndarray]:
     """
     lam = float(np.clip(strength, 0.0, 1.0))
     theta = math.asin(math.sqrt(lam)) if lam <= 1.0 else math.pi / 2
-    c, s = math.cos(theta / 2), math.sin(theta / 2)
     # Two-outcome POVM interpolating identity -> projective Z
     k0 = np.array([[math.cos(theta / 2 + math.pi / 4), 0],
                    [0, math.sin(theta / 2 + math.pi / 4)]], dtype=complex)
     k1 = np.array([[math.sin(theta / 2 + math.pi / 4), 0],
                    [0, math.cos(theta / 2 + math.pi / 4)]], dtype=complex)
-    del c, s
     return [k0, k1]
 
 

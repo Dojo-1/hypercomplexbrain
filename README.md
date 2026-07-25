@@ -5,7 +5,7 @@ grades it.
 
 The architecture is in **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**.
 
-## The correction, twice
+## The correction, four times
 
 **First:** QΣ∞ measured quantumness by counting edges written as unitaries. That
 metric returns **1.0000 for every all-unitary core** — min equals max across 150
@@ -41,14 +41,6 @@ coordinate **Quantum Necessity Atlas**:
   is *not* "zero quantum"; a padded identity circuit is hard-ish to simulate and
   does no work.
 
-**Fourth:** coordinates are now typed (`Bits >= Strength` raises; a `Monotone`
-cannot exist without a declared free theory), and transport holonomy is measured.
-Carrying a section around a loop of free theories and back gives defect **∞** —
-it does not return. Carrying the *state* around the same loop gives defect
-**exactly 0.0**. A monotone is computed *from* a state, not carried *by* a
-section: **an organ that keeps only its own summary statistics has a
-path-dependent self-image.**
-
 **Third:** a second audit found three flattenings still inside the atlas and one
 monarchic scalar on top of it — and the fix **falsifies this project's own
 hyperbolic base**. Measured on the live free-theory structure (a diamond DAG, not
@@ -56,6 +48,14 @@ a tree): **Gromov δ/diameter = 0.5, the maximum possible for any metric space.*
 The Poincaré base does not earn its curvature on the structure it actually
 carries, and is retired. The earlier 1.02×/2.25× figures described a *synthetic*
 binary tree, not this base.
+
+**Fourth:** coordinates are now typed (`Bits >= Strength` raises; a `Monotone`
+cannot exist without a declared free theory), and transport holonomy is measured.
+Carrying a section around a loop of free theories and back gives defect **∞** —
+it does not return. Carrying the *state* around the same loop gives defect
+**exactly 0.0**. A monotone is computed *from* a state, not carried *by* a
+section: **an organ that keeps only its own summary statistics has a
+path-dependent self-image.**
 
 ## What this buys
 
@@ -90,7 +90,7 @@ pip install qiskit numpy scipy pytest
 
 python3 experiments/run_audit.py      # every claim, computed
 python3 experiments/acaf_sweep.py     # 150-core falsification sweep
-python3 -m pytest tests/ -q           # 57 tests
+python3 -m pytest tests/ -q           # 59 tests
 ```
 
 ## Layout
@@ -124,9 +124,11 @@ That direction is correct: it can only be revised downward by classical progress
 never inflated by notation.
 
 Nothing here connects any coordinate to cognitive performance. The advantage cone
-is now the right *shape* to receive an answer; no experiment has produced one. The
-base is still a containment graph rather than a measured free-conversion metric,
-so no geometry should be assigned to it yet. The coordinates are still untyped
-floats. The architecture is auditable; it is not justified.
+is the right *shape* to receive an answer; no experiment has produced one, and
+`promote()` now returns HOLD rather than falling back to a scalar when no cone is
+supplied. The base is still a containment graph rather than a measured
+free-conversion metric, so no geometry is assigned to it. The base category is
+still one axis where it should be six. The architecture is auditable; it is not
+justified.
 
 Not a consciousness claim, not an AGI claim, not a completed proof.

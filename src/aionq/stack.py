@@ -38,12 +38,12 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from .atlas import (ALL_FREE, CLASSICAL, FREE_THEORIES, SEPARABLE, STABILIZER,
-                    FreeTheory, resource_over)
+from .atlas import (ALL_FREE, CLASSICAL, SEPARABLE, STABILIZER, FreeTheory,
+                    resource_over)
 
 __all__ = [
     "Quantity", "Fraction", "Bits", "Monotone", "Strength", "IncommensurableError",
-    "BasePoint", "LoopReport", "transport_loop", "state_anchored_loop",
+    "LoopReport", "transport_loop", "state_anchored_loop",
     "holonomy_defect",
 ]
 
@@ -134,17 +134,6 @@ class Strength(Quantity):
 # Transport holonomy around a loop of free theories
 # --------------------------------------------------------------------------
 
-@dataclass(frozen=True)
-class BasePoint:
-    """One chart in the base category, reduced here to its free theory."""
-
-    theory: FreeTheory
-
-    @property
-    def name(self) -> str:
-        return self.theory.name
-
-
 DEFAULT_LOOP = (STABILIZER, ALL_FREE, SEPARABLE, CLASSICAL, STABILIZER)
 
 
@@ -196,13 +185,15 @@ def transport_loop(section, path=DEFAULT_LOOP) -> LoopReport:
     start = float(section.q_resource)
     current = section
     lost: set = set()
-    survived: set = set()
+    survived: set | None = None
 
     for theory in path[1:]:
         moved = current.transport_to(theory)
         lost.update(moved.lost)
-        survived = set(moved.preserved) if not survived else survived & set(moved.preserved)
+        step = set(moved.preserved)
+        survived = step if survived is None else survived & step
         current = moved.section
+    survived = survived or set()
 
     end = float(current.q_resource)
     defect = math.inf if math.isnan(end) else abs(end - start)

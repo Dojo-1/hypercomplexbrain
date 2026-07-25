@@ -11,14 +11,20 @@ That move is sound as physics and is exactly Stinespring dilation.  What the
 draft does not price is that it is not free and does not, by itself, make the
 core more quantum.  Two costs are charged here.
 
-Cost 1: it does not raise certified quantum residency
------------------------------------------------------
+Cost 1: it buys far less hardness than advertised, and pays magic for it
+-----------------------------------------------------------------------
 Deferring a measurement replaces a classically-mediated edge with a controlled
-unitary.  Under the draft's additive metric this raises Q_causal.  Under
-:mod:`aionq.residency` it does not move Q_cert at all, because the stabilizer
-rank of the core is unchanged: the same non-Clifford resources are being spent
-either way.  Coherentization *relocates* classicality; it does not remove it.
-The draft listed this as a theorem target ("quantum residency monotonicity");
+unitary.  Under the draft's additive metric this raises Q_causal by +0.36,
+straight to "1.00 quantum".  Measured against :mod:`aionq.residency` the gain is
++0.019 -- about 5% of what is advertised -- and it is bought by spending *more*
+non-Clifford resource (T-count 3 -> 5, because controlled-T costs roughly three
+T where bare T costs one), not by acquiring new capability.
+
+So the honest statement is not "coherentization does not move the metric".  It
+moves it slightly, in the wrong currency.  What it genuinely buys is
+counterfactual retention: the branch stays available for later interference.
+That is a real and different good, and it is not quantum residency.  The draft
+listed this as a theorem target ("quantum residency monotonicity");
 :func:`coherentization_audit` decides it numerically.
 
 Cost 2: it accrues ancillas monotonically
@@ -120,7 +126,7 @@ class CoherentizationAudit:
 
     @property
     def monotone(self) -> bool:
-        """Did coherentization actually buy certified quantum residency?"""
+        """Did coherentization raise the simulation-cost upper bound at all?"""
         return self.cert_delta > 1e-9
 
     def __str__(self) -> str:  # pragma: no cover - display only

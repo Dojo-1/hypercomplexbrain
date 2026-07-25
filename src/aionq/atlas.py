@@ -34,20 +34,25 @@ rather than chosen for ornament.
     a base point is named.  :func:`resource_over` makes this numerical: the same
     state returns 1.0 over one base point and 0.0 over another.
 
-3.  Its base is hyperbolic, not Euclidean.
-    Free theories are ordered by containment -- classical reversible inside
-    stabilizer inside Clifford+T inside universal -- and that containment order
-    branches.  Tree-like hierarchies embed with bounded distortion in hyperbolic
-    space and with unbounded distortion in Euclidean space of any fixed
-    dimension, because the number of nodes at depth d grows exponentially while
-    Euclidean volume grows polynomially.  Flattening the base to a Euclidean
-    scalar axis is precisely the error of ranking resource theories along a
-    line.  The base is therefore the Poincare ball and comparisons use
-    :func:`poincare_distance`.
+3.  Its base carries NO assigned geometry.
+    An earlier revision made the base the Poincare ball, on the argument that
+    containment hierarchies are tree-like and embed badly in Euclidean space.
+    That argument was then tested against the structure the base actually has,
+    and it failed: the live free-theory Hasse diagram is a diamond DAG
+    (classical-reversible sits below three parents), with Gromov delta = 1.0 on
+    a diameter-2 metric, so delta/diameter = 0.5 -- the *maximum possible* for
+    any metric space.  The base is maximally non-tree-like and hyperbolic
+    embedding is not indicated.  See
+    :func:`compare_embeddings_on_real_hierarchy`.
 
-Promotion to "this organ is quantum in a way that matters" requires
-``q_causal > 0`` against a matched free-theory control.  Hardness alone never
-promotes.
+    :func:`poincare_distance` and :func:`hierarchy_distortion` are retained as
+    instruments, not as commitments.  The hyperbolic hypothesis may be re-earned
+    once a measured free-conversion metric exists
+    (d(F_i,F_j) = -log sup p_succ); until then no geometry is assigned.
+
+Promotion requires a pre-registered advantage cone over the outcome vector --
+see :mod:`aionq.advantage`.  The scalar gate ``q_causal > 0`` is retired:
+hardness never promotes, and neither does a single asserted number.
 """
 
 from __future__ import annotations
@@ -410,17 +415,31 @@ class QuantumNecessityAtlas:
     q_causal: float = 0.0        # task gain over matched free-theory control
     q_audit: float = 0.0         # external certification strength
 
-    def promote(self, threshold: float = 0.0) -> PromotionVerdict:
-        """Cognitive gain is the decisive gate. Hardness alone never promotes."""
-        if self.q_causal > threshold:
-            return PromotionVerdict(True, f"q_causal = {self.q_causal:.3f} > {threshold} "
-                                          "against a matched free-theory control")
-        if self.q_sim.upper > 0.5:
-            return PromotionVerdict(False, f"hard to simulate (q_sim {self.q_sim}) but "
-                                           f"q_causal = {self.q_causal:.3f}: hardness "
-                                           "without cognitive gain does not promote")
-        return PromotionVerdict(False, f"q_causal = {self.q_causal:.3f}: no measured "
-                                       "advantage over the matched control")
+    def promote(self, posterior=None, cone=None, **kwargs) -> PromotionVerdict:
+        """Promotion requires a pre-registered advantage cone.
+
+        The scalar gate ``q_causal > 0`` is retired.  It was the last monarch
+        over the atlas: it silently chose a weighting across generalisation,
+        robustness, latency, energy and calibration, and it promoted an organ
+        whose gain was bought entirely by spending latency.
+
+        Calling this without a cone does **not** fall back to the scalar.  It
+        returns HOLD, because a stored ``q_causal`` float is an assertion, not a
+        measurement against a matched free-theory control.  Supply an
+        :class:`aionq.advantage.EffectPosterior` and
+        :class:`aionq.advantage.AdvantageCone` to obtain a real decision.
+        """
+        if posterior is None or cone is None:
+            return PromotionVerdict(
+                False,
+                "no pre-registered advantage cone supplied. The scalar "
+                "q_causal gate is retired; see aionq.advantage.promote(). "
+                f"(stored q_causal = {self.q_causal} is an assertion, not a "
+                "measured effect against a matched control)")
+
+        from .advantage import promote as _cone_promote
+        decision = _cone_promote(posterior, cone, audit=self.q_audit, **kwargs)
+        return PromotionVerdict(decision.promoted, str(decision))
 
     def dominates(self, other: "QuantumNecessityAtlas") -> bool:
         """Partial order, valid only within one fiber.

@@ -1,4 +1,4 @@
-"""Certified quantum residency.
+"""Simulation-cost residency: an upper bound, never a certificate.
 
 The governing correction to QSigma-infinity.
 
@@ -28,27 +28,34 @@ classical cost of simulating the causal core to constant total-variation error,
 and let n be the number of logical qubits the core spans, so that dense
 simulation costs 2^n.  Define
 
-    Q_cert = log2(C_sim) / n,   clipped to [0, 1]
+    q_sim_upper = log2(C_sim) / n,   clipped to [0, 1]
 
-Q_cert is the fraction of the Hilbert-space exponent that a classical simulator
-is actually forced to pay.  It reads:
+q_sim_upper is the fraction of the Hilbert-space exponent that the best
+simulation strategy implemented here is *known* to pay.  It is an upper bound on
+classical hardness and never a certificate of it: exhibiting a good algorithm
+bounds cost from above, while proving no better one exists is a different and
+much harder problem.  The honest object is the interval
+[q_sim_lower, q_sim_upper], with q_sim_lower = 0 absent a real lower-bound
+argument.  It reads:
 
-    permutation core            -> Q_cert ~ 0
-    Clifford core (any depth)   -> Q_cert ~ 0
-    Clifford + t T gates        -> Q_cert = alpha * t / n
-    generic core                -> Q_cert = 1
+    permutation core            -> q_sim_upper ~ 0
+    Clifford core (any depth)   -> q_sim_upper ~ 0
+    Clifford + t T gates        -> q_sim_upper = alpha * t / n
+    generic core                -> q_sim_upper = 1
 
-with alpha the Bravyi-Gosset stabilizer-rank exponent per T gate.  Saturation at
-Q_cert = 1 needs t ~ n / alpha ~ 4.4 n non-Clifford gates: an almost-all-quantum
+with alpha the Bravyi-Gosset stabilizer-rank exponent per T gate.  Saturation
+needs t ~ n / alpha ~ 4.4 n non-Clifford gates: an almost-all-quantum
 brain must spend on the order of four non-Clifford operations per logical qubit,
 per coherent episode.  That is a hardware budget, not a slogan.
 
 Scope and honesty
 -----------------
-Q_cert is an *upper bound on classical hardness* built from the best simulation
-strategies this module implements (basis-permutation, stabilizer, stabilizer
-rank).  A better classical algorithm lowers C_sim and therefore lowers Q_cert.
-That direction is the correct one: the metric can only ever be revised
+q_sim_upper is built from the simulation strategies this module implements
+(basis-permutation, stabilizer, stabilizer rank), and is compiler-dependent by
+construction: a compiler portfolio defeats the cancellation attacks in the
+sweep, but circuit equivalence is intractable in general, so residual gaming
+vectors exist.  A better classical algorithm lowers C_sim and therefore lowers
+q_sim_upper.  That direction is the correct one: the metric can only ever be revised
 downward by classical progress, never inflated by notation.  It is a
 falsifiable claim about a circuit, not a property the architecture may assert
 about itself.
@@ -107,10 +114,6 @@ _FREE_OPS = {"barrier", "delay", "id", "measure", "reset", "store", "snapshot"}
 # Gates that permute computational basis states.  Under the basis-permutation
 # simulation strategy these are free; under stabilizer-rank they may not be.
 _PERMUTATION_NAMES = {"x", "cx", "ccx", "cswap", "swap", "mcx", "rccx", "id"}
-
-# Gates that leave the computational basis (up to phase) and therefore
-# invalidate the basis-permutation strategy for the whole core.
-_BASIS_LEAVING = {"h", "ry", "rx", "sx", "sxdg", "u", "u2", "u3", "r", "initialize"}
 
 
 class TransitionClass:
@@ -289,9 +292,7 @@ def classify_instruction(operation, eps: float = DEFAULT_EPS) -> tuple[str, floa
         if base_cost > 0:
             ctrl = operation.num_ctrl_qubits
             cost = (2 ** ctrl) * base_cost + (2 ** ctrl - 1)
-            cls = (TransitionClass.NONCLIFFORD if not _is_diagonal(operation)
-                   else TransitionClass.NONCLIFFORD)
-            return cls, float(cost)
+            return TransitionClass.NONCLIFFORD, float(cost)
 
     if _is_diagonal(operation, atol=1e-9):
         # Diagonal but non-Clifford: applies unobservable phases to basis states,
@@ -444,7 +445,7 @@ def simulation_residency(
     if t_total == 0 and opaque_exponent == 0 and total_edges > 0:
         notes.append(
             "core is entirely stabilizer/permutation simulable (Gottesman-Knill): "
-            "Q_cert = 0 regardless of depth, width or entanglement."
+            "q_sim_upper = 0 regardless of depth, width or entanglement."
         )
     if q_upper >= 1.0:
         notes.append("no implemented strategy simulates this core below dense cost; "
@@ -521,7 +522,7 @@ def stabilizer_renyi_entropy(state: Statevector | np.ndarray) -> float:
 def max_bipartite_entanglement(state: Statevector | np.ndarray) -> float:
     """Maximum von Neumann entanglement entropy over contiguous bipartitions.
 
-    Included specifically to be *excluded* from Q_cert: a GHZ state maximises
+    Included specifically to be *excluded* from q_sim_upper: a GHZ state maximises
     this quantity and is exactly stabilizer-simulable.
     """
     sv = state if isinstance(state, Statevector) else Statevector(state)
