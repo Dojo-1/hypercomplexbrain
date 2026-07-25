@@ -1,4 +1,4 @@
-# AION-Ω^Q / QΣ-R³
+# AION-Ω^Q / QΣ-R³ʙ
 
 **An audited almost-all-quantum polycosmic brain.**
 
@@ -234,15 +234,57 @@ cost, parity and audit are not tradeable against one another by a weighting
 chosen after the fact. The cone must be declared before the experiment; choosing
 it afterwards is the same failure as choosing the scalar afterwards.
 
+### D12 — the coordinates were untyped
+
+Fractions, bits, resource monotones, simulation intervals and audit strengths
+were stored as bare floats and compared coordinatewise. Nothing prevented
+comparing 0.9 bits of process memory against 0.9 of audit strength.
+**Fix:** `aionq.stack` types them. `Bits >= Strength` raises; `Monotone` refuses
+to exist without a declared free theory; `Monotone(base="stabilizer") >=
+Monotone(base="separable")` raises; `Fraction` is range-checked. The illegal
+comparison is now a `TypeError`, not a matter of discipline.
+
+### D13 — transport holonomy was never measured
+
+R³ added `transport_to` and never asked whether a section carried around a
+*loop* of free theories returns. It does not, and the reason is exact.
+
+Loop: `stabilizer → all-free → separable → classical-reversible → stabilizer`,
+carrying a T-state organ.
+
+| mode | start | end | defect | holonomy |
+|---|---:|---:|---:|---|
+| section-only | 0.415000 | NaN | **∞** | non-trivial (lossy) |
+| state-anchored | 0.415037 | 0.415037 | **0.0** | trivial (returns) |
+
+Section-only transport loses `q_resource` and `q_causal` permanently; 5 of 8
+coordinates survive. State-anchored transport recomputes the monotone at each
+chart and closes exactly, with the profile
+`0.4150 → 0.0000 → 0.0000 → 1.0000 → 0.4150`.
+
+The asymmetry has one cause: **a resource monotone is computed *from* a state,
+not carried *by* a section.** Discard the state and keep the number, and the
+number cannot survive a change of base — there is nothing left to recompute it
+from.
+
+> **An organ that keeps only its own summary statistics has a path-dependent
+> self-image: what it believes about itself depends on the route it took through
+> its own assumptions. Path-independent self-assessment requires retaining the
+> state the assessments were computed from.**
+
+That is the architecture's self-reflection result stated as a measurement rather
+than a metaphor, and it is the one place where the Gödelian framing earns a
+number instead of a gesture.
+
 ### Still not done
 
-- `q_causal` remains unmeasured. The cone is now the right *shape* to receive an
+- `q_causal` remains unmeasured. The cone is the right *shape* to receive an
   answer; no experiment has produced one.
 - The base metric is still a containment graph, not a measured free-conversion
   metric `d(F_i,F_j) = −log sup p_succ`. Until that is measured, no geometry —
   hyperbolic, Euclidean or otherwise — should be assigned to the base.
-- The coordinates are still floats. They carry different units, uncertainties and
-  base-relativity, and are not yet typed.
+- The base category is still one axis (resource theory). The full
+  `Task × Interface × ResourceTheory × Compiler × Noise × Frame` is not built.
 - QΣ-R³B (the four-cell causal organ test) is specified and not run.
 
 ---
@@ -618,6 +660,8 @@ Kill conditions. Each names the matched control that would retire the component.
 | K13 | the hyperbolic base earns its curvature | Euclidean matches it on the live hierarchy | **FALSIFIED on the real base** — δ/diam = 0.5, maximally non-tree-like |
 | K15 | fibers are comparable without transport | a cross-fiber comparison succeeds | **falsified**, now raises |
 | K16 | promotion is one-dimensional | one scalar reproduces the cone's five verdicts | **falsified** — 1 promote, 4 distinct refusals |
+| K17 | coordinates are commensurable | bits and audit-strength compare without error | **falsified**, now raises |
+| K18 | transport holonomy is trivial | section-only loop returns to its start | **falsified** — defect ∞ vs 0.0 state-anchored |
 | K14 | resource content is base-independent | same state, same monotone, different free theories | **falsified** (§1) |
 
 Two of the draft's own components are falsified by its own stated standards (K3, K9)
@@ -667,6 +711,7 @@ capacity as a count of holonomies.
 | QΣ-R0 | metric, audit, falsification harness | ✅ superseded |
 | QΣ-R0.5 | peer audit fixes; atlas replaces the scalar | ✅ 38/38 tests, 3/3 attacks defeated |
 | QΣ-R0.6 | second audit: transport, orientation, real-base geometry, advantage cone | ✅ 48/48 tests |
+| QΣ-R0.7 | typed quantities; transport holonomy measured | ✅ 57/57 tests |
 | QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network / matchgate / low-treewidth families not yet covered |
 | QΣ-R3A | measured free-conversion metric; re-test base geometry against it | not started |
 | QΣ-R3B | four-cell causal organ (self/other/memory/auditor), ΔY with uncertainty | specified, not run |

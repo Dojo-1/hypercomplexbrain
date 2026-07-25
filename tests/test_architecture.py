@@ -516,3 +516,81 @@ def test_parity_and_audit_are_not_tradeable_against_effect_size():
     assert no_parity.probability > 0.95
     assert any("parity" in b for b in no_parity.blockers)
     assert any("audit" in b for b in no_audit.blockers)
+
+
+# --------------------------------------------------------------------------
+# Claim 14: coordinates are typed; incommensurable comparisons are illegal
+# --------------------------------------------------------------------------
+
+def test_different_kinds_do_not_compare():
+    from aionq.stack import Bits, IncommensurableError, Strength
+    with pytest.raises(IncommensurableError):
+        Bits(0.9) >= Strength(0.9)
+
+
+def test_monotones_over_different_bases_do_not_compare():
+    from aionq.stack import IncommensurableError, Monotone
+    with pytest.raises(IncommensurableError):
+        Monotone(1.2, base="stabilizer") >= Monotone(0.9, base="separable")
+
+
+def test_monotones_over_the_same_base_do_compare():
+    from aionq.stack import Monotone
+    assert Monotone(1.2, base="stabilizer") >= Monotone(0.9, base="stabilizer")
+
+
+def test_a_monotone_must_declare_its_free_theory():
+    from aionq.stack import Monotone
+    with pytest.raises(ValueError):
+        Monotone(0.5)
+
+
+def test_fraction_is_range_checked():
+    from aionq.stack import Fraction
+    with pytest.raises(ValueError):
+        Fraction(1.7)
+
+
+# --------------------------------------------------------------------------
+# Claim 15: transport holonomy around a loop of free theories
+# --------------------------------------------------------------------------
+
+def _t_state():
+    return np.array([1, complex(math.cos(math.pi / 4), math.sin(math.pi / 4))],
+                    dtype=complex) / math.sqrt(2)
+
+
+def test_section_only_loop_is_lossy():
+    """Keep the summary, lose the ability to recompute it."""
+    from aionq.stack import transport_loop
+    sec = QuantumNecessityAtlas("T-organ", STABILIZER, q_resource=0.415)
+    rep = transport_loop(sec)
+    assert not rep.trivial
+    assert "q_resource" in rep.lost_coordinates
+
+
+def test_state_anchored_loop_closes_exactly():
+    """Keep the state, and every base change is recoverable."""
+    from aionq.stack import state_anchored_loop
+    rep = state_anchored_loop(_t_state())
+    assert rep.trivial
+    assert rep.defect == pytest.approx(0.0, abs=1e-12)
+    assert rep.start_value == pytest.approx(rep.end_value)
+
+
+def test_holonomy_gap_is_the_price_of_forgetting_the_state():
+    from aionq.stack import holonomy_defect
+    sec = QuantumNecessityAtlas("T-organ", STABILIZER, q_resource=0.415)
+    d = holonomy_defect(_t_state(), sec)
+    assert d["state_anchored_trivial"]
+    assert not d["section_only_trivial"]
+    assert d["state_anchored_defect"] < d["section_only_defect"]
+
+
+def test_loop_profile_is_genuinely_base_dependent():
+    """The monotone really does move around the loop; it is not constant."""
+    from aionq.atlas import ALL_FREE, CLASSICAL
+    t = _t_state()
+    assert resource_over(t, STABILIZER) == pytest.approx(math.log2(4 / 3), abs=1e-4)
+    assert resource_over(t, ALL_FREE) == pytest.approx(0.0)
+    assert resource_over(t, CLASSICAL) == pytest.approx(1.0)

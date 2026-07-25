@@ -1,4 +1,4 @@
-# hypercomplexbrain — AION-Ω^Q / QΣ-R³
+# hypercomplexbrain — AION-Ω^Q / QΣ-R³ʙ
 
 An audited almost-all-quantum polycosmic brain architecture, and the harness that
 grades it.
@@ -41,6 +41,14 @@ coordinate **Quantum Necessity Atlas**:
   is *not* "zero quantum"; a padded identity circuit is hard-ish to simulate and
   does no work.
 
+**Fourth:** coordinates are now typed (`Bits >= Strength` raises; a `Monotone`
+cannot exist without a declared free theory), and transport holonomy is measured.
+Carrying a section around a loop of free theories and back gives defect **∞** —
+it does not return. Carrying the *state* around the same loop gives defect
+**exactly 0.0**. A monotone is computed *from* a state, not carried *by* a
+section: **an organ that keeps only its own summary statistics has a
+path-dependent self-image.**
+
 **Third:** a second audit found three flattenings still inside the atlas and one
 monarchic scalar on top of it — and the fix **falsifies this project's own
 hyperbolic base**. Measured on the live free-theory structure (a diamond DAG, not
@@ -82,7 +90,7 @@ pip install qiskit numpy scipy pytest
 
 python3 experiments/run_audit.py      # every claim, computed
 python3 experiments/acaf_sweep.py     # 150-core falsification sweep
-python3 -m pytest tests/ -q           # 48 tests
+python3 -m pytest tests/ -q           # 57 tests
 ```
 
 ## Layout
@@ -91,6 +99,7 @@ python3 -m pytest tests/ -q           # 48 tests
 src/aionq/
   atlas.py          Quantum Necessity Atlas: intervals, free-theory bundle, transport
   advantage.py      causal advantage cone: promotion is a region, not a scalar
+  stack.py          typed quantities; transport holonomy around free-theory loops
   residency.py      simulation-cost interval (one coordinate of the atlas)
   coherentize.py    Stinespring coherentization and what it actually buys
   budget.py         coherence budget, forced breath schedule, magic budget

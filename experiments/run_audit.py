@@ -33,6 +33,8 @@ from aionq.atlas import (ALL_FREE, CLASSICAL, MINIMAL_FREE, SEPARABLE, STABILIZE
                          QuantumNecessityAtlas, embed_hierarchy,
                          compare_embeddings_on_real_hierarchy, hierarchy_distortion,
                          poincare_distance, resource_over)
+from aionq.stack import (Bits, IncommensurableError, Monotone, Strength,
+                         holonomy_defect, state_anchored_loop, transport_loop)
 from aionq.selfknowledge import (copies_for_self_tomography, self_knowledge_tradeoff,
                                 syndrome_extraction_disturbance)
 
@@ -346,6 +348,47 @@ def claim_13_promotion_is_a_cone() -> None:
     print("  each other by a weighting chosen after the fact.")
 
 
+def claim_14_typed_coordinates() -> None:
+    rule("CLAIM 14  Coordinates are typed; incommensurable comparisons are illegal")
+    try:
+        Bits(0.9) >= Strength(0.9)
+        print("  BUG: 0.9 bits compared against 0.9 audit-strength")
+    except IncommensurableError as e:
+        print(f"  0.9 bits vs 0.9 audit-strength -> refused: {e}")
+    try:
+        Monotone(1.2, base="stabilizer") >= Monotone(0.9, base="separable")
+        print("  BUG: cross-base monotone comparison succeeded")
+    except IncommensurableError as e:
+        print(f"  magic vs entanglement          -> refused: {str(e)[:60]}...")
+    same = Monotone(1.2, base="stabilizer") >= Monotone(0.9, base="stabilizer")
+    print(f"  same base                      -> allowed: {same}")
+    print("\n  Units, uncertainty and base-relativity now live in the type, so the")
+    print("  coordinatewise float comparison that R3 still permitted cannot occur.")
+
+
+def claim_15_transport_holonomy() -> None:
+    rule("CLAIM 15  Self-assessment is path-independent ONLY if the state is kept")
+
+    t_state = np.array([1, complex(math.cos(math.pi / 4), math.sin(math.pi / 4))],
+                       dtype=complex) / math.sqrt(2)
+    section = QuantumNecessityAtlas("T-organ", STABILIZER, q_resource=0.415)
+
+    print("  Carrying a section around a loop of free theories and back:\n")
+    print("  " + str(transport_loop(section)).replace("\n", "\n  "))
+    print("\n  Carrying the STATE around the same loop:\n")
+    print("  " + str(state_anchored_loop(t_state)).replace("\n", "\n  "))
+
+    d = holonomy_defect(t_state, section)
+    print("\n  holonomy comparison")
+    for k, v in d.items():
+        print(f"    {k:<26} {v}")
+    print("\n  A resource monotone is computed FROM a state, not carried BY a section.")
+    print("  An organ that keeps only its own summary statistics has a path-dependent")
+    print("  self-image: what it believes about itself depends on the route it took")
+    print("  through its own assumptions. Retaining the state makes the loop close")
+    print("  exactly. That is the architecture's self-reflection result, with a number.")
+
+
 def main() -> int:
     print("AION-Omega^Q architecture audit")
     print("every number below is computed, none is asserted")
@@ -362,6 +405,8 @@ def main() -> int:
     claim_11_fibers_need_transport()
     claim_12_real_hierarchy_is_not_hyperbolic()
     claim_13_promotion_is_a_cone()
+    claim_14_typed_coordinates()
+    claim_15_transport_holonomy()
     print("\n" + "=" * 72)
     print("audit complete")
     print("=" * 72)
