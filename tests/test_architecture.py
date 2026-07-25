@@ -772,3 +772,81 @@ def test_no_interruption_needed_when_refill_covers_draw():
                         Pipe("task", PipeKind.PUNTERO, 0.5))).analyse()
     assert math.isinf(rep.sustain_ticks)
     assert rep.drone_survives and rep.melody_survives
+
+
+# --------------------------------------------------------------------------
+# Round V1: visibility / coupling field
+# --------------------------------------------------------------------------
+
+def _ghz(n):
+    qc = QuantumCircuit(n)
+    qc.h(0)
+    for i in range(1, n):
+        qc.cx(0, i)
+    return qc
+
+
+def test_product_state_is_fully_visible():
+    """The defect that killed the first instrument: this must be exactly 0."""
+    from aionq.visibility import visibility_profile
+    qc = QuantumCircuit(6)
+    qc.h(range(6))
+    assert visibility_profile(qc).g1 == pytest.approx(0.0)
+
+
+def test_ghz_hides_exactly_one_generator():
+    from aionq.visibility import visibility_profile
+    for n in range(3, 8):
+        rep = visibility_profile(_ghz(n))
+        for r in range(2, n):
+            assert rep.coupling[r] == pytest.approx(1.0 / n)
+        assert rep.r_star == n
+        assert rep.coupling[n] == pytest.approx(0.0)
+
+
+def test_visibility_depth_is_not_the_code_distance():
+    """Steane [[7,1,3]] has r* = 4: r* is generating weight, not distance."""
+    from aionq.visibility import visibility_profile
+    steane = ["IIIXXXX", "IXXIIXX", "XIXIXIX",
+              "IIIZZZZ", "IZZIIZZ", "ZIZIZIZ", "ZZZZZZZ"]
+    assert visibility_profile(steane).r_star == 4
+
+
+def test_visibility_rejects_non_stabilizer_input():
+    from aionq.visibility import NotAStabilizerState, visibility_profile
+    qc = QuantumCircuit(2)
+    qc.h(0)
+    qc.t(0)
+    with pytest.raises(NotAStabilizerState):
+        visibility_profile(qc)
+
+
+# --------------------------------------------------------------------------
+# Cayley-Dickson ladder replication
+# --------------------------------------------------------------------------
+
+def test_associativity_holds_exactly_through_quaternions():
+    from aionq.cayley_dickson import associator
+    rng = np.random.default_rng(0)
+    for dim in (1, 2, 4):
+        for _ in range(20):
+            x, y, z = (rng.normal(size=dim) for _ in range(3))
+            assert np.linalg.norm(associator(x, y, z)) == pytest.approx(0.0, abs=1e-12)
+
+
+def test_octonions_are_non_associative():
+    from aionq.cayley_dickson import associator
+    rng = np.random.default_rng(0)
+    worst = max(np.linalg.norm(associator(*(rng.normal(size=8) for _ in range(3))))
+                for _ in range(50))
+    assert worst > 1e-6
+
+
+def test_zero_divisors_appear_exactly_at_sedenions():
+    from aionq.cayley_dickson import cd_multiply, find_zero_divisor
+    assert find_zero_divisor(8) is None
+    zd = find_zero_divisor(16)
+    assert zd is not None
+    a, b = zd
+    assert np.linalg.norm(a) > 0 and np.linalg.norm(b) > 0
+    assert np.linalg.norm(cd_multiply(a, b)) == pytest.approx(0.0, abs=1e-12)

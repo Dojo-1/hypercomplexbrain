@@ -320,6 +320,23 @@ CLAIMS = [
           "Process-tensor non-Markovianity rises 0.000 -> 2.000 bits with coupling.",
           artifact="aionq.process.non_markovianity"),
 
+    Claim("EXP-V1-GHZ_HIDES_ONE_BIT", EvidenceTag.MEASURED,
+          "GHZ_n hides exactly one stabilizer generator from every probe of depth "
+          "r < n: g_r = 1/n exactly for 1 < r < n, verified n = 3..9.",
+          artifact="experiments/run_visibility.py",
+          assumptions=("stabilizer states only",)),
+    Claim("EXP-V1-RSTAR_IS_NOT_DISTANCE", EvidenceTag.MEASURED,
+          "Visibility depth r* is the minimum generating weight of the stabilizer "
+          "group, NOT the code distance: Steane [[7,1,3]] has r* = 4 while d = 3.",
+          artifact="experiments/run_visibility.py",
+          assumptions=("generators supplied explicitly and checked to commute",)),
+    Claim("EXP-V1-CD_LADDER_PARTIAL", EvidenceTag.MEASURED,
+          "Replication of the Atlas Cayley-Dickson ladder: S16 basis-triple mean "
+          "1.3538 vs reported 1.356; O gives 1.6000 vs reported 0.359 under the "
+          "same convention. Associativity boundary and zero-divisor onset replicate "
+          "exactly.",
+          artifact="aionq.cayley_dickson.associator_ladder"),
+
     # --- H: bridges with kill conditions -------------------------------------
     Claim("BRIDGE-R3-QCAUSAL", EvidenceTag.HYPOTHESIS,
           "Some quantum organ shows a causal advantage inside a pre-registered cone.",
@@ -354,6 +371,14 @@ CLAIMS = [
           artifact="docs/ARCHITECTURE.md"),
 
     # --- R: retired, preserved --------------------------------------------
+    Claim("RET-V1-RSTAR_EQUALS_D", EvidenceTag.RETIRED,
+          "Visibility depth equals code distance.",
+          corrections=("survived on [[n,1,n]] repetition and [[5,1,3]] but Steane "
+                       "[[7,1,3]] gives r* = 4 with d = 3",)),
+    Claim("RET-V1-WEIGHT_IS_VISIBILITY", EvidenceTag.RETIRED,
+          "Pauli weight above r measures invisibility at probe depth r.",
+          corrections=("product state |+>^6 scored g_1 = 0.891 when it must be 0; "
+                       "<X1X2> = <X1><X2> is 1-locally determined despite weight 2",)),
     Claim("RET-R1-QCAUSAL_ADDITIVE", EvidenceTag.RETIRED,
           "Additive Q_causal over edges measures quantumness.",
           corrections=("constant on all-unitary cores; permutation and Clifford "

@@ -213,6 +213,76 @@ not merely to different kinds. Recorded as the next remainder-typing target.
 
 ---
 
+## 5c. Round V1 — two more Atlas instruments, implemented and run
+
+### The visibility probe / coupling field `g_r`
+
+The Atlas's **surviving late positive**: *"certified global structure can be
+extensively present while remaining weakly coupled to bounded local inference."*
+That is a SAT statement and no bridge to it is claimed. The **instrument**
+transfers, and this repository had nothing like it.
+
+Quantum form (`src/aionq/visibility.py`), exact for stabilizer states:
+
+```
+g_r = (n − rank(S_r)) / n,     S_r = <{s ∈ S : |s| ≤ r}>
+```
+
+**A wrong first attempt, kept in the module docstring.** The obvious construction
+bins Pauli *weight* and calls weight > r invisible. Measurement killed it in one
+shot: `|+⟩^6` scored `g₁ = 0.891` when it must score 0, because
+`⟨X₁X₂⟩ = ⟨X₁⟩⟨X₂⟩` is 1-locally *determined* despite being weight 2. Weight is
+not visibility. Retired as `RET-V1-WEIGHT_IS_VISIBILITY`.
+
+**Round V1 results** (pre-registered in `experiments/run_visibility.py`):
+
+| prediction | verdict |
+|---|---|
+| P1: `g_r = 1/n` exactly for `1 < r < n` on GHZ_n, n=3..9 | **survived** |
+| P2: `r* = d` on the `[[n,1,n]]` repetition family | **survived** |
+| P2 generalised: `r* = d` for any stabilizer code | **FALSIFIED** |
+| control: random Cliffords track n | **survived** — slope 0.310, so the result is informative |
+
+GHZ_n hides **exactly one** stabilizer generator from every probe of depth
+`r < n` — no more, no less. But Steane `[[7,1,3]]` has `r* = 4` while `d = 3`:
+its weight-3 elements have GF(2) rank 4 of 7, and the weight-4 checks are needed
+to complete the group. `[[5,1,3]]` gives `r* = 3 = d`, and the repetition family
+gives `r* = n = d`, so the coincidence is real but not a law.
+
+> **Corrected reading:** `r*` is the minimum *generating weight* of the
+> stabilizer group. Distance is the weight of the *lightest logical operator*.
+> Neither determines the other.
+
+En route, a hand-written Steane encoder stabilized none of the Steane generators
+and produced a spurious falsification. Generators are now supplied explicitly and
+checked to commute — the apparent result was a circuit bug, and it is recorded
+rather than quietly deleted.
+
+Architecturally this finally makes measurable a tension flagged in round 1 and
+never implemented: **high `g_r` is exactly protection and exactly inertness.** An
+organ invisible to local probes cannot be locally read or acted upon.
+
+### The Cayley–Dickson failure ladder — partial replication
+
+The Atlas reports ‖A‖: 𝕆 ≈ 0.359, 𝕊₁₆ ≈ 1.356, 𝕋₃₂ ≈ 1.4. Replicated in
+`src/aionq/cayley_dickson.py`:
+
+| rung | measured (basis triples) | Atlas | |
+|---|---:|---:|---|
+| ℝ, ℂ, ℍ | 0 exactly | 0 | ✅ |
+| 𝕆 (dim 8) | **1.6000** | 0.359 | ❌ |
+| 𝕊₁₆ (dim 16) | **1.3538** | 1.356 | ✅ 0.2% |
+| zero divisors | absent ≤ 8, present ≥ 16 | same | ✅ |
+
+Under the single convention that reproduces 𝕊₁₆ to 0.2%, the octonion figure
+should be 1.6000. Random-unit sampling gives 1.103; no normalisation tried
+reproduces 0.359 while also matching 𝕊₁₆. **The qualitative ladder replicates
+exactly — associativity fails first at 𝕆, zero divisors appear first at 𝕊₁₆ —
+but the octonion norm does not.** This is a question for the source, not a
+correction to it: the convention may simply differ.
+
+---
+
 ## 6. Net effect on this repository
 
 1. `src/aionq/governance.py` — evidence lattice, typed remainders, immutable
