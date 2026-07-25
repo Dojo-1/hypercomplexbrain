@@ -63,9 +63,11 @@ Results the draft architecture stated as targets, now decided by measurement:
 
 - **Coherentization is not a residency gain.** Measured gain is 5.2% of advertised,
   and is bought by spending more magic, not by new capability.
-- **Exhalation is forced**, by ancilla accounting and Bennett pebbling — not chosen
-  by taste. The breath period is computable. It is *entropy export*, though, and
-  measurement is only one of seven channels for it.
+- **Respiration is reservoir dynamics**, not a scheduled interruption. From the
+  Bordón (Galician gaita) architecture: a *fol* reservoir decouples intake from
+  expenditure and a *bordón* drone is never interrupted. Sharp consequence:
+  `drone_ceiling = refill_rate` — an uninterrupted channel is fundable only out
+  of steady income, never out of buffer, at any capacity.
 - **Entanglement is not quantumness** and is not even frame-invariant (0 bits in one
   frame, 1 bit in another, same situation).
 - **The fusion grammar is coherent and order-sensitive**: pentagon and hexagon hold
@@ -90,7 +92,7 @@ pip install qiskit numpy scipy pytest
 
 python3 experiments/run_audit.py      # every claim, computed
 python3 experiments/acaf_sweep.py     # 150-core falsification sweep
-python3 -m pytest tests/ -q           # 67 tests
+python3 -m pytest tests/ -q           # 80 tests
 ```
 
 ## Layout
@@ -109,6 +111,8 @@ src/aionq/
   selfknowledge.py  bounds on self-knowledge, and the syndrome counterexample
   qrf.py            quantum reference frames
   governance.py     P/A/M/H/S/R evidence lattice as executable CI policy
+  quantities.py     typed coordinates: units, uncertainty, base-relativity
+  bordon.py         Bordon respiration: reservoir dynamics, drone ceiling
 experiments/        audit and ACAF sweep
 tests/              one test per falsifiable claim
 docs/ARCHITECTURE.md

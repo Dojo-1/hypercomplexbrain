@@ -380,7 +380,7 @@ def test_clifford_memory_is_not_zero_quantum():
         organ="Clifford FT memory", base=STABILIZER, q_phys=1.0, q_logical=1.0,
         q_sim=Interval(0.0, 0.0), q_causal=0.4)
     assert memory.q_sim.upper == 0.0
-    assert memory.q_phys == 1.0 and memory.q_logical == 1.0
+    assert float(memory.q_phys) == 1.0 and float(memory.q_logical) == 1.0
 
 
 def test_asserted_q_causal_no_longer_promotes():
@@ -449,7 +449,7 @@ def test_transport_declares_what_it_loses():
     moved = magic.transport_to(SEPARABLE)
     assert "q_resource" in moved.lost
     assert "q_causal" in moved.lost
-    assert math.isnan(moved.section.q_resource)
+    assert math.isnan(float(moved.section.q_resource))
     assert moved.remainder and moved.evidence
 
 
@@ -457,7 +457,7 @@ def test_identity_transport_preserves_everything():
     magic = QuantumNecessityAtlas("magic", STABILIZER, q_resource=1.2)
     moved = magic.transport_to(STABILIZER)
     assert moved.lost == ()
-    assert moved.section.q_resource == pytest.approx(1.2)
+    assert float(moved.section.q_resource) == pytest.approx(1.2)
 
 
 def test_free_theory_orientation_is_consistent():
@@ -683,3 +683,92 @@ def test_headline_metric_is_axiomatized_not_measured():
     c = registry["METRIC-R3-QSIM_UPPER"]
     assert c.tag == EvidenceTag.AXIOMATIZED
     assert "weaker than circuit equivalence" in c.surrogate
+
+
+# --------------------------------------------------------------------------
+# D15 / interval order / retired instrument
+# --------------------------------------------------------------------------
+
+def test_atlas_coordinates_are_typed_not_floats():
+    from aionq.quantities import Bits, Fraction, Monotone, Strength
+    a = QuantumNecessityAtlas("x", STABILIZER, q_phys=1.0, q_process=0.9,
+                              q_resource=1.2, q_audit=0.8)
+    assert isinstance(a.q_phys, Fraction)
+    assert isinstance(a.q_process, Bits)
+    assert isinstance(a.q_resource, Monotone)
+    assert isinstance(a.q_audit, Strength)
+    assert a.q_resource.base == STABILIZER.name
+
+
+def test_atlas_coordinates_refuse_cross_unit_comparison():
+    from aionq.quantities import IncommensurableError
+    a = QuantumNecessityAtlas("x", STABILIZER, q_process=0.9, q_audit=0.9)
+    with pytest.raises(IncommensurableError):
+        a.q_process >= a.q_audit
+
+
+def test_interval_order_is_explicit_and_not_collapsed_to_lower():
+    """Two organs differing only in q_sim.upper must not compare equal."""
+    from aionq.atlas import IntervalOrder
+    narrow = QuantumNecessityAtlas("a", STABILIZER, q_sim=Interval(0.0, 0.05))
+    wide = QuantumNecessityAtlas("b", STABILIZER, q_sim=Interval(0.0, 1.00))
+    # optimistic: wide has the better known upper bound
+    assert wide.dominates(narrow, interval_policy=IntervalOrder.OPTIMISTIC)
+    # guaranteed: neither, since both lower bounds are 0
+    assert not wide.dominates(narrow, interval_policy=IntervalOrder.GUARANTEED)
+    assert not narrow.dominates(wide, interval_policy=IntervalOrder.GUARANTEED)
+
+
+def test_unknown_interval_policy_raises():
+    a = QuantumNecessityAtlas("a", STABILIZER)
+    b = QuantumNecessityAtlas("b", STABILIZER)
+    with pytest.raises(ValueError):
+        a.dominates(b, interval_policy="wishful")
+
+
+def test_retired_poincare_instrument_warns():
+    a = QuantumNecessityAtlas("a", STABILIZER)
+    b = QuantumNecessityAtlas("b", SEPARABLE)
+    assert not hasattr(a, "base_distance")       # the live default is gone
+    with pytest.warns(UserWarning, match="RETIRED"):
+        a.experimental_poincare_instrument(b)
+
+
+def test_syndrome_information_is_computed_not_hardcoded():
+    """All four outcomes are distinguishable, so each carries the full 2 bits."""
+    for err in (None, 0, 1, 2):
+        assert syndrome_extraction_disturbance(error_qubit=err).information_bits \
+            == pytest.approx(2.0)
+
+
+# --------------------------------------------------------------------------
+# Bordon respiration
+# --------------------------------------------------------------------------
+
+def test_drone_ceiling_is_the_refill_rate_not_the_capacity():
+    """A reservoir of any size cannot fund an uninterrupted channel."""
+    from aionq.bordon import BordonBreath, Fol, Pipe, PipeKind
+    huge = BordonBreath(Fol(capacity=1e6, refill_rate=0.2),
+                        (Pipe("identity", PipeKind.BORDON, 0.5),))
+    rep = huge.analyse()
+    assert rep.drone_ceiling == pytest.approx(0.2)
+    assert not rep.drone_survives          # capacity 1e6 does not save it
+
+
+def test_melody_is_silenced_to_protect_the_drone():
+    from aionq.bordon import BordonBreath, Fol, Pipe, PipeKind
+    rep = BordonBreath(Fol(10, 0.5),
+                       (Pipe("identity", PipeKind.BORDON, 0.3),
+                        Pipe("task", PipeKind.PUNTERO, 0.9))).analyse()
+    assert rep.drone_survives and not rep.melody_survives
+    assert any("silenced" in n for n in rep.notes)
+
+
+def test_no_interruption_needed_when_refill_covers_draw():
+    """The periodic model cannot express this case at all."""
+    from aionq.bordon import BordonBreath, Fol, Pipe, PipeKind
+    rep = BordonBreath(Fol(10, 1.0),
+                       (Pipe("identity", PipeKind.BORDON, 0.3),
+                        Pipe("task", PipeKind.PUNTERO, 0.5))).analyse()
+    assert math.isinf(rep.sustain_ticks)
+    assert rep.drone_survives and rep.melody_survives

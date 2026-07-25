@@ -1,4 +1,15 @@
-"""The coherence budget: why exhalation is forced, not chosen.
+"""The coherence budget: the periodic breath model.
+
+.. note::
+   **Superseded as a respiration model by** :mod:`aionq.bordon`.  This module
+   treats breathing as a single global period that interrupts cognition.  The
+   Bordon (Galician gaita) model is structurally better: a *fol* reservoir
+   decouples intake from expenditure, a *bordon* drone channel is never
+   interrupted, and channels breathe at different rates.  The ancilla accounting
+   below remains valid as a *capacity* argument; the periodic schedule does not
+   survive as a model of how an organ actually respires.
+
+The coherence budget: why entropy export is forced, not chosen.
 
 The draft architecture treats breathing as a design aesthetic -- inhalation
 expands the code, exhalation measures and consolidates -- and motivates it by
@@ -16,7 +27,7 @@ The argument
     of room.
 4.  Recovering room without measuring requires *uncomputation*, which requires
     the branch to be recomputable.  Bennett's reversible pebble game gives the
-    exact trade: with k pebbles one can reversibly traverse ``2^k`` computation
+    trade: with k pebbles one can reversibly traverse ``2^k`` computation
     steps at a cost of ``3^k`` operations, i.e. traversing L steps with
     ``log2 L`` ancillas costs ``L^log2(3) ~ L^1.585`` time.
 5.  Cognition is not reversible in general -- abstraction discards -- so some
@@ -85,9 +96,13 @@ def magic_budget(logical_qubits: int, target_residency: float,
 def bennett_time_cost(horizon: int, pebbles: int) -> float:
     """Time cost of reversibly traversing `horizon` steps with `pebbles` ancillas.
 
-    Bennett's pebble game: k pebbles reach 2^k steps in 3^k operations.  For a
-    requested horizon L and budget k, the cost is L^(log2 3) when k = log2 L,
-    and grows without bound as k falls below that.
+    Bennett's pebble game gives the anchor point: k pebbles reach 2^k steps in
+    3^k operations.  The interpolation used here for intermediate pebble budgets
+    is a PROJECT-SPECIFIC HEURISTIC, not a derivation of the reversible
+    pebble-game optimum.  The literature establishes a reversible
+    time-space-erasure tradeoff; it does not establish this particular schedule.
+    Every overhead figure downstream inherits that status (tagged A in
+    :mod:`aionq.governance`).
     """
     if horizon <= 1:
         return float(horizon)

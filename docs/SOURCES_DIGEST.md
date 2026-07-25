@@ -166,6 +166,53 @@ carry.
 
 ---
 
+## 5b. Bordón respiration — a better breathing model
+
+Pointed to directly: *"breathing is better implemented in my Bordón and Bordón
+Siphony architectures."* Found in the corpus as the Galician gaita geometry:
+
+```
+puntero (chanter)   visible melody        the readable projection
+bordón  (drone)     continuous harmonic   resonates, never plays the melody
+fol     (bag)       pressure reservoir    the remainder [R]
+pallón  (reed)      threshold / wall      where pressure becomes sound
+```
+
+It is better than `budget.py`'s periodic model for three structural reasons, and
+it is a *literal* breathing instrument:
+
+1. **The fol decouples intake from expenditure.** A piper inhales while the
+   melody continues. Respiration and computation are not phase-locked. The
+   periodic model forces a global stop; the reservoir model fails only when the
+   bag actually runs dry.
+2. **The bordón is never interrupted.** The drone is the invariant carrier and
+   must be exempt from the breath cycle. The periodic model has no exemption, so
+   it would exhale the very continuity that defines the organ.
+3. **Channels breathe at different rates.** Respiration is polyrhythmic per
+   channel, not one global period.
+
+`src/aionq/bordon.py` implements it, and the model yields one sharp consequence
+the periodic model could not state:
+
+> **`drone_ceiling = refill_rate`.** An uninterrupted channel can be funded only
+> out of steady income, never out of buffer. A reservoir of capacity 10⁶ still
+> cannot sustain a drone drawing 0.5 against a refill of 0.2 — collapse is only a
+> matter of time, independent of capacity.
+
+Architecturally: an organ may spend its buffer on melody, but must fund its
+identity carrier out of steady income. `budget.py` is marked superseded as a
+respiration model; its ancilla accounting survives as a capacity argument.
+
+Also noted from the same source, not implemented: **L55, the Galician drone
+theorem** — *"the left side reads the right side without influencing it;
+`pipe_immunity` formalizes that [R]_left ≠ [R]_right — they are incompleteness
+classes of different formal systems."* That is a typed-remainder statement in the
+sense of §1.2, and a sharper one than this repository has: it says two remainders
+may be structurally incomparable because they belong to different formal systems,
+not merely to different kinds. Recorded as the next remainder-typing target.
+
+---
+
 ## 6. Net effect on this repository
 
 1. `src/aionq/governance.py` — evidence lattice, typed remainders, immutable
@@ -173,6 +220,10 @@ carry.
 2. Five claims retagged **M/P → A**, with their surrogates stated.
 3. Six retired claims preserved as `RET-*` instead of deleted.
 4. `docs/ARCHITECTURE.md` evidence ledger updated to the six-tier lattice.
+5. `src/aionq/bordon.py` — reservoir respiration replacing the periodic breath
+   model, with `drone_ceiling = refill_rate` as its one sharp consequence.
+6. `src/aionq/quantities.py` — the typed coordinates moved out of `stack.py` so
+   the Atlas can actually import them (D15).
 
 Nothing in the supplied corpus changes any measurement in this repository. What
 it changes is the *tier* several of those measurements are entitled to claim.

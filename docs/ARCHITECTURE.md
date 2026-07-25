@@ -330,8 +330,13 @@ Two organs the scalar orders wrongly, both computed in `experiments/run_audit.py
 
 | organ | q_phys | q_logical | q_sim | q_causal | verdict |
 |---|---:|---:|---|---:|---|
-| Clifford fault-tolerant memory | 1.00 | 1.00 | [0.00, 0.00] | 0.40 | **PROMOTE** |
-| syntactically magic identity circuit | 0.20 | 0.00 | [0.00, 0.68] | 0.00 | **HOLD** |
+| Clifford fault-tolerant memory | 1.00 | 1.00 | [0.00, 0.00] | 0.40* | **HOLD** |
+| syntactically magic identity circuit | 0.20 | 0.00 | [0.00, 0.68] | 0.00* | **HOLD** |
+
+\* asserted, not measured. Since D14c both correctly HOLD: `promote()` requires a
+pre-registered cone and no longer falls back to a stored scalar. The point of the
+table is the *coordinates* — a Clifford memory with `q_sim_upper = 0` is not
+"zero quantum" — not the verdicts, which were an artifact of the retired gate.
 
 A Clifford FT memory is not "zero quantum". It is genuinely quantum tissue whose
 current dynamics happen to admit an efficient classical description. A padded
@@ -359,10 +364,12 @@ until a base point is named.** Each Reality Cell now carries
 `(free_states, free_operations, admissible_group, monotone)`, and resource claims
 do not transport outside the admissible group.
 
-**(c) A hyperbolic base — worth 1.02× today.** Free theories are ordered by
-containment and that order branches; tree-like hierarchies embed with bounded
-distortion in hyperbolic space and unbounded distortion in fixed-dimension
-Euclidean space. Measured worst-case distortion against the true tree metric:
+**(c) No assigned base geometry** — *this was the hyperbolic base, and it is
+retired.* The argument below was made against a **synthetic complete binary
+tree**, then tested against the structure the base actually has and failed
+(§0.6 D10: Gromov δ/diameter = 0.5 on the live diamond DAG). The table is kept
+because it is the evidence that retired the hypothesis, not because the
+hypothesis stands. Worst-case distortion against a synthetic tree metric:
 
 | depth | nodes | hyperbolic | euclidean | advantage |
 |---:|---:|---:|---:|---:|
@@ -371,15 +378,19 @@ Euclidean space. Measured worst-case distortion against the true tree metric:
 | 4 | 31 | 4.67 | 7.55 | 1.62× |
 | 6 | 127 | 13.35 | 30.03 | 2.25× |
 
-**Honest reading: at the current two-level free-theory hierarchy the hyperbolic
-base buys essentially nothing.** It becomes decisive only as resource theories
-nest deeper. Stated rather than oversold — a curved base that is not yet earning
-its curvature is decoration, and decoration is what this programme is for
-removing.
+**Honest reading: the table above measures a synthetic tree, not this base.** On
+the real structure the hyperbolic hypothesis is falsified outright (§0.6 D10), and
+`base_distance` has been renamed `experimental_poincare_instrument` and made to
+emit a warning so the retired geometry cannot be used as a live default. A curved
+base that is not earning its curvature is decoration, and decoration is what this
+programme is for removing — including when the decoration is its own.
 
-**The promotion gate is `q_causal > 0`** against a matched free-theory control.
-Hardness never promotes on its own. This is the bridge from "hard to simulate" to
-"helps cognition", and it is the coordinate the architecture still cannot fill in.
+**The promotion gate is a pre-registered advantage cone** over the outcome vector
+(§0.6 D11), evaluated against a matched free-theory control. `q_causal > 0` as a
+*scalar* gate is retired — it silently chose a weighting and promoted gains bought
+entirely with latency. Hardness never promotes on its own either. This is the
+bridge from "hard to simulate" to "helps cognition", and it is the coordinate the
+architecture still cannot fill in.
 
 ---
 

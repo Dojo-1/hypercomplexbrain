@@ -62,6 +62,8 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+from .quantities import (Bits, Effect, Fraction, IncommensurableError, Monotone,
+                         Quantity, Strength, coerce)
 from .residency import max_bipartite_entanglement, stabilizer_renyi_entropy
 
 __all__ = [
@@ -80,6 +82,7 @@ __all__ = [
     "Interval",
     "QuantumNecessityAtlas",
     "PromotionVerdict",
+    "IntervalOrder",
 ]
 
 
@@ -359,6 +362,33 @@ def resource_over(state: np.ndarray, theory: FreeTheory) -> float:
 # The atlas
 # --------------------------------------------------------------------------
 
+class IntervalOrder:
+    """How to order two simulation-cost intervals.
+
+    ``_vector`` previously fed only ``q_sim.lower`` into the coordinatewise
+    comparison.  Since the lower bound is 0 absent a hardness argument, that
+    made the simulation coordinate inert: organs with intervals [0, 0.05] and
+    [0, 1.00] compared equal.  An interval order has to be chosen explicitly.
+    """
+
+    GUARANTEED = "guaranteed"      # self.lower >= other.upper: true under any refinement
+    OPTIMISTIC = "optimistic"      # compare upper bounds: best-known hardness
+    INFORMATION = "information"    # no weaker bound, and strictly narrower
+
+    ALL = (GUARANTEED, OPTIMISTIC, INFORMATION)
+
+    @staticmethod
+    def compare(a: "Interval", b: "Interval", policy: str) -> bool:
+        """Is `a` at least as good as `b` under `policy`?"""
+        if policy == IntervalOrder.GUARANTEED:
+            return a.lower >= b.upper - 1e-12
+        if policy == IntervalOrder.OPTIMISTIC:
+            return a.upper >= b.upper - 1e-12
+        if policy == IntervalOrder.INFORMATION:
+            return (a.lower >= b.lower - 1e-12 and a.upper <= b.upper + 1e-12)
+        raise ValueError(f"unknown interval order policy {policy!r}")
+
+
 class IncomparableFibersError(TypeError):
     """Raised when two sections over different free theories are compared."""
 
@@ -399,21 +429,36 @@ class QuantumNecessityAtlas:
     """Eight coordinates, several interval-valued, over a named free theory.
 
     No coordinate dominates another and there is no total order.  Comparing two
-    organs means comparing sections, which is a partial order plus a hyperbolic
-    distance on the base -- not a subtraction of scalars.
+    organs means comparing sections within one fiber: a partial order on the
+    typed scalar coordinates plus an explicit :class:`IntervalOrder` policy on
+    ``q_sim`` -- not a subtraction of floats, and not a distance on the base,
+    which carries no assigned geometry.
     """
 
     organ: str
     base: FreeTheory
 
-    q_phys: float = 0.0          # state/transitions in protected quantum dof
-    q_coh: float = 0.0           # coherence actually *used* by interference
-    q_resource: float = 0.0      # monotone over `base` (fiber-dependent)
-    q_process: float = 0.0       # non-Markovian temporal memory, bits
-    q_logical: float = 0.0       # code distance / recoverability
+    q_phys: Fraction | float = 0.0      # state/transitions in protected quantum dof
+    q_coh: Fraction | float = 0.0       # coherence actually *used* by interference
+    q_resource: Monotone | float = 0.0  # monotone over `base` (fiber-dependent)
+    q_process: Bits | float = 0.0       # non-Markovian temporal memory, bits
+    q_logical: Fraction | float = 0.0   # code distance / recoverability
     q_sim: Interval = field(default_factory=lambda: Interval(0.0, 0.0))
-    q_causal: float = 0.0        # task gain over matched free-theory control
-    q_audit: float = 0.0         # external certification strength
+    q_causal: Effect | float = 0.0      # task gain over matched free-theory control
+    q_audit: Strength | float = 0.0     # external certification strength
+
+    def __post_init__(self) -> None:
+        # Coordinates are stored typed, not as bare floats.  This is what makes
+        # the comparison rules enforceable rather than advisory: `q_process` in
+        # bits can no longer be ranked against `q_audit` in audit-strength, and
+        # `q_resource` carries the free theory it was computed over.
+        self.q_phys = coerce(self.q_phys, Fraction)
+        self.q_coh = coerce(self.q_coh, Fraction)
+        self.q_resource = coerce(self.q_resource, Monotone, base=self.base.name)
+        self.q_process = coerce(self.q_process, Bits)
+        self.q_logical = coerce(self.q_logical, Fraction)
+        self.q_causal = coerce(self.q_causal, Effect)
+        self.q_audit = coerce(self.q_audit, Strength)
 
     def promote(self, posterior=None, cone=None, **kwargs) -> PromotionVerdict:
         """Promotion requires a pre-registered advantage cone.
@@ -438,10 +483,11 @@ class QuantumNecessityAtlas:
                 "measured effect against a matched control)")
 
         from .advantage import promote as _cone_promote
-        decision = _cone_promote(posterior, cone, audit=self.q_audit, **kwargs)
+        decision = _cone_promote(posterior, cone, audit=float(self.q_audit), **kwargs)
         return PromotionVerdict(decision.promoted, str(decision))
 
-    def dominates(self, other: "QuantumNecessityAtlas") -> bool:
+    def dominates(self, other: "QuantumNecessityAtlas",
+                  interval_policy: str = IntervalOrder.GUARANTEED) -> bool:
         """Partial order, valid only within one fiber.
 
         Raises if the two sections lie over different free theories.  Comparing
@@ -451,6 +497,8 @@ class QuantumNecessityAtlas:
         Transport one section into the other's chart first -- see
         :meth:`transport_to` -- and read the declared remainder before comparing.
         """
+        if interval_policy not in IntervalOrder.ALL:
+            raise ValueError(f"unknown interval order policy {interval_policy!r}")
         if self.base.name != other.base.name:
             raise IncomparableFibersError(
                 f"cannot compare a section over '{self.base.name}' "
@@ -460,7 +508,11 @@ class QuantumNecessityAtlas:
             )
         mine = self._vector()
         theirs = other._vector()
-        return all(a >= b - 1e-12 for a, b in zip(mine, theirs)) and mine != theirs
+        scalars_ok = all(a >= b - 1e-12 for a, b in zip(mine, theirs))
+        interval_ok = IntervalOrder.compare(self.q_sim, other.q_sim, interval_policy)
+        strict = mine != theirs or (self.q_sim.lower, self.q_sim.upper) != (
+            other.q_sim.lower, other.q_sim.upper)
+        return scalars_ok and interval_ok and strict
 
     def transport_to(self, target: FreeTheory) -> "Transport":
         """Move this section into another chart, declaring what is lost.
@@ -494,11 +546,30 @@ class QuantumNecessityAtlas:
         )
 
     def _vector(self) -> tuple:
-        return (self.q_phys, self.q_coh, self.q_resource, self.q_process,
-                self.q_logical, self.q_sim.lower, self.q_causal, self.q_audit)
+        """Scalar coordinates only.  q_sim is an interval and is ordered separately
+        by an explicit :class:`IntervalOrder` policy, never collapsed to one end."""
+        return tuple(float(v) for v in (self.q_phys, self.q_coh, self.q_resource,
+                                        self.q_process, self.q_logical,
+                                        self.q_causal, self.q_audit))
 
-    def base_distance(self, other: "QuantumNecessityAtlas", coords=None) -> float:
-        """Hyperbolic distance between the two organs' free theories."""
+    def experimental_poincare_instrument(self, other: "QuantumNecessityAtlas",
+                                        coords=None) -> float:
+        """RETIRED HYPOTHESIS, kept as an instrument. Not a distance on this base.
+
+        Formerly ``base_distance``, which made the Poincare ball the default
+        geometry of the base. That geometry was measured against the structure it
+        actually carries and failed: the live free-theory graph has Gromov
+        delta/diameter = 0.5, the maximum possible for any metric space (see
+        :func:`compare_embeddings_on_real_hierarchy`). No geometry is assigned to
+        the base. This method computes the retired quantity for comparison only,
+        and emits a warning so it cannot be used as though it were current.
+        """
+        import warnings
+        warnings.warn(
+            "the Poincare base is a RETIRED hypothesis (delta/diameter = 0.5 on "
+            "the live free-theory graph); this value is an instrument reading, "
+            "not a distance on this base",
+            UserWarning, stacklevel=2)
         coords = coords or embed_hierarchy()
         return poincare_distance(coords[self.base.name], coords[other.base.name])
 

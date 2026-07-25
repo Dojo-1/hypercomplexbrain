@@ -17,8 +17,9 @@ output leg and half of a maximally entangled pair is swapped in -- and reports
     N = I(o1 : i1, f)
 
 the quantum mutual information between what the process delivered at t1 and
-everything downstream.  N = 0 certifies Markovianity: the relation carries no
-memory, and the draft's Tendril lift buys nothing for that edge.  N > 0 is the
+everything downstream.  N = 0 is consistent with Markovianity for this construction; it is a
+witness, not a general certificate (see the scope note below). It means the
+relation carries no measurable memory here, and the draft's Tendril lift buys nothing for that edge.  N > 0 is the
 amount of temporal binding actually available.
 """
 
@@ -28,8 +29,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-__all__ = ["ProcessTensor", "build_two_step_process", "non_markovianity",
-           "ProcessReport"]
+__all__ = ["ProcessTensor", "build_two_step_process",
+           "temporal_correlation_witness", "non_markovianity", "ProcessReport"]
 
 
 def _dm(vec: np.ndarray) -> np.ndarray:
@@ -78,6 +79,7 @@ class ProcessReport:
 
     @property
     def markovian(self) -> bool:
+        """No measurable temporal correlation *on this construction*."""
         return self.non_markovianity < 1e-9
 
     def __str__(self) -> str:  # pragma: no cover - display only
@@ -142,8 +144,19 @@ def build_two_step_process(coupling: float) -> ProcessTensor:
     return ProcessTensor(choi=choi, dims=[d, d, d])
 
 
-def non_markovianity(coupling: float) -> ProcessReport:
-    """Measure the temporal memory of a two-step process at a given coupling."""
+def temporal_correlation_witness(coupling: float) -> ProcessReport:
+    """Temporal-correlation witness for the two-step toy process.
+
+    Not a general Markovianity certificate: see the module scope note.
+    """
     pt = build_two_step_process(coupling)
     return ProcessReport(coupling=coupling,
                          non_markovianity=max(0.0, pt.mutual_information()))
+
+
+def non_markovianity(coupling: float) -> ProcessReport:
+    """Deprecated alias for :func:`temporal_correlation_witness`.
+
+    The old name asserted more than the construction supports.
+    """
+    return temporal_correlation_witness(coupling)

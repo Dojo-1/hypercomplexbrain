@@ -237,8 +237,13 @@ def syndrome_extraction_disturbance(alpha: float = 0.6, error_qubit: int | None 
     ideal[0b111] = beta
     fidelity = float(abs(np.vdot(ideal, psi)) ** 2)
 
-    # The syndrome distinguishes 4 equally-likely error locations: 2 bits.
-    info = 2.0 if error_qubit is not None else 0.0
+    # Information the syndrome carries, computed rather than asserted.  Under a
+    # uniform prior over the four distinguishable situations (no error, or a flip
+    # on one of three qubits) the syndrome map is a bijection onto four outcomes,
+    # so I(error ; syndrome) = H(prior) = 2 bits -- including the no-error case,
+    # which is one of the four outcomes and not an absence of information.
+    syndromes = {(1, 1): None, (-1, 1): 0, (-1, -1): 1, (1, -1): 2}
+    info = math.log2(len(syndromes))
 
     return SyndromeReport(syndrome=tuple(syndrome),
                           information_bits=info,

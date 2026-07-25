@@ -332,6 +332,19 @@ CLAIMS = [
           kill_condition="effective rank and conditioning predict robustness as "
                          "well or better at matched cost."),
 
+    Claim("MODEL-R4-DRONE_CEILING", EvidenceTag.PROVED,
+          "An uninterrupted channel can be funded only by steady refill, never by a "
+          "finite reservoir: drone_ceiling = refill_rate.",
+          artifact="aionq.bordon.BordonBreath.drone_ceiling",
+          assumptions=("constant draw", "constant refill", "finite capacity")),
+    Claim("MODEL-R4-BORDON", EvidenceTag.HYPOTHESIS,
+          "Reservoir respiration (fol/puntero/bordon) models cognitive breathing "
+          "better than a single global period.",
+          artifact="aionq.bordon",
+          kill_condition="a periodic model reproduces drone protection, "
+                         "asynchronous per-channel rates and uninterrupted sustain "
+                         "at matched parameters."),
+
     # --- S: scaffolding ------------------------------------------------------
     Claim("SEM-R0-BREATHING", EvidenceTag.SEMANTIC,
           "Inhalation/exhalation as a description of code expansion and entropy export.",
