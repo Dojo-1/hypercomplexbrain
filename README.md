@@ -94,7 +94,9 @@ python3 experiments/run_audit.py      # every claim, computed
 python3 experiments/acaf_sweep.py     # 150-core falsification sweep
 python3 experiments/run_visibility.py # Round V1: coupling field vs code distance
 python3 experiments/run_replication.py # Round V2: depth, intervals, distributions
-python3 -m pytest tests/ -q           # 103 tests
+python3 experiments/run_sentinel.py   # Round S1: Sigma-inf sentinel vs its kill condition
+python3 experiments/run_stokes.py     # Round S2: Stokes router vs its kill condition
+python3 -m pytest tests/ -q           # 109 tests
 ```
 
 ## Layout
@@ -120,6 +122,7 @@ src/aionq/
   statistics.py     bootstrap intervals; measurements that carry their uncertainty
   splitform.py      split forms over R and F_2; logical pairs; computed distance
   sentinel.py       sparse expanding-gap novelty diagnostic (RETIRED: see S1)
+  stokes.py         Stokes matrices, braid action, basis-mutation router (S2)
 experiments/        audit and ACAF sweep
 tests/              one test per falsifiable claim
 docs/ARCHITECTURE.md

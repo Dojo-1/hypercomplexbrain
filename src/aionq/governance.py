@@ -428,6 +428,24 @@ CLAIMS = [
                        "its best direction -- the reading most favourable to the "
                        "baselines")),
 
+    Claim("EXP-S2-STOKES_CONDITIONAL", EvidenceTag.MEASURED,
+          "The Stokes router matches a refitting gated mixture ZERO-SHOT where the "
+          "latent basis truly mutates (delta +0.0004, not significant, 6 params vs "
+          "14), and fails completely in the weights-only control (delta +5.777, "
+          "d = 1.88). The conditional pattern of thesis section 12 holds.",
+          artifact="experiments/run_stokes.py",
+          sample_size=120, interval=(-0.0060, 0.0065),
+          null="the thesis kill condition: a standard gated mixture matching all "
+               "metrics; and the control regime where no basis change occurs",
+          assumptions=("60 trials per regime, latent dim 3, observed dim 6",
+                       "router is zero-shot: fitted on regime 1 only, carried "
+                       "across by the declared mutation; the mixture refits on "
+                       "regime-2 labels",
+                       "the mutation matrix is SUPPLIED, not learned -- the router "
+                       "is told where the crossing is and what it is",
+                       "MSE only: the thesis also predicts an interpretability "
+                       "gain, which is NOT tested here")),
+
     Claim("BRIDGE-R3-QCAUSAL", EvidenceTag.HYPOTHESIS,
           "Some quantum organ shows a causal advantage inside a pre-registered cone.",
           artifact="aionq.advantage.promote",
@@ -479,6 +497,16 @@ CLAIMS = [
           "Pauli weight above r measures invisibility at probe depth r.",
           corrections=("product state |+>^6 scored g_1 = 0.891 when it must be 0; "
                        "<X1X2> = <X1><X2> is 1-locally determined despite weight 2",)),
+    Claim("RET-S2-STOKES_ROUTER_ACCURACY", EvidenceTag.RETIRED,
+          "The Stokes-Thimble Router earns its place by beating a gated mixture "
+          "on accuracy.",
+          corrections=("the thesis kill condition as written is met: the mixture "
+                       "matches it on MSE where the basis truly changes",
+                       "what survives is narrower and is kept as "
+                       "EXP-S2-STOKES_CONDITIONAL -- parity reached zero-shot at "
+                       "fewer parameters, plus correct failure in the control",
+                       "the mutation matrix is supplied rather than learned, so "
+                       "this does not show a system could FIND the crossing")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",

@@ -421,6 +421,43 @@ remains what §13 says it is: an inspiration, not a transferred theorem.
 
 ---
 
+## 5f. Σ∞ §16 experiment 4 — the Stokes-Thimble Router (Round S2)
+
+§12 predicts the router *conditionally*: mutation helps **"only when the
+transition truly changes basis."** That conditional is the real test, so two
+regimes are generated — one where the latent basis mutates by a unipotent Stokes
+matrix, one control where only the coefficients move.
+
+| regime | router | mixture | Δ (router − mixture) |
+|---|---:|---:|---|
+| **A** basis truly mutates | 0.0169 | 0.0165 | **+0.0004 [−0.0060, +0.0065]** — not significant |
+| **B** control, weights only | 5.7870 | 0.0101 | **+5.777 [+4.75, +6.91]**, d = 1.88 — fails |
+
+Four things follow, and they don't all point the same way.
+
+1. **The kill condition as written is met.** *"A standard gated mixture matches
+   all metrics"* — on MSE in regime A, it does. `RET-S2-STOKES_ROUTER_ACCURACY`.
+2. **But the comparison is not apples-to-apples.** The router reaches parity
+   **zero-shot** — it never sees regime-2 labels, carrying a regime-1 fit across
+   by the declared mutation — using **6 parameters against the mixture's 14**.
+3. **The conditional pattern holds exactly.** It matches where the basis genuinely
+   mutates and collapses to fixed-basis performance in the control, which is what
+   §12 predicts and what pure extra capacity would *not* produce.
+4. **Half the prediction was not tested.** §12 also predicts an *interpretability*
+   gain. I measured MSE. The router does carry an auditable `MutationRecord` with
+   provenance, but no interpretability metric was run, and I am not going to
+   claim a result I did not measure.
+
+The load-bearing caveat: **the mutation matrix is supplied, not learned.** The
+router is told where the crossing is and what it is. So this shows a declared
+basis change transfers a model zero-shot — not that a system could *find* the
+crossing. That is the gap between this result and the architectural claim.
+
+An earlier version of the script refit the router in the control but not in
+regime A, which would have flattered it. Corrected to zero-shot in both.
+
+---
+
 ## 6. Net effect on this repository
 
 1. `src/aionq/governance.py` — evidence lattice, typed remainders, immutable

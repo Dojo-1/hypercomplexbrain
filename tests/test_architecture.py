@@ -1048,3 +1048,46 @@ def test_sentinel_is_registered_as_retired():
     c = registry["RET-S1-TRANSCENDENCE_SENTINEL"]
     assert c.tag == EvidenceTag.RETIRED
     assert any("kill condition" in x for x in c.corrections)
+
+
+# --------------------------------------------------------------------------
+# Round S2: Stokes-Thimble routing
+# --------------------------------------------------------------------------
+
+def test_stokes_matrix_is_unipotent_upper():
+    from aionq.stokes import is_unipotent_upper, stokes_matrix
+    rng = np.random.default_rng(0)
+    s = stokes_matrix(4, rng=rng)
+    assert is_unipotent_upper(s)
+    assert np.linalg.det(s) == pytest.approx(1.0)     # a basis change, not a rescaling
+
+
+def test_router_refuses_a_non_stokes_crossing():
+    from aionq.stokes import StokesRouter
+    r = StokesRouter(basis=np.eye(3))
+    with pytest.raises(ValueError):
+        r.mutate(np.diag([2.0, 1.0, 1.0]))            # not unipotent
+
+
+def test_mutation_is_recorded_with_provenance():
+    """The point of the router: the basis change is auditable, not hidden."""
+    from aionq.stokes import StokesRouter, stokes_matrix
+    r = StokesRouter(basis=np.eye(3))
+    r.mutate(stokes_matrix(3, entries={(0, 1): 0.7}), at_step=42, reason="crossing")
+    assert len(r.history) == 1
+    assert r.history[0].at_step == 42 and r.sector == 1
+    assert "crossing" in str(r.history[0])
+
+
+def test_braid_action_preserves_unipotent_upper_form():
+    from aionq.stokes import braid_action, is_unipotent_upper, stokes_matrix
+    rng = np.random.default_rng(3)
+    s = stokes_matrix(4, rng=rng)
+    for i in range(3):
+        assert is_unipotent_upper(braid_action(s, i))
+
+
+def test_stokes_router_is_registered_as_retired_on_accuracy():
+    from aionq.governance import registry, EvidenceTag
+    assert registry["RET-S2-STOKES_ROUTER_ACCURACY"].tag == EvidenceTag.RETIRED
+    assert registry["EXP-S2-STOKES_CONDITIONAL"].tag == EvidenceTag.MEASURED

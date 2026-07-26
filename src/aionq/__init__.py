@@ -29,7 +29,7 @@ qrf           quantum reference frames: entanglement is frame-relative
 
 from . import (advantage, atlas, bordon, budget, cayley_dickson, coherentize,
                fusion, governance, identity, process, qrf, quantities, residency,
-               selfknowledge, sentinel, splitform, stack, visibility)
+               selfknowledge, sentinel, splitform, stack, stokes, visibility)
 
 __version__ = "0.1.0"
 
@@ -51,6 +51,7 @@ __all__ = [
     "sentinel",
     "splitform",
     "stack",
+    "stokes",
     "visibility",
     "__version__",
 ]
