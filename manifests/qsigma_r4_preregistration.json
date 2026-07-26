@@ -1,0 +1,89 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "QSigma-R4 - Witnessed Reproducibility Membrane",
+  "contract": "docs/CLAUDE_CODE_CO_DEVELOPMENT.md",
+  "committed_before_any_implementation": true,
+  "baseline": {
+    "commit_sha": "b495cc7",
+    "tests_passing": 222,
+    "ledger": {"total": 81, "P": 21, "A": 5, "M": 22, "H": 4, "S": 5, "R": 24},
+    "platforms_actually_run": ["linux"],
+    "note": "222 is a Linux-only figure measured in this container. Windows and macOS counts are unknown until a green job exists on each; the contract forbids reporting cross-platform success before that, and this round will not report it."
+  },
+
+  "claims_addressed": [
+    {
+      "id": "R4-A",
+      "claim": "q_sim_upper is an upper bound on the classical simulation cost of a circuit.",
+      "defect": "A compiler path containing an opaque or unpriced instruction currently contributes its partial T-count to the portfolio minimum. The unpriced instruction is skipped rather than invalidating the path, so an opaque gate makes the circuit look CHEAPER to simulate, i.e. it silently OVERSTATES quantum advantage.",
+      "invariant": "For every circuit C and every injected opaque instruction g, q_sim_upper(C + g) >= q_sim_upper(C). No path status other than `valid` may enter the minimum."
+    },
+    {
+      "id": "R4-B",
+      "claim": "The quaternion projection basis is constructed once and reused.",
+      "defect": "The current test times cached-quaternion against sheaf and accepts any ratio in (3, 60). It never exercises the uncached path, never asserts reuse, and puts a wall-clock threshold inside the correctness suite.",
+      "invariant": "Construction count is 1 on first call and 0 on every subsequent call, asserted by instrumentation rather than by timing. All global cache state is restored after the test."
+    },
+    {
+      "id": "R4-C",
+      "claim": "max_rss_kib reports the peak resident memory of one experimental condition, in KiB.",
+      "defect": "Two errors. (i) ru_maxrss is KiB on Linux and BYTES on macOS, so the same physical usage differs by 1024x across platforms under one field name. (ii) ru_maxrss is a process-LIFETIME maximum, so a later condition inherits an earlier condition's peak and the attribution is wrong even on Linux.",
+      "invariant": "Units are normalised at the source and the field name states its temporal scope. Per-condition attribution, where claimed, comes from an isolated subprocess."
+    },
+    {
+      "id": "R4-D",
+      "claim": "The governance registry records the evidence status of each claim.",
+      "defect": "The registry is currently the sole source of its own evidence status. Its tests establish that the hand-authored ledger agrees with itself; they do not establish that the cited command ran, that the stored interval came from the cited artifact, or that the artifact matches the cited commit.",
+      "invariant": "An M/A/P claim carries an EvidenceEnvelope binding it to a command, an environment, input hashes, seeds and raw artifact hashes. Editing the registry alone cannot promote a claim."
+    }
+  ],
+
+  "files_expected_to_change": [
+    "src/aionq/residency.py",
+    "src/aionq/recognition/metrics.py",
+    "src/aionq/governance.py",
+    "src/aionq/evidence.py",
+    "tests/test_architecture.py",
+    "tests/test_evidence.py",
+    "experiments/run_instrument_benchmark.py",
+    ".github/workflows/ci.yml",
+    "docs/ARCHITECTURE.md",
+    "README.md"
+  ],
+
+  "controls_and_attacks": [
+    {"name": "opaque injection", "procedure": "Append a UnitaryGate with no known decomposition to a circuit whose q_sim_upper is known. PASS iff the reported bound does not decrease and the path is marked opaque_instruction."},
+    {"name": "compiler failure injection", "procedure": "Force transpile to raise at one optimisation level. PASS iff that level is recorded as transpile_failed and does not enter the minimum."},
+    {"name": "no valid path", "procedure": "Make every level fail. PASS iff the result is `unknown` with a typed remainder, NOT 0.0 and NOT nan silently coerced to a small number."},
+    {"name": "unexpected error", "procedure": "Raise KeyboardInterrupt inside a classification path. PASS iff it propagates."},
+    {"name": "cache instrumentation", "procedure": "Count basis constructions across two calls. PASS iff (1, 0)."},
+    {"name": "envelope corruption", "procedure": "Flip one byte of a recorded raw artifact hash. PASS iff verification fails."},
+    {"name": "registry-only promotion", "procedure": "Change a claim's tag from H to M without adding an envelope. PASS iff promotion is refused."},
+    {"name": "commit mismatch", "procedure": "Point an envelope at a commit that does not contain its artifact. PASS iff verification fails."},
+    {"name": "historical regression", "procedure": "Run the membrane against a claim already in the ledger and report at least one that it REJECTS. If it rejects none, that is evidence the membrane is ceremonial, and it is reported as such."}
+  ],
+
+  "resource_budget": {
+    "no_new_runtime_dependency": true,
+    "psutil": "not permitted; RSS is reported as unavailable rather than importing a new dependency to obtain it",
+    "benchmark_is_not_gated_in_ci": "a wall-clock ratio must never be a CI pass condition"
+  },
+
+  "kill_conditions": [
+    "R4-A: any opaque or failed path can still make the reported simulation bound smaller.",
+    "R4-B: the documented cache claim cannot be reconstructed from a raw benchmark artifact plus its environment envelope.",
+    "R4-C: the same physical memory use can still be reported with a silent 1024x unit error, or an earlier condition's lifetime peak is attributed to a later one.",
+    "R4-D: copying a prose result into JSON passes verification. If the envelope layer only restates what the registry already said, WITHOUT independently binding a claim to a command and a raw artifact, the whole membrane is RETIRED as ceremonial governance rather than kept as decoration."
+  ],
+
+  "stop_condition": "Stop after R4. Do not begin QTau-Germinal, the UTAI audit, the lambda-sat study, higher gerbes or any architecture lift in this round.",
+
+  "promotion_rule": {
+    "S_to_H": "the membrane is specified with its kill conditions",
+    "H_to_M": "each preregistered attack above runs and its outcome is recorded",
+    "cross_platform": "NOT claimed until each platform has an actual green CI job; a Linux-only run promotes nothing about Windows or macOS",
+    "P": "reserved for statements with proofs, e.g. the monotonicity invariant of R4-A, not for the fact that the tests pass"
+  },
+
+  "prior_probability_of_the_authors_own_failure_mode": "This repository's recurring error is the correct shape with the old comparison still inside it. For R4 the specific risk is an EvidenceEnvelope that hashes a file the same process just wrote from the same prose, which is self-witnessing with extra steps. The R4-D kill condition is written to catch exactly that, and it is the condition most likely to fire."
+}
