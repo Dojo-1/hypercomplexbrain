@@ -755,7 +755,14 @@ measuring it high makes it *think better*. That gap is the largest one remaining
 cognitive gerbe, quantum identity ecology. Retained as scaffolding, load-bearing
 nowhere.
 
-**R — retired.** Hypercomplex coordinates improve obstruction diagnosis (Round S3:
+**R — retired.** An adaptive aperture reveals structure a static ensemble does
+not (Round S4: the static ensemble matches or beats it on four of five held-out
+families); Explore-then-verify ordering improves localisation (Round S4: the gate
+passes while the method loses to the baseline); The Reversible Recognition
+Chamber architecture is already optimal (retired pre-emptively and never
+supported); The chamber's per-overlap belief is intrinsic to the sheaf (Round S4:
+demoted to a representation-sensitive diagnostic); Hypercomplex coordinates
+improve obstruction diagnosis (Round S3:
 they *tie* with a dimension-matched real sheaf on their home ground and lose
 badly off it); Octonionic fibers give a sheaf-cohomological obstruction theory
 (Round S3: ill-posed — above dimension 4 a vertex gauge induces no flat
@@ -781,6 +788,7 @@ capacity as a count of holonomies.
 | QΣ-R0.8 | self-review: half-applied fixes completed; cone wired into `promote()` | ✅ 59/59 tests |
 | QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network / matchgate / low-treewidth families not yet covered |
 | Σ∞-S3 | §16 exp. 1: sheaf obstruction localisation, 8 coordinate systems, 300 trials; plus the QΣ query claim | ✅ 128 tests; sheaf clause survives, hypercomplex clause killed, octonionic clause ill-posed |
+| S4-G100 | Reversible Recognition Chamber: aperture, ordered roles, nest gate, 10 preregistered gates | ✅ 193 tests; 6/10 gates fail, chamber retired, S3 claim superseded as basis-dependent |
 | QΣ-R3A | measured free-conversion metric; re-test base geometry against it | not started |
 | QΣ-R3B | four-cell causal organ (self/other/memory/auditor), ΔY with uncertainty | specified, not run |
 | QΣ-R1 | four-cell organ (self/other/memory/auditor) at measured `Q_cert` | `Q_cert > 0.5` on hardware-sized cores |

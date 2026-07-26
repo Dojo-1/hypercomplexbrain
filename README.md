@@ -97,7 +97,9 @@ python3 experiments/run_replication.py # Round V2: depth, intervals, distributio
 python3 experiments/run_sentinel.py   # Round S1: Sigma-inf sentinel vs its kill condition
 python3 experiments/run_stokes.py     # Round S2: Stokes router vs its kill condition
 python3 experiments/run_sheaf.py      # Round S3: sheaf obstruction localisation + query claim
-python3 -m pytest tests/ -q           # 128 tests
+python3 experiments/run_s4_g100.py    # Round S4-G100: recognition chamber vs its gates
+python3 experiments/run_s4_basis_attack.py  # S4: is the S3 claim basis-invariant?
+python3 -m pytest tests/ -q           # 193 tests
 ```
 
 ## Layout
@@ -126,6 +128,7 @@ src/aionq/
   stokes.py         Stokes matrices, braid action, basis-mutation router (S2)
   sheaf.py          cellular sheaves of worldlets; eight localisation instruments
   interference.py   holonomy oracle: b classical queries against 1 quantum one
+  recognition/      S4-G100 chamber: worldlets, tendrils, aperture, nest, budget
 experiments/        audit and ACAF sweep
 tests/              one test per falsifiable claim
 docs/ARCHITECTURE.md
@@ -159,6 +162,25 @@ obstruction class costs exactly `b = E − V + C` classical queries against exac
 accesses, which exceeds `b` on every instance tested; recovering the class is not
 localising the defect, and the decoding step that follows is unchanged for both
 parties.
+
+Round S4-G100 built the Reversible Recognition Chamber, preregistered ten gates,
+and **failed six of them**. On five held-out nerve families the chamber is worse
+than the closed-form S3 localiser it was built to improve on (pooled ΔAUROC
+−0.033, winning 20 of 50 instances), and its apparent advantage tracks
+budget-to-search-space ratio rather than adaptivity or ordering. The declared
+expectation on record was a negative result, and that is what the held-out
+families produced.
+
+Two things came out of it that matter more than the failure. The **dominance
+region caught what a weighted score would have passed**: the ordered-flow gate
+clears +0.033 while the method sits 0.033 *below* baseline, so any aggregate
+containing that component could have carried the round on a measurement of the
+chamber against itself. And the mandatory attack suite exposed a defect in a
+**prior** claim — Round S3's headline was measured inside one arbitrary
+fundamental cycle basis, and under an admissible worldlet relabelling it retains
+its direction but only 20% of its effect size (+0.269 → +0.055). Every
+localisation number on this host is a basis-relative quantity.
+`EXP-S3-SHEAF_LOCALISATION` is superseded, its original text preserved.
 
 Nothing here connects any coordinate to cognitive performance. The advantage cone
 is the right *shape* to receive an answer; no experiment has produced one, and
