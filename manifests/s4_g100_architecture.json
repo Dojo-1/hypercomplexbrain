@@ -1,0 +1,277 @@
+{
+  "name": "s4-g100-reversible-recognition-chamber",
+  "evidence_floor": "H",
+  "round": "S4-G100",
+  "host": "the surviving S3 real/matrix sheaf-localisation environment (aionq.sheaf)",
+  "forbidden_promotions": [
+    "no AGI, consciousness or cognition claim",
+    "no quantum advantage claim",
+    "no asymptotic computational advantage claim",
+    "no claim that hypercomplex coordinates are superior (RET-S3-HYPERCOMPLEX_DIAGNOSIS)",
+    "no octonionic flat-sheaf construction (RET-S3-OCTONIONIC_SHEAF)",
+    "no weighted scalar promotion gate (RET-R3-SCALAR_PROMOTION)",
+    "no claim that this architecture is optimal (RET-S4-OPTIMAL_COGNITION)"
+  ],
+
+  "worldlets": [
+    {
+      "id": "W_evidence",
+      "role": "local_evidence_carrier",
+      "carrier": "sheaf_transitions: one d x d orthogonal matrix per overlap",
+      "local_geometry": "orthogonal_group_frobenius",
+      "algebra_regime": "real_matrix",
+      "flat_sheaf_role": true,
+      "clocks": ["slow_evidence"],
+      "observers": ["cycle_basis_holonomy_readout"],
+      "boundary": "observes only holonomy around basis cycles; never a per-overlap ground truth",
+      "energy_or_cost": 0.0,
+      "evidence_refs": ["EXP-S3-SHEAF_LOCALISATION"],
+      "typed_remainders": ["coboundary component invisible to holonomy"],
+      "note": "real_matrix and NOT quaternionic: the dimension-matched real representation is the primary, per the S3 governing constraint"
+    },
+    {
+      "id": "W_memory",
+      "role": "candidate_memory",
+      "carrier": "f2_cochain: candidate defect supports in F_2^E",
+      "local_geometry": "hamming_f2",
+      "algebra_regime": "gf2",
+      "flat_sheaf_role": false,
+      "clocks": ["meso_consolidation"],
+      "observers": ["candidate_population_statistics"],
+      "boundary": "holds supports only; carries no transition values",
+      "energy_or_cost": 0.0,
+      "evidence_refs": [],
+      "typed_remainders": ["coset ambiguity: supports differing by a cut are indistinguishable"]
+    },
+    {
+      "id": "W_explore",
+      "role": "exploratory_counterfactual",
+      "carrier": "aperture_box: (tau, kappa, beta) with declared bounds",
+      "local_geometry": "bounded_box_l1",
+      "algebra_regime": "real",
+      "flat_sheaf_role": false,
+      "clocks": ["fast_candidate"],
+      "observers": ["susceptibility_and_instability_signals"],
+      "boundary": "may propose and may not promote; has no handle on the evidence ledger",
+      "energy_or_cost": 0.0,
+      "evidence_refs": ["SEM-S4-EMPEROR"],
+      "typed_remainders": []
+    },
+    {
+      "id": "W_audit",
+      "role": "auditor_verification",
+      "carrier": "evidence_lattice: P/A/M/H/S/R claims under the governance partial order",
+      "local_geometry": "discrete_partial_order",
+      "algebra_regime": "symbolic",
+      "flat_sheaf_role": false,
+      "clocks": ["slow_evidence"],
+      "observers": ["deposit_gate", "witness_independence_check"],
+      "boundary": "may tag and may not generate; shares code and authorship with the other roles, so it is a correlated witness and says so",
+      "energy_or_cost": 0.0,
+      "evidence_refs": ["SEM-S4-NEST"],
+      "typed_remainders": ["semantic remainder: what a tag does not capture about the candidate"]
+    }
+  ],
+
+  "tendrils": [
+    {
+      "id": "T_evidence_to_memory",
+      "source": "W_evidence",
+      "target": "W_memory",
+      "forward_transport": "holonomy readout: cycle basis -> obstruction mass vector",
+      "return_transport": "non-negative least-squares fit of edge magnitudes on a candidate support",
+      "preserved_fields": ["cycle obstruction magnitudes"],
+      "transformed_fields": ["orthogonal matrices -> real obstruction masses"],
+      "lost_fields": ["the coboundary component of the defect", "transition phase and orientation", "which element of the group the defect was"],
+      "transport_cost": 1.0,
+      "claims_exact_inverse": false,
+      "typed_remainder": {
+        "remainder_type": "cohomology_class",
+        "carrier": "F_2^E modulo the cut space",
+        "metric_or_comparison": "coset dimension E - betti_1",
+        "note": "a genuine cohomological remainder, distinct in type from the round-trip transport defect"
+      }
+    },
+    {
+      "id": "T_memory_to_evidence",
+      "source": "W_memory",
+      "target": "W_evidence",
+      "forward_transport": "candidate support -> predicted cycle mass under the additive model",
+      "return_transport": "residual -> updated support belief",
+      "preserved_fields": ["support cardinality"],
+      "transformed_fields": ["F_2 support -> real predicted masses"],
+      "lost_fields": ["candidate co-occurrence structure once projected to a per-overlap belief"],
+      "transport_cost": 1.0,
+      "claims_exact_inverse": false,
+      "typed_remainder": {
+        "remainder_type": "empirical_residual",
+        "carrier": "real_vector[n_cycles]",
+        "metric_or_comparison": "sum of squares of the fit residual"
+      }
+    },
+    {
+      "id": "T_explore_to_memory",
+      "source": "W_explore",
+      "target": "W_memory",
+      "forward_transport": "aperture (tau, kappa, beta) -> a candidate population of size kappa",
+      "return_transport": "population dispersion and consistency -> susceptibility and instability signals",
+      "preserved_fields": ["population size contract kappa"],
+      "transformed_fields": ["aperture dials -> sampled supports"],
+      "lost_fields": ["individual candidate identity on the return path: only aggregates return"],
+      "transport_cost": 0.0,
+      "claims_exact_inverse": false,
+      "typed_remainder": {
+        "remainder_type": "empirical_residual",
+        "carrier": "real_vector[2]",
+        "metric_or_comparison": "dispersion of gluing scores weighted by explained fraction"
+      }
+    },
+    {
+      "id": "T_memory_to_audit",
+      "source": "W_memory",
+      "target": "W_audit",
+      "forward_transport": "candidate metrics tuple -> deposit decision against the preregistered region",
+      "return_transport": "evidence tag -> candidate status",
+      "preserved_fields": ["candidate id", "generated_by dependency set"],
+      "transformed_fields": ["six-component metric tuple -> one deposit type and tag"],
+      "lost_fields": ["the raw metric distribution", "per-gate margins once the tag is issued"],
+      "transport_cost": 0.0,
+      "claims_exact_inverse": false,
+      "typed_remainder": {
+        "remainder_type": "semantic_remainder",
+        "carrier": "evidence_lattice",
+        "metric_or_comparison": "what the tag does not say about the candidate"
+      }
+    },
+    {
+      "id": "T_evidence_to_audit",
+      "source": "W_evidence",
+      "target": "W_audit",
+      "forward_transport": "raw artifact reference -> provenance record",
+      "return_transport": "provenance record -> the identical raw artifact reference",
+      "preserved_fields": ["artifact path", "seed", "commit", "raw value"],
+      "transformed_fields": [],
+      "lost_fields": [],
+      "transport_cost": 0.0,
+      "claims_exact_inverse": true,
+      "invariant_channel": true,
+      "typed_remainder": {
+        "remainder_type": "empirical_residual",
+        "carrier": "provenance_record",
+        "metric_or_comparison": "exact equality of the retained reference; defect is identically zero"
+      },
+      "note": "the invariant channel. This is the one edge that must be exactly reversible, and it is the null-loop test case."
+    },
+    {
+      "id": "T_explore_to_evidence",
+      "source": "W_explore",
+      "target": "W_evidence",
+      "forward_transport": "orthogonal gauge transform G applied to every transition",
+      "return_transport": "G inverse applied to every transition",
+      "preserved_fields": ["cycle holonomy conjugacy class", "obstruction magnitudes", "AUROC"],
+      "transformed_fields": ["individual transition matrices"],
+      "lost_fields": [],
+      "transport_cost": 0.0,
+      "claims_exact_inverse": true,
+      "typed_remainder": {
+        "remainder_type": "empirical_residual",
+        "carrier": "real_matrix",
+        "metric_or_comparison": "Frobenius round-trip; defect is identically zero for orthogonal G"
+      },
+      "note": "the isometry case for theorem target P3"
+    }
+  ],
+
+  "identity": {
+    "carrier": "the tuple (evidence ledger, correction history, provenance records)",
+    "continuity_condition": "the invariant channel T_evidence_to_audit is never throttled and its loop defect stays exactly zero",
+    "funded_by": "invariant_draw, which must not exceed refill_rate",
+    "what_would_break_it": "any code path that reduces invariant_draw under resource pressure; none exists in aionq.recognition.budget by construction"
+  },
+
+  "clocks": [
+    {"name": "fast_candidate", "period": 1, "role": "one candidate batch per tick", "funded_by": "speculative", "throttle_order": 1},
+    {"name": "meso_consolidation", "period": 4, "role": "aperture update, resource charge, nest evaluation", "funded_by": "speculative", "throttle_order": 2},
+    {"name": "slow_evidence", "period": 16, "role": "evidence retention and provenance write", "funded_by": "invariant", "throttle_order": null}
+  ],
+
+  "dynamics": {
+    "hyperedges": [
+      {
+        "id": "H_deposit_gate",
+        "members": ["W_memory", "W_evidence", "W_audit"],
+        "constraint": "a deposit requires the candidate (memory), its gluing evidence (evidence) and an authorizing witness outside the generating dependency closure (audit). No pair of these suffices.",
+        "implemented_by": "aionq.recognition.nest.nest_decision"
+      },
+      {
+        "id": "H_aperture_update",
+        "members": ["W_explore", "W_memory", "W_evidence"],
+        "constraint": "the aperture responds to candidate dispersion AND explained obstruction fraction jointly; dispersion alone is noise and explained fraction alone is not susceptibility.",
+        "implemented_by": "aionq.recognition.chamber.RecognitionChamber._signals"
+      }
+    ],
+    "breathing": {
+      "model": "aionq.bordon reservoir (fol / bordon / puntero)",
+      "capacity": 50.0,
+      "refill_rate": 0.6,
+      "invariant_draw": 0.4,
+      "speculative_draw": "0.02 * branch_width, charged per meso tick",
+      "throttle_order": ["narrow branch width", "shorten unresolved lifetime", "preserve evidence and provenance", "record the intervention"],
+      "invariant_never_cut": true
+    },
+    "weaving": {
+      "rule": "a tendril is woven while it carries information the chamber uses",
+      "implemented_by": "aionq.recognition.worldlet.Tendril.weave"
+    },
+    "deweaving": {
+      "rule": "a tendril is retired with a stated reason and is recorded, never deleted",
+      "implemented_by": "aionq.recognition.worldlet.Tendril.deweave"
+    },
+    "controls": [
+      "C0 deterministic S3 localiser",
+      "C1 equal-entropy random perturbation",
+      "C2 static candidate ensemble, no adaptive aperture",
+      "C3 adaptive aperture, no ordered flow",
+      "C5 reversed flow",
+      "C7 matched-spectrum surrogate perturbation fields",
+      "matched random aperture controller",
+      "shuffled role labels"
+    ]
+  },
+
+  "evidence": [
+    {"id": "DEF-S4-LOOP_DEFECT", "tag": "P", "statement": "loop defect is a nonnegative TransportDefect, typed, raw value retained"},
+    {"id": "MATH-S4-LOOP_ZERO", "tag": "P", "statement": "an exact left inverse gives zero loop defect"},
+    {"id": "MATH-S4-GAUGE_INVARIANCE", "tag": "P", "statement": "loop defect is invariant under conjugation by an isometry"},
+    {"id": "MODEL-S4-BORDON_CEILING", "tag": "P", "statement": "indefinite invariant-channel survival requires invariant_draw <= refill_rate, inside the constant-rate model"},
+    {"id": "MATH-S4-NO_SELF_PROMOTION", "tag": "P", "statement": "a claim cannot be promoted when every authorizing node lies in the dependency closure of the generating nodes"},
+    {"id": "HYP-S4-FERTILE_APERTURE", "tag": "H", "statement": "an adaptive aperture reveals structure a static ensemble does not", "kill_condition": "C2 static ensemble matches the complete effect region"},
+    {"id": "HYP-S4-ORDERED_FLOW", "tag": "H", "statement": "explore-then-verify outperforms both unordered and reversed flow", "kill_condition": "C4 fails to beat C3 and C5 by at least +0.01 held-out AUROC"},
+    {"id": "HYP-S4-STRUCTURED_PERTURBATION", "tag": "H", "statement": "the three fixed structured fields probe basin stability better than matched-spectrum surrogates", "kill_condition": "C7 matched surrogates match C6 within the preregistered margin"},
+    {"id": "SEM-S4-EMPEROR", "tag": "S", "statement": "the exploratory role potential; denotes aionq.recognition.roles.Explorer and nothing more"},
+    {"id": "SEM-S4-EMPRESS", "tag": "S", "statement": "the gluing and verification role potential; denotes aionq.recognition.roles.Verifier and nothing more"},
+    {"id": "SEM-S4-NEST", "tag": "S", "statement": "the evidence-gated deposit predicate; denotes aionq.recognition.nest.nest_decision and nothing more"}
+  ],
+
+  "observables": [
+    {"name": "delta_auroc", "carrier": "rank statistic on per-overlap scores", "raw_before_normalisation": true},
+    {"name": "delta_brier", "carrier": "normalised score vs 0/1 label", "distribution_reported": true},
+    {"name": "delta_candidate_diversity", "carrier": "mean pairwise Hamming / E"},
+    {"name": "neg_delta_loop_defect", "carrier": "typed TransportDefect, raw"},
+    {"name": "neg_delta_compute", "carrier": "wall seconds, peak KiB, candidate evaluations, parameter count"},
+    {"name": "neg_delta_instability", "carrier": "worst-case AUROC change over representation attacks"},
+    {"name": "order_defect", "carrier": "L1 on the per-overlap belief simplex", "interpretation": "an observable, NOT a benefit"}
+  ],
+
+  "falsifiers": [
+    {"id": "F1", "kill_if": "the static ensemble C2 matches the complete effect region"},
+    {"id": "F2", "kill_if": "equal-entropy random perturbation C1 or matched surrogate C7 matches the effect region"},
+    {"id": "F3", "kill_if": "C4 does not outperform both C3 and C5 by at least +0.01 held-out AUROC"},
+    {"id": "F4", "kill_if": "the effect disappears on held-out nerve families"},
+    {"id": "F5", "kill_if": "the effect depends materially on vertex labels, edge order, cycle basis, gauge or encoding"},
+    {"id": "F6", "kill_if": "the three fixed structured seeds work only under post-hoc selection"},
+    {"id": "F7", "kill_if": "an ordinary confidence margin predicts useful susceptibility as well as the aperture observables"},
+    {"id": "F8", "kill_if": "resource parity fails: wall clock above 2.0x or peak memory above 1.5x the best matched baseline"},
+    {"id": "F9", "kill_if": "raw metrics reveal clipping, leakage or tautological validation"}
+  ]
+}
