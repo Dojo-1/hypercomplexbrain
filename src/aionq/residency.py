@@ -69,6 +69,7 @@ from dataclasses import dataclass, field
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit import Barrier, ControlFlowOp, Delay, Measure, Reset
+from qiskit.exceptions import QiskitError
 from qiskit.quantum_info import Clifford, Operator, Statevector
 
 __all__ = [
@@ -81,7 +82,53 @@ __all__ = [
     "naive_residency",
     "stabilizer_renyi_entropy",
     "max_bipartite_entanglement",
+    "SWALLOWED",
+    "swallowed_report",
+    "clear_swallowed",
 ]
+
+# --------------------------------------------------------------------------
+# The swallow ledger
+# --------------------------------------------------------------------------
+#
+# Three sites here must tolerate an operation that has no unitary, is not
+# Clifford, or cannot be transpiled -- those are ordinary answers, not faults.
+# They were written as bare ``except Exception: return False``, which an external
+# reviewer flagged.  The objection is exact: with a blanket catch, a real defect
+# -- a broken import, a numpy failure, a shape bug -- is indistinguishable from
+# "this gate simply has no matrix", and the classification degrades silently to
+# OPAQUE.  OPAQUE inflates the reported residency, so the failure mode is a
+# *quiet overstatement of quantum advantage*, which is the exact direction this
+# repository is least entitled to be wrong in.
+#
+# Two changes.  The catch is narrowed to what Qiskit actually raises for an
+# unrepresentable operation, so anything else propagates.  And the ones that are
+# still caught are RECORDED rather than dropped, so "nothing was swallowed" is a
+# checkable statement instead of an assumption.
+
+_EXPECTED = (QiskitError, TypeError, ValueError)
+
+SWALLOWED: list = []
+
+
+def _swallow(site: str, operation, exc: Exception) -> None:
+    SWALLOWED.append({"site": site,
+                      "op": getattr(operation, "name", repr(operation)),
+                      "error": f"{type(exc).__name__}: {exc}"})
+
+
+def swallowed_report() -> list:
+    """Every expected-but-caught exception since the last :func:`clear_swallowed`.
+
+    Empty is the normal state.  A non-empty report is not necessarily a bug --
+    a measurement genuinely has no unitary -- but it is the only place the
+    distinction can be made, so it is reported rather than inferred.
+    """
+    return list(SWALLOWED)
+
+
+def clear_swallowed() -> None:
+    SWALLOWED.clear()
 
 # Bravyi et al., "Simulation of quantum circuits by low-rank stabilizer
 # decompositions" (2019): asymptotic stabilizer rank per T gate ~ 2^(0.2284 t).
@@ -230,7 +277,8 @@ def _is_diagonal(operation, atol: float = 1e-9) -> bool:
         return True
     try:
         mat = Operator(operation).data
-    except Exception:
+    except _EXPECTED as exc:
+        _swallow("_is_diagonal/Operator", operation, exc)
         return False
     return bool(np.allclose(mat - np.diag(np.diag(mat)), 0, atol=atol))
 
@@ -239,7 +287,9 @@ def _is_clifford(operation) -> bool:
     try:
         Clifford(operation)
         return True
-    except Exception:
+    except _EXPECTED as exc:
+        # The overwhelmingly common case, and a correct answer: T is not Clifford.
+        _swallow("_is_clifford/Clifford", operation, exc)
         return False
 
 
@@ -272,7 +322,8 @@ def classify_instruction(operation, eps: float = DEFAULT_EPS) -> tuple[str, floa
 
     try:
         matrix = Operator(operation).data
-    except Exception:
+    except _EXPECTED as exc:
+        _swallow("classify_instruction/Operator", operation, exc)
         matrix = None
 
     if _is_clifford(operation):
@@ -354,7 +405,10 @@ def _portfolio_t_count(circuit: QuantumCircuit, eps: float,
         try:
             compiled = transpile(circuit, basis_gates=CLIFFORD_T_BASIS,
                                  optimization_level=level, seed_transpiler=11)
-        except Exception:
+        except _EXPECTED as exc:
+            # One optimisation level failing is survivable; ALL of them failing
+            # returns nan, which is why `best` is not silently defaulted to 0.
+            _swallow(f"clifford_t_cost/transpile(opt{level})", circuit, exc)
             continue
         total = 0.0
         for op in _walk(compiled):
