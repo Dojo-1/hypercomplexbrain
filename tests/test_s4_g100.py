@@ -561,3 +561,116 @@ def test_s4_claims_are_registered_at_the_right_tiers():
     assert registry["SEM-S4-EMPEROR"].tag == EvidenceTag.SEMANTIC
     assert registry["EXP-S3-SHEAF_LOCALISATION"].superseded_by == \
         "EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT"
+
+
+# ==========================================================================
+# 10. THE CONJUGATE ANTI-PAIR: true identity, unsupported interpretation
+# ==========================================================================
+
+def test_conjugate_associator_antipair_holds_exactly():
+    """A(conj a, b, c) = -A(a, b, c). True, and two lines to prove."""
+    from aionq.cayley_dickson import cd_conjugate, fast_associator, _random_unit
+    rng = np.random.default_rng(0)
+    for dim in (2, 4, 8, 16):
+        for _ in range(200):
+            a, b, c = (_random_unit(dim, rng) for _ in range(3))
+            std = fast_associator(a, b, c)
+            assert np.allclose(fast_associator(cd_conjugate(a), b, c), -std,
+                               atol=1e-12)
+
+
+def test_plain_negation_produces_the_same_antipair():
+    """The claim that conjugation makes this an 'algebraically exact anti-pair,
+    not an aesthetic duality' does not survive: negation does it too, exactly.
+
+    conj(a) and -a differ by 2 Re(a) . 1, and A(1, b, c) = 0, so the two act
+    identically on the associator.  A diagnostic that cannot separate
+    Cayley-Dickson conjugation from multiplication by -1 is not evidence that
+    conjugation is the right relation between a provability tower and a doxastic
+    one.  Locks RET-S4-CONJUGATION_IS_LOAD_BEARING.
+    """
+    from aionq.cayley_dickson import fast_associator, _random_unit
+    rng = np.random.default_rng(1)
+    for dim in (8, 16):
+        for _ in range(200):
+            a, b, c = (_random_unit(dim, rng) for _ in range(3))
+            # negation flips the associator EXACTLY, not just to tolerance
+            assert np.array_equal(fast_associator(-a, b, c),
+                                  -fast_associator(a, b, c))
+
+
+def test_the_antipair_is_vacuous_below_octonions():
+    """Identically zero at dim 2 and 4: no content for complex or quaternionic
+    towers, so the construction cannot distinguish them at all."""
+    from aionq.cayley_dickson import fast_associator, _random_unit
+    rng = np.random.default_rng(2)
+    for dim in (1, 2, 4):
+        for _ in range(200):
+            a, b, c = (_random_unit(dim, rng) for _ in range(3))
+            assert np.allclose(fast_associator(a, b, c), 0.0, atol=1e-12)
+
+
+def test_associator_vanishes_on_the_identity():
+    """A(1, b, c) = 0 exactly: the reason the whole thing is trilinear-trivial."""
+    from aionq.cayley_dickson import fast_associator, _random_unit
+    rng = np.random.default_rng(3)
+    for dim in (2, 4, 8, 16):
+        one = np.zeros(dim)
+        one[0] = 1.0
+        for _ in range(100):
+            b, c = _random_unit(dim, rng), _random_unit(dim, rng)
+            assert np.allclose(fast_associator(one, b, c), 0.0, atol=1e-14)
+
+
+# ==========================================================================
+# 11. MODULE-INDEPENDENT REMAINDER SAFETY
+#     Transplanted from an external audit of a sibling codebase, which found a
+#     module whose remainder stayed bounded only because another module ran.
+# ==========================================================================
+
+def test_aperture_is_bounded_without_any_controller():
+    """No controller, no budget tick: bounds must come from the type itself."""
+    ap = ApertureState()
+    for step in range(500):
+        ap.set("branch_width", ap.branch_width * 2, step, "unbounded widening")
+        ap.set("unresolved_lifetime", ap.unresolved_lifetime * 2, step, "unbounded")
+    assert ap.branch_width == ap.bounds.kappa_max
+    assert ap.unresolved_lifetime == ap.bounds.tau_max
+
+
+def test_reservoir_is_bounded_with_no_aperture_to_throttle():
+    """tick(aperture=None) removes the throttle's handle; level must still hold."""
+    b = BordonBudget(capacity=10.0, refill_rate=0.1, invariant_draw=0.05)
+    worst = 0.0
+    for step in range(1000):
+        b.charge(9.0)
+        b.tick(step, None)
+        worst = min(worst, b.level)
+    assert worst >= -1e-9
+
+
+def test_invariant_draw_never_falls_under_any_pressure():
+    """The one thing no code path may do."""
+    b = BordonBudget(capacity=1.0, refill_rate=0.0, invariant_draw=0.9)
+    ap = ApertureState()
+    for step in range(1000):
+        b.charge(50.0)
+        b.tick(step, ap)
+    assert b.invariant_draw == 0.9
+
+
+def test_provenance_log_growth_is_registered_as_a_known_drift():
+    """The audit's one real finding: the log grows while invariant_draw is fixed.
+
+    MODEL-S4-BORDON_CEILING stays true inside its constant-rate model; what is
+    retired is the implicit claim that the model's constant draw matches the
+    implementation's actual consumption.
+    """
+    from aionq.governance import registry
+    b = BordonBudget(capacity=1.0, refill_rate=0.0, invariant_draw=0.5)
+    ap = ApertureState()
+    for step in range(300):
+        b.charge(10.0)
+        b.tick(step, ap)
+    assert len(b.interventions) > 100, "the log does grow without bound"
+    assert registry["RET-S4-CONSTANT_INVARIANT_COST"].tag == EvidenceTag.RETIRED

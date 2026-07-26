@@ -761,6 +761,40 @@ CLAIMS = [
                        "attack, while the baseline moves both ways",
                        "orthogonal gauge change leaves both EXACTLY unchanged, "
                        "which is the one invariance that does hold")),
+    Claim("MATH-S4-CONJUGATE_ANTIPAIR", EvidenceTag.PROVED,
+          "A(conj a, b, c) = -A(a, b, c) exactly (max error 5e-16 to dimension "
+          "32), with cosine similarity -1 wherever the associator is nonzero. "
+          "Two lines: the associator is trilinear and A(1, b, c) = 0, so "
+          "A(a,b,c) = A(Im a, b, c) and conjugation flips Im a.",
+          artifact="experiments/run_conjugation_antipair.py"),
+    Claim("RET-S4-CONJUGATION_IS_LOAD_BEARING", EvidenceTag.RETIRED,
+          "Cayley-Dickson conjugation makes the Emperor-Empress pairing an "
+          "algebraically exact anti-pair rather than an aesthetic duality.",
+          corrections=("the identity is true but conjugation does not produce it: "
+                       "plain negation gives cosine -1 at exactly 0.0 error, "
+                       "because conj(a) - (-a) = 2 Re(a) . 1 and A(1,b,c) = 0",
+                       "a diagnostic that cannot separate conjugation from "
+                       "multiplication by -1 is not evidence that conjugation is "
+                       "the right relation between a provability tower and a "
+                       "doxastic one",
+                       "the associator is IDENTICALLY ZERO below dimension 8, so "
+                       "the construction has no content for complex or "
+                       "quaternionic towers; and for purely real a the cosine is "
+                       "0/0",
+                       "what survives is MATH-S4-CONJUGATE_ANTIPAIR, an exact "
+                       "algebraic identity carrying no architectural implication")),
+    Claim("RET-S4-CONSTANT_INVARIANT_COST", EvidenceTag.RETIRED,
+          "The invariant channel's cost is constant, as the constant-rate "
+          "reservoir model assumes.",
+          corrections=("audit of module-independent remainder safety found the "
+                       "provenance log grows without bound while invariant_draw "
+                       "stays fixed, so the model's constant draw understates the "
+                       "implementation's actual consumption",
+                       "everything else audited clean: aperture, reservoir level "
+                       "and invariant draw are each bounded by their own type "
+                       "rather than by another module happening to run",
+                       "this is a specification-implementation drift, not a leak: "
+                       "MODEL-S4-BORDON_CEILING remains true INSIDE its model")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",
