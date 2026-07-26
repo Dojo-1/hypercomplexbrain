@@ -835,3 +835,58 @@ def test_the_falsified_p_claim_is_retired_and_superseded():
         "MATH-S6-LAPLACIAN_INVARIANT_SAFE"
     assert registry["EXP-S5-INVARIANT_LOCALISATION"].superseded_by == \
         "EXP-S6-ACAF_REPLICATION"
+
+
+# ==========================================================================
+# 14. EXTERNAL REVIEW: numbers asserted in prose must be measurable
+# ==========================================================================
+
+def test_quaternion_cache_speedup_is_measured_not_asserted():
+    """An external reviewer flagged a '131x' figure that was never benchmarked.
+
+    It was wrong: measured 27.8x uncached, 17.2x cached, against a claimed
+    131x/13x. This test measures the ratio rather than trusting a docstring, so
+    the number cannot drift back into prose.
+    """
+    import time
+    import aionq.sheaf as S
+    from aionq.sheaf import localise, ring_of_worldlets
+    rng = np.random.default_rng(0)
+    nerve = ring_of_worldlets(9, chords=((0, 4), (1, 6), (2, 7), (3, 8)))
+    defects = rng.choice(nerve.n_edges, size=2, replace=False)
+    sheaf = make_obstructed_sheaf(nerve, defects, rng, kind="generic", dim=4)
+    cycles = nerve.cycle_basis()
+
+    def timeit(fn, n):
+        t = time.perf_counter()
+        for _ in range(n):
+            fn()
+        return (time.perf_counter() - t) / n
+
+    base = timeit(lambda: localise(sheaf, "sheaf", rng, cycles=cycles), 60)
+    cached = timeit(lambda: localise(sheaf, "quaternion", rng, cycles=cycles), 60)
+    S._QUATERNION_BASIS = None
+    ratio = cached / base
+    # generous band: this is a timing test, but 131x is far outside it
+    assert 3.0 < ratio < 60.0, f"quaternion/sheaf cost ratio {ratio:.1f} outside the measured band"
+
+
+def test_resource_accounting_works_without_the_unix_resource_module():
+    """Simulate Windows: ``resource`` is Unix-only and was a hard top-level
+    import, which broke every S4 test and four experiment scripts there.
+
+    Behavioural, not textual: the module must still measure wall clock and peak
+    allocation with ``resource`` absent, and simply omit RSS.
+    """
+    import aionq.recognition.metrics as m
+    saved = m.resource
+    try:
+        m.resource = None                      # what Windows looks like
+        led = m.ResourceLedger()
+        with m.measure_resources(led):
+            _ = [0.0] * 10000
+        assert led.wall_seconds >= 0.0
+        assert led.peak_kib > 0.0, "tracemalloc must still supply the peak figure"
+        assert led.max_rss_kib == 0.0, "RSS is omitted, not faked, without resource"
+    finally:
+        m.resource = saved

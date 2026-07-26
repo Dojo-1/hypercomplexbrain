@@ -559,10 +559,21 @@ _QUATERNION_BASIS: np.ndarray | None = None
 def _quaternion_basis() -> np.ndarray:
     """The (16, 4) matrix whose columns are vec(L_1), vec(L_i), vec(L_j), vec(L_k).
 
-    Cached.  Rebuilding it per edge made the quaternionic instrument 131x the
-    cost of the matrix one, which would have violated the *compute*-matching half
-    of the thesis's kill condition while the experiment was busy checking the
-    dimension-matching half.
+    Cached, because rebuilding it per edge is measurably more expensive.
+
+    An earlier docstring asserted "131x the cost of the matrix one" and "13x
+    cached".  Neither number was ever measured -- an external reviewer flagged
+    them as prose presented as a result, and the flag was correct.  Benchmarked
+    (200 reps, V=9, E=13, dim 4):
+
+        sheaf (baseline)       79.6 us    1.00x
+        quaternion, cached   1371.1 us   17.22x
+        quaternion, uncached 2214.9 us   27.81x
+
+    So caching buys about 1.6x, and the quaternionic instrument costs ~17x the
+    matrix one either way.  That is still worth reporting in a compute-matched
+    comparison, but it is a sixth of what was claimed.  Locked by
+    ``test_quaternion_cache_speedup_is_measured_not_asserted``.
     """
     global _QUATERNION_BASIS
     if _QUATERNION_BASIS is None:

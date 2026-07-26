@@ -18,9 +18,13 @@ or 1 instead of the chance 0.5 it deserves.
 
 from __future__ import annotations
 
-import resource
 import time
 import tracemalloc
+
+try:                                   # Unix only; absent on Windows
+    import resource
+except ImportError:                    # pragma: no cover - platform dependent
+    resource = None
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 
@@ -101,6 +105,13 @@ def measure_resources(ledger: ResourceLedger):
     psutil is absent in this environment, so peak *process* RSS is read from
     ``resource.getrusage`` as a coarse upper bound and the fine-grained figure
     comes from tracemalloc.  Both are reported; neither is presented as the other.
+
+    ``resource`` is Unix-only.  An unguarded top-level import of it made this
+    module -- and therefore the whole chamber, its 65 tests and four experiment
+    scripts -- fail to import on Windows.  Reported by an external reviewer who
+    ran the suite there.  RSS is now simply omitted on platforms without it;
+    tracemalloc, which is stdlib everywhere, still supplies the peak figure the
+    resource gates actually use.
     """
     tracemalloc.start()
     t0 = time.perf_counter()
@@ -111,9 +122,10 @@ def measure_resources(ledger: ResourceLedger):
         _cur, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
         ledger.peak_kib = max(ledger.peak_kib, peak / 1024.0)
-        ledger.max_rss_kib = max(ledger.max_rss_kib,
-                                 float(resource.getrusage(resource.RUSAGE_SELF)
-                                       .ru_maxrss))
+        if resource is not None:
+            ledger.max_rss_kib = max(
+                ledger.max_rss_kib,
+                float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
 
 # --------------------------------------------------------------------------

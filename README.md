@@ -88,6 +88,7 @@ episodes on a 200-logical-qubit machine.
 ## Run it
 
 ```bash
+pip install -e .            # src/ layout: this makes `import aionq` work
 pip install qiskit numpy scipy pytest
 
 python3 experiments/run_audit.py      # every claim, computed
