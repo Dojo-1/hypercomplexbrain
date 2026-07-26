@@ -1,0 +1,127 @@
+{
+  "name": "s4-g100-preregistration",
+  "round": "S4-G100",
+  "preregistered_utc": "2026-07-26T09:30:00Z",
+  "preregistered_at_commit": "290c145",
+  "status": "committed BEFORE the primary experiment was run; see git history",
+  "evidence_floor": "H",
+
+  "research_question": "Can a controlled aperture plus ordered exploratory/verification operations reveal useful hidden structure beyond deterministic, static-ensemble and equal-entropy stochastic controls, while preserving round-trip and gauge stability under matched resource budgets?",
+
+  "declared_expectation": {
+    "statement": "On the tuning partition the chamber beat the deterministic baseline on the SMALL nerve only (E=13, 23.4% of the candidate space sampled: C4 0.682 vs C0 0.599) and lost on the medium and large nerves (E=24: C0 0.659 vs best chamber 0.558; E=36: C0 0.705 vs best chamber 0.558).",
+    "prediction": "S4-G100 will FAIL gate 1 on the held-out families, because the chamber's advantage appears only where sampling is already near-exhaustive. The advantage is expected to be an artifact of budget-to-search-space ratio rather than of aperture or ordering.",
+    "why_this_is_recorded": "Preregistering the expected NEGATIVE result removes the option of presenting a failure as a surprise or a success as a confirmation. If the chamber does win on held-out families, that is now a genuine surprise and is worth more than it would have been.",
+    "why_the_regime_was_not_narrowed": "Preregistering only the small nerve, where the chamber wins, would be post-hoc regime selection -- the same defect falsifier F6 names for the perturbation seeds. All three scales are held-out and gated together."
+  },
+
+  "host": {
+    "environment": "aionq.sheaf, real/matrix representation (kind='generic', dim=4)",
+    "primary_representation": "real_matrix -- NOT quaternionic and NOT octonionic, per the S3 governing constraints",
+    "task": "localise hidden defective overlaps from cycle holonomy alone; no overlap is locally anomalous by construction"
+  },
+
+  "partitions": {
+    "tuning": {
+      "nerve_family": "ring_9_chord4",
+      "seeds": "1000-1039",
+      "used_for": "objective design, exploration floor, aperture gain; NOT reported as a result"
+    },
+    "held_out_by_seed": {"seeds": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010]},
+    "held_out_by_family": [
+      {"id": "ring_small", "spec": "ring_of_worldlets(9, chords=((0,4),(1,6),(2,7),(3,8)))", "n_defects": 3},
+      {"id": "ring_medium", "spec": "ring_of_worldlets(16, chords=((i,i+8) for i in range(8)))", "n_defects": 5},
+      {"id": "ring_large", "spec": "ring_of_worldlets(24, chords=((i,i+12) for i in range(12)))", "n_defects": 7},
+      {"id": "random_nerve", "spec": "random connected nerve, V=12, E=20, spanning tree plus random chords", "n_defects": 4},
+      {"id": "grid_nerve", "spec": "4x4 grid graph with wraparound in one direction", "n_defects": 4}
+    ],
+    "note": "ring_small shares its spec with the tuning family but NOT its seeds; the other four families were never touched during development."
+  },
+
+  "conditions": {
+    "C0": "deterministic S3 sheaf localiser (cycle holonomy + equal blame spreading)",
+    "C1": "equal-entropy random perturbation of the observed transitions, then C0",
+    "C2": "static candidate ensemble, fixed aperture, no verify->explore feedback",
+    "C3": "adaptive aperture, no ordered Emperor-Empress flow",
+    "C4": "explore then verify (the ordered flow)",
+    "C5": "verify then explore/reopen (the reversed flow)",
+    "C6": "C4 with each of the three fixed structured perturbation fields",
+    "C7": "C4 with matched-spectrum surrogate fields (sign-randomised, identical power spectrum)",
+    "C8": "the best apparent condition under all ten representation and gauge attacks"
+  },
+
+  "parity": {
+    "candidate_evaluation_budget": 256,
+    "note_on_evaluations": "identical for every chamber condition; the loop halts when spent, so a wider aperture buys fewer steps rather than more compute",
+    "instrument_cost_separate": "the order-defect probe is charged to an instrument ledger and reported separately, because it measures the chamber rather than being part of it",
+    "parameter_counts": {"C0": 0, "C2": 5, "C3": 5, "C4": 6, "C5": 6},
+    "parameter_asymmetry_declared": "C4 and C5 carry one more parameter (the exploration floor) than C2 and C3. If the ordered conditions win by a margin comparable to what one parameter buys, the ordered interpretation is NOT supported.",
+    "data_access": "every condition sees the same nerve, the same cycle basis and the same transitions",
+    "tuning_budget": "zero for all held-out runs; no per-instance or per-family tuning is permitted",
+    "reported": ["wall_seconds", "peak_kib", "max_rss_kib", "candidate_evaluations", "parameter_count"]
+  },
+
+  "primary_effect_region": {
+    "name": "DeltaY",
+    "type": "typed effect region evaluated by DOMINANCE, never by a weighted score",
+    "rationale": "RET-R3-SCALAR_PROMOTION retired a weighted gate in this repository because one number let a large gain on a cheap axis pay for a loss on an expensive one",
+    "gates": [
+      {"name": "delta_auroc_vs_c0", "threshold": 0.03, "direction": "at_least", "unit": "AUROC"},
+      {"name": "delta_auroc_vs_best_control", "threshold": 0.02, "direction": "at_least", "unit": "AUROC"},
+      {"name": "delta_brier_vs_c0", "threshold": 0.005, "direction": "at_most", "unit": "Brier"},
+      {"name": "mean_loop_defect", "threshold": 1e-10, "direction": "at_most", "unit": "transport defect"},
+      {"name": "p99_loop_defect", "threshold": 1e-8, "direction": "at_most", "unit": "transport defect"},
+      {"name": "instability", "threshold": 0.01, "direction": "at_most", "unit": "AUROC under admissible reparametrisation"},
+      {"name": "wall_ratio_vs_best_baseline", "threshold": 2.0, "direction": "at_most", "unit": "x"},
+      {"name": "memory_ratio_vs_best_baseline", "threshold": 1.5, "direction": "at_most", "unit": "x"},
+      {"name": "seed_wins", "threshold": 8, "direction": "at_least", "unit": "of 10 preregistered seeds"},
+      {"name": "ordered_flow_margin", "threshold": 0.01, "direction": "at_least", "unit": "AUROC over max(C3, C5)"}
+    ]
+  },
+
+  "secondary_reporting": {
+    "brier": "full distribution, not only the mean",
+    "raw_values": "all metrics reported raw before normalisation or clipping",
+    "per_seed": "seed-level outputs retained in artifacts/s4_g100/raw",
+    "order_defect": "reported as an observable; a nonzero value is NOT evidence for the ordered interpretation"
+  },
+
+  "representation_attacks": [
+    "vertex relabeling",
+    "edge permutation",
+    "alternate fundamental cycle basis",
+    "orthogonal gauge transformation",
+    "exact forward/backward transport loop",
+    "equivalent candidate encoding (support set vs indicator vector)",
+    "reordering of independent operations",
+    "fixed structured seeds replaced by matched-spectrum surrogates",
+    "canonicalised vs non-canonicalised representation",
+    "shuffled role labels"
+  ],
+
+  "kill_conditions": [
+    "F1 static ensemble C2 matches the complete effect region",
+    "F2 equal-entropy random perturbation C1 or matched surrogate C7 matches it",
+    "F3 C4 does not outperform both C3 and C5 by at least +0.01 held-out AUROC",
+    "F4 the effect disappears on held-out nerve families",
+    "F5 the effect depends materially on labels, cycle basis, gauge or encoding",
+    "F6 the structured seeds work only under post-hoc selection",
+    "F7 an ordinary confidence margin predicts useful susceptibility as well as the aperture observables",
+    "F8 resource parity fails",
+    "F9 raw metrics reveal clipping, leakage or tautological validation"
+  ],
+
+  "amendment_policy": {
+    "permitted": "exactly one amendment, before any primary run, and only for a genuine unit incompatibility",
+    "amendments_made": [],
+    "forbidden": "any amendment after S4 primary results are observed"
+  },
+
+  "f7_operationalisation": {
+    "confidence_margin_baseline": "gap between the top-scoring and second-scoring overlap under C0, normalised by the score range",
+    "test": "if this ordinary margin predicts which instances the chamber helps on as well as the aperture susceptibility signal does, HYP-S4-FERTILE_APERTURE gains nothing from the aperture construction",
+    "comparison": "Spearman correlation with per-instance delta_auroc, both reported with bootstrap intervals"
+  },
+
+  "stop_condition": "no new fauna, higher Cayley-Dickson levels, physical quantum claims, morphogenesis or visualization layers until S4-G100 crosses its gate or is retired. A negative result is a valid completion."
+}
