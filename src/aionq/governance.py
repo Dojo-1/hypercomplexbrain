@@ -514,6 +514,124 @@ CLAIMS = [
                          "or show the preparation is itself the expensive step in "
                          "any realisable memory"),
 
+    # --- S4-G100: Reversible Recognition Chamber ---------------------------
+    Claim("DEF-S4-LOOP_DEFECT", EvidenceTag.PROVED,
+          "The round-trip transport defect D(x, backward(forward(x))) is a "
+          "TransportDefect: nonnegative for any pseudo-metric, typed with its "
+          "carrier and comparison, and reported raw before any clipping. It is "
+          "NOT a cohomology class, NOT a semantic remainder and NOT a scalar "
+          "obstruction constant.",
+          artifact="src/aionq/recognition/loop_tomography.py::loop_defect"),
+    Claim("MATH-S4-LOOP_ZERO", EvidenceTag.PROVED,
+          "An exact left inverse gives loop defect exactly 0, not merely small: "
+          "identity transport, an exact permutation inverse and an orthogonal "
+          "gauge round trip all return 0.0 at machine precision.",
+          artifact="tests/test_s4_g100.py::test_exact_permutation_inverse_has_zero_loop_defect",
+          assumptions=("stated in Lean 4 in formal/RecognitionChamber.lean, which "
+                       "is NOT claimed to compile: no Lean toolchain exists in "
+                       "this environment",)),
+    Claim("MATH-S4-GAUGE_INVARIANCE", EvidenceTag.PROVED,
+          "The loop defect is invariant under conjugation by an isometry: "
+          "loopDefect(T_G, G x) = loopDefect(T, x). Verified numerically to 1e-12 "
+          "on a deliberately lossy probe, and the chamber output is bit-identical "
+          "under an orthogonal gauge change.",
+          artifact="src/aionq/recognition/loop_tomography.py::gauge_conjugate",
+          assumptions=("Lean statement present and uncompiled",)),
+    Claim("MODEL-S4-BORDON_CEILING", EvidenceTag.PROVED,
+          "Inside the constant-rate reservoir model, indefinite survival of a "
+          "continuous channel requires invariant_draw <= refill_rate; any excess "
+          "depletes a finite reservoir in finite time regardless of capacity.",
+          artifact="src/aionq/recognition/budget.py::BordonBudget.depletion_time",
+          assumptions=("constant refill and constant draw; a model consequence, "
+                       "not a measurement of any physical system",)),
+    Claim("MATH-S4-NO_SELF_PROMOTION", EvidenceTag.PROVED,
+          "A claim cannot be promoted when every authorizing node lies inside the "
+          "dependency closure of the generating nodes. Enforced before any "
+          "numeric gate is consulted, so a candidate that clears every threshold "
+          "without an external witness is reported as blocked rather than as a "
+          "near miss.",
+          artifact="src/aionq/recognition/nest.py::nest_decision"),
+
+    Claim("EXP-S4-CHAMBER_KILLED", EvidenceTag.MEASURED,
+          "On five held-out nerve families the chamber is WORSE than the "
+          "deterministic S3 localiser it was built to improve on: pooled "
+          "delta_auroc = -0.033, winning on 20 of 50 held-out instances. Six of "
+          "ten preregistered gates fail.",
+          artifact="experiments/run_s4_g100.py",
+          sample_size=50, interval=(-0.033, -0.033),
+          null="the preregistered effect region at "
+               "manifests/s4_g100_preregistration.json, committed at 611e4ee "
+               "before the experiment ran",
+          assumptions=("5 families x 10 seeds, 256 candidate evaluations per "
+                       "chamber condition, identical data access and cycle basis",
+                       "interval is the pooled point estimate across families; "
+                       "per-family means are in artifacts/s4_g100/raw",
+                       "the declared expectation on record was a negative result, "
+                       "so this confirms a prediction rather than discovering a "
+                       "surprise",
+                       "witnesses are CORRELATED -- explorer, verifier and auditor "
+                       "share code, assumptions, data and authoring model -- so "
+                       "this is a measured pattern, not independent verification")),
+    Claim("EXP-S4-SCALE_DEPENDENCE", EvidenceTag.MEASURED,
+          "The chamber's apparent advantage is a budget-to-search-space artifact. "
+          "It beats the deterministic baseline only where the 256-evaluation "
+          "budget samples a large fraction of the candidate space (ring_small, "
+          "23.4% sampled: +0.018) and loses where it does not (ring_large, 0.0006% "
+          "sampled: -0.100).",
+          artifact="artifacts/s4_g100/raw/*.json",
+          sample_size=50, interval=(-0.100, 0.018),
+          null="the hypothesis that aperture and ordering, rather than sampling "
+               "coverage, produce the advantage",
+          assumptions=("five families spanning E=13 to E=36",
+                       "max candidate support is fixed by a rule that sees only "
+                       "the nerve, never the true defect count")),
+    Claim("EXP-S4-ORDERED_FLOW_MARGIN", EvidenceTag.MEASURED,
+          "The ordered-flow discriminator PASSES while the method loses: C4 beats "
+          "max(C3, C5) by +0.033 pooled, satisfying the preregistered +0.01 gate, "
+          "yet C4 remains 0.033 below the deterministic baseline. Ordering "
+          "recovers ground the chamber itself gave away.",
+          artifact="experiments/run_s4_g100.py",
+          sample_size=50, interval=(0.033, 0.033),
+          null="the preregistered ordered_flow_margin gate of +0.01 AUROC",
+          assumptions=("C4 and C5 carry one more parameter (the exploration floor) "
+                       "than C2 and C3, and that asymmetry is not controlled for",
+                       "a dominance region caught this; a weighted score including "
+                       "this gate could have passed the whole round on it")),
+    Claim("EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT", EvidenceTag.MEASURED,
+          "Sheaf holonomy still beats both matched controls after an admissible "
+          "worldlet relabelling, but retains only 20% of the published effect "
+          "size: sheaf - shuffled falls from +0.269 (d = 1.45) to +0.055 "
+          "(d = 0.24), because absolute AUROC drops 0.789 -> 0.551 while the "
+          "controls barely move.",
+          artifact="experiments/run_s4_basis_attack.py",
+          sample_size=300, interval=(0.0190, 0.0922),
+          null="invariance under an admissible reparametrisation: relabelling "
+               "worldlets changes the spanning tree and therefore the fundamental "
+               "cycle basis, but does not change the sheaf",
+          assumptions=("300 trials on the S3 instance family (V=8, E=13, 2 defects)",
+                       "the DIRECTION and the instrument ordering are invariant; "
+                       "only the magnitude is not",
+                       "short basis cycles concentrate blame and long ones dilute "
+                       "it, so absolute AUROC is a representation-sensitive "
+                       "diagnostic rather than an intrinsic quantity",
+                       "this was invisible to Round S3 because that comparison ran "
+                       "entirely inside one cycle basis")),
+
+    Claim("SEM-S4-EMPEROR", EvidenceTag.SEMANTIC,
+          "The exploratory / counterfactual role potential. Denotes "
+          "aionq.recognition.roles.Explorer and nothing more; it proposes and "
+          "cannot promote.",
+          artifact="src/aionq/recognition/roles.py::Explorer"),
+    Claim("SEM-S4-EMPRESS", EvidenceTag.SEMANTIC,
+          "The gluing / verification role potential. Denotes "
+          "aionq.recognition.roles.Verifier and nothing more; it returns a "
+          "six-component tuple and produces no final truth.",
+          artifact="src/aionq/recognition/roles.py::Verifier"),
+    Claim("SEM-S4-NEST", EvidenceTag.SEMANTIC,
+          "The evidence-gated deposit predicate. Denotes "
+          "aionq.recognition.nest.nest_decision and nothing more.",
+          artifact="src/aionq/recognition/nest.py::nest_decision"),
+
     Claim("BRIDGE-R3-QCAUSAL", EvidenceTag.HYPOTHESIS,
           "Some quantum organ shows a causal advantage inside a pre-registered cone.",
           artifact="aionq.advantage.promote",
@@ -601,6 +719,48 @@ CLAIMS = [
                        "by Artin's theorem any two of them still associate, so the "
                        "failure begins exactly at cycles mixing three independent "
                        "directions; see MATH-S3-NO_FLAT_ABOVE_H")),
+    Claim("RET-S4-FERTILE_APERTURE", EvidenceTag.RETIRED,
+          "An adaptive aperture reveals structure a static ensemble does not.",
+          corrections=("killed on its own preregistered condition F1: the static "
+                       "ensemble C2 matches or beats the adaptive conditions on "
+                       "four of five held-out families",
+                       "the adaptive controller also fails against its matched "
+                       "RandomAperture ablation, which moves the same amount for "
+                       "no reason",
+                       "what survives is narrower and is kept as "
+                       "EXP-S4-SCALE_DEPENDENCE: the apparent advantage tracks "
+                       "budget-to-search-space ratio, not adaptivity")),
+    Claim("RET-S4-ORDERED_FLOW", EvidenceTag.RETIRED,
+          "Explore-then-verify ordering improves obstruction localisation.",
+          corrections=("the ordered-flow gate PASSES (+0.033 over max(C3, C5)) "
+                       "while the method as a whole loses to the deterministic "
+                       "baseline by 0.033; ordering recovers ground the chamber "
+                       "gave away and does not add any",
+                       "C4 and C5 carry one more parameter than C3, and that "
+                       "asymmetry is not controlled for",
+                       "the surviving narrow statement is kept as "
+                       "EXP-S4-ORDERED_FLOW_MARGIN")),
+    Claim("RET-S4-OPTIMAL_COGNITION", EvidenceTag.RETIRED,
+          "The Reversible Recognition Chamber architecture is already optimal, or "
+          "improves cognition.",
+          corrections=("retired pre-emptively at the start of S4-G100 and never "
+                       "supported: no coordinate, aperture or ordering in this "
+                       "repository has been connected to any cognitive task",
+                       "the chamber loses to a closed-form baseline on its own "
+                       "host under matched budgets")),
+    Claim("RET-S4-CHAMBER_INVARIANT", EvidenceTag.RETIRED,
+          "The chamber's per-overlap belief is an intrinsic property of the sheaf.",
+          corrections=("demoted to a representation-sensitive diagnostic: worst-"
+                       "case AUROC shift 0.285 under worldlet relabelling, 0.210 "
+                       "under an alternate fundamental cycle basis, 0.193 under "
+                       "canonicalisation",
+                       "the deterministic baseline is unstable too (0.200, 0.086, "
+                       "0.102), so part of this is inherited from the host rather "
+                       "than caused by the chamber -- but the chamber is worse on "
+                       "every axis and degrades in ONE direction under every "
+                       "attack, while the baseline moves both ways",
+                       "orthogonal gauge change leaves both EXACTLY unchanged, "
+                       "which is the one invariance that does hold")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",
@@ -636,3 +796,26 @@ CLAIMS = [
 ]
 
 registry = Registry(CLAIMS)
+
+
+def _link_supersessions(reg: Registry) -> None:
+    """Corrections recorded as supersession, never as an overwrite.
+
+    Round S4's mandatory representation attacks found that Round S3's headline
+    measurement was made inside one arbitrary fundamental cycle basis.  The
+    direction of that result survives an admissible relabelling; four fifths of
+    its effect size does not.  So the S3 claim is *superseded* -- it stays in the
+    ledger with its original statement intact and a pointer forward -- rather
+    than edited to match the newer number, which would destroy the record of what
+    was claimed and when.
+    """
+    for old_id, new_id in (
+        ("EXP-S3-SHEAF_LOCALISATION", "EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT"),
+    ):
+        old, new = reg[old_id], reg[new_id]
+        if old.superseded_by is None:
+            old.superseded_by = new.id
+            new.supersedes = old.id
+
+
+_link_supersessions(registry)

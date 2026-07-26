@@ -1,0 +1,262 @@
+{
+ "elapsed_seconds": 103.34113881200028,
+ "quick": false,
+ "gates": {
+  "observed": {
+   "delta_auroc_vs_c0": -0.03311779178549834,
+   "delta_auroc_vs_best_control": -0.008731162496759093,
+   "delta_brier_vs_c0": -0.012155063648177172,
+   "mean_loop_defect": 8.932003589164025e-16,
+   "p99_loop_defect": 2.220446049250313e-15,
+   "instability": 0.2850000000000001,
+   "wall_ratio_vs_best_baseline": 193.58413488211485,
+   "memory_ratio_vs_best_baseline": 85.57125545322346,
+   "seed_wins": 4.0,
+   "ordered_flow_margin": 0.032897326830006124,
+   "_baseline_instability": 0.1999999999999999
+  },
+  "best_control": "C1",
+  "baseline_instability": 0.1999999999999999,
+  "per_gate": {
+   "delta_auroc_vs_c0": false,
+   "delta_auroc_vs_best_control": false,
+   "delta_brier_vs_c0": true,
+   "mean_loop_defect": true,
+   "p99_loop_defect": true,
+   "instability": false,
+   "wall_ratio_vs_best_baseline": false,
+   "memory_ratio_vs_best_baseline": false,
+   "seed_wins": false,
+   "ordered_flow_margin": true
+  },
+  "dominated": false,
+  "seed_wins_raw": "20/50"
+ },
+ "witness": {
+  "roles": [
+   "auditor",
+   "explorer",
+   "verifier"
+  ],
+  "shared_axes": [
+   "code",
+   "assumptions",
+   "data",
+   "author"
+  ],
+  "independent": false,
+  "status": "correlated",
+  "consequence": "deposits may claim MeasuredPattern at most; no deposit from these roles is independent verification"
+ },
+ "f7_spearman": {
+  "ring_small": 0.4666666666666666,
+  "ring_medium": 0.5393939393939393,
+  "ring_large": -0.35757575757575755,
+  "random_nerve": -0.10303030303030303,
+  "grid_nerve": 0.2727272727272727
+ },
+ "deposit": {
+  "type": "Conjecture",
+  "tag": "H",
+  "reason": "effect region not dominated; failed gates: ['delta_auroc_vs_c0', 'delta_auroc_vs_best_control', 'instability', 'wall_ratio_vs_best_baseline', 'memory_ratio_vs_best_baseline', 'seed_wins']",
+  "per_gate": {
+   "delta_auroc_vs_c0": false,
+   "delta_auroc_vs_best_control": false,
+   "delta_brier_vs_c0": true,
+   "mean_loop_defect": true,
+   "p99_loop_defect": true,
+   "instability": false,
+   "wall_ratio_vs_best_baseline": false,
+   "memory_ratio_vs_best_baseline": false,
+   "seed_wins": false,
+   "ordered_flow_margin": true
+  }
+ },
+ "families": {
+  "ring_small": {
+   "n_worldlets": 9,
+   "n_edges": 13,
+   "betti_1": 5,
+   "n_defects": 3,
+   "search_space": 1092,
+   "budget_fraction": 0.23443223443223443,
+   "best_chamber": "C3",
+   "mean_auroc": {
+    "C0": 0.6416666666666666,
+    "C1": 0.6216666666666666,
+    "C2": 0.6266666666666666,
+    "C3": 0.67,
+    "C4": 0.6599999999999999,
+    "C5": 0.615,
+    "C6_thinking": 0.5850000000000001,
+    "C6_proving": 0.6416666666666666,
+    "C6_formalising": 0.6016666666666668,
+    "C7_thinking": 0.6233333333333334,
+    "C7_proving": 0.5416666666666666,
+    "C7_formalising": 0.5983333333333333
+   },
+   "attacks": {
+    "vertex_relabel": 0.38499999999999995,
+    "edge_permutation": 0.6083333333333334,
+    "alternate_cycle_basis": 0.6183333333333334,
+    "orthogonal_gauge": 0.67,
+    "canonicalised": 0.4766666666666667
+   },
+   "baseline_attacks": {
+    "vertex_relabel": 0.4416666666666667,
+    "edge_permutation": 0.7266666666666668,
+    "alternate_cycle_basis": 0.7083333333333334,
+    "orthogonal_gauge": 0.6416666666666666,
+    "canonicalised": 0.65
+   }
+  },
+  "ring_medium": {
+   "n_worldlets": 16,
+   "n_edges": 24,
+   "betti_1": 9,
+   "n_defects": 5,
+   "search_space": 190050,
+   "budget_fraction": 0.0013470139436990267,
+   "best_chamber": "C4",
+   "mean_auroc": {
+    "C0": 0.6831578947368422,
+    "C1": 0.6736842105263159,
+    "C2": 0.5510526315789475,
+    "C3": 0.5110526315789474,
+    "C4": 0.625263157894737,
+    "C5": 0.6036842105263158,
+    "C6_thinking": 0.533157894736842,
+    "C6_proving": 0.5610526315789474,
+    "C6_formalising": 0.51,
+    "C7_thinking": 0.523157894736842,
+    "C7_proving": 0.5589473684210525,
+    "C7_formalising": 0.4610526315789474
+   },
+   "attacks": {
+    "vertex_relabel": 0.49315789473684213,
+    "edge_permutation": 0.5878947368421052,
+    "alternate_cycle_basis": 0.4773684210526315,
+    "orthogonal_gauge": 0.625263157894737,
+    "canonicalised": 0.5005263157894737
+   },
+   "baseline_attacks": {
+    "vertex_relabel": 0.568421052631579,
+    "edge_permutation": 0.6405263157894737,
+    "alternate_cycle_basis": 0.5973684210526317,
+    "orthogonal_gauge": 0.6831578947368422,
+    "canonicalised": 0.7552631578947369
+   }
+  },
+  "ring_large": {
+   "n_worldlets": 24,
+   "n_edges": 36,
+   "betti_1": 13,
+   "n_defects": 7,
+   "search_space": 40999515,
+   "budget_fraction": 6.243976300695264e-06,
+   "best_chamber": "C5",
+   "mean_auroc": {
+    "C0": 0.6273399014778325,
+    "C1": 0.6093596059113301,
+    "C2": 0.5618226600985222,
+    "C3": 0.49408866995073897,
+    "C4": 0.5270935960591133,
+    "C5": 0.5633004926108375,
+    "C6_thinking": 0.5231527093596059,
+    "C6_proving": 0.5647783251231526,
+    "C6_formalising": 0.6051724137931034,
+    "C7_thinking": 0.5527093596059113,
+    "C7_proving": 0.5233990147783252,
+    "C7_formalising": 0.527832512315271
+   },
+   "attacks": {
+    "vertex_relabel": 0.5317733990147784,
+    "edge_permutation": 0.5150246305418719,
+    "alternate_cycle_basis": 0.5775862068965517,
+    "orthogonal_gauge": 0.5633004926108375,
+    "canonicalised": 0.4810344827586207
+   },
+   "baseline_attacks": {
+    "vertex_relabel": 0.5583743842364532,
+    "edge_permutation": 0.6591133004926109,
+    "alternate_cycle_basis": 0.6716748768472905,
+    "orthogonal_gauge": 0.6273399014778325,
+    "canonicalised": 0.7295566502463054
+   }
+  },
+  "random_nerve": {
+   "n_worldlets": 12,
+   "n_edges": 20,
+   "betti_1": 9,
+   "n_defects": 4,
+   "search_space": 60459,
+   "budget_fraction": 0.004234274466994161,
+   "best_chamber": "C4",
+   "mean_auroc": {
+    "C0": 0.73984375,
+    "C1": 0.69765625,
+    "C2": 0.6609375,
+    "C3": 0.578125,
+    "C4": 0.7078125,
+    "C5": 0.64765625,
+    "C6_thinking": 0.58359375,
+    "C6_proving": 0.64296875,
+    "C6_formalising": 0.615625,
+    "C7_thinking": 0.55,
+    "C7_proving": 0.546875,
+    "C7_formalising": 0.59296875
+   },
+   "attacks": {
+    "vertex_relabel": 0.59453125,
+    "edge_permutation": 0.68203125,
+    "alternate_cycle_basis": 0.49765625,
+    "orthogonal_gauge": 0.7078125,
+    "canonicalised": 0.7078125
+   },
+   "baseline_attacks": {
+    "vertex_relabel": 0.5890625,
+    "edge_permutation": 0.775,
+    "alternate_cycle_basis": 0.759375,
+    "orthogonal_gauge": 0.73984375,
+    "canonicalised": 0.73984375
+   }
+  },
+  "grid_nerve": {
+   "n_worldlets": 16,
+   "n_edges": 28,
+   "betti_1": 13,
+   "n_defects": 4,
+   "search_space": 4791322,
+   "budget_fraction": 5.3429930194631045e-05,
+   "best_chamber": "C2",
+   "mean_auroc": {
+    "C0": 0.7031249999999999,
+    "C1": 0.6708333333333333,
+    "C2": 0.74375,
+    "C3": 0.6515625,
+    "C4": 0.709375,
+    "C5": 0.6354166666666666,
+    "C6_thinking": 0.5937499999999999,
+    "C6_proving": 0.6223958333333333,
+    "C6_formalising": 0.5765625000000001,
+    "C7_thinking": 0.6265625,
+    "C7_proving": 0.5859375,
+    "C7_formalising": 0.5604166666666667
+   },
+   "attacks": {
+    "vertex_relabel": 0.55,
+    "edge_permutation": 0.6510416666666666,
+    "alternate_cycle_basis": 0.653125,
+    "orthogonal_gauge": 0.74375,
+    "canonicalised": 0.74375
+   },
+   "baseline_attacks": {
+    "vertex_relabel": 0.5864583333333333,
+    "edge_permutation": 0.7348958333333334,
+    "alternate_cycle_basis": 0.7546875,
+    "orthogonal_gauge": 0.7031249999999999,
+    "canonicalised": 0.7031249999999999
+   }
+  }
+ }
+}
