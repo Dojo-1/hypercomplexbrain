@@ -446,6 +446,71 @@ CLAIMS = [
                        "MSE only: the thesis also predicts an interpretability "
                        "gain, which is NOT tested here")),
 
+    Claim("MATH-S3-CHARACTER_BLIND", EvidenceTag.PROVED,
+          "No multiplicative character can detect a commutator obstruction: every "
+          "L_q for a unit quaternion q lies in SO(4), whose abelianisation is "
+          "trivial, so det(H) = 1 identically on defective and clean cycles alike.",
+          artifact="src/aionq/sheaf.py::_instr_character"),
+    Claim("MATH-S3-NO_FLAT_ABOVE_H", EvidenceTag.PROVED,
+          "A vertex gauge a_ij = g_j g_i^-1 induces a FLAT connection iff left "
+          "multiplication is a homomorphism, L_a L_b = L_{ab}, which holds exactly "
+          "through Cayley-Dickson dimension 4. From dimension 8 the clean sheaf "
+          "already carries holonomy on every cycle, so 'no obstruction' is not "
+          "definable and octonionic sheaf cohomology is ill-posed, not merely "
+          "unhelpful. Unit octonions form a Moufang loop, not a group.",
+          artifact="src/aionq/sheaf.py::flatness_ladder"),
+    Claim("MATH-S3-BV_QUERY_SEPARATION", EvidenceTag.PROVED,
+          "In the holonomy-oracle model a cycle obstruction class costs exactly b "
+          "= E - V + C classical queries and exactly 1 quantum query. Lower bound: "
+          "one bit per query against b bits of class. Upper: a cycle basis, and "
+          "Bernstein-Vazirani.",
+          artifact="src/aionq/interference.py::classical_query_cost",
+          assumptions=("the oracle is already coherent; building it from classical "
+                       "worldlet data costs E accesses, which exceeds b on every "
+                       "instance tested (see BRIDGE-S3-COHERENT_ORACLE)",
+                       "recovering the CLASS is not localising the DEFECT: the "
+                       "lightest cochain in the coset is syndrome decoding, "
+                       "NP-hard in general and identical for both parties")),
+
+    Claim("EXP-S3-SHEAF_LOCALISATION", EvidenceTag.MEASURED,
+          "Sheaf holonomy localises hidden cycle obstructions better than "
+          "dimension- and compute-matched controls: AUROC 0.797 vs 0.511 for "
+          "shuffled overlaps and 0.508 for topology-only, at identical nerve, "
+          "cycle basis and attribution rule.",
+          artifact="experiments/run_sheaf.py",
+          sample_size=300, interval=(0.2583, 0.3158),
+          null="the thesis kill condition (section 16, experiment 1): any "
+               "advantage disappears under dimension- and compute-matched controls",
+          assumptions=("8 worldlets, 13 overlaps, 2 hidden defects, fiber "
+                       "dimension 4, 300 trials",
+                       "the defect replaces a transition with another drawn from "
+                       "the same distribution, so no overlap is locally anomalous",
+                       "every instrument shares the blame-spreading attribution "
+                       "rule; only the coordinate system differs")),
+    Claim("EXP-S3-BV_NOISE_CROSSOVER", EvidenceTag.MEASURED,
+          "The single-query advantage survives depolarizing noise up to 0.17 per "
+          "qubit per layer at cycle rank 4, falling to 0.105 at rank 12 -- flat "
+          "to b = 6 and then decaying, as log(b)/b requires.",
+          artifact="src/aionq/interference.py::crossover_noise",
+          sample_size=500, interval=(0.105, 0.170),
+          null="the classical learner's b queries, paid up front with certainty",
+          assumptions=("Pauli-twirled depolarizing on every qubit after each of "
+                       "three circuit layers; Monte Carlo, so sampled outcomes "
+                       "are exact",
+                       "1/p_success assumes a correct run can be recognised for "
+                       "free, which it cannot -- so this OVERSTATES the quantum "
+                       "side and the crossover is an upper bound")),
+
+    Claim("BRIDGE-S3-COHERENT_ORACLE", EvidenceTag.HYPOTHESIS,
+          "A cognitive architecture could hold its overlap relations in a form "
+          "that IS the coherent holonomy oracle, rather than one built from "
+          "classical reads -- which is the only way the b-to-1 query separation "
+          "is not paid for twice.",
+          kill_condition="exhibit no construction in which the oracle's "
+                         "preparation cost is below E classical overlap accesses; "
+                         "or show the preparation is itself the expensive step in "
+                         "any realisable memory"),
+
     Claim("BRIDGE-R3-QCAUSAL", EvidenceTag.HYPOTHESIS,
           "Some quantum organ shows a causal advantage inside a pre-registered cone.",
           artifact="aionq.advantage.promote",
@@ -507,6 +572,32 @@ CLAIMS = [
                        "fewer parameters, plus correct failure in the control",
                        "the mutation matrix is supplied rather than learned, so "
                        "this does not show a system could FIND the crossing")),
+    Claim("RET-S3-HYPERCOMPLEX_DIAGNOSIS", EvidenceTag.RETIRED,
+          "Hypercomplex coordinates improve obstruction diagnosis on "
+          "order-sensitive cases.",
+          corrections=("measured against the thesis's own kill condition "
+                       "(section 16, experiment 1): quaternionic coordinates TIE "
+                       "with the matched real sheaf on their home ground "
+                       "(delta +0.000 [-0.018, +0.017]) and LOSE on generic "
+                       "transitions (delta -0.231 [-0.257, -0.204])",
+                       "the predicted conditional SHAPE does reproduce, and that "
+                       "much is kept: they cost nothing where the structure is "
+                       "genuinely quaternionic and cost a great deal elsewhere",
+                       "'may improve diagnosis' is not supported by a tie; the "
+                       "advantage vanishes under matched controls exactly as the "
+                       "kill condition anticipated")),
+    Claim("RET-S3-OCTONIONIC_SHEAF", EvidenceTag.RETIRED,
+          "Octonionic fibers give a sheaf-cohomological obstruction theory that "
+          "diagnoses order-sensitive gluing failure.",
+          corrections=("not falsified but ILL-POSED, which is stronger: above "
+                       "dimension 4 a vertex gauge induces no flat connection, so "
+                       "the clean sheaf already has holonomy 3.19 on every cycle "
+                       "and there is no zero for a defect to stand out against",
+                       "the cause is structural -- unit octonions are a Moufang "
+                       "loop, not a group, and H^1 needs a group",
+                       "by Artin's theorem any two of them still associate, so the "
+                       "failure begins exactly at cycles mixing three independent "
+                       "directions; see MATH-S3-NO_FLAT_ABOVE_H")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",

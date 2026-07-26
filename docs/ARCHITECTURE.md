@@ -731,7 +731,13 @@ stabilizer rank; stabilizer Rényi entropy as a magic monotone; Bennett reversib
 pebbling; no-cloning and no-deleting; state-tomography copy complexity; process
 tensors and their Choi representation; Fibonacci F/R symbols and the pentagon/hexagon
 equations; Gram-matrix positivity; quantum reference-frame transformations;
-no-programming theorem.
+no-programming theorem. **Added in Round S3:** no multiplicative character
+detects a commutator obstruction (every `L_q` lies in SO(4), whose abelianisation
+is trivial); a vertex gauge induces a flat connection **iff** left multiplication
+is a homomorphism, which holds exactly through Cayley–Dickson dimension 4; and in
+the holonomy-oracle model a cycle obstruction class costs exactly `b = E − V + C`
+classical queries against exactly 1 quantum query — bounded by the fact that
+*building* the coherent oracle costs `E` classical accesses.
 
 **M — machine-verified in this repository.** Every table above; 22 tests in
 `tests/test_architecture.py`; the 150-core ACAF sweep. Qiskit 2.5.1 confirmed to
@@ -749,7 +755,12 @@ measuring it high makes it *think better*. That gap is the largest one remaining
 cognitive gerbe, quantum identity ecology. Retained as scaffolding, load-bearing
 nowhere.
 
-**R — retired.** Additive `Q_causal`; the name and point-valued form of `Q_cert`;
+**R — retired.** Hypercomplex coordinates improve obstruction diagnosis (Round S3:
+they *tie* with a dimension-matched real sheaf on their home ground and lose
+badly off it); Octonionic fibers give a sheaf-cohomological obstruction theory
+(Round S3: ill-posed — above dimension 4 a vertex gauge induces no flat
+connection, so the clean sheaf already has holonomy 3.19 on every cycle);
+additive `Q_causal`; the name and point-valued form of `Q_cert`;
 "self-tomography is impossible"; "magic is the frame-invariant resource";
 `rank(G)` as "identity capacity"; exhalation as necessarily measurement;
 entanglement as a quantumness measure;
@@ -769,6 +780,7 @@ capacity as a count of holonomies.
 | QΣ-R0.7 | typed quantities; transport holonomy measured | ✅ 57/57 tests |
 | QΣ-R0.8 | self-review: half-applied fixes completed; cone wired into `promote()` | ✅ 59/59 tests |
 | QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network / matchgate / low-treewidth families not yet covered |
+| Σ∞-S3 | §16 exp. 1: sheaf obstruction localisation, 8 coordinate systems, 300 trials; plus the QΣ query claim | ✅ 128 tests; sheaf clause survives, hypercomplex clause killed, octonionic clause ill-posed |
 | QΣ-R3A | measured free-conversion metric; re-test base geometry against it | not started |
 | QΣ-R3B | four-cell causal organ (self/other/memory/auditor), ΔY with uncertainty | specified, not run |
 | QΣ-R1 | four-cell organ (self/other/memory/auditor) at measured `Q_cert` | `Q_cert > 0.5` on hardware-sized cores |

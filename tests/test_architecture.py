@@ -1091,3 +1091,252 @@ def test_stokes_router_is_registered_as_retired_on_accuracy():
     from aionq.governance import registry, EvidenceTag
     assert registry["RET-S2-STOKES_ROUTER_ACCURACY"].tag == EvidenceTag.RETIRED
     assert registry["EXP-S2-STOKES_CONDITIONAL"].tag == EvidenceTag.MEASURED
+
+
+# --------------------------------------------------------------------------
+# Round S3: sheaf obstruction localisation (Sigma-infinity section 16, exp. 1)
+# --------------------------------------------------------------------------
+
+def test_cycle_rank_matches_euler_formula():
+    from aionq.sheaf import Nerve, ring_of_worldlets
+    n = ring_of_worldlets(6, chords=((0, 3), (1, 4)))
+    assert n.betti_1 == n.n_edges - n.n_worldlets + n.n_components == 3
+    assert len(n.cycle_basis()) == n.betti_1
+    disconnected = Nerve(4, ((0, 1), (2, 3)))
+    assert disconnected.n_components == 2 and disconnected.betti_1 == 0
+
+
+def test_clean_sheaf_has_exactly_trivial_holonomy():
+    """No defect must mean no obstruction, or nothing below is a measurement."""
+    from aionq.sheaf import make_obstructed_sheaf, ring_of_worldlets
+    rng = np.random.default_rng(11)
+    nerve = ring_of_worldlets(6, chords=((0, 3), (1, 4)))
+    for kind in ("generic", "commutator"):
+        s = make_obstructed_sheaf(nerve, [], rng, kind=kind, dim=4)
+        for c in nerve.cycle_basis():
+            assert np.allclose(s.holonomy(c), np.eye(4), atol=1e-9)
+
+
+def test_no_overlap_is_locally_anomalous():
+    """The defect must be invisible edge by edge, or the task is an outlier scan.
+
+    Every transition, defective or not, is an orthogonal matrix drawn from the
+    same set; in the commutator regime every one of them is L_q for some q in Q_8.
+    A per-edge test therefore has nothing to separate.
+    """
+    from aionq.sheaf import (left_multiplication_matrix, make_obstructed_sheaf,
+                             quaternion_group, ring_of_worldlets)
+    rng = np.random.default_rng(12)
+    nerve = ring_of_worldlets(6, chords=((0, 3),))
+    s = make_obstructed_sheaf(nerve, [2, 5], rng, kind="commutator", dim=4)
+    group = [left_multiplication_matrix(q) for q in quaternion_group()]
+    for g in s.transitions:
+        assert any(np.allclose(g, h, atol=1e-9) for h in group)
+
+
+def test_no_scalar_character_separates_the_commutator_regime():
+    """Proved, not measured: det is a homomorphism into an abelian group.
+
+    Every L_q for a unit quaternion lies in SO(4), so det = 1 on every overlap
+    and every cycle holonomy, defective or clean.  No sample size, tuning or
+    noise model can rescue a homomorphic scalar coordinate here.
+    """
+    from aionq.sheaf import auroc, localise, make_obstructed_sheaf, ring_of_worldlets
+    rng = np.random.default_rng(13)
+    nerve = ring_of_worldlets(7, chords=((0, 3), (1, 5)))
+    for _ in range(20):
+        defects = rng.choice(nerve.n_edges, size=2, replace=False)
+        s = make_obstructed_sheaf(nerve, defects, rng, kind="commutator", dim=4)
+        assert np.allclose([np.linalg.det(g) for g in s.transitions], 1.0, atol=1e-9)
+        labels = np.zeros(nerve.n_edges, dtype=bool)
+        labels[defects] = True
+        assert auroc(localise(s, "character", rng), labels) == 0.5
+
+
+def test_sheaf_instrument_beats_the_matched_controls():
+    from aionq.sheaf import auroc, localise, make_obstructed_sheaf, ring_of_worldlets
+    rng = np.random.default_rng(14)
+    nerve = ring_of_worldlets(8, chords=((0, 4), (1, 5), (2, 6)))
+    got = {k: [] for k in ("sheaf", "shuffled", "graph")}
+    for _ in range(40):
+        defects = rng.choice(nerve.n_edges, size=2, replace=False)
+        s = make_obstructed_sheaf(nerve, defects, rng, kind="generic", dim=4)
+        labels = np.zeros(nerve.n_edges, dtype=bool)
+        labels[defects] = True
+        for k in got:
+            got[k].append(auroc(localise(s, k, rng), labels))
+    assert np.mean(got["sheaf"]) > np.mean(got["shuffled"]) + 0.1
+    assert np.mean(got["sheaf"]) > np.mean(got["graph"]) + 0.1
+
+
+def test_quaternionic_coordinates_tie_on_their_home_ground_and_lose_off_it():
+    """The thesis's conditional, as a test: 'may improve ... only when ...'.
+
+    The shape reproduces -- exact tie in the quaternionic regime, clear loss on
+    generic O(4) -- but a tie is not an improvement, which is why
+    RET-S3-HYPERCOMPLEX_DIAGNOSIS is retired rather than promoted.
+    """
+    from aionq.sheaf import auroc, localise, make_obstructed_sheaf, ring_of_worldlets
+    rng = np.random.default_rng(15)
+    nerve = ring_of_worldlets(8, chords=((0, 4), (1, 5)))
+    home, away = [], []
+    for _ in range(40):
+        defects = rng.choice(nerve.n_edges, size=2, replace=False)
+        labels = np.zeros(nerve.n_edges, dtype=bool)
+        labels[defects] = True
+        q = make_obstructed_sheaf(nerve, defects, rng, kind="commutator", dim=4)
+        home.append(auroc(localise(q, "quaternion", rng), labels)
+                    - auroc(localise(q, "sheaf", rng), labels))
+        g = make_obstructed_sheaf(nerve, defects, rng, kind="generic", dim=4)
+        away.append(auroc(localise(g, "quaternion", rng), labels)
+                    - auroc(localise(g, "sheaf", rng), labels))
+    assert abs(np.mean(home)) < 1e-9        # exact tie, not a small win
+    assert np.mean(away) < -0.05            # strictly worse off its home ground
+
+
+def test_a_vertex_gauge_is_flat_exactly_through_the_quaternions():
+    """The octonionic clause is ill-posed, and this is why.
+
+    A gauge a_ij = g_j g_i^-1 gives zero holonomy iff L_a L_b = L_{ab}.  That
+    holds through dimension 4 and fails from 8, so above the quaternions the
+    CLEAN sheaf already carries an obstruction and there is no zero to measure
+    a defect against.
+    """
+    from aionq.sheaf import flatness_ladder, ring_of_worldlets
+    nerve = ring_of_worldlets(5, chords=((0, 2),))
+    ladder = flatness_ladder(nerve, dims=(1, 2, 4, 8, 16), samples=25,
+                             rng=np.random.default_rng(16))
+    for d in (1, 2, 4):
+        assert ladder[d][1] < 1e-9, f"dimension {d} should be flat"
+    for d in (8, 16):
+        assert ladder[d][0] > 1.0, f"dimension {d} should not be flat"
+
+
+def test_left_multiplication_stops_being_a_homomorphism_at_dimension_eight():
+    from aionq.sheaf import left_action_is_associative_on, random_unit_hypercomplex
+    rng = np.random.default_rng(17)
+    for d in (1, 2, 4):
+        a, b = random_unit_hypercomplex(d, rng), random_unit_hypercomplex(d, rng)
+        assert left_action_is_associative_on(a, b)
+    a, b = random_unit_hypercomplex(8, rng), random_unit_hypercomplex(8, rng)
+    assert not left_action_is_associative_on(a, b)
+
+
+def test_associator_channel_vanishes_in_associative_algebras():
+    from aionq.sheaf import localise, make_obstructed_sheaf, ring_of_worldlets
+    rng = np.random.default_rng(18)
+    nerve = ring_of_worldlets(6, chords=((0, 3),))
+    s = make_obstructed_sheaf(nerve, [1, 4], rng, kind="commutator", dim=4)
+    assert np.allclose(localise(s, "associator", rng), 0.0, atol=1e-9)
+
+
+def test_gluing_defect_is_nonnegative_and_vanishes_on_a_global_section():
+    """The thesis's formalisation programme asks for exactly this."""
+    from aionq.sheaf import gluing_defect, make_obstructed_sheaf, ring_of_worldlets
+    rng = np.random.default_rng(19)
+    nerve = ring_of_worldlets(5)
+    s = make_obstructed_sheaf(nerve, [], rng, kind="generic", dim=4)
+    x0 = rng.normal(size=4)
+    sections = [x0]
+    for k in range(1, 5):
+        sections.append(s.transitions[k - 1] @ sections[k - 1])
+    assert gluing_defect(s, sections) >= 0.0
+    assert gluing_defect(s, sections) < 1e-18
+    assert gluing_defect(s, [rng.normal(size=4) for _ in range(5)]) > 0.0
+
+
+def test_sheaf_laplacian_is_psd():
+    from aionq.sheaf import make_obstructed_sheaf, ring_of_worldlets
+    rng = np.random.default_rng(20)
+    s = make_obstructed_sheaf(ring_of_worldlets(5, chords=((0, 2),)), [1], rng,
+                              kind="generic", dim=3)
+    ev = np.linalg.eigvalsh(s.sheaf_laplacian())
+    assert ev.min() > -1e-9
+
+
+def test_auroc_averages_ties_to_chance():
+    """A constant-score instrument must read 0.5, not a spurious 0 or 1."""
+    from aionq.sheaf import auroc
+    assert auroc(np.zeros(8), np.array([1, 1, 0, 0, 0, 0, 0, 0], dtype=bool)) == 0.5
+
+
+# --------------------------------------------------------------------------
+# Round S3: quantum interference on the same obstruction (the QSigma claim)
+# --------------------------------------------------------------------------
+
+def test_bernstein_vazirani_reads_the_class_in_one_noiseless_query():
+    from aionq.interference import bv_recover
+    rng = np.random.default_rng(21)
+    for b in (1, 2, 3, 5, 7):
+        for _ in range(20):
+            hidden = rng.integers(0, 2, size=b).astype(np.uint8)
+            assert np.array_equal(bv_recover(hidden, 0.0, rng), hidden)
+
+
+def test_the_obstruction_class_is_blind_to_coboundaries():
+    """Two defects differing by a cut are indistinguishable to ANY query count.
+
+    This is what makes b, not E, the learner's target -- and it bounds the
+    quantum advantage as tightly as it bounds the classical cost.
+    """
+    from aionq.interference import cycle_incidence, obstruction_class
+    from aionq.sheaf import ring_of_worldlets
+    nerve = ring_of_worldlets(5, chords=((0, 2),))
+    c = cycle_incidence(nerve)
+    # a coboundary: the set of edges incident to one worldlet
+    cut = [k for k, (i, j) in enumerate(nerve.edges) if 0 in (i, j)]
+    assert np.array_equal((c @ np.eye(nerve.n_edges, dtype=np.uint8)[cut].sum(0)) % 2,
+                          np.zeros(nerve.betti_1, dtype=np.uint8))
+    base = obstruction_class(nerve, [1])
+    moved = obstruction_class(nerve, [1] + cut)
+    assert np.array_equal(base, moved)
+
+
+def test_classical_cost_is_the_cycle_rank_and_quantum_cost_is_one():
+    from aionq.interference import query_report
+    from aionq.sheaf import ring_of_worldlets
+    r = query_report(ring_of_worldlets(4, chords=((0, 2),)))
+    assert (r.betti_1, r.classical_queries, r.quantum_queries) == (2, 2, 1)
+    assert r.query_ratio == 2.0
+
+
+def test_building_the_oracle_costs_more_than_the_queries_it_saves():
+    """The caveat, as a test: outside the oracle model the advantage is negative."""
+    from aionq.interference import query_report
+    from aionq.sheaf import ring_of_worldlets
+    for n, chords in ((4, ((0, 2),)), (6, ((0, 3), (1, 4))),
+                      (12, tuple((i, i + 6) for i in range(6)))):
+        r = query_report(ring_of_worldlets(n, chords=chords))
+        assert r.oracle_build_cost > r.classical_queries
+        assert r.honest_ratio < 1.0
+
+
+def test_minimum_weight_representative_reproduces_the_class():
+    from aionq.interference import minimum_weight_representative, obstruction_class
+    from aionq.sheaf import ring_of_worldlets
+    nerve = ring_of_worldlets(5, chords=((0, 2),))
+    cls = obstruction_class(nerve, [3])
+    rep = minimum_weight_representative(nerve, cls)
+    assert np.array_equal(obstruction_class(nerve, np.flatnonzero(rep)), cls)
+    assert rep.sum() <= 1
+
+
+def test_noise_erodes_the_single_query_advantage():
+    from aionq.interference import bv_success_rate
+    rng = np.random.default_rng(22)
+    clean = bv_success_rate(6, 0.0, 60, rng)
+    noisy = bv_success_rate(6, 0.15, 200, rng)
+    assert clean == 1.0
+    assert noisy < 0.5
+
+
+def test_round_s3_claims_are_registered_with_their_corrections():
+    from aionq.governance import registry, EvidenceTag
+    assert registry["EXP-S3-SHEAF_LOCALISATION"].tag == EvidenceTag.MEASURED
+    assert registry["MATH-S3-NO_FLAT_ABOVE_H"].tag == EvidenceTag.PROVED
+    assert registry["MATH-S3-BV_QUERY_SEPARATION"].tag == EvidenceTag.PROVED
+    assert registry["RET-S3-HYPERCOMPLEX_DIAGNOSIS"].tag == EvidenceTag.RETIRED
+    assert registry["RET-S3-OCTONIONIC_SHEAF"].tag == EvidenceTag.RETIRED
+    assert registry["BRIDGE-S3-COHERENT_ORACLE"].kill_condition
+    with pytest.raises(Exception):
+        registry.cite("RET-S3-OCTONIONIC_SHEAF", section="results")

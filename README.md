@@ -96,7 +96,8 @@ python3 experiments/run_visibility.py # Round V1: coupling field vs code distanc
 python3 experiments/run_replication.py # Round V2: depth, intervals, distributions
 python3 experiments/run_sentinel.py   # Round S1: Sigma-inf sentinel vs its kill condition
 python3 experiments/run_stokes.py     # Round S2: Stokes router vs its kill condition
-python3 -m pytest tests/ -q           # 109 tests
+python3 experiments/run_sheaf.py      # Round S3: sheaf obstruction localisation + query claim
+python3 -m pytest tests/ -q           # 128 tests
 ```
 
 ## Layout
@@ -123,6 +124,8 @@ src/aionq/
   splitform.py      split forms over R and F_2; logical pairs; computed distance
   sentinel.py       sparse expanding-gap novelty diagnostic (RETIRED: see S1)
   stokes.py         Stokes matrices, braid action, basis-mutation router (S2)
+  sheaf.py          cellular sheaves of worldlets; eight localisation instruments
+  interference.py   holonomy oracle: b classical queries against 1 quantum one
 experiments/        audit and ACAF sweep
 tests/              one test per falsifiable claim
 docs/ARCHITECTURE.md
@@ -137,6 +140,25 @@ cancellation attacks in the sweep, but circuit equivalence is intractable in gen
 so residual gaming vectors exist. A better classical algorithm lowers the bound.
 That direction is correct: it can only be revised downward by classical progress,
 never inflated by notation.
+
+Round S3 is the first pre-registered Σ∞ prediction to **survive** its kill
+condition: sheaf holonomy localises hidden cycle obstructions at AUROC 0.797
+against 0.511 for shuffled overlaps and 0.508 for topology alone, at equal
+dimension, equal arithmetic and an identical attribution rule (n = 300,
+Δ = +0.286 [+0.258, +0.316]). The same round kills the hypercomplex clause by a
+*tie* — quaternionic coordinates are exactly identical to a dimension-matched
+real sheaf on their home ground and lose 0.231 off it — and finds the octonionic
+clause **ill-posed**: above dimension 4 a vertex gauge induces no flat
+connection, so a clean sheaf already carries holonomy on every cycle and there is
+nothing for a defect to stand out against. Unit octonions are a Moufang loop, not
+a group.
+
+The one genuine quantum separation here is proved and bounded: reading a cycle
+obstruction class costs exactly `b = E − V + C` classical queries against exactly
+1 quantum query. Building the coherent oracle from classical data costs `E`
+accesses, which exceeds `b` on every instance tested; recovering the class is not
+localising the defect, and the decoding step that follows is unchanged for both
+parties.
 
 Nothing here connects any coordinate to cognitive performance. The advantage cone
 is the right *shape* to receive an answer; no experiment has produced one, and
