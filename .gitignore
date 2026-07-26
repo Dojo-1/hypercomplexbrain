@@ -4,3 +4,58 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+
+# ---------------------------------------------------------------------------
+# Source research material: NEVER committed.
+#
+# The Manifold archive, the Sigma-infinity thesis, the NN Disk and m1-bordon
+# snapshots, the HTML visualisations and the external papers are the author's
+# private research corpus.  This repository holds only what it *derives* from
+# them -- condensations, measurements, claims and corrections -- never the
+# originals.
+#
+# docs/MANIFOLD_REFERENCE.md is a condensation and belongs here.
+# artifacts/manifold/SOURCE_INDEX.md holds character offsets and term counts
+# only, no source text.  Both are deliberate; everything below is not.
+# ---------------------------------------------------------------------------
+*.docx
+*.doc
+*.dotx
+*.pdf
+*.pptx
+*.potx
+*.xlsx
+*.xlsm
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.html
+*.htm
+
+# extracted or ingested copies of the above, under any name
+**/ingest/
+**/uploads/
+*manifold_latest*
+*Manifold_Research_Atlas*
+*Polycosmic*
+*Sigma_Infinity*
+*nnnhyperbolicramdisk*
+*m1-bordon*
+*heralded*
+*telos_over_substrate*
+*fauna_over_substrate*
+*continuumcalculator*
+*.ingested.txt
+*_source.txt
+
+# generated binaries and figures (repo policy: no binary artifacts)
+artifacts/**/plots/*
+!artifacts/**/plots/.gitkeep
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.gif
