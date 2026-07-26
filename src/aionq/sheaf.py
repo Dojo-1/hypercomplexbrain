@@ -632,6 +632,44 @@ def _instr_associator(sheaf, cycles, rng):
                                                   - sheaf.label_holonomy(c, "right"))))
 
 
+def _instr_laplacian(sheaf, cycles, rng):
+    """Per-overlap Dirichlet energy of the sheaf Laplacian's lowest eigenspace.
+
+    **This instrument never mentions a cycle basis.**  That is its entire point.
+    Every other instrument here spreads blame over a *fundamental* cycle basis,
+    which is an arbitrary choice of spanning tree, and Round S4 measured what that
+    costs: the sheaf instrument's AUROC moves 0.789 -> 0.551 under an admissible
+    worldlet relabelling because a different tree yields different cycles.
+
+    Here the score is built from the sheaf Laplacian L = delta^T delta alone:
+
+        r_e = sum over an orthonormal basis {x^k} of the lowest eigenspace of
+              || x_j^k - G_e x_i^k ||^2
+
+    Two invariances hold by construction rather than by measurement.  Relabelling
+    worldlets conjugates L by a block permutation, so its eigenvectors permute and
+    each edge carries its own residual along.  An orthogonal gauge Q sends
+    x_j - G x_i to Q(x_j - G x_i), which preserves the norm.  And summing over a
+    whole eigenspace rather than one eigenvector makes the score independent of
+    which orthonormal basis diagonalisation happened to return, which is what
+    makes it well defined when the eigenvalue is degenerate -- and it is degenerate
+    exactly when the sheaf is flat.
+    """
+    d, n = sheaf.fiber_dim, sheaf.nerve.n_worldlets
+    lap = sheaf.sheaf_laplacian()
+    vals, vecs = np.linalg.eigh(lap)
+    k = min(d, vals.size)
+    basis = vecs[:, :k]                       # lowest eigenspace, whole subspace
+
+    scores = np.zeros(sheaf.nerve.n_edges)
+    for e, (i, j) in enumerate(sheaf.nerve.edges):
+        xi = basis[i * d:(i + 1) * d, :]
+        xj = basis[j * d:(j + 1) * d, :]
+        resid = xj - sheaf.transitions[e] @ xi
+        scores[e] = float(np.sum(resid * resid))
+    return scores
+
+
 def _instr_shuffled(sheaf, cycles, rng):
     """The sheaf instrument on overlaps permuted across edges.
 
@@ -649,6 +687,7 @@ INSTRUMENTS = {
     "scalar": _instr_scalar,
     "character": _instr_character,
     "sheaf": _instr_sheaf,
+    "laplacian": _instr_laplacian,
     "quaternion": _instr_quaternion,
     "octonion": _instr_octonion,
     "associator": _instr_associator,

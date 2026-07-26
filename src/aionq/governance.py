@@ -795,6 +795,48 @@ CLAIMS = [
                        "rather than by another module happening to run",
                        "this is a specification-implementation drift, not a leak: "
                        "MODEL-S4-BORDON_CEILING remains true INSIDE its model")),
+    Claim("MATH-S5-LAPLACIAN_INVARIANT", EvidenceTag.PROVED,
+          "The sheaf-Laplacian instrument is EXACTLY invariant under the frame "
+          "group (worldlet relabelling x edge reordering x orthogonal gauge): "
+          "worst orbit deviation 0.000 over 30 instances x 30 frames, sitting "
+          "with the topological control betti_1. It references no fundamental "
+          "cycle basis, so there is no spanning tree for a relabelling to change; "
+          "relabelling conjugates L by a block permutation, gauge Q sends "
+          "x_j - G x_i to Q(x_j - G x_i), and summing over the whole lowest "
+          "eigenspace removes any dependence on which orthonormal basis the "
+          "diagonalisation returned.",
+          artifact="src/aionq/sheaf.py::_instr_laplacian"),
+    Claim("EXP-S5-INVARIANT_LOCALISATION", EvidenceTag.MEASURED,
+          "The basis-free instrument is both invariant AND the strongest: AUROC "
+          "0.964 against 0.776 for the basis-dependent sheaf instrument, and its "
+          "contrast against matched controls retains 96% of its magnitude across "
+          "an admissible frame change (+0.486 -> +0.467 vs shuffled) where the S3 "
+          "instrument retained 20%.",
+          artifact="experiments/run_moving_frame.py",
+          sample_size=300, interval=(0.4404, 0.4918),
+          null="the Round S3 matched controls (shuffled overlaps, topology-only), "
+               "measured in both the identity frame and a random frame",
+          assumptions=("300 trials on the S3 instance family (V=8, E=13, 2 defects)",
+                       "gated by two integrity checks that ran first: equivariance "
+                       "of the group action (8e-16) and loop closure (exactly 0)",
+                       "invariance did not cost accuracy, it bought accuracy -- the "
+                       "opposite of the usual trade, and worth distrusting until "
+                       "replicated on an unseen instance family",
+                       "witnesses remain correlated: same author, same codebase")),
+    Claim("RET-S5-CYCLE_BASIS_INSTRUMENTS", EvidenceTag.RETIRED,
+          "Localisation scores built on a fundamental cycle basis are properties "
+          "of the sheaf.",
+          corrections=("moving-frame audit: every cycle-basis instrument is "
+                       "ORBIT-RESOLVING. Mean worst deviation over the frame "
+                       "orbit: sheaf 0.299, character 0.245, graph 0.579, scalar "
+                       "0.644, quaternion 0.602, shuffled 0.634",
+                       "in the archive's own language, these measurements resolve "
+                       "the orbit rather than collapsing to its quotient: they "
+                       "report frame coordinates, not object structure",
+                       "they are mistyped rather than wrong -- properties of the "
+                       "pair (sheaf, frame) reported as properties of the sheaf",
+                       "superseded by the orbit-collapsed instrument, not merely "
+                       "retired: see EXP-S5-INVARIANT_LOCALISATION")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",
@@ -845,6 +887,7 @@ def _link_supersessions(reg: Registry) -> None:
     """
     for old_id, new_id in (
         ("EXP-S3-SHEAF_LOCALISATION", "EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT"),
+        ("EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT", "EXP-S5-INVARIANT_LOCALISATION"),
     ):
         old, new = reg[old_id], reg[new_id]
         if old.superseded_by is None:

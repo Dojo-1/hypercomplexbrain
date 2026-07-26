@@ -1,0 +1,91 @@
+{
+ "trials": 30,
+ "frames_per_trial": 30,
+ "equivariance_defect": 6.972121039994489e-16,
+ "worst_loop_closure": 0.0,
+ "instruments": {
+  "laplacian": {
+   "auroc_identity": 0.9545454545454546,
+   "mean_max_deviation": 0.0,
+   "worst_max_deviation": 0.0,
+   "mean_spread": 9.992007221626409e-17,
+   "orbit_collapsed": true
+  },
+  "sheaf": {
+   "auroc_identity": 0.797727272727273,
+   "mean_max_deviation": 0.2053030303030303,
+   "worst_max_deviation": 0.40909090909090906,
+   "mean_spread": 0.08012239030418841,
+   "orbit_collapsed": false
+  },
+  "quaternion": {
+   "auroc_identity": 0.5053030303030303,
+   "mean_max_deviation": 0.5166666666666666,
+   "worst_max_deviation": 0.9545454545454546,
+   "mean_spread": 0.18802676168436697,
+   "orbit_collapsed": false
+  },
+  "character": {
+   "auroc_identity": 0.621969696969697,
+   "mean_max_deviation": 0.1575757575757576,
+   "worst_max_deviation": 0.38636363636363635,
+   "mean_spread": 0.05789812309544391,
+   "orbit_collapsed": false
+  },
+  "scalar": {
+   "auroc_identity": 0.4249999999999999,
+   "mean_max_deviation": 0.5303030303030304,
+   "worst_max_deviation": 0.8181818181818182,
+   "mean_spread": 0.1862230892802867,
+   "orbit_collapsed": false
+  },
+  "graph": {
+   "auroc_identity": 0.4242424242424242,
+   "mean_max_deviation": 0.4992424242424242,
+   "worst_max_deviation": 0.7727272727272727,
+   "mean_spread": 0.1797306001442167,
+   "orbit_collapsed": false
+  },
+  "shuffled": {
+   "auroc_identity": 0.4083333333333334,
+   "mean_max_deviation": 0.5893939393939394,
+   "worst_max_deviation": 1.0,
+   "mean_spread": 0.20977534854536833,
+   "orbit_collapsed": false
+  }
+ },
+ "s3_contrasts": {
+  "identity_shuffled": {
+   "delta": 0.48643939393939395,
+   "ci": [
+    0.46121022727272726,
+    0.5116685606060608
+   ],
+   "d": 3.0199175014407875
+  },
+  "identity_graph": {
+   "delta": 0.4696212121212121,
+   "ci": [
+    0.4476496212121212,
+    0.4918181818181818
+   ],
+   "d": 3.3226356210347423
+  },
+  "moved_shuffled": {
+   "delta": 0.46659090909090917,
+   "ci": [
+    0.4403787878787879,
+    0.49182386363636355
+   ],
+   "d": 2.8766912125205804
+  },
+  "moved_graph": {
+   "delta": 0.46628787878787886,
+   "ci": [
+    0.441282196969697,
+    0.4903049242424241
+   ],
+   "d": 3.084554766462865
+  }
+ }
+}

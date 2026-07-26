@@ -99,6 +99,7 @@ python3 experiments/run_stokes.py     # Round S2: Stokes router vs its kill cond
 python3 experiments/run_sheaf.py      # Round S3: sheaf obstruction localisation + query claim
 python3 experiments/run_s4_g100.py    # Round S4-G100: recognition chamber vs its gates
 python3 experiments/run_s4_basis_attack.py  # S4: is the S3 claim basis-invariant?
+python3 experiments/run_moving_frame.py     # S5: moving-frame orbit audit + invariant instrument
 python3 -m pytest tests/ -q           # 193 tests
 ```
 
@@ -129,6 +130,7 @@ src/aionq/
   sheaf.py          cellular sheaves of worldlets; eight localisation instruments
   interference.py   holonomy oracle: b classical queries against 1 quantum one
   recognition/      S4-G100 chamber: worldlets, tendrils, aperture, nest, budget
+  movingframe.py    frame bundle action; orbit-collapse vs orbit-resolution
 experiments/        audit and ACAF sweep
 tests/              one test per falsifiable claim
 docs/ARCHITECTURE.md
@@ -181,6 +183,27 @@ fundamental cycle basis, and under an admissible worldlet relabelling it retains
 its direction but only 20% of its effect size (+0.269 → +0.055). Every
 localisation number on this host is a basis-relative quantity.
 `EXP-S3-SHEAF_LOCALISATION` is superseded, its original text preserved.
+
+Round S5 closed the bridge S4 left open. A moving-frame audit -- a *path* through
+the frame bundle (worldlet relabelling x edge reordering x orthogonal gauge,
+composed as a genuine group) rather than a single attack -- classifies every
+instrument as **orbit-collapsed** (constant on the orbit: it sees the object) or
+**orbit-resolving** (varies: it reports frame coordinates). Every cycle-basis
+instrument is orbit-resolving, with worst deviations from 0.245 to 0.644.
+
+A basis-free replacement -- per-overlap Dirichlet energy of the sheaf Laplacian's
+lowest eigenspace, which never mentions a cycle basis -- is **exactly**
+orbit-collapsed, worst deviation 0.000, sitting with the topological control. It
+is also the strongest instrument: **AUROC 0.964 against 0.776**, and its contrast
+against matched controls retains **96%** of its magnitude across an admissible
+frame change where the S3 instrument retained 20%. Invariance did not cost
+accuracy here; it bought accuracy.
+
+Two integrity gates ran first and are the reason to trust it: equivariance of the
+group action (8e-16) and loop closure (exactly 0, no hidden state). The first
+implementation failed equivariance with *infinity* -- it re-sorted edges, which is
+a canonicalisation rather than a group operation -- and the gate correctly
+invalidated every orbit statistic built on it before any of them were reported.
 
 Nothing here connects any coordinate to cognitive performance. The advantage cone
 is the right *shape* to receive an answer; no experiment has produced one, and

@@ -674,3 +674,116 @@ def test_provenance_log_growth_is_registered_as_a_known_drift():
         b.tick(step, ap)
     assert len(b.interventions) > 100, "the log does grow without bound"
     assert registry["RET-S4-CONSTANT_INVARIANT_COST"].tag == EvidenceTag.RETIRED
+
+
+# ==========================================================================
+# 12. MOVING FRAME: orbit-collapse vs orbit-resolution
+# ==========================================================================
+
+def _mf_instance(seed=5):
+    from aionq.sheaf import Nerve
+    rng = np.random.default_rng(seed)
+    nerve = Nerve(8, tuple(sorted({(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6),
+                                   (6, 7), (7, 0), (0, 4), (1, 5), (2, 6)})))
+    defects = rng.choice(nerve.n_edges, size=2, replace=False)
+    sheaf = make_obstructed_sheaf(nerve, defects, rng, kind="generic", dim=4)
+    labels = np.zeros(nerve.n_edges, dtype=bool)
+    labels[defects] = True
+    return nerve, sheaf, labels, rng
+
+
+def test_frame_action_is_a_genuine_group_action():
+    """Gates everything else: acting by f2 after f1 must equal the composite.
+
+    The first implementation re-sorted edges on every action.  Sorting is a
+    canonicalisation, not a group operation, so this returned infinity and
+    correctly invalidated every orbit statistic built on it.
+    """
+    from aionq.movingframe import equivariance_defect, random_frame
+    nerve, sheaf, _l, rng = _mf_instance()
+    for _ in range(50):
+        f1 = random_frame(nerve.n_worldlets, 4, rng, nerve.n_edges)
+        f2 = random_frame(nerve.n_worldlets, 4, rng, nerve.n_edges)
+        assert equivariance_defect(nerve, sheaf, f1, f2) < 1e-9
+
+
+def test_frame_composed_with_its_inverse_is_the_identity():
+    from aionq.movingframe import compose, identity_frame, invert, random_frame
+    nerve, sheaf, _l, rng = _mf_instance()
+    ident = identity_frame(nerve.n_worldlets, 4, nerve.n_edges)
+    for _ in range(50):
+        f = random_frame(nerve.n_worldlets, 4, rng, nerve.n_edges)
+        c = compose(invert(f), f)
+        assert c.vertex_perm == ident.vertex_perm
+        assert c.edge_order == ident.edge_order
+        assert np.allclose(c.gauge, ident.gauge, atol=1e-9)
+
+
+def test_loop_closure_is_exact_for_every_instrument():
+    """Nonzero closure would be hidden state carried between runs, not frame
+    dependence.  It is a bug class no single-frame-pair attack can detect."""
+    from aionq.movingframe import loop_closure, random_frame
+    from aionq.sheaf import localise
+    nerve, sheaf, labels, rng = _mf_instance()
+    frames = [random_frame(nerve.n_worldlets, 4, rng, nerve.n_edges)
+              for _ in range(6)]
+    for name in ("laplacian", "sheaf", "graph", "character"):
+        m = (lambda n2, s2, l2, nm=name:
+             auroc(localise(s2, nm, np.random.default_rng(7)), l2))
+        assert loop_closure(m, nerve, sheaf, labels, frames) == 0.0
+
+
+def test_laplacian_instrument_is_orbit_collapsed():
+    """The basis-free instrument is EXACTLY frame-invariant, like betti_1.
+
+    It never references a fundamental cycle basis, so there is no spanning tree
+    for a relabelling to change.  Locks MATH-S5-LAPLACIAN_INVARIANT.
+    """
+    from aionq.movingframe import orbit_report, random_frame
+    from aionq.sheaf import localise
+    nerve, sheaf, labels, rng = _mf_instance()
+    frames = [random_frame(nerve.n_worldlets, 4, rng, nerve.n_edges)
+              for _ in range(30)]
+    m = lambda n2, s2, l2: auroc(localise(s2, "laplacian",
+                                          np.random.default_rng(7)), l2)
+    r = orbit_report("laplacian", m, nerve, sheaf, labels, frames)
+    assert r.max_deviation == 0.0
+    assert r.is_invariant
+
+
+def test_cycle_basis_instruments_are_orbit_resolving():
+    """A metamorphic test that asserts a FAILURE, because that is the finding.
+
+    Every instrument that spreads blame over a fundamental cycle basis reports
+    frame coordinates, not object structure.  Locked so a later change that
+    accidentally fixes one cannot pass silently.
+    """
+    from aionq.movingframe import orbit_report, random_frame
+    from aionq.sheaf import localise
+    nerve, sheaf, labels, rng = _mf_instance()
+    frames = [random_frame(nerve.n_worldlets, 4, rng, nerve.n_edges)
+              for _ in range(30)]
+    for name in ("sheaf", "graph", "scalar"):
+        m = (lambda n2, s2, l2, nm=name:
+             auroc(localise(s2, nm, np.random.default_rng(7)), l2))
+        r = orbit_report(name, m, nerve, sheaf, labels, frames)
+        assert not r.is_invariant, f"{name} is now invariant; revisit the ledger"
+
+
+def test_topological_control_is_exactly_invariant():
+    from aionq.movingframe import orbit_report, random_frame
+    nerve, sheaf, labels, rng = _mf_instance()
+    frames = [random_frame(nerve.n_worldlets, 4, rng, nerve.n_edges)
+              for _ in range(20)]
+    r = orbit_report("betti_1", lambda n2, s2, l2: n2.betti_1,
+                     nerve, sheaf, labels, frames)
+    assert r.max_deviation == 0.0
+
+
+def test_moving_frame_claims_are_registered():
+    from aionq.governance import registry
+    assert registry["MATH-S5-LAPLACIAN_INVARIANT"].tag == EvidenceTag.PROVED
+    assert registry["EXP-S5-INVARIANT_LOCALISATION"].tag == EvidenceTag.MEASURED
+    assert registry["RET-S5-CYCLE_BASIS_INSTRUMENTS"].tag == EvidenceTag.RETIRED
+    assert registry["EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT"].superseded_by == \
+        "EXP-S5-INVARIANT_LOCALISATION"
