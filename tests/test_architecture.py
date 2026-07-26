@@ -660,8 +660,10 @@ def test_semantic_claims_cannot_be_cited_in_results():
 
 def test_correction_supersedes_rather_than_deletes():
     from aionq.governance import Claim, EvidenceTag, Registry
-    r = Registry([Claim("MATH-R1-OLD", EvidenceTag.MEASURED, "old reading")])
-    r.supersede("MATH-R1-OLD", Claim("MATH-R2-NEW", EvidenceTag.MEASURED, "new reading"))
+    stats = dict(sample_size=10, interval=(0.1, 0.3), null="zero effect")
+    r = Registry([Claim("MATH-R1-OLD", EvidenceTag.MEASURED, "old reading", **stats)])
+    r.supersede("MATH-R1-OLD",
+                Claim("MATH-R2-NEW", EvidenceTag.MEASURED, "new reading", **stats))
     assert r["MATH-R1-OLD"].superseded_by == "MATH-R2-NEW"
     assert r["MATH-R2-NEW"].supersedes == "MATH-R1-OLD"
     assert len(r) == 2                      # history preserved, not overwritten
@@ -850,3 +852,49 @@ def test_zero_divisors_appear_exactly_at_sedenions():
     a, b = zd
     assert np.linalg.norm(a) > 0 and np.linalg.norm(b) > 0
     assert np.linalg.norm(cd_multiply(a, b)) == pytest.approx(0.0, abs=1e-12)
+
+
+# --------------------------------------------------------------------------
+# Statistical discipline
+# --------------------------------------------------------------------------
+
+def test_measured_claims_must_report_sample_size_and_interval():
+    """The Atlas M rule, now enforced rather than merely stated."""
+    from aionq.governance import Claim, EvidenceTag, GovernanceError
+    with pytest.raises(GovernanceError, match="sample_size"):
+        Claim("EXP-R9-BARE", EvidenceTag.MEASURED, "a number with no uncertainty")
+
+
+def test_every_registered_measured_claim_carries_statistics():
+    from aionq.governance import registry, EvidenceTag
+    for c in registry.by_tag(EvidenceTag.MEASURED):
+        assert c.sample_size and c.sample_size > 0, c.id
+        assert c.interval and len(c.interval) == 2, c.id
+        assert c.null, c.id
+
+
+def test_bootstrap_ci_brackets_a_known_mean():
+    from aionq.statistics import bootstrap_ci
+    rng = np.random.default_rng(0)
+    data = rng.normal(5.0, 1.0, 500)
+    lo, hi = bootstrap_ci(data, seed=1)
+    assert lo < 5.0 < hi
+    assert hi - lo < 0.5
+
+
+def test_measurement_significance_is_interval_based():
+    from aionq.statistics import summarize
+    rng = np.random.default_rng(2)
+    shifted = summarize("shifted", rng.normal(1.0, 0.1, 400))
+    centred = summarize("centred", rng.normal(0.0, 1.0, 400))
+    assert shifted.excludes(0.0)
+    assert not centred.excludes(0.0)
+
+
+def test_effect_size_detects_and_rejects():
+    from aionq.statistics import compare_groups
+    rng = np.random.default_rng(3)
+    real = compare_groups("real", rng.normal(1, 1, 300), rng.normal(0, 1, 300), resamples=2000)
+    null = compare_groups("null", rng.normal(0, 1, 300), rng.normal(0, 1, 300), resamples=2000)
+    assert real.significant and abs(real.cohens_d) > 0.5
+    assert not null.significant

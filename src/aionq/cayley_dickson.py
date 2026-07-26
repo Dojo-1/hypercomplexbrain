@@ -34,7 +34,8 @@ from dataclasses import dataclass
 import numpy as np
 
 __all__ = ["cd_multiply", "cd_conjugate", "associator", "associator_ladder",
-           "find_zero_divisor", "LadderRow", "ATLAS_REPORTED"]
+           "find_zero_divisor", "LadderRow", "ATLAS_REPORTED",
+           "structure_table", "fast_multiply", "fast_associator"]
 
 # Reported in the Manifold Research Atlas, section 6.4.  Targets for replication,
 # not assumptions.
@@ -64,6 +65,48 @@ def cd_multiply(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     left = cd_multiply(a, c) - cd_multiply(cd_conjugate(d), b)
     right = cd_multiply(d, a) + cd_multiply(b, cd_conjugate(c))
     return np.concatenate([left, right])
+
+
+_TABLE_CACHE: dict = {}
+
+
+def structure_table(dim: int) -> tuple:
+    """Precomputed structure constants: e_i e_j = sign[i,j] * e_{index[i,j]}.
+
+    The recursive product costs ~3^log2(dim) calls per multiplication, which made
+    sampling at dim 32 infeasible.  The table is built once from the recursion
+    (so it is the same algebra, not a re-derivation) and reduces a product to a
+    single O(dim^2) scatter-add.
+    """
+    if dim in _TABLE_CACHE:
+        return _TABLE_CACHE[dim]
+    eye = np.eye(dim)
+    index = np.zeros((dim, dim), dtype=np.int64)
+    sign = np.zeros((dim, dim))
+    for i in range(dim):
+        for j in range(dim):
+            prod = cd_multiply(eye[i], eye[j])
+            nz = np.flatnonzero(np.abs(prod) > 1e-12)
+            assert nz.size == 1, "Cayley-Dickson basis product must be a single unit"
+            index[i, j] = nz[0]
+            sign[i, j] = prod[nz[0]]
+    _TABLE_CACHE[dim] = (index, sign)
+    return index, sign
+
+
+def fast_multiply(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    """Product via the structure table.  Identical to :func:`cd_multiply`."""
+    dim = x.shape[0]
+    index, sign = structure_table(dim)
+    out = np.zeros(dim)
+    coeff = (sign * np.outer(x, y)).ravel()
+    np.add.at(out, index.ravel(), coeff)
+    return out
+
+
+def fast_associator(x, y, z) -> np.ndarray:
+    """[x, y, z] using the structure table."""
+    return fast_multiply(fast_multiply(x, y), z) - fast_multiply(x, fast_multiply(y, z))
 
 
 def associator(x: np.ndarray, y: np.ndarray, z: np.ndarray) -> np.ndarray:

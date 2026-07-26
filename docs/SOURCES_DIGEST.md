@@ -262,24 +262,54 @@ Architecturally this finally makes measurable a tension flagged in round 1 and
 never implemented: **high `g_r` is exactly protection and exactly inertness.** An
 organ invisible to local probes cannot be locally read or acted upon.
 
-### The Cayley–Dickson failure ladder — partial replication
+### The Cayley–Dickson failure ladder — replication at depth (Round V2)
 
-The Atlas reports ‖A‖: 𝕆 ≈ 0.359, 𝕊₁₆ ≈ 1.356, 𝕋₃₂ ≈ 1.4. Replicated in
-`src/aionq/cayley_dickson.py`:
+The Atlas reports ‖A‖: 𝕆 ≈ 0.359, 𝕊₁₆ ≈ 1.356, 𝕋₃₂ ≈ 1.4. Round V1 measured
+these from a single seed with no interval; Round V2 re-ran them with 8 seeds ×
+20,000 samples, exhaustive enumeration where feasible, and bootstrap intervals.
 
-| rung | measured (basis triples) | Atlas | |
-|---|---:|---:|---|
-| ℝ, ℂ, ℍ | 0 exactly | 0 | ✅ |
-| 𝕆 (dim 8) | **1.6000** | 0.359 | ❌ |
-| 𝕊₁₆ (dim 16) | **1.3538** | 1.356 | ✅ 0.2% |
-| zero divisors | absent ≤ 8, present ≥ 16 | same | ✅ |
+**Basis-triple convention** (the one that fits 𝕊₁₆):
 
-Under the single convention that reproduces 𝕊₁₆ to 0.2%, the octonion figure
-should be 1.6000. Random-unit sampling gives 1.103; no normalisation tried
-reproduces 0.359 while also matching 𝕊₁₆. **The qualitative ladder replicates
-exactly — associativity fails first at 𝕆, zero divisors appear first at 𝕊₁₆ —
-but the octonion norm does not.** This is a question for the source, not a
-correction to it: the convention may simply differ.
+| rung | measured | 95% CI | Atlas | |
+|---|---:|---|---:|---|
+| ℝ, ℂ, ℍ | 0 exactly | — | 0 | ✅ |
+| 𝕆 (dim 8) | **1.6000** | exhaustive | 0.359 | ❌ |
+| 𝕊₁₆ (dim 16) | **1.3538** | exhaustive | 1.356 | ✅ |
+| 𝕋₃₂ (dim 32) | **1.1815** | [1.1719, 1.1912] | 1.400 | ❌ |
+
+**Random-unit convention:** 1.0929 [1.0879, 1.0984] / 1.3123 [1.3096, 1.3148] /
+1.3777 [1.3753, 1.3801] — misses **all three**.
+
+> **Exactly one of the three reported nonzero values replicates, and only under
+> one convention.** No single convention reproduces the ladder.
+
+Two corrections to what Round V1 reported. The dim-32 value was called "close to
+1.4" on the strength of the random-unit figure 1.377; under the convention that
+actually fits 𝕊₁₆ it is **1.1815, which does not match**. And the V1 dim-8
+random-unit point estimate 1.103 falls **outside** the tighter V2 interval
+[1.0879, 1.0984] — a single seed was not enough.
+
+The dim-8 and dim-16 figures are **exhaustive**, so no interval can reconcile
+them: this is not a sampling question. What replicates exactly is the
+**qualitative** ladder — associativity fails first at 𝕆, zero divisors appear
+first at 𝕊₁₆. Reported as a question for the source, not a correction to it.
+
+### Round V2: the control, re-measured
+
+The V1 control slope 0.310 came from 7 group means of 6 seeds each, fitted with
+no error propagation. At 200 seeds per width (n = 1,400) with the bootstrap
+resampled *within* groups:
+
+```
+slope = 0.3200 per unit width  [0.3059, 0.3341] 95% CI
+tracks n (CI above 0.8)?  False        distinguishable from zero?  True
+repetition vs control at n=9: Δ = +4.915 [+4.870, +4.955], Cohen's d = 22.2
+```
+
+The V1 point estimate falls inside the interval, so the conclusion survives — but
+it had no interval when it was used to justify the conclusion. Random-Clifford
+`r*` does grow with width, just at roughly a third of the 1:1 rate, and the
+separation from the repetition family is enormous rather than marginal.
 
 ---
 

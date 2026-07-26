@@ -149,6 +149,9 @@ class Claim:
     corrections: tuple = ()
     supersedes: str | None = None
     superseded_by: str | None = None
+    sample_size: int | None = None      # required for M
+    interval: tuple | None = None       # required for M: (lo, hi) at 95%
+    null: str = ""                      # required for M: what it is measured against
 
     def __post_init__(self) -> None:
         if not _ID_RE.match(self.id):
@@ -164,6 +167,20 @@ class Claim:
         if self.tag == EvidenceTag.HYPOTHESIS and not self.kill_condition:
             raise GovernanceError(
                 f"{self.id}: an H-tagged claim requires a kill condition")
+        if self.tag == EvidenceTag.MEASURED:
+            # The Atlas M rule -- "report sample size, null, effect and scope" --
+            # was stated here and not enforced, so several claims were point
+            # estimates from thin samples with no dispersion.  It is enforced now.
+            missing = [f for f, v in (("sample_size", self.sample_size),
+                                      ("interval", self.interval),
+                                      ("null", self.null)) if not v]
+            if missing:
+                raise GovernanceError(
+                    f"{self.id}: an M-tagged claim must report {', '.join(missing)}. "
+                    "A measurement without a sample size, an interval and a stated "
+                    "null cannot be checked for significance.")
+            if len(self.interval) != 2 or self.interval[0] > self.interval[1]:
+                raise GovernanceError(f"{self.id}: malformed interval {self.interval}")
 
     @property
     def citable(self) -> bool:
@@ -304,40 +321,84 @@ CLAIMS = [
 
     # --- M: measured with code, seeds and controls ---------------------------
     Claim("EXP-R1-QNAIVE_CONSTANT", EvidenceTag.MEASURED,
-          "Q_naive is constant at 1.0000 (min = max) over 150 random all-unitary cores.",
+          "Q_naive is constant at 1.0000 (min = max) over random all-unitary cores.",
           artifact="experiments/acaf_sweep.py",
+          sample_size=150, interval=(1.0, 1.0),
+          null="a metric with discriminating power would show min < max",
           assumptions=("generator emits only H/S/T/CX",
                        "no measurements, resets or classical control sampled")),
     Claim("EXP-R1-COHERENTIZATION_GAIN", EvidenceTag.MEASURED,
           "Coherentization delivers +0.019 against an advertised +0.36, and raises "
           "T-count 3 -> 5.",
-          artifact="aionq.coherentize.coherentization_audit"),
+          artifact="aionq.coherentize.coherentization_audit",
+          sample_size=1, interval=(0.0190, 0.0190),
+          null="the advertised gain of +0.3636 under the draft metric",
+          assumptions=("single deterministic circuit; exact, not sampled",)),
     Claim("EXP-R3-REAL_BASE_NOT_TREELIKE", EvidenceTag.MEASURED,
           "The live free-theory structure has Gromov delta/diameter = 0.5, the "
           "maximum possible for any metric space.",
-          artifact="aionq.atlas.compare_embeddings_on_real_hierarchy"),
+          artifact="aionq.atlas.compare_embeddings_on_real_hierarchy",
+          sample_size=5, interval=(0.5, 0.5),
+          null="a tree metric would give delta/diameter = 0",
+          assumptions=("exhaustive over all quadruples of the 5-node graph; "
+                       "exact, not sampled",)),
     Claim("EXP-R2-PROCESS_MEMORY", EvidenceTag.MEASURED,
-          "Process-tensor non-Markovianity rises 0.000 -> 2.000 bits with coupling.",
-          artifact="aionq.process.non_markovianity"),
+          "Temporal-correlation witness rises 0.000 -> 2.000 bits with coupling.",
+          artifact="aionq.process.temporal_correlation_witness",
+          sample_size=6, interval=(0.0, 2.0),
+          null="a Markovian process would give N = 0 at every coupling",
+          assumptions=("deterministic two-step toy construction; exact per point",)),
 
     Claim("EXP-V1-GHZ_HIDES_ONE_BIT", EvidenceTag.MEASURED,
           "GHZ_n hides exactly one stabilizer generator from every probe of depth "
           "r < n: g_r = 1/n exactly for 1 < r < n, verified n = 3..9.",
           artifact="experiments/run_visibility.py",
-          assumptions=("stabilizer states only",)),
+          sample_size=7, interval=(1.0, 1.0),
+          null="g_r would vary with r if the hidden structure were not a single "
+               "generator; ratio g_r/(1/n) tested against 1",
+          assumptions=("stabilizer states only", "exact rank computation, not sampled")),
     Claim("EXP-V1-RSTAR_IS_NOT_DISTANCE", EvidenceTag.MEASURED,
           "Visibility depth r* is the minimum generating weight of the stabilizer "
           "group, NOT the code distance: Steane [[7,1,3]] has r* = 4 while d = 3.",
           artifact="experiments/run_visibility.py",
-          assumptions=("generators supplied explicitly and checked to commute",)),
+          sample_size=1, interval=(4.0, 4.0),
+          null="r* = d = 3 under the naive reading",
+          assumptions=("generators supplied explicitly and checked to commute",
+                       "exact GF(2) rank; a single code, not a sampled family")),
     Claim("EXP-V1-CD_LADDER_PARTIAL", EvidenceTag.MEASURED,
           "Replication of the Atlas Cayley-Dickson ladder: S16 basis-triple mean "
           "1.3538 vs reported 1.356; O gives 1.6000 vs reported 0.359 under the "
           "same convention. Associativity boundary and zero-divisor onset replicate "
           "exactly.",
-          artifact="aionq.cayley_dickson.associator_ladder"),
+          artifact="experiments/run_replication.py",
+          sample_size=2730, interval=(1.3187, 1.3883),
+          null="the Atlas reported values 0.359 / 1.356 / 1.4",
+          assumptions=("basis-triple convention, exhaustive over ordered triples "
+                       "of distinct imaginary units at dim 8 and 16",
+                       "dim 32 subsampled at n=40,000: 1.1815 [1.1719, 1.1912], "
+                       "which does NOT contain the reported 1.4",
+                       "random-unit convention gives 1.0929 / 1.3123 / 1.3777, "
+                       "missing all three reported values")),
 
     # --- H: bridges with kill conditions -------------------------------------
+    Claim("EXP-V2-CONTROL_SLOPE", EvidenceTag.MEASURED,
+          "Random-Clifford visibility depth grows with width at slope 0.3200, far "
+          "below the 1:1 tracking that would make the repetition r* = n result "
+          "uninformative.",
+          artifact="experiments/run_replication.py",
+          sample_size=1400, interval=(0.3059, 0.3341),
+          null="slope >= 0.8 would mean the control tracks n and the signature is "
+               "not diagnostic; slope = 0 would mean r* is width-independent",
+          assumptions=("200 seeds per width, widths 3..9",
+                       "bootstrap resampled within width groups, 5000 resamples")),
+    Claim("EXP-V2-REPETITION_EFFECT", EvidenceTag.MEASURED,
+          "At n = 9 the repetition family exceeds the random-Clifford control by "
+          "4.915 in r*, Cohen's d = 22.2.",
+          artifact="experiments/run_replication.py",
+          sample_size=400, interval=(4.8700, 4.9550),
+          null="zero difference between designed and undesigned stabilizer states",
+          assumptions=("200 per group at n=9", "4000 bootstrap resamples")),
+
     Claim("BRIDGE-R3-QCAUSAL", EvidenceTag.HYPOTHESIS,
           "Some quantum organ shows a causal advantage inside a pre-registered cone.",
           artifact="aionq.advantage.promote",

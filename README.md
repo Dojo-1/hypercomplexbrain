@@ -93,7 +93,8 @@ pip install qiskit numpy scipy pytest
 python3 experiments/run_audit.py      # every claim, computed
 python3 experiments/acaf_sweep.py     # 150-core falsification sweep
 python3 experiments/run_visibility.py # Round V1: coupling field vs code distance
-python3 -m pytest tests/ -q           # 87 tests
+python3 experiments/run_replication.py # Round V2: depth, intervals, distributions
+python3 -m pytest tests/ -q           # 92 tests
 ```
 
 ## Layout
@@ -116,6 +117,7 @@ src/aionq/
   bordon.py         Bordon respiration: reservoir dynamics, drone ceiling
   visibility.py     coupling field g_r: structure invisible to depth-r probes
   cayley_dickson.py associator failure ladder as an observability atlas
+  statistics.py     bootstrap intervals; measurements that carry their uncertainty
 experiments/        audit and ACAF sweep
 tests/              one test per falsifiable claim
 docs/ARCHITECTURE.md
