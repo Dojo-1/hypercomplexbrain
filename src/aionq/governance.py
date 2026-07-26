@@ -929,6 +929,103 @@ CLAIMS = [
                        "unconditioned average over instances that included "
                        "provably impossible ones; superseded by "
                        "EXP-S6-BRIDGE_EXPLAINS_STAR")),
+    # ---- Round S7: adjudicating an external corrections audit ---------------
+    Claim("EXP-S7-AUDIT_REPLICATION", EvidenceTag.MEASURED,
+          "The three arithmetic/geometric claims an external corrections audit "
+          "of the source archive marks CORRECT all replicate here exactly: the "
+          "spin-1/2 Berry phase is minus half the enclosed solid angle (worst "
+          "error 9.7e-09 over four loops, taken modulo 2 pi); exactly 7 of the "
+          "C(7,3) = 35 imaginary octonion triples associate and all 7 are closed "
+          "under the product (the Fano lines), 28 do not; and y^2 = x^3 - x has "
+          "a_p = 0 at exactly the 24 inert primes below 200, 0 violations in 45.",
+          artifact="experiments/run_audit_adjudication.py",
+          sample_size=84, interval=(0.0, 9.7e-9),
+          null="the hypothesis that an audit's own checkable arithmetic should be "
+               "taken on authority rather than re-run",
+          assumptions=("84 = 4 Berry loops + 35 octonion triples + 45 primes; the "
+                       "interval is the range of numerical deviation across the "
+                       "three, not a bootstrap CI, because two of the three are "
+                       "exact integer counts with no dispersion to bootstrap",
+                       "a geometric phase is defined modulo 2 pi; comparing it "
+                       "without wrapping reported the theta0 = 2pi/3 loop as an "
+                       "error of 6.28 -- exactly 2 pi, i.e. perfect agreement "
+                       "recorded as total disagreement")),
+    Claim("MATH-S7-FLAT_HOLONOMY_ON_A_NERVE", EvidenceTag.PROVED,
+          "A nerve is a 1-complex: its cochain complex terminates at C^1, so the "
+          "space of 2-cochains is zero and EVERY notion of curvature on it "
+          "vanishes identically, while the holonomy around a cycle is a generic "
+          "orthogonal matrix (defect 2.00 to 3.97 at fiber_dim 2,3,4,8). This is "
+          "a counterexample, on this repository's own object, to the archive's "
+          "'non-trivial holonomy <=> non-trivial curvature'.",
+          artifact="experiments/run_audit_adjudication.py::check_flat_with_holonomy",
+          assumptions=("the converse half IS a theorem: Ambrose-Singer gives that "
+                       "nonzero curvature forces nontrivial holonomy. Only the "
+                       "forward implication fails, and the external audit's "
+                       "'neither biconditional holds' is loose on this point",
+                       "this places every cellular-sheaf result in this repository "
+                       "in the flat-monodromy regime -- the one the audit's Angle "
+                       "3 identifies as the OPPOSITE of the Berry/Chern regime the "
+                       "archive's chain invokes at its first step")),
+    Claim("MATH-S7-EULER_H1_IDENTITY", EvidenceTag.PROVED,
+          "For a cellular sheaf on a connected graph with n vertices, m edges and "
+          "b1 = m - n + 1, rank-nullity on the two-term complex forces "
+          "dim H^1 = dim H^0 + (b1 - 1) * fiber_dim. Verified on 16 instances "
+          "across four nerve families and four fiber dimensions, 0 violations.",
+          artifact="experiments/run_audit_adjudication.py::check_euler_identity",
+          assumptions=("H^0 = ker delta, H^1 = coker delta, both over the reals; "
+                       "the identity is an equality of dimensions and a single "
+                       "violation would indicate a rank-computation bug, not a "
+                       "weaker effect",
+                       "a tree (b1 = 0) is the boundary case: dim H^1 = 0 and "
+                       "dim H^0 = fiber_dim for EVERY choice of transitions, which "
+                       "is MATH-S6-BRIDGE_BLINDNESS reached from the cohomological "
+                       "side")),
+    Claim("RET-S7-H1_AS_REMAINDER", EvidenceTag.RETIRED,
+          "The Goedelian remainder is measured by the norm of a first cohomology "
+          "class: [R] = ||H^1||, so [R] > 0 certifies an obstruction. (Asserted "
+          "throughout the source archive; never registered here, and retired "
+          "before it could be.)",
+          corrections=("in the CONTINUOUS regime the archive invokes, the "
+                       "obstruction is a degree-two Chern class, and the base it "
+                       "names (S^2, S^8, the lift of S^7) is simply connected, so "
+                       "H^1 = 0 identically -- the chain's own step [1] forces its "
+                       "step [3] to be zero",
+                       "in the DISCRETE regime where the degree is right -- graph "
+                       "nerves, which is what this repository actually measures -- "
+                       "MATH-S7-EULER_H1_IDENTITY forces dim H^1 to INCREASE with "
+                       "the global-section space. Measured on ring8+2chords at "
+                       "fiber_dim 4: the perfectly flat sheaf, which has no "
+                       "obstruction at all, has dim H^1 = 12, while the fully "
+                       "generic one has dim H^1 = 8. ||H^1|| is largest where "
+                       "there is nothing wrong",
+                       "so the functional is not merely in the wrong degree; in "
+                       "the one regime where its degree is right, it moves the "
+                       "wrong way. The quantity that does detect the obstruction "
+                       "is dim H^0 = 0, and this repository's Laplacian "
+                       "instrument already measures the lowest eigenspace of "
+                       "L = delta^T delta, which is the H^0 side")),
+    Claim("RET-S7-AMBROSE_SINGER_BRIDGE", EvidenceTag.RETIRED,
+          "gamma != 0 <=> H^1 != 0, by Ambrose-Singer -- step [2] of the "
+          "archive's P != NP chain. (Asserted in archive rounds R41, R77, R83.)",
+          corrections=("Ambrose-Singer determines the holonomy LIE ALGEBRA as the "
+                       "span of curvature values along horizontal paths. It "
+                       "therefore constrains the identity component Hol^0 and says "
+                       "nothing about the component group Hol/Hol^0, which is the "
+                       "part fed by pi_1. It contains no sheaf and no cohomology "
+                       "of the base",
+                       "a compiling Lean tower does not repair it: with the bridge "
+                       "declared as an axiom, a green build certifies "
+                       "type-correctness relative to the conclusion; with the "
+                       "axiom removed, what native_decide checks is the octonion "
+                       "multiplication table, which "
+                       "EXP-S7-AUDIT_REPLICATION confirms and which bears on no "
+                       "SAT lower bound",
+                       "the step carrying the complexity content is the assumed "
+                       "super-polynomial cost of trivialising the obstruction -- "
+                       "a lower bound as strong as the conclusion. This is the "
+                       "same failure mode this repository has now recorded seven "
+                       "times under a different name: the correct shape with the "
+                       "old comparison still inside it")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",

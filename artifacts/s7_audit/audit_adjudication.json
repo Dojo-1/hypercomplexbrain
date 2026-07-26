@@ -1,0 +1,542 @@
+{
+  "A_berry_phase": {
+    "adjudication": "CONFIRMED",
+    "audit_verdict": "CORRECT",
+    "claim": "gamma = -Omega/2; |gamma| = pi/2 at Omega = pi",
+    "gamma_at_test_point": -1.570796317105439,
+    "omega_at_test_point": 3.1415926535897922,
+    "rows": [
+      {
+        "abs_error": 5.594214869120151e-09,
+        "berry_phase": -0.4208936016442515,
+        "half_solid_angle": -0.42089360723846625,
+        "solid_angle": 0.8417872144769325,
+        "theta0": 0.5235987755982988
+      },
+      {
+        "abs_error": 9.689457236561339e-09,
+        "berry_phase": -1.570796317105439,
+        "half_solid_angle": -1.5707963267948961,
+        "solid_angle": 3.1415926535897922,
+        "theta0": 1.0471975511965976
+      },
+      {
+        "abs_error": 1.7763568394002505e-15,
+        "berry_phase": 3.1415926535897922,
+        "half_solid_angle": -3.1415926535897927,
+        "solid_angle": 6.283185307179585,
+        "theta0": 1.5707963267948966
+      },
+      {
+        "abs_error": 9.689458124739758e-09,
+        "berry_phase": 1.5707963171054404,
+        "half_solid_angle": -4.712388980384689,
+        "solid_angle": 9.424777960769378,
+        "theta0": 2.0943951023931953
+      }
+    ],
+    "target": 1.5707963267948966,
+    "worst_abs_error": 9.689458124739758e-09
+  },
+  "B_octonion_census": {
+    "adjudication": "CONFIRMED",
+    "audit_verdict": "CORRECT",
+    "claim": "of C(7,3) = 35 imaginary triples, exactly 7 associate (the Fano lines) and 28 do not",
+    "fano_lines": [
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        1,
+        4,
+        5
+      ],
+      [
+        1,
+        6,
+        7
+      ],
+      [
+        2,
+        4,
+        6
+      ],
+      [
+        2,
+        5,
+        7
+      ],
+      [
+        3,
+        4,
+        7
+      ],
+      [
+        3,
+        5,
+        6
+      ]
+    ],
+    "n_associative": 7,
+    "n_associative_and_multiplicatively_closed": 7,
+    "n_nonassociative": 28,
+    "n_triples": 35
+  },
+  "C_cm_curve": {
+    "adjudication": "CONFIRMED",
+    "audit_verdict": "CORRECT",
+    "claim": "for E: y^2 = x^3 - x (CM by Z[i]), a_p = 0 exactly at the inert primes p = 3 mod 4",
+    "max_prime": 199,
+    "note": "correct, and non-probative for BSD: a_p data is not the equality ord_{s=1} L(E,s) = rank E(Q)",
+    "primes_tested": 45,
+    "sample": [
+      {
+        "a_p": 0,
+        "inert_in_Zi": true,
+        "p": 3
+      },
+      {
+        "a_p": -2,
+        "inert_in_Zi": false,
+        "p": 5
+      },
+      {
+        "a_p": 0,
+        "inert_in_Zi": true,
+        "p": 7
+      },
+      {
+        "a_p": 0,
+        "inert_in_Zi": true,
+        "p": 11
+      },
+      {
+        "a_p": 6,
+        "inert_in_Zi": false,
+        "p": 13
+      },
+      {
+        "a_p": 2,
+        "inert_in_Zi": false,
+        "p": 17
+      },
+      {
+        "a_p": 0,
+        "inert_in_Zi": true,
+        "p": 19
+      },
+      {
+        "a_p": 0,
+        "inert_in_Zi": true,
+        "p": 23
+      },
+      {
+        "a_p": -10,
+        "inert_in_Zi": false,
+        "p": 29
+      },
+      {
+        "a_p": 0,
+        "inert_in_Zi": true,
+        "p": 31
+      },
+      {
+        "a_p": -2,
+        "inert_in_Zi": false,
+        "p": 37
+      },
+      {
+        "a_p": 10,
+        "inert_in_Zi": false,
+        "p": 41
+      }
+    ],
+    "supersingular_count": 24,
+    "violations": []
+  },
+  "D_flat_with_holonomy": {
+    "adjudication": "CONFIRMED WRONG, by counterexample on a nerve",
+    "audit_verdict": "WRONG (audit Angle 3: the flat-monodromy regime)",
+    "claim": "non-trivial holonomy <=> non-trivial curvature",
+    "rows": [
+      {
+        "curvature_norm": 0.0,
+        "fiber_dim": 2,
+        "holonomy_defect": 1.9999999999999996,
+        "holonomy_is_identity": false,
+        "n_two_cells": 0
+      },
+      {
+        "curvature_norm": 0.0,
+        "fiber_dim": 3,
+        "holonomy_defect": 2.0015682318632537,
+        "holonomy_is_identity": false,
+        "n_two_cells": 0
+      },
+      {
+        "curvature_norm": 0.0,
+        "fiber_dim": 4,
+        "holonomy_defect": 3.2673193164403997,
+        "holonomy_is_identity": false,
+        "n_two_cells": 0
+      },
+      {
+        "curvature_norm": 0.0,
+        "fiber_dim": 8,
+        "holonomy_defect": 3.968629754438022,
+        "holonomy_is_identity": false,
+        "n_two_cells": 0
+      }
+    ],
+    "why": "a graph has no 2-cells, so curvature is identically zero while holonomy is a generic orthogonal matrix"
+  },
+  "E_euler_identity": {
+    "H1_never_smaller_when_unobstructed": true,
+    "adjudication": "CONFIRMED on every instance",
+    "audit_verdict": "NOT IN THE AUDIT",
+    "claim": "for a cellular sheaf on a connected graph, dim H^1 = dim H^0 + (b1 - 1) * fiber_dim",
+    "consequence": "||H^1|| is monotone INCREASING in the global-section space, so it cannot be a measure of the obstruction to having global sections; the archive's [R] = ||H^1|| moves the wrong way",
+    "contrast_flat_vs_generic": [
+      {
+        "H1_larger_when_unobstructed": true,
+        "family": "ring8",
+        "fiber_dim": 2,
+        "flat_dim_H0": 2,
+        "flat_dim_H1": 2,
+        "generic_dim_H0": 0,
+        "generic_dim_H1": 0
+      },
+      {
+        "H1_larger_when_unobstructed": true,
+        "family": "ring8",
+        "fiber_dim": 4,
+        "flat_dim_H0": 4,
+        "flat_dim_H1": 4,
+        "generic_dim_H0": 0,
+        "generic_dim_H1": 0
+      },
+      {
+        "H1_larger_when_unobstructed": true,
+        "family": "ring8+2chords",
+        "fiber_dim": 2,
+        "flat_dim_H0": 2,
+        "flat_dim_H1": 6,
+        "generic_dim_H0": 0,
+        "generic_dim_H1": 4
+      },
+      {
+        "H1_larger_when_unobstructed": true,
+        "family": "ring8+2chords",
+        "fiber_dim": 4,
+        "flat_dim_H0": 4,
+        "flat_dim_H1": 12,
+        "generic_dim_H0": 0,
+        "generic_dim_H1": 8
+      },
+      {
+        "H1_larger_when_unobstructed": true,
+        "family": "ring12+3chords",
+        "fiber_dim": 2,
+        "flat_dim_H0": 2,
+        "flat_dim_H1": 8,
+        "generic_dim_H0": 0,
+        "generic_dim_H1": 6
+      },
+      {
+        "H1_larger_when_unobstructed": true,
+        "family": "ring12+3chords",
+        "fiber_dim": 4,
+        "flat_dim_H0": 4,
+        "flat_dim_H1": 16,
+        "generic_dim_H0": 0,
+        "generic_dim_H1": 12
+      },
+      {
+        "H1_larger_when_unobstructed": true,
+        "family": "ring6",
+        "fiber_dim": 2,
+        "flat_dim_H0": 2,
+        "flat_dim_H1": 2,
+        "generic_dim_H0": 1,
+        "generic_dim_H1": 1
+      },
+      {
+        "H1_larger_when_unobstructed": true,
+        "family": "ring6",
+        "fiber_dim": 4,
+        "flat_dim_H0": 4,
+        "flat_dim_H1": 4,
+        "generic_dim_H0": 1,
+        "generic_dim_H1": 1
+      }
+    ],
+    "instances_where_H0_positive_inflates_H1": 5,
+    "n_instances": 16,
+    "rows": [
+      {
+        "b1": 1,
+        "dim_H0": 0,
+        "dim_H1": 0,
+        "family": "ring8",
+        "fiber_dim": 1,
+        "matches": true,
+        "predicted_H1": 0
+      },
+      {
+        "b1": 1,
+        "dim_H0": 1,
+        "dim_H1": 1,
+        "family": "ring8",
+        "fiber_dim": 2,
+        "matches": true,
+        "predicted_H1": 1
+      },
+      {
+        "b1": 1,
+        "dim_H0": 0,
+        "dim_H1": 0,
+        "family": "ring8",
+        "fiber_dim": 3,
+        "matches": true,
+        "predicted_H1": 0
+      },
+      {
+        "b1": 1,
+        "dim_H0": 1,
+        "dim_H1": 1,
+        "family": "ring8",
+        "fiber_dim": 4,
+        "matches": true,
+        "predicted_H1": 1
+      },
+      {
+        "b1": 3,
+        "dim_H0": 0,
+        "dim_H1": 2,
+        "family": "ring8+2chords",
+        "fiber_dim": 1,
+        "matches": true,
+        "predicted_H1": 2
+      },
+      {
+        "b1": 3,
+        "dim_H0": 0,
+        "dim_H1": 4,
+        "family": "ring8+2chords",
+        "fiber_dim": 2,
+        "matches": true,
+        "predicted_H1": 4
+      },
+      {
+        "b1": 3,
+        "dim_H0": 0,
+        "dim_H1": 6,
+        "family": "ring8+2chords",
+        "fiber_dim": 3,
+        "matches": true,
+        "predicted_H1": 6
+      },
+      {
+        "b1": 3,
+        "dim_H0": 0,
+        "dim_H1": 8,
+        "family": "ring8+2chords",
+        "fiber_dim": 4,
+        "matches": true,
+        "predicted_H1": 8
+      },
+      {
+        "b1": 4,
+        "dim_H0": 0,
+        "dim_H1": 3,
+        "family": "ring12+3chords",
+        "fiber_dim": 1,
+        "matches": true,
+        "predicted_H1": 3
+      },
+      {
+        "b1": 4,
+        "dim_H0": 0,
+        "dim_H1": 6,
+        "family": "ring12+3chords",
+        "fiber_dim": 2,
+        "matches": true,
+        "predicted_H1": 6
+      },
+      {
+        "b1": 4,
+        "dim_H0": 0,
+        "dim_H1": 9,
+        "family": "ring12+3chords",
+        "fiber_dim": 3,
+        "matches": true,
+        "predicted_H1": 9
+      },
+      {
+        "b1": 4,
+        "dim_H0": 0,
+        "dim_H1": 12,
+        "family": "ring12+3chords",
+        "fiber_dim": 4,
+        "matches": true,
+        "predicted_H1": 12
+      },
+      {
+        "b1": 1,
+        "dim_H0": 1,
+        "dim_H1": 1,
+        "family": "ring6",
+        "fiber_dim": 1,
+        "matches": true,
+        "predicted_H1": 1
+      },
+      {
+        "b1": 1,
+        "dim_H0": 0,
+        "dim_H1": 0,
+        "family": "ring6",
+        "fiber_dim": 2,
+        "matches": true,
+        "predicted_H1": 0
+      },
+      {
+        "b1": 1,
+        "dim_H0": 1,
+        "dim_H1": 1,
+        "family": "ring6",
+        "fiber_dim": 3,
+        "matches": true,
+        "predicted_H1": 1
+      },
+      {
+        "b1": 1,
+        "dim_H0": 1,
+        "dim_H1": 1,
+        "family": "ring6",
+        "fiber_dim": 4,
+        "matches": true,
+        "predicted_H1": 1
+      }
+    ],
+    "violations": []
+  },
+  "F_tree_kills_h1": {
+    "adjudication": "CONFIRMED on every instance",
+    "all_full_sections": true,
+    "all_vanish": true,
+    "audit_verdict": "NOT IN THE AUDIT (its continuous form is the audit's Angle 2)",
+    "claim": "a tree nerve (b1 = 0) has dim H^1 = 0 and dim H^0 = fiber_dim, whatever the transitions are",
+    "rows": [
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 1,
+        "dim_H1": 0,
+        "fiber_dim": 1,
+        "n_worldlets": 4
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 2,
+        "dim_H1": 0,
+        "fiber_dim": 2,
+        "n_worldlets": 4
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 4,
+        "dim_H1": 0,
+        "fiber_dim": 4,
+        "n_worldlets": 4
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 1,
+        "dim_H1": 0,
+        "fiber_dim": 1,
+        "n_worldlets": 6
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 2,
+        "dim_H1": 0,
+        "fiber_dim": 2,
+        "n_worldlets": 6
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 4,
+        "dim_H1": 0,
+        "fiber_dim": 4,
+        "n_worldlets": 6
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 1,
+        "dim_H1": 0,
+        "fiber_dim": 1,
+        "n_worldlets": 9
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 2,
+        "dim_H1": 0,
+        "fiber_dim": 2,
+        "n_worldlets": 9
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 4,
+        "dim_H1": 0,
+        "fiber_dim": 4,
+        "n_worldlets": 9
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 1,
+        "dim_H1": 0,
+        "fiber_dim": 1,
+        "n_worldlets": 12
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 2,
+        "dim_H1": 0,
+        "fiber_dim": 2,
+        "n_worldlets": 12
+      },
+      {
+        "H0_is_full_fiber": true,
+        "H1_vanishes": true,
+        "b1": 0,
+        "dim_H0": 4,
+        "dim_H1": 0,
+        "fiber_dim": 4,
+        "n_worldlets": 12
+      }
+    ]
+  }
+}

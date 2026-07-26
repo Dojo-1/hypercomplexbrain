@@ -173,6 +173,8 @@ Anything in this list is a **governing constraint**, not an open question.
 
 | retired | why |
 |---|---|
+| `[R] = ‖H¹‖` as an obstruction measure | wrong degree in the continuous regime, wrong *direction* in the discrete one (`RET-S7-H1_AS_REMAINDER`, §9) |
+| `γ ≠ 0 ⇔ H¹ ≠ 0, by Ambrose–Singer` | A–S gives the holonomy Lie algebra, not a cohomology class (`RET-S7-AMBROSE_SINGER_BRIDGE`, §9) |
 | hypercomplex coordinates improve diagnosis | tie with dimension-matched real sheaf on home ground, large loss off it (`RET-S3-HYPERCOMPLEX_DIAGNOSIS`) |
 | octonionic flat sheaves | **ill-posed**: a vertex gauge induces no flat connection above dim 4; clean sheaf already has holonomy 3.19 (`RET-S3-OCTONIONIC_SHEAF`) |
 | conjugation as load-bearing | negation reproduces it exactly (`RET-S4-CONJUGATION_IS_LOAD_BEARING`) |
@@ -222,3 +224,127 @@ Term frequencies, as a rough map of what the archive is actually about:
 sedenion 358 · Löb 593 · Clay 298 · sorry 277 · octonion 208 · sheaf 204 ·
 Gödel 190 · Hopf 190 · Empress 189 · UTAI 183 · holoport 165 · Emperor 128 ·
 moving frame 125 · ergocetic 37 / erdodetic 41.
+
+---
+
+## 9. The external corrections audit (26 July 2026), adjudicated
+
+An independent mathematical audit of the archive was commissioned and delivered.
+Its headline verdict: **the P ≠ NP chain does not go through.** This repository's
+rule is that an external verdict is evidence, not authority, so the audit was run
+through the harness rather than adopted — `experiments/run_audit_adjudication.py`,
+Round S7, 222 tests.
+
+### 9.1 What replicated exactly
+
+Every arithmetic or geometric claim the audit marks **CORRECT** re-derives here.
+
+| checked | audit | measured here |
+|---|---|---|
+| Berry phase of a spin-½ loop is −Ω/2; |γ| = π/2 at Ω = π | CORRECT | worst error **9.7e−09** over four loops |
+| 7 of the C(7,3) = 35 imaginary octonion triples associate (the Fano lines) | CORRECT | **7 / 35**, all 7 closed under the product; 28 non-associative |
+| `y² = x³ − x` has `a_p = 0` exactly at inert `p ≡ 3 (mod 4)` | CORRECT | **0 violations** in 45 primes below 200; 24 supersingular |
+
+One measurement note, kept because it nearly produced a false disagreement: a
+geometric phase is defined **mod 2π**. Comparing without wrapping reported the
+θ₀ = 2π/3 loop as an error of 6.28 — exactly 2π, i.e. perfect agreement recorded
+as total disagreement.
+
+### 9.2 Where the audit is right, and one place it is loose
+
+The keystone the archive repeats (R41, R77, R83) is
+
+> non-trivial holonomy ↔ non-trivial curvature ↔ non-trivial `H¹` of the
+> associated sheaf, *by Ambrose–Singer*.
+
+Ambrose–Singer determines the holonomy **Lie algebra** as the span of curvature
+values along horizontal paths. It therefore constrains only the identity
+component `Hol⁰` and is silent about `Hol/Hol⁰`, the part fed by π₁. It contains
+no sheaf and no cohomology of the base. The audit is correct.
+
+**Where it is loose:** the audit writes *"neither biconditional holds in
+general."* One half of the first one is a theorem — non-zero curvature does force
+non-trivial holonomy, which is precisely what Ambrose–Singer gives. Only the
+forward implication fails. The correction stands; its statement should be
+narrower.
+
+That failing implication is realised here, on this repository's own object: a
+nerve is a **1-complex**, its cochain complex terminates at `C¹`, so the space of
+2-cochains is zero and every notion of curvature on it vanishes identically —
+while the holonomy around a cycle is a generic orthogonal matrix (defect 2.00 to
+3.97 at fiber dimension 2, 3, 4, 8). `MATH-S7-FLAT_HOLONOMY_ON_A_NERVE`.
+
+**Consequence for this repository, and it is not small.** Every cellular-sheaf
+result here lives in the *flat-monodromy* regime — the one the audit's Angle 3
+names as the **opposite** of the Berry/Chern regime the archive's chain invokes
+at its first step. The repo has been in the right regime all along; the archive
+switches regimes silently between its steps [1] and [2].
+
+### 9.3 The sharpening: `‖H¹‖` fails in the discrete regime too
+
+The audit corrects a **degree** error: in the continuous setting the obstruction
+is a degree-two Chern class, and the archive's own base (S², S⁸, the lift of S⁷)
+is simply connected, so `H¹ = 0` identically — step [1] forces step [3] to zero.
+
+The natural follow-up is whether `[R] = ‖H¹‖` is at least well typed in the
+discrete regime, where the degree *is* right. **It is not.** On a connected graph
+with `n` vertices, `m` edges and `β₁ = m − n + 1`, rank–nullity on the two-term
+complex forces
+
+```
+dim H⁰ − dim H¹ = (n − m)·d        ⇒        dim H¹ = dim H⁰ + (β₁ − 1)·d
+```
+
+Verified on 16 instances across four nerve families and four fiber dimensions,
+zero violations (`MATH-S7-EULER_H1_IDENTITY`). So `H¹` is **large when global
+sections are plentiful** — the reverse of the reading the archive gives it — and
+what remains of its content is the cycle rank times the fiber dimension, fixed
+before any transition map is chosen.
+
+In its sharpest form, on `ring8 + 2 chords` at fiber dimension 4:
+
+| sheaf on the same nerve | obstruction | `dim H⁰` | `dim H¹` |
+|---|---|---|---|
+| identity transitions | **none at all** | 4 | **12** |
+| generic orthogonal transitions | maximal | 0 | **8** |
+
+`‖H¹‖` is largest where nothing is wrong. The functional is not merely in the
+wrong degree; in the one regime where its degree is right, it moves the wrong
+way. The quantity that *does* detect the obstruction is `dim H⁰ = 0` — and the
+Laplacian instrument this repository already uses reads the lowest eigenspace of
+`L = δᵀδ`, which is the `H⁰` side. `RET-S7-H1_AS_REMAINDER`.
+
+The boundary case closes a loop: a tree (`β₁ = 0`) has `dim H¹ = 0` and
+`dim H⁰ = d` for **every** choice of transitions — which is
+`MATH-S6-BRIDGE_BLINDNESS`, reached independently from the cohomological side.
+
+### 9.4 The Lean tower does not rescue the chain
+
+Two states appear in the archive. With the bridge declared as an axiom, a green
+`lake build` certifies type-correctness *relative to the conclusion*. With the
+axiom removed, what `native_decide` actually checks is the octonion
+multiplication table — which §9.1 confirms, and which bears on no SAT lower
+bound. Removing the named axiom did not remove the assumption; it migrated into
+the definitions.
+
+The step carrying all the complexity content is the assumed **super-polynomial
+cost of trivialising the obstruction** — a lower bound as strong as the
+conclusion. This is the same failure mode this repository has now recorded seven
+times under other names: *the correct shape with the old comparison still inside
+it.*
+
+The archive's own `CLAY_PROOF_ATTEMPT_LEDGER.md` already says
+`promotion_allowed: false`. §3 above flagged that line as the single most
+important sentence in the document for calibration. The audit is independent
+confirmation that the programme's own ground truth was the accurate one.
+
+### 9.5 What survives, unchanged
+
+A genuine non-zero first Chern number of a Hopf-type U(1) bundle; the octonionic
+associator/Fano structure; correct CM arithmetic for `y² = x³ − x`; a correctly
+stated GRH error bound; and — importantly — the archive's *honest tierings*
+(Yang–Mills / Navier–Stokes / Hodge as "architectural analogy only", Poincaré as
+"Perelman, used as reference calibration", the 47 sorries in L35/L36). Those
+self-assessments are accurate and are to be kept visible, not quietly upgraded.
+
+---

@@ -1340,3 +1340,129 @@ def test_round_s3_claims_are_registered_with_their_corrections():
     assert registry["BRIDGE-S3-COHERENT_ORACLE"].kill_condition
     with pytest.raises(Exception):
         registry.cite("RET-S3-OCTONIONIC_SHEAF", section="results")
+
+
+# --------------------------------------------------------------------------
+# Round S7: adjudicating an external corrections audit
+#
+# Each test below re-derives one verdict.  They are cheap on purpose -- the
+# point is that an audit's checkable content stays checked on every run, not
+# only on the day it arrived.
+# --------------------------------------------------------------------------
+
+def test_berry_phase_is_half_the_enclosed_solid_angle():
+    """The audit's step [1]: CORRECT, and it replicates to 1e-8."""
+    from run_audit_adjudication import berry_phase_of_cone, _wrapped
+    theta0 = math.acos(0.5)                      # solid angle exactly pi
+    omega = 2.0 * math.pi * (1.0 - math.cos(theta0))
+    assert _wrapped(berry_phase_of_cone(theta0, steps=4000) + omega / 2.0) < 1e-6
+    assert abs(omega - math.pi) < 1e-12
+
+
+def test_exactly_seven_octonion_triples_associate():
+    """The Fano lines, counted rather than cited: 7 of 35."""
+    from aionq.cayley_dickson import fast_associator
+    eye = np.eye(8)
+    associative = [(i, j, k)
+                   for i in range(1, 8) for j in range(i + 1, 8)
+                   for k in range(j + 1, 8)
+                   if np.linalg.norm(fast_associator(eye[i], eye[j], eye[k])) < 1e-9]
+    assert len(associative) == 7
+
+
+def test_cm_curve_is_supersingular_exactly_at_the_inert_primes():
+    from run_audit_adjudication import ap_of_congruent_number_curve
+    for p in (3, 5, 7, 11, 13, 17, 19, 23, 29, 31):
+        assert (ap_of_congruent_number_curve(p) == 0) == (p % 4 == 3)
+
+
+def test_a_nerve_carries_flat_connections_with_nontrivial_holonomy():
+    """A graph has no 2-cells, so curvature is identically zero.
+
+    Holonomy is not.  This is the counterexample to "non-trivial holonomy <=>
+    non-trivial curvature" -- and it says this repository works entirely inside
+    the flat-monodromy regime, not the Berry/Chern one the archive invokes.
+    """
+    from run_audit_adjudication import random_sheaf
+    from aionq.sheaf import ring_of_worldlets
+    rng = np.random.default_rng(3)
+    nerve = ring_of_worldlets(7)
+    sheaf = random_sheaf(nerve, 4, rng)
+    hol = sheaf.holonomy([(k, +1) for k in range(nerve.n_edges)])
+    assert np.linalg.norm(hol - np.eye(4)) > 0.5
+
+
+def test_h1_of_a_graph_sheaf_grows_with_the_section_space():
+    """dim H^1 = dim H^0 + (b1 - 1) d, so ||H^1|| is not an obstruction measure.
+
+    Checked in its sharpest form: on one fixed nerve the UNOBSTRUCTED sheaf has
+    strictly the larger H^1.
+    """
+    from run_audit_adjudication import cohomology_dims, random_sheaf
+    from aionq.sheaf import CellularSheaf, ring_of_worldlets
+    nerve = ring_of_worldlets(8, chords=((0, 4), (2, 6)))
+    d, b1 = 4, nerve.n_edges - nerve.n_worldlets + 1
+    flat = CellularSheaf(nerve=nerve, fiber_dim=d,
+                         transitions=[np.eye(d)] * nerve.n_edges)
+    generic = random_sheaf(nerve, d, np.random.default_rng(5))
+
+    f0, f1 = cohomology_dims(flat)
+    g0, g1 = cohomology_dims(generic)
+    assert f1 == f0 + (b1 - 1) * d
+    assert g1 == g0 + (b1 - 1) * d
+    assert (f0, g0) == (d, 0)            # flat: full sections; generic: none
+    assert f1 > g1                       # and yet H^1 is LARGER where nothing is wrong
+
+
+def test_a_tree_nerve_has_no_first_cohomology_whatever_the_transitions():
+    from run_audit_adjudication import cohomology_dims, random_sheaf
+    from aionq.sheaf import Nerve
+    rng = np.random.default_rng(9)
+    for n in (5, 8):
+        for d in (2, 4):
+            nerve = Nerve(n_worldlets=n, edges=tuple((0, i) for i in range(1, n)))
+            h0, h1 = cohomology_dims(random_sheaf(nerve, d, rng))
+            assert (h0, h1) == (d, 0)
+
+
+def test_round_s7_claims_are_registered():
+    from aionq.governance import registry, EvidenceTag
+    assert registry["EXP-S7-AUDIT_REPLICATION"].tag == EvidenceTag.MEASURED
+    assert registry["MATH-S7-EULER_H1_IDENTITY"].tag == EvidenceTag.PROVED
+    assert registry["MATH-S7-FLAT_HOLONOMY_ON_A_NERVE"].tag == EvidenceTag.PROVED
+    assert registry["RET-S7-H1_AS_REMAINDER"].tag == EvidenceTag.RETIRED
+    assert registry["RET-S7-AMBROSE_SINGER_BRIDGE"].tag == EvidenceTag.RETIRED
+    with pytest.raises(Exception):
+        registry.cite("RET-S7-H1_AS_REMAINDER", section="results")
+
+
+# --------------------------------------------------------------------------
+# The swallow ledger (external peer review: bare `except Exception`)
+# --------------------------------------------------------------------------
+
+def test_expected_qiskit_failures_are_recorded_not_dropped():
+    from qiskit.circuit import Measure
+    from qiskit.circuit.library import TGate
+    from aionq.residency import (_is_clifford, _is_diagonal, clear_swallowed,
+                                 swallowed_report)
+    clear_swallowed()
+    assert _is_clifford(TGate()) is False
+    assert _is_diagonal(Measure()) is False
+    sites = {r["site"] for r in swallowed_report()}
+    assert sites == {"_is_clifford/Clifford", "_is_diagonal/Operator"}
+    clear_swallowed()
+    assert swallowed_report() == []
+
+
+def test_an_unexpected_error_is_not_swallowed():
+    """Narrowing the catch is the point: a real defect must still propagate."""
+    from aionq.residency import _is_clifford
+
+    class Exploding:
+        name = "boom"
+
+        def __repr__(self):
+            raise KeyboardInterrupt("this must escape")
+
+    with pytest.raises(KeyboardInterrupt):
+        _is_clifford(Exploding())

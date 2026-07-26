@@ -102,7 +102,8 @@ python3 experiments/run_s4_g100.py    # Round S4-G100: recognition chamber vs it
 python3 experiments/run_s4_basis_attack.py  # S4: is the S3 claim basis-invariant?
 python3 experiments/run_moving_frame.py     # S5: moving-frame orbit audit + invariant instrument
 python3 experiments/run_acaf_frame_sweep.py # S6: ACAF sweep hunting for where S5 breaks
-python3 -m pytest tests/ -q           # 193 tests
+python3 experiments/run_audit_adjudication.py # S7: an external corrections audit, re-run here
+python3 -m pytest tests/ -q           # 222 tests
 ```
 
 ## Layout
@@ -227,6 +228,40 @@ The accuracy advantage replicates on three unseen families but **not uniformly**
 and the claim is scoped to say so: Erdős–Rényi +0.076 (78% of instances),
 grid +0.114 (73%), ring+chords +0.059 (57%), **star+chords +0.021 (44% — below
 chance)**. Invariance is structural; accuracy is topology-dependent.
+
+Round S7 adjudicated an **external corrections audit** of the source archive --
+one commissioned against the archive, not against this repository. Its headline
+verdict is that the archive's P != NP chain does not go through. The rule here is
+that an external verdict is evidence, not authority, so it was re-run rather than
+adopted.
+
+All three of its checkable CORRECT calls replicate exactly: the spin-1/2 Berry
+phase is minus half the enclosed solid angle (worst error 9.7e-09, once the
+comparison is taken **mod 2 pi** -- without wrapping, perfect agreement reads as an
+error of 6.28, which is 2 pi); exactly 7 of the 35 imaginary octonion triples
+associate, all 7 closed under the product; and `y^2 = x^3 - x` is supersingular at
+exactly the 24 inert primes below 200, 0 violations in 45.
+
+The audit's central correction is a **degree** error: the archive identifies a
+Berry phase with an `H^1` class "by Ambrose-Singer", but Ambrose-Singer gives the
+holonomy *Lie algebra* -- hence only the identity component, not the part fed by
+pi_1 -- and the obstruction it does govern is a degree-two Chern class, on a base
+the archive itself calls simply connected, where `H^1 = 0` identically.
+
+One sharpening the audit does not make, and it lands on this repository's own
+object. A nerve is a 1-complex: its cochain complex terminates at `C^1`, so
+curvature vanishes identically while holonomy is a generic orthogonal matrix. So
+everything here lives in the *flat-monodromy* regime, where the degree **is**
+right -- and `||H^1||` still fails, because rank-nullity forces
+`dim H^1 = dim H^0 + (b1 - 1) d`. Measured on one fixed nerve at fiber dimension
+4: the perfectly flat sheaf, with no obstruction at all, has `dim H^1 = 12`; the
+fully obstructed one has **8**. The remainder functional is largest where nothing
+is wrong. `RET-S7-H1_AS_REMAINDER`, `MATH-S7-EULER_H1_IDENTITY`.
+
+One place the audit is loose, recorded because accuracy runs both ways: it writes
+"neither biconditional holds in general", but half of the first one is a theorem
+-- non-zero curvature *does* force non-trivial holonomy. Only the forward
+implication fails.
 
 Nothing here connects any coordinate to cognitive performance. The advantage cone
 is the right *shape* to receive an answer; no experiment has produced one, and

@@ -755,6 +755,20 @@ measuring it high makes it *think better*. That gap is the largest one remaining
 cognitive gerbe, quantum identity ecology. Retained as scaffolding, load-bearing
 nowhere.
 
+**R — retired (Round S7, against an external corrections audit).** The Gödelian
+remainder is measured by the norm of a first cohomology class, `[R] = ‖H¹‖`
+(retired in *both* regimes: in the continuous Berry setting the obstruction is a
+degree-two Chern class and the archive's own simply-connected base forces
+`H¹ = 0`; in the discrete graph setting, where the degree is right and where
+this repository actually works, rank-nullity forces
+`dim H¹ = dim H⁰ + (β₁ − 1)·d`, so `‖H¹‖` is *largest where nothing is wrong* —
+measured 12 on a fully flat sheaf against 8 on a fully obstructed one over the
+same nerve); and `γ ≠ 0 ⇔ H¹ ≠ 0, by Ambrose–Singer` (retired: Ambrose–Singer
+determines the holonomy *Lie algebra*, hence only the identity component, and
+mentions no sheaf and no cohomology of the base — a counterexample is exhibited
+on this repository's own object, where a nerve has no 2-cells so curvature is
+identically zero while holonomy is a generic orthogonal matrix).
+
 **R — retired.** An adaptive aperture reveals structure a static ensemble does
 not (Round S4: the static ensemble matches or beats it on four of five held-out
 families); Explore-then-verify ordering improves localisation (Round S4: the gate
@@ -791,6 +805,7 @@ capacity as a count of holonomies.
 | S4-G100 | Reversible Recognition Chamber: aperture, ordered roles, nest gate, 10 preregistered gates | ✅ 193 tests; 6/10 gates fail, chamber retired, S3 claim superseded as basis-dependent |
 | S5 | moving-frame orbit audit; basis-free Laplacian instrument | ✅ 208 tests; exactly orbit-collapsed AND strongest (0.964 vs 0.776) |
 | S6 | ACAF adversarial sweep: 950 instances, 4 families; falsified a P-tagged claim and fixed the instrument | ✅ 211 tests; invariance 950/950 after fix, accuracy scoped by topology |
+| S7 | adjudicating an external corrections audit of the source archive: its checkable claims re-run here, its central verdict sharpened | ✅ 222 tests; 3/3 replications exact, `[R] = ‖H¹‖` retired in **both** regimes |
 | QΣ-R3A | measured free-conversion metric; re-test base geometry against it | not started |
 | QΣ-R3B | four-cell causal organ (self/other/memory/auditor), ΔY with uncertainty | specified, not run |
 | QΣ-R1 | four-cell organ (self/other/memory/auditor) at measured `Q_cert` | `Q_cert > 0.5` on hardware-sized cores |
