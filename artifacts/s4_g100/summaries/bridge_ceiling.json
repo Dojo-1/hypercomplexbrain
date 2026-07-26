@@ -1,0 +1,16 @@
+{
+ "star": {
+  "bridge_fraction": 0.37579975579975583,
+  "auroc_defect_on_cycle": 0.9120879120879121,
+  "n_on_cycle": 42,
+  "auroc_defect_on_bridge": 0.6788409240332317,
+  "n_on_bridge": 78
+ },
+ "erdos_renyi": {
+  "bridge_fraction": 0.0021407351879615746,
+  "auroc_defect_on_cycle": 0.9993617230736482,
+  "n_on_cycle": 120,
+  "auroc_defect_on_bridge": null,
+  "n_on_bridge": 0
+ }
+}

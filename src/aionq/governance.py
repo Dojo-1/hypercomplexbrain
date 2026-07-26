@@ -888,6 +888,47 @@ CLAIMS = [
                        "produced a degenerate cut. Superseded by "
                        "MATH-S6-LAPLACIAN_INVARIANT_SAFE, which fixes the "
                        "instrument rather than narrowing the claim")),
+    Claim("MATH-S6-BRIDGE_BLINDNESS", EvidenceTag.PROVED,
+          "An overlap that lies in no cycle (a bridge) carries zero holonomy "
+          "information: every cycle in the nerve has the same holonomy whether "
+          "that overlap is defective or not. EVERY cycle-based instrument is "
+          "blind to it, not approximately but identically, and the achievable "
+          "AUROC is capped by the nerve before any method runs.",
+          artifact="experiments/run_bridge_ceiling.py",
+          assumptions=("removing a bridge disconnects the nerve, so it lies on no "
+                       "cycle and appears in no cycle-basis vector",)),
+    Claim("EXP-S6-BRIDGE_EXPLAINS_STAR", EvidenceTag.MEASURED,
+          "The star_chords deficit is a property of the NERVE, not the "
+          "instrument. 37.6% of star edges are bridges against 0.2% for "
+          "Erdos-Renyi. Conditioned on the defect lying on a cycle the invariant "
+          "instrument reaches 0.912 on star against 0.999 on ER; unconditioned it "
+          "falls to 0.679 because 65% of star trials put a defect on a bridge, a "
+          "case ER produced zero times in 120.",
+          artifact="experiments/run_bridge_ceiling.py",
+          sample_size=240, interval=(0.679, 0.912),
+          null="the hypothesis that star_chords reveals a topology-dependence of "
+               "the instrument",
+          assumptions=("interval is the conditional-vs-unconditional AUROC range "
+                       "on star, not a bootstrap CI",
+                       "two hypotheses were tested and FALSIFIED first: "
+                       "hub-localisation of the lowest eigenspace (IPR 0.090 star "
+                       "vs 0.091 ER, both at the 0.083 uniform reference), and "
+                       "evidence redundancy (the family gap survives inside every "
+                       "betti_1/defect bucket)")),
+    Claim("RET-S6-STAR_TOPOLOGY_DEPENDENCE", EvidenceTag.RETIRED,
+          "The invariant instrument's accuracy is topology-dependent, failing on "
+          "hub-and-spoke nerves. (Registered one commit earlier as part of "
+          "EXP-S6-ACAF_REPLICATION.)",
+          corrections=("mis-attributed: the deficit belongs to the NERVE, not the "
+                       "instrument. Star nerves are 37.6% bridge edges, and a "
+                       "bridge carries zero holonomy information for any "
+                       "cycle-based method",
+                       "conditioned on a localisable defect the instrument reaches "
+                       "0.912 on star, comparable to its behaviour elsewhere",
+                       "the correct statement is that the ACAF sweep measured an "
+                       "unconditioned average over instances that included "
+                       "provably impossible ones; superseded by "
+                       "EXP-S6-BRIDGE_EXPLAINS_STAR")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",
