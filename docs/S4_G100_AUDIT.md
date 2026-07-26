@@ -17,6 +17,32 @@ advantage, hypercomplex superiority, octonionic flat sheaves, weighted scalar
 promotion, optimality. Baseline freeze at `artifacts/s4_g100/summaries/baseline_freeze.json`
 (HEAD `745e480`, clean tree, 128/128 passing, 48 claims).
 
+### 2a. Provenance limitation: commits are cryptographically unsigned
+
+Every commit in this round shows as **Unverified** on GitHub, and this cannot be
+repaired in this environment. The committer email is correct
+(`noreply@anthropic.com` on both author and committer for all five commits); what
+is missing is a signature. `commit.gpgsign=true` and `gpg.format=ssh` are
+configured, but the **private** signing key does not exist — only a zero-byte
+`commit_signing_key.pub` — and `ssh-keygen` is not installed, so git cannot
+produce an SSH signature. A control probe in a fresh repository with identical
+configuration also produces `sig=N`. The last commit pushed before this round,
+`745e480`, is likewise unsigned.
+
+`git commit --amend --reset-author` was therefore **not** run. It would change
+five commit hashes and still produce unsigned commits, and those hashes are
+load-bearing: `manifests/s4_g100_preregistration.json` records
+`preregistered_at_commit: 290c145`, and `experiments/run_s4_g100.py` cites the
+preregistration commit `611e4ee`. Rewriting them would leave this round's central
+integrity property — that the preregistration predates the primary results —
+pointing at hashes that no longer exist, in exchange for no signature.
+
+**What this costs the audit.** Commit authorship here is attested by ordering and
+content, not by cryptography. The preregistration-before-results claim rests on
+commit *order* in a linear history, which anyone can check with
+`git log --oneline`, and on the fact that `611e4ee` contains no results file. That
+is weaker than a signature and is stated as such rather than glossed.
+
 ## 3. Claim → artifact map
 
 | claim | artifact | test |
