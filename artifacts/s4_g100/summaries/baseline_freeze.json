@@ -1,0 +1,123 @@
+{
+  "recorded_utc": "2026-07-26T11:10:31+00:00",
+  "purpose": "S4-G100 baseline freeze, taken before any S4 code was written",
+  "git": {
+    "branch": "claude/aion-brain-architecture-27f8ji",
+    "head": "745e4805ac6472e2c0b4bd5b7010a89112378c0d",
+    "head_subject": "Round S3: replicate the noise crossover on an independent seed, to b = 16",
+    "uncommitted_changes": "none",
+    "remote_matches_head": true
+  },
+  "runtime": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "machine": "x86_64"
+  },
+  "dependencies_present": {
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "qiskit": "2.5.1",
+    "pytest": "9.1.1"
+  },
+  "dependencies_absent": [
+    "matplotlib",
+    "jsonschema",
+    "hypothesis",
+    "psutil"
+  ],
+  "absent_dependency_consequences": [
+    "no jsonschema -> the strict manifest validator is implemented in-repo with its own tests",
+    "no hypothesis -> property-based tests are hand-rolled with explicit seeds, and are NOT a substitute for a shrinking fuzzer",
+    "no psutil -> memory accounting uses stdlib tracemalloc and resource.getrusage",
+    "no matplotlib -> artifacts/s4_g100/plots stays empty; summaries are CSV/JSON text so nothing binary enters version control"
+  ],
+  "toolchain_absent": {
+    "lean": "no lean, lake or elan on PATH; no formal/ directory existed",
+    "consequence": "P1-P5 are written as exact Lean 4 source plus theorem obligations and are NOT claimed to compile"
+  },
+  "baseline_tests": {
+    "summary": "128 passed in 6.91s",
+    "failures": [],
+    "note": "128/128 pass; no baseline failures to isolate"
+  },
+  "claim_ledger_before_s4": {
+    "total": 48,
+    "counts": {
+      "P": 10,
+      "A": 5,
+      "M": 14,
+      "H": 4,
+      "S": 2,
+      "R": 13
+    },
+    "ids_by_tag": {
+      "P": [
+        "MATH-R1-GRAM_PSD",
+        "MATH-R1-FUSION_COHERENCE",
+        "MATH-R1-TSTATE_MAGIC",
+        "MATH-R2-FRAME_ENTANGLEMENT",
+        "MATH-R2-SYNDROME_NONDISTURBING",
+        "EXP-V3-SPLIT_FORM_SHARED",
+        "MATH-S3-CHARACTER_BLIND",
+        "MATH-S3-NO_FLAT_ABOVE_H",
+        "MATH-S3-BV_QUERY_SEPARATION",
+        "MODEL-R4-DRONE_CEILING"
+      ],
+      "A": [
+        "METRIC-R3-QSIM_UPPER",
+        "METRIC-R3-ALPHA_BG",
+        "BUDGET-R2-BENNETT",
+        "SELF-R2-TOMOGRAPHY_COST",
+        "STACK-R3-HOLONOMY_LOSSY"
+      ],
+      "M": [
+        "EXP-R1-QNAIVE_CONSTANT",
+        "EXP-R1-COHERENTIZATION_GAIN",
+        "EXP-R3-REAL_BASE_NOT_TREELIKE",
+        "EXP-R2-PROCESS_MEMORY",
+        "EXP-V1-GHZ_HIDES_ONE_BIT",
+        "EXP-V3-DISTANCE_COMPUTED",
+        "EXP-V1-RSTAR_IS_NOT_DISTANCE",
+        "EXP-V1-CD_LADDER_PARTIAL",
+        "EXP-V2-CONTROL_SLOPE",
+        "EXP-V2-REPETITION_EFFECT",
+        "EXP-S1-SENTINEL_KILLED",
+        "EXP-S2-STOKES_CONDITIONAL",
+        "EXP-S3-SHEAF_LOCALISATION",
+        "EXP-S3-BV_NOISE_CROSSOVER"
+      ],
+      "H": [
+        "BRIDGE-S3-COHERENT_ORACLE",
+        "BRIDGE-R3-QCAUSAL",
+        "BRIDGE-R1-RANK_ROBUSTNESS",
+        "MODEL-R4-BORDON"
+      ],
+      "S": [
+        "SEM-R0-BREATHING",
+        "SEM-R0-REALITY_CELL"
+      ],
+      "R": [
+        "RET-V1-RSTAR_EQUALS_D",
+        "RET-V1-REPETITION_DISTANCE_N",
+        "RET-V1-WEIGHT_IS_VISIBILITY",
+        "RET-S2-STOKES_ROUTER_ACCURACY",
+        "RET-S3-HYPERCOMPLEX_DIAGNOSIS",
+        "RET-S3-OCTONIONIC_SHEAF",
+        "RET-S1-TRANSCENDENCE_SENTINEL",
+        "RET-R1-QCAUSAL_ADDITIVE",
+        "RET-R2-QCERT_CERTIFICATE",
+        "RET-R3-HYPERBOLIC_BASE",
+        "RET-R2-SELF_TOMOGRAPHY_IMPOSSIBLE",
+        "RET-R3-SCALAR_PROMOTION",
+        "RET-R1-ENTANGLEMENT_QUANTUMNESS"
+      ]
+    }
+  },
+  "governing_negative_results_carried_forward": [
+    "RET-S3-HYPERCOMPLEX_DIAGNOSIS: hypercomplex coordinates tie, they do not improve",
+    "RET-S3-OCTONIONIC_SHEAF: flatness fails above the quaternionic regime; no octonionic flat sheaf may be reintroduced",
+    "RET-R3-SCALAR_PROMOTION: promotion is a region, never a weighted scalar",
+    "RET-S1-TRANSCENDENCE_SENTINEL, RET-S2-STOKES_ROUTER_ACCURACY: killed on their own conditions",
+    "no coordinate has been shown to improve general cognitive performance"
+  ]
+}
