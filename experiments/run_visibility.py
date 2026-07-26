@@ -41,6 +41,7 @@ from qiskit.quantum_info import random_clifford
 
 sys.path.insert(0, "src")
 
+from aionq.splitform import code_distance
 from aionq.visibility import visibility_profile
 
 
@@ -136,14 +137,43 @@ def main() -> int:
         verdict = "matches d" if rs == d else f"does NOT equal d (= {d})"
         print(f"  {name}: r* = {rs}, {verdict}")
 
+    # --- V1 CORRECTION (Round V3) -------------------------------------------
+    # P2 was scored against d taken from each code's NAME. With d COMPUTED from
+    # the logical cosets (aionq.splitform.code_distance) the repetition family
+    # collapses: its stabilizer distance is 1 for every n, not n. "[[n,1,n]]" is
+    # the X-distance convention -- the bit-flip code has a weight-1 logical Z
+    # (Z_1 commutes with every Z_iZ_j check and is not in the stabilizer), so it
+    # protects against X errors only.
+    print("\n  P2 RE-SCORED against COMPUTED distance, not the code's name")
+    print("  " + "-" * 68)
+    print(f"  {'code':<24}{'r*':>4}{'d computed':>12}{'r*==d':>8}")
+    recomputed = []
+    for n in (3, 5, 7, 9):
+        checks = ["".join("Z" if k in (i, i + 1) else "I" for k in range(n))
+                  for i in range(n - 1)]
+        d_true = code_distance(checks)
+        rs = visibility_profile(repetition_codeword(n)).r_star
+        recomputed.append((f"repetition n={n}", rs, d_true))
+    for nm, labels in (("Steane [[7,1,3]]", STEANE_LOGICAL_ZERO[:6]),
+                       ("Perfect [[5,1,3]]", FIVE_QUBIT_LOGICAL_ZERO[:4])):
+        full = STEANE_LOGICAL_ZERO if "Steane" in nm else FIVE_QUBIT_LOGICAL_ZERO
+        recomputed.append((nm, visibility_profile(full).r_star, code_distance(labels)))
+    for nm, rs, d_true in recomputed:
+        print(f"  {nm:<24}{rs:>4}{d_true:>12}{str(rs == d_true):>8}")
+    agree = sum(1 for _, rs, d_true in recomputed if rs == d_true)
+    print(f"\n  r* == d in {agree}/{len(recomputed)} cases.")
+    print("  P2 IS FALSIFIED ON THE REPETITION FAMILY TOO. Round V1 scored it as")
+    print("  'survived' only because d was read off the code's name. The single")
+    print("  remaining agreement ([[5,1,3]]) is a coincidence, not a law.")
+
     print("\n  P2 GENERALISED (r* = d for any stabilizer code): "
           f"{'FALSIFIED' if mismatches else 'survived'}")
     if mismatches:
         print("  Steane [[7,1,3]] has r* = 4 while d = 3. Its weight-3 elements have")
         print("  GF(2) rank 4 of 7; the weight-4 checks are needed to complete the")
         print("  group. So r* is the minimum GENERATING WEIGHT of the stabilizer")
-        print("  group, not the code distance. The two coincide for [[n,1,n]]")
-        print("  repetition codes and for [[5,1,3]], and diverge for Steane.")
+        print("  group, not the code distance. (Round V1 said the two 'coincide for")
+        print("  repetition codes'; the re-scoring above retires that -- see V3.)")
         print("\n  Corrected reading: r* measures how deep a local probe must reach")
         print("  to reconstruct the whole stabilizer structure. Distance measures the")
         print("  lightest logical operator. Neither determines the other.")

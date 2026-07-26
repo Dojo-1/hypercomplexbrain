@@ -898,3 +898,73 @@ def test_effect_size_detects_and_rejects():
     null = compare_groups("null", rng.normal(0, 1, 300), rng.normal(0, 1, 300), resamples=2000)
     assert real.significant and abs(real.cohens_d) > 0.5
     assert not null.significant
+
+
+# --------------------------------------------------------------------------
+# Round V3: split forms over R and F_2, and computed code distance
+# --------------------------------------------------------------------------
+
+def test_real_22_signature_is_two_hyperbolic_planes():
+    """SO(2,2) is the split orthogonal group: Q = uv + st exactly."""
+    from aionq.splitform import real_split_planes
+    r = real_split_planes()
+    assert r["signature"] == (2, 2)
+    assert r["is_two_hyperbolic_planes"]
+    gram = r["gram_in_split_basis"]
+    assert np.allclose(np.diag(gram), 0.0)        # both planes isotropic
+    assert np.allclose(gram[:2, 2:], 0.0)         # and mutually orthogonal
+
+
+def test_f2_phase_space_is_n_hyperbolic_planes():
+    """One hyperbolic plane per qubit, spanned by X_i and Z_i."""
+    from aionq.splitform import symplectic_basis
+    for n in (2, 3, 4):
+        vecs = []
+        for i in range(n):
+            x = np.zeros(2 * n, dtype=np.uint8); x[i] = 1; vecs.append(x)
+            z = np.zeros(2 * n, dtype=np.uint8); z[n + i] = 1; vecs.append(z)
+        planes, radical = symplectic_basis(vecs)
+        assert len(planes) == n
+        assert len(radical) == 0
+
+
+def test_stabilizer_checks_are_totally_isotropic():
+    """Commuting checks pair to zero: they are the radical, carrying no plane."""
+    from aionq.splitform import symplectic_basis
+    from aionq.visibility import generators_from_labels
+    _, checks = generators_from_labels(["IIIXXXX", "IXXIIXX", "XIXIXIX",
+                                        "IIIZZZZ", "IZZIIZZ", "ZIZIZIZ"])
+    planes, radical = symplectic_basis(list(checks))
+    assert len(planes) == 0
+    assert len(radical) == 6
+
+
+def test_computed_distance_matches_known_codes():
+    from aionq.splitform import code_distance
+    assert code_distance(["IIIXXXX", "IXXIIXX", "XIXIXIX",
+                          "IIIZZZZ", "IZZIIZZ", "ZIZIZIZ"]) == 3   # Steane
+    assert code_distance(["XZZXI", "IXZZX", "XIXZZ", "ZXIXZ"]) == 3  # [[5,1,3]]
+    assert code_distance(["XXXX", "ZZZZ"]) == 2                      # [[4,2,2]]
+
+
+def test_repetition_code_stabilizer_distance_is_one():
+    """The V1 correction: [[n,1,n]] is the X-distance convention, not d."""
+    from aionq.splitform import code_distance
+    for n in (3, 5, 7):
+        checks = ["".join("Z" if k in (i, i + 1) else "I" for k in range(n))
+                  for i in range(n - 1)]
+        assert code_distance(checks) == 1
+
+
+def test_rstar_is_not_the_distance_on_any_family():
+    """P2 falsified against computed d, including where V1 said it survived."""
+    from aionq.splitform import code_distance
+    from aionq.visibility import visibility_profile
+    qc = QuantumCircuit(5)
+    qc.h(0)
+    for i in range(1, 5):
+        qc.cx(0, i)
+    checks = ["".join("Z" if k in (i, i + 1) else "I" for k in range(5))
+              for i in range(4)]
+    assert visibility_profile(qc).r_star == 5
+    assert code_distance(checks) == 1             # not 5

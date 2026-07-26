@@ -357,6 +357,20 @@ CLAIMS = [
           null="g_r would vary with r if the hidden structure were not a single "
                "generator; ratio g_r/(1/n) tested against 1",
           assumptions=("stabilizer states only", "exact rank computation, not sampled")),
+    Claim("EXP-V3-SPLIT_FORM_SHARED", EvidenceTag.PROVED,
+          "The real (2,2) form and the F_2 stabilizer phase space are both SPLIT: "
+          "Q = x0^2+x1^2-x2^2-x3^2 becomes uv+st (two hyperbolic planes), and "
+          "F_2^{2n} with the symplectic form is n hyperbolic planes, one per qubit.",
+          artifact="aionq.splitform.real_split_planes, aionq.splitform.symplectic_basis",
+          assumptions=("exact change of basis; verified numerically",)),
+    Claim("EXP-V3-DISTANCE_COMPUTED", EvidenceTag.MEASURED,
+          "Stabilizer distance computed from logical cosets: Steane 3, [[5,1,3]] 3, "
+          "[[4,2,2]] 2, and the n-qubit bit-flip repetition code 1 for every n.",
+          artifact="aionq.splitform.code_distance",
+          sample_size=7, interval=(1.0, 3.0),
+          null="the distances asserted by each code's conventional name",
+          assumptions=("exhaustive over logical x stabilizer cosets; exact")),
+
     Claim("EXP-V1-RSTAR_IS_NOT_DISTANCE", EvidenceTag.MEASURED,
           "Visibility depth r* is the minimum generating weight of the stabilizer "
           "group, NOT the code distance: Steane [[7,1,3]] has r* = 4 while d = 3.",
@@ -434,8 +448,18 @@ CLAIMS = [
     # --- R: retired, preserved --------------------------------------------
     Claim("RET-V1-RSTAR_EQUALS_D", EvidenceTag.RETIRED,
           "Visibility depth equals code distance.",
-          corrections=("survived on [[n,1,n]] repetition and [[5,1,3]] but Steane "
-                       "[[7,1,3]] gives r* = 4 with d = 3",)),
+          corrections=("Steane [[7,1,3]] gives r* = 4 with d = 3",
+                       "Round V3: falsified on the repetition family as well. V1 "
+                       "scored that family as 'survived' using d taken from the "
+                       "code's NAME. With d computed from the logical cosets the "
+                       "bit-flip repetition code has stabilizer distance 1 for "
+                       "every n (Z_1 is a weight-1 logical), not n. r* == d now "
+                       "holds in 1 of 6 cases and that one is a coincidence.")),
+    Claim("RET-V1-REPETITION_DISTANCE_N", EvidenceTag.RETIRED,
+          "The n-qubit repetition codeword has stabilizer distance n.",
+          corrections=("that is the X-distance convention; the true stabilizer "
+                       "distance is 1, verified independently: Z_1 commutes with "
+                       "every Z_iZ_j check and is not in the stabilizer group",)),
     Claim("RET-V1-WEIGHT_IS_VISIBILITY", EvidenceTag.RETIRED,
           "Pauli weight above r measures invisibility at probe depth r.",
           corrections=("product state |+>^6 scored g_1 = 0.891 when it must be 0; "

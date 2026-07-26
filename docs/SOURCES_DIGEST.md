@@ -313,6 +313,60 @@ separation from the repetition family is enormous rather than marginal.
 
 ---
 
+## 5d. NN Disk — the premise corrected, and the real bridge (Round V3)
+
+The NN Disk archive (`nnn-hyperbolic-ramdisk_v2`) was offered as possibly
+pertinent on the grounds that it is *"based in GF(2) in a (2,2) approach."*
+
+**The literal reading does not hold.** That codebase contains **no GF(2)**. Its
+geometric plane uses the *real* quadratic form `Q(x) = x₀²+x₁²−x₂²−x₃²` with
+SO(2,2) acting on the `Q=+1` pseudo-sphere — signature (2,2) over ℝ. GF(2) is
+the two-element field. Different objects; conflating them is the borrowing this
+repository's lattice exists to prevent.
+
+**But the structure you sensed is there, and it is sharper than the wording.**
+Both are **split forms** — orthogonal sums of *hyperbolic planes* — over
+different fields:
+
+| | field | decomposition | verified |
+|---|---|---|---|
+| NN Disk (2,2) | ℝ | `Q ≅ uv + st` — **two** hyperbolic planes | gram in split basis is block off-diagonal, exact |
+| this repo's stabilizer space | F₂ | `F₂^{2n} ≅` **n** hyperbolic planes, one per qubit | n = 2,3,4 exact |
+
+Signature (2,2) *is* the split form in dimension 4: `x₀²−x₂² = (x₀+x₂)(x₀−x₂)`
+is a hyperbolic plane, and so is `x₁²−x₃²`. SO(2,2) is **the split orthogonal
+group**. The stabilizer phase space is the F₂ analogue. Same classification
+concept, two fields — not an analogy.
+
+### It paid for itself immediately: a Round V1 claim was wrong
+
+Finding the hyperbolic planes of a code's phase space is *how you find its
+logical qubits* — and hence its distance. `aionq.splitform` does that, and
+computing `d` instead of reading it off a name **falsified my own Round V1
+result**:
+
+| code | r* | d *computed* | r* = d? |
+|---|---:|---:|---|
+| repetition n = 3, 5, 7, 9 | 3, 5, 7, 9 | **1, 1, 1, 1** | ✗ |
+| Steane [[7,1,3]] | 4 | 3 | ✗ |
+| Perfect [[5,1,3]] | 3 | 3 | ✓ |
+
+Round V1 scored P2 as **survived** on the repetition family. It isn't. The
+bit-flip repetition code has stabilizer distance **1 for every n**: `Z₁` commutes
+with every `Z_iZ_j` check and is not in the stabilizer group, so it is a weight-1
+logical. `[[n,1,n]]` is the *X-distance* convention. Verified independently
+before accepting.
+
+> **`r* = d` now holds in 1 of 6 cases, and that one is a coincidence.** The
+> corrected reading — `r*` is the minimum generating weight, distance is the
+> lightest logical, neither determines the other — is unchanged but now rests on
+> computed distances rather than on code names.
+
+So: the stated premise was wrong, the underlying instinct was right, and acting
+on it retired one of this repository's own claims.
+
+---
+
 ## 6. Net effect on this repository
 
 1. `src/aionq/governance.py` — evidence lattice, typed remainders, immutable
