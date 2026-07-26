@@ -629,11 +629,15 @@ only while it succeeds. Pauli-twirled depolarizing at rate p on every qubit afte
 each of three layers, 500 trials; crossover is the smallest p at which the
 expected coherent cost `1/p_success` first exceeds `b`:
 
-| cycle rank b | 2 | 4 | 6 | 8 | 12 |
-|---|---:|---:|---:|---:|---:|
-| crossover p | 0.165 | 0.170 | 0.140 | 0.125 | 0.105 |
+| cycle rank b | 2 | 4 | 6 | 8 | 12 | 16 |
+|---|---:|---:|---:|---:|---:|---:|
+| crossover p, seed 404 | 0.165 | 0.170 | 0.140 | 0.125 | 0.105 | — |
+| crossover p, seed 1 | 0.160 | 0.155 | 0.160 | 0.125 | 0.100 | **0.090** |
 
-Flat to `b = 6`, then falling — which is what the arithmetic requires, since
+The second row is an **independent-seed replication**, same grid and sample size,
+run separately because `b = 16` is 17 qubits and costs ~10 minutes for one point.
+It reproduces the shape and extends it one octave; `experiments/run_sheaf.py
+--deep --seed 1` regenerates it. Flat to `b = 6`, then falling — which is what the arithmetic requires, since
 `1/p_success` grows exponentially in `b` while the classical cost grows only
 linearly, so tolerable noise must decay like `log(b)/b`. The advantage is
 **asymptotically fragile while looking comfortable at exactly the sizes a

@@ -162,7 +162,7 @@ def part_3():
     return ladder
 
 
-def part_4():
+def part_4(deep: bool = False, seed: int = 404):
     print("\n" + "=" * 84)
     print("PART 4 -- quantum interference vs classical queries on the same class")
     print("=" * 84)
@@ -192,14 +192,15 @@ def part_4():
 
     print("\n  Noise: one coherent query is worth b classical queries only while")
     print("  it succeeds.  Depolarizing rate p on every qubit after every layer.")
-    rng = np.random.default_rng(404)
+    rng = np.random.default_rng(seed)
     grid = (0.0, 0.01, 0.02, 0.05, 0.10, 0.20)
     fine = np.arange(0.0, 0.301, 0.005)
+    ranks = (2, 4, 6, 8, 12, 16) if deep else (2, 4, 6, 8, 12)
     print(f"\n    {'b':>4}" + "".join(f"{f'p={p}':>11}" for p in grid)
           + f"{'crossover':>12}")
     print("  " + "-" * 84)
     crossovers = {}
-    for b in (2, 4, 6, 8, 12):
+    for b in ranks:
         row = f"    {b:>4}"
         for p in grid:
             row += f"{bv_success_rate(b, p, 400, rng):>11.3f}"
@@ -208,14 +209,22 @@ def part_4():
         print(row + f"{xo:>12.3f}")
     print("\n    crossover = smallest p where the expected coherent cost 1/p_success")
     print("    first exceeds the b queries the classical learner simply pays.")
+    if not deep:
+        print("    b = 16 is omitted by default: one point costs ~10 minutes at 17")
+        print("    qubits. Run with --deep (and --seed to re-randomise) to include it.")
     return crossovers
 
 
-def main() -> int:
+def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else list(argv)
+    deep = "--deep" in argv
+    seed = 404
+    if "--seed" in argv:
+        seed = int(argv[argv.index("--seed") + 1])
     print("Round S3 -- sheaf obstruction localisation, and the QSigma query claim")
     generic, commutator = part_1_and_2()
     ladder = part_3()
-    crossovers = part_4()
+    crossovers = part_4(deep=deep, seed=seed)
 
     print("\n" + "=" * 84)
     print("VERDICT against the pre-registered kill conditions")

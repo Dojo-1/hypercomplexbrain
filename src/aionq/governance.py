@@ -489,17 +489,20 @@ CLAIMS = [
                        "rule; only the coordinate system differs")),
     Claim("EXP-S3-BV_NOISE_CROSSOVER", EvidenceTag.MEASURED,
           "The single-query advantage survives depolarizing noise up to 0.17 per "
-          "qubit per layer at cycle rank 4, falling to 0.105 at rank 12 -- flat "
-          "to b = 6 and then decaying, as log(b)/b requires.",
+          "qubit per layer at cycle rank 4, falling to 0.105 at rank 12 and 0.090 "
+          "at rank 16 -- flat to b = 6 and then decaying, as log(b)/b requires.",
           artifact="src/aionq/interference.py::crossover_noise",
-          sample_size=500, interval=(0.105, 0.170),
+          sample_size=500, interval=(0.090, 0.170),
           null="the classical learner's b queries, paid up front with certainty",
           assumptions=("Pauli-twirled depolarizing on every qubit after each of "
                        "three circuit layers; Monte Carlo, so sampled outcomes "
                        "are exact",
                        "1/p_success assumes a correct run can be recognised for "
                        "free, which it cannot -- so this OVERSTATES the quantum "
-                       "side and the crossover is an upper bound")),
+                       "side and the crossover is an upper bound",
+                       "b = 16 comes from an independent-seed replication run "
+                       "separately (17 qubits, ~10 min per point); reproduce with "
+                       "run_sheaf.py --deep --seed 1")),
 
     Claim("BRIDGE-S3-COHERENT_ORACLE", EvidenceTag.HYPOTHESIS,
           "A cognitive architecture could hold its overlap relations in a form "
