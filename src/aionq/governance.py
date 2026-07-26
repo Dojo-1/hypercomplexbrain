@@ -413,6 +413,21 @@ CLAIMS = [
           null="zero difference between designed and undesigned stabilizer states",
           assumptions=("200 per group at n=9", "4000 bootstrap resamples")),
 
+    Claim("EXP-S1-SENTINEL_KILLED", EvidenceTag.MEASURED,
+          "The Sigma-infinity Transcendence Sentinel is beaten by a gzip MDL proxy "
+          "on the thesis's own four-class generator family: mean AUROC 0.865 vs "
+          "1.000 for compression and 0.754 for change-point.",
+          artifact="experiments/run_sentinel.py",
+          sample_size=480, interval=(0.52, 1.00),
+          null="the thesis's pre-registered kill condition: conventional "
+               "change-point or compression matching the sentinel at equal cost",
+          assumptions=("120 streams per class, length 600",
+                       "all three methods share the same recurrence filter and "
+                       "residual preprocessing",
+                       "polarity not pre-registered, so each method is scored with "
+                       "its best direction -- the reading most favourable to the "
+                       "baselines")),
+
     Claim("BRIDGE-R3-QCAUSAL", EvidenceTag.HYPOTHESIS,
           "Some quantum organ shows a causal advantage inside a pre-registered cone.",
           artifact="aionq.advantage.promote",
@@ -464,6 +479,16 @@ CLAIMS = [
           "Pauli weight above r measures invisibility at probe depth r.",
           corrections=("product state |+>^6 scored g_1 = 0.891 when it must be 0; "
                        "<X1X2> = <X1><X2> is 1-locally determined despite weight 2",)),
+    Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
+          "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
+          "in the architecture as a novelty diagnostic.",
+          corrections=("retired against the Sigma-infinity thesis's OWN "
+                       "pre-registered kill condition (section 16, experiment 3): "
+                       "a gzip MDL proxy on the identical residual separates the "
+                       "four classes at AUROC 1.000 vs the sentinel's 0.865",
+                       "the module and experiment are kept so the negative result "
+                       "is reproducible, per the Atlas rule that R is preserved "
+                       "and never deleted")),
     Claim("RET-R1-QCAUSAL_ADDITIVE", EvidenceTag.RETIRED,
           "Additive Q_causal over edges measures quantumness.",
           corrections=("constant on all-unitary cores; permutation and Clifford "

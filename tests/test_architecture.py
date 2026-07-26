@@ -968,3 +968,83 @@ def test_rstar_is_not_the_distance_on_any_family():
               for i in range(4)]
     assert visibility_profile(qc).r_star == 5
     assert code_distance(checks) == 1             # not 5
+
+
+# --------------------------------------------------------------------------
+# Round S1: the Sigma-infinity Transcendence Sentinel, and its retirement
+# --------------------------------------------------------------------------
+
+def _recurrent(n=400):
+    u = np.zeros(n)
+    u[0], u[1] = 1.0, 0.5
+    for i in range(2, n):
+        u[i] = 0.6 * u[i - 1] + 0.3 * u[i - 2]
+    return u
+
+
+def test_exact_recurrence_leaves_nothing_to_protect():
+    from aionq.sentinel import sentinel_score
+    s = sentinel_score(_recurrent())
+    assert s.score == pytest.approx(0.0, abs=1e-9)
+
+
+def test_dense_noise_is_not_flagged_as_sparse_novelty():
+    from aionq.sentinel import sentinel_score
+    rng = np.random.default_rng(0)
+    s = sentinel_score(rng.normal(size=400))
+    assert s.sparsity < 0.2
+    assert s.score == pytest.approx(0.0, abs=1e-9)
+
+
+def _fixed_and_expanding(seed):
+    from aionq.sentinel import sentinel_score
+    rng = np.random.default_rng(seed)
+    fixed = _recurrent()
+    for m in range(17, fixed.size, 17):
+        fixed[m] += rng.normal() * 3.0
+    expanding = _recurrent()
+    m, k, gap = 12, 1, 6
+    while m < expanding.size:
+        expanding[m] += rng.normal() * 3.0 * (k ** 0.5)
+        gap = int(gap * 1.35) + 1
+        m += gap
+        k += 1
+    return sentinel_score(fixed), sentinel_score(expanding)
+
+
+def test_composite_score_weakly_separates_expanding_from_fixed_rate():
+    """The sentinel's only real signal, and it is weak: AUROC ~0.6 in Round S1."""
+    wins = sum(1 for seed in range(20)
+               if _fixed_and_expanding(seed)[1].score > _fixed_and_expanding(seed)[0].score)
+    assert wins > 10          # better than chance, nowhere near reliable
+
+
+def test_gap_expansion_alone_does_not_order_the_classes():
+    """The component imported from Hecke-Mahler is NOT the one doing the work.
+
+    On individual streams the fixed-rate class often shows a higher gap slope
+    than the expanding-gap class, because the recurrence filter smears each
+    isolated anomaly across several residual positions. What weakly separates
+    them is magnitude variation, not gap expansion -- the opposite of what the
+    source condition emphasises. Recorded rather than hidden.
+    """
+    disagreements = sum(1 for seed in range(20)
+                        if _fixed_and_expanding(seed)[1].gap_expansion
+                        <= _fixed_and_expanding(seed)[0].gap_expansion)
+    assert disagreements > 5
+
+
+def test_sentinel_components_are_reported_separately():
+    """A single number would hide which condition fired."""
+    from aionq.sentinel import sentinel_score
+    s = sentinel_score(_recurrent())
+    for field in ("sparsity", "gap_expansion", "variation", "support_size"):
+        assert hasattr(s, field)
+
+
+def test_sentinel_is_registered_as_retired():
+    """It lost against the thesis's own kill condition and must stay retired."""
+    from aionq.governance import registry, EvidenceTag
+    c = registry["RET-S1-TRANSCENDENCE_SENTINEL"]
+    assert c.tag == EvidenceTag.RETIRED
+    assert any("kill condition" in x for x in c.corrections)

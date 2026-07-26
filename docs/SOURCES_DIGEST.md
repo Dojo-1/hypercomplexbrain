@@ -367,6 +367,60 @@ on it retired one of this repository's own claims.
 
 ---
 
+## 5e. Σ∞ thesis — running its own pre-registered kill condition (Round S1)
+
+The Σ∞ thesis (29 pp, verified against the pasted text) rates itself honestly in
+its own Appendix B:
+
+> *"Σ∞ is a falsifiable architecture specification — **H**. Becomes **M** only
+> after implementation and controlled experiments."*
+
+and §16 pre-registers four experiments **with kill conditions**. This repository
+is the machine for exactly that, so Round S1 implements the most concrete new
+operator — the **Transcendence Sentinel** (§13, from Luca–Ouaknine–Worrell) — and
+runs the thesis's own experiment 3 against its own stated kill condition:
+
+> *"Kill condition: conventional change-point or compression methods match the
+> result under equal tuning and cost."*
+
+Four stream classes × 120 each, all methods sharing the identical recurrence
+filter and residual preprocessing:
+
+| method | mean AUROC (target vs each other class) |
+|---|---:|
+| Sentinel | 0.865 |
+| Change-point (CUSUM) | 0.754 |
+| **Compression (gzip MDL)** | **1.000** |
+
+> **The kill condition is met. The Sentinel is RETIRED** (`RET-S1-TRANSCENDENCE_SENTINEL`).
+> A gzip ratio on the same residual separates the four classes perfectly, where
+> the sentinel reaches 0.865. The module and experiment are kept so the negative
+> result stays reproducible.
+
+**A methodological catch that reversed the verdict.** The first run scored
+compression at AUROC **0.000** and I nearly reported the sentinel as surviving.
+But 0.000 is *perfect separation with the decision rule inverted*, not failure.
+Polarity was never pre-registered for the baselines, so scoring them
+one-directionally handicapped them. Giving each method its best direction — the
+reading most favourable to the *null*, which is what a kill condition requires —
+flips compression to 1.000 and kills the sentinel.
+
+**A second finding, on the transport itself.** The sentinel's only residual
+signal (expanding-gap vs fixed-rate, AUROC 0.595) is carried by the
+*magnitude-variation* component — **not** by gap expansion. Gap expansion is the
+part actually imported from Hecke–Mahler, and it fails to order individual
+streams reliably: the recurrence filter smears each isolated anomaly across
+several residual positions, so fixed-rate streams frequently show a *higher* gap
+slope than expanding-gap ones. So even the weak surviving signal is not coming
+from the imported structure. Locked by
+`test_gap_expansion_alone_does_not_order_the_classes`.
+
+This is the thesis's own governance working as designed — an S-tier transport
+proposed with a kill condition, implemented, and killed. The Hecke–Mahler paper
+remains what §13 says it is: an inspiration, not a transferred theorem.
+
+---
+
 ## 6. Net effect on this repository
 
 1. `src/aionq/governance.py` — evidence lattice, typed remainders, immutable
