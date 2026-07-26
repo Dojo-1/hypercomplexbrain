@@ -837,6 +837,57 @@ CLAIMS = [
                        "pair (sheaf, frame) reported as properties of the sheaf",
                        "superseded by the orbit-collapsed instrument, not merely "
                        "retired: see EXP-S5-INVARIANT_LOCALISATION")),
+    Claim("MATH-S6-LAPLACIAN_INVARIANT_SAFE", EvidenceTag.PROVED,
+          "With a DEGENERACY-SAFE cut -- k extended until it falls in a real "
+          "spectral gap, never inside an eigenspace -- the Laplacian instrument "
+          "is exactly invariant under the frame group: 0.00e+00 worst deviation "
+          "over 950 instances across four nerve families, at a minimum sampled "
+          "gap of 2.8e-17.",
+          artifact="src/aionq/sheaf.py::_degeneracy_safe_cut",
+          assumptions=("the precondition is summing over a WHOLE eigenspace; the "
+                       "fixed-k version violated it and was false, see "
+                       "RET-S5-FIXED_CUT_INVARIANT",
+                       "relative tolerance 1e-8 against the spectral scale, "
+                       "because the Laplacian's scale varies with fiber dimension "
+                       "and graph size")),
+    Claim("EXP-S6-ACAF_REPLICATION", EvidenceTag.MEASURED,
+          "The S5 result replicates on three families it had never seen. Pooled "
+          "over 950 ACAF-swept instances the invariant instrument beats the "
+          "basis-dependent one by +0.068 AUROC, winning 63% of instances -- but "
+          "NOT uniformly: erdos_renyi +0.076 (78% wins), grid +0.114 (73%), "
+          "ring_chords +0.059 (57%), star_chords +0.021 (44% wins).",
+          artifact="experiments/run_acaf_frame_sweep.py",
+          sample_size=950, interval=(0.021, 0.114),
+          null="the basis-dependent sheaf instrument on the same instances; and "
+               "the hypothesis that S5's advantage was a property of the single "
+               "family it was found on",
+          assumptions=("Ambigator spans family x fiber_dim{2,3,4,6,8} x "
+                       "nodes{6,9,14,20} x density{0.15,0.35,0.6} x defects{1,3}",
+                       "interval is the range of per-family effects, not a "
+                       "bootstrap CI: the effect is heterogeneous across families "
+                       "and a pooled CI would hide that",
+                       "on star_chords the invariant instrument wins only 44% of "
+                       "instances -- BELOW chance. The accuracy claim does not "
+                       "hold on hub-and-spoke topologies and is scoped accordingly",
+                       "invariance holds on all four families; only accuracy is "
+                       "family-dependent")),
+    Claim("RET-S5-FIXED_CUT_INVARIANT", EvidenceTag.RETIRED,
+          "The Laplacian instrument with a fixed cut at k = fiber_dim is exactly "
+          "frame-invariant. (Registered as P in Round S5.)",
+          corrections=("FALSE AS STATED, and it was a P-tagged claim. An ACAF "
+                       "sweep designed to break it did: 9 of 950 instances broke "
+                       "invariance, worst deviation 0.80",
+                       "the mechanism is the one the attack predicted -- a fixed "
+                       "cut can land INSIDE a degenerate eigenspace, and the "
+                       "invariance argument requires a whole one. Median spectral "
+                       "gap at the cut was 6.1e-16 where it broke against 6.3e-01 "
+                       "where it held",
+                       "every failure had cycle rank 1, where the spectrum is "
+                       "degenerate at the cut",
+                       "S5 could not have seen this: its single family never "
+                       "produced a degenerate cut. Superseded by "
+                       "MATH-S6-LAPLACIAN_INVARIANT_SAFE, which fixes the "
+                       "instrument rather than narrowing the claim")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",
@@ -888,6 +939,8 @@ def _link_supersessions(reg: Registry) -> None:
     for old_id, new_id in (
         ("EXP-S3-SHEAF_LOCALISATION", "EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT"),
         ("EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT", "EXP-S5-INVARIANT_LOCALISATION"),
+        ("EXP-S5-INVARIANT_LOCALISATION", "EXP-S6-ACAF_REPLICATION"),
+        ("MATH-S5-LAPLACIAN_INVARIANT", "MATH-S6-LAPLACIAN_INVARIANT_SAFE"),
     ):
         old, new = reg[old_id], reg[new_id]
         if old.superseded_by is None:

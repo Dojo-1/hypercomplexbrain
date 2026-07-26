@@ -787,3 +787,51 @@ def test_moving_frame_claims_are_registered():
     assert registry["RET-S5-CYCLE_BASIS_INSTRUMENTS"].tag == EvidenceTag.RETIRED
     assert registry["EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT"].superseded_by == \
         "EXP-S5-INVARIANT_LOCALISATION"
+
+
+# ==========================================================================
+# 13. ACAF: the degenerate-spectrum boundary that falsified a P-tagged claim
+# ==========================================================================
+
+def test_degeneracy_safe_cut_never_splits_an_eigenspace():
+    from aionq.sheaf import _degeneracy_safe_cut
+    # a spectrum with a 4-fold degenerate block straddling k=2
+    vals = np.array([0.0, 1.0, 1.0, 1.0, 1.0, 5.0])
+    assert _degeneracy_safe_cut(vals, 2) == 5, "cut must clear the whole block"
+    assert _degeneracy_safe_cut(vals, 5) == 5, "already in a gap: unchanged"
+    assert _degeneracy_safe_cut(np.array([0.0, 1.0, 2.0]), 2) == 2
+
+
+def test_laplacian_is_invariant_on_a_single_cycle_where_the_old_cut_failed():
+    """Cycle rank 1 is where every ACAF invariance failure lived.
+
+    The fixed-k instrument broke here with deviations up to 0.80; this locks the
+    regime so the fix cannot silently regress.
+    """
+    from aionq.movingframe import orbit_report, random_frame
+    from aionq.sheaf import Nerve, localise
+    rng = np.random.default_rng(17)
+    for v in (6, 9, 14):
+        nerve = Nerve(v, tuple((i, (i + 1) % v) for i in range(v)))
+        assert nerve.betti_1 == 1
+        for dim in (3, 4, 8):
+            defects = rng.choice(nerve.n_edges, size=1, replace=False)
+            sheaf = make_obstructed_sheaf(nerve, defects, rng, kind="generic",
+                                          dim=dim)
+            labels = np.zeros(nerve.n_edges, dtype=bool)
+            labels[defects] = True
+            frames = [random_frame(v, dim, rng, nerve.n_edges) for _ in range(10)]
+            m = lambda n2, s2, l2: auroc(
+                localise(s2, "laplacian", np.random.default_rng(7)), l2)
+            r = orbit_report("laplacian", m, nerve, sheaf, labels, frames)
+            assert r.max_deviation == 0.0, f"broke at V={v} dim={dim}"
+
+
+def test_the_falsified_p_claim_is_retired_and_superseded():
+    from aionq.governance import registry
+    assert registry["RET-S5-FIXED_CUT_INVARIANT"].tag == EvidenceTag.RETIRED
+    assert registry["MATH-S6-LAPLACIAN_INVARIANT_SAFE"].tag == EvidenceTag.PROVED
+    assert registry["MATH-S5-LAPLACIAN_INVARIANT"].superseded_by == \
+        "MATH-S6-LAPLACIAN_INVARIANT_SAFE"
+    assert registry["EXP-S5-INVARIANT_LOCALISATION"].superseded_by == \
+        "EXP-S6-ACAF_REPLICATION"

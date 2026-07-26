@@ -632,6 +632,29 @@ def _instr_associator(sheaf, cycles, rng):
                                                   - sheaf.label_holonomy(c, "right"))))
 
 
+def _degeneracy_safe_cut(vals: np.ndarray, k: int, rtol: float = 1e-8) -> int:
+    """Extend k until it falls in a real spectral gap, never inside an eigenspace.
+
+    The invariance of :func:`_instr_laplacian` rests on summing over a **whole**
+    eigenspace, so that an orthogonal mixing inside it cannot change the score.
+    Cutting at a fixed ``k = fiber_dim`` violates that precondition exactly when
+    ``lambda_k == lambda_{k-1}``, and an ACAF sweep found it: 9 of 950 instances
+    broke invariance, all of them at cycle rank 1, with median gap at the cut of
+    6e-16 against 6e-1 where invariance held.
+
+    So the cut is moved to the end of whatever degenerate block it lands in.  The
+    tolerance is relative to the spectral scale, because the Laplacian's scale
+    varies with fiber dimension and graph size.
+    """
+    if vals.size == 0:
+        return 0
+    k = max(1, min(k, vals.size))
+    scale = max(float(np.max(np.abs(vals))), 1e-300)
+    while k < vals.size and (vals[k] - vals[k - 1]) <= rtol * scale:
+        k += 1
+    return k
+
+
 def _instr_laplacian(sheaf, cycles, rng):
     """Per-overlap Dirichlet energy of the sheaf Laplacian's lowest eigenspace.
 
@@ -658,8 +681,8 @@ def _instr_laplacian(sheaf, cycles, rng):
     d, n = sheaf.fiber_dim, sheaf.nerve.n_worldlets
     lap = sheaf.sheaf_laplacian()
     vals, vecs = np.linalg.eigh(lap)
-    k = min(d, vals.size)
-    basis = vecs[:, :k]                       # lowest eigenspace, whole subspace
+    k = _degeneracy_safe_cut(vals, min(d, vals.size))
+    basis = vecs[:, :k]                       # a WHOLE eigenspace, never a part
 
     scores = np.zeros(sheaf.nerve.n_edges)
     for e, (i, j) in enumerate(sheaf.nerve.edges):

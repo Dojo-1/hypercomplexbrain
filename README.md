@@ -100,6 +100,7 @@ python3 experiments/run_sheaf.py      # Round S3: sheaf obstruction localisation
 python3 experiments/run_s4_g100.py    # Round S4-G100: recognition chamber vs its gates
 python3 experiments/run_s4_basis_attack.py  # S4: is the S3 claim basis-invariant?
 python3 experiments/run_moving_frame.py     # S5: moving-frame orbit audit + invariant instrument
+python3 experiments/run_acaf_frame_sweep.py # S6: ACAF sweep hunting for where S5 breaks
 python3 -m pytest tests/ -q           # 193 tests
 ```
 
@@ -204,6 +205,27 @@ group action (8e-16) and loop closure (exactly 0, no hidden state). The first
 implementation failed equivariance with *infinity* -- it re-sorted edges, which is
 a canonicalisation rather than a group operation -- and the gate correctly
 invalidated every orbit statistic built on it before any of them were reported.
+
+Round S6 applied the ACAF discipline -- an Ambigator spanning family x fiber
+dimension x nodes x density x defect count, run adversarially to **break** the S5
+result rather than confirm it. It succeeded, and falsified a **P-tagged** claim.
+
+`MATH-S5-LAPLACIAN_INVARIANT` cut the eigenspectrum at a fixed `k = fiber_dim`.
+The invariance argument requires summing over a *whole* eigenspace, and a fixed
+cut can land inside a degenerate one. 9 of 950 instances broke, worst deviation
+0.80 -- all at cycle rank 1, median spectral gap at the cut **6.1e-16** against
+**6.3e-01** where invariance held. S5 could not have seen this: its single family
+never produced a degenerate cut.
+
+Fixed rather than narrowed: the cut now extends until it falls in a real gap.
+Re-hunted, invariance holds on **950/950** instances at 0.00e+00, down to a
+sampled gap of 2.8e-17. `RET-S5-FIXED_CUT_INVARIANT`,
+`MATH-S6-LAPLACIAN_INVARIANT_SAFE`.
+
+The accuracy advantage replicates on three unseen families but **not uniformly**,
+and the claim is scoped to say so: Erdős–Rényi +0.076 (78% of instances),
+grid +0.114 (73%), ring+chords +0.059 (57%), **star+chords +0.021 (44% — below
+chance)**. Invariance is structural; accuracy is topology-dependent.
 
 Nothing here connects any coordinate to cognitive performance. The advantage cone
 is the right *shape* to receive an answer; no experiment has produced one, and
