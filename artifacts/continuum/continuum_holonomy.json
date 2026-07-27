@@ -1,0 +1,136 @@
+{
+  "rows": {
+    "large": {
+      "gauss_bonnet_error_full": 1.3391580910848688e-07,
+      "gauss_bonnet_error_stub": 2.4777616358291867,
+      "holonomy_full": 2.477761769744996,
+      "holonomy_stub_MEASURED": 0.0,
+      "hyperbolic_area": 2.4777616358291867,
+      "interior_angles": [
+        0.17437381927537854,
+        0.2308784154519287,
+        0.258578783033299
+      ],
+      "stub_direction_change": 0.0,
+      "vertices": [
+        [
+          -0.72,
+          0.45
+        ],
+        [
+          0.74,
+          0.36
+        ],
+        [
+          0.03,
+          -0.8
+        ]
+      ]
+    },
+    "mvp_default": {
+      "gauss_bonnet_error_full": 1.7236069016490774e-08,
+      "gauss_bonnet_error_stub": 1.1714863311378223,
+      "holonomy_full": 1.1714863483738913,
+      "holonomy_stub_MEASURED": 0.0,
+      "hyperbolic_area": 1.1714863311378223,
+      "interior_angles": [
+        0.6013526260495321,
+        0.7014812490416982,
+        0.6672724473607404
+      ],
+      "stub_direction_change": 0.0,
+      "vertices": [
+        [
+          -0.42,
+          0.3
+        ],
+        [
+          0.46,
+          0.22
+        ],
+        [
+          0.02,
+          -0.5
+        ]
+      ]
+    },
+    "small": {
+      "gauss_bonnet_error_full": 6.015810072312888e-11,
+      "gauss_bonnet_error_stub": 0.08078584130453592,
+      "holonomy_full": 0.08078584136469402,
+      "holonomy_stub_MEASURED": 0.0,
+      "hyperbolic_area": 0.08078584130453592,
+      "interior_angles": [
+        0.9068602161059692,
+        1.1027083614920747,
+        1.0512382346872133
+      ],
+      "stub_direction_change": 0.0,
+      "vertices": [
+        [
+          -0.1,
+          0.08
+        ],
+        [
+          0.12,
+          0.05
+        ],
+        [
+          0.01,
+          -0.12
+        ]
+      ]
+    },
+    "thin": {
+      "gauss_bonnet_error_full": 7.450272843101402e-09,
+      "gauss_bonnet_error_stub": 0.7435123429172372,
+      "holonomy_full": 0.7435123503675101,
+      "holonomy_stub_MEASURED": 0.0,
+      "hyperbolic_area": 0.7435123429172372,
+      "interior_angles": [
+        0.2952540317680462,
+        0.2952540317680466,
+        1.807572247136463
+      ],
+      "stub_direction_change": 0.0,
+      "vertices": [
+        [
+          -0.6,
+          0.02
+        ],
+        [
+          0.6,
+          0.02
+        ],
+        [
+          0.0,
+          -0.3
+        ]
+      ]
+    }
+  },
+  "verdict": {
+    "A_full_transport_reproduces_gauss_bonnet": {
+      "convergence_ratio_per_doubling": 4.0,
+      "how_a_bug_was_found": "the FIRST version of this check plateaued at 5.86e-03 from n=500 to n=16000 and did not move. A residual that ignores resolution is not discretisation, it is a bug: the tangent used for the interior angles was a chord over a fixed 200-point sample, so the AREA carried a constant error while the holonomy converged. Replaced with the analytic tangent. Without the convergence sweep the plateau would have been reported as the MVP's error",
+      "note": "holonomy equals the enclosed area, and the residual falls with ratio EXACTLY 4.00 per doubling -- second order, the signature of a correct midpoint scheme. 1.10e-06 at n=500 down to 4.31e-09 at n=8000. The MVP's claim is true",
+      "verdict": "CONFIRMED",
+      "worst_absolute_error": 1.3391580910848688e-07
+    },
+    "B_stub_deficit_equals_the_area": {
+      "note": "a scaling-only step is a POSITIVE MULTIPLE OF THE IDENTITY, which cannot rotate a vector. The stub's holonomy is zero for a reason available before any experiment, so its 'deficit equals the area' is arithmetic, not a measurement",
+      "stub_holonomy_is_exactly_zero_to": 0.0,
+      "verdict": "CONFIRMED, but trivially"
+    },
+    "C_is_the_reported_stub_value_measured": {
+      "evidence": "the MVP source sets `holStub: 0` as a literal; it is never computed from stub.vx, stub.vy, so the displayed error |0 - area| equals the area BY CONSTRUCTION",
+      "is_the_hardcoded_value_correct": true,
+      "measured_here": 0.0,
+      "note": "the number is right and the panel would read identically if the stub transport did nothing at all, or did something wrong. Correct-and-asserted is not measured; this repository has spent eight rounds on that distinction and the fix costs one line: report atan2(stub.vy, stub.vx) like the full path",
+      "verdict": "NO -- and this is the finding"
+    },
+    "relation_to_MATH-S7-FLAT_HOLONOMY_ON_A_NERVE": {
+      "note": "there: no 2-cells, curvature identically zero, holonomy generic. here: curvature identically -1, holonomy exactly the area. Together they show holonomy and curvature are independent knobs -- which is the Ambrose-Singer correction of Round S7, exhibited from both ends"
+    }
+  }
+}
