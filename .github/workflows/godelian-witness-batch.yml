@@ -1,0 +1,113 @@
+name: Godelian witness batch
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Dispatch new tasks, or only rebuild status/view"
+        required: true
+        default: dispatch
+        type: choice
+        options:
+          - dispatch
+          - status
+      retry_task:
+        description: "Optional task_id for one explicit retry; pending tasks are never retried"
+        required: false
+        default: ""
+        type: string
+
+# One batch writer at a time. The journal is append-only, but two simultaneous
+# pushes would still create an avoidable branch race.
+concurrency:
+  group: godelian-witness-batch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  witness-weave:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GODELIAN_AGENT_TOKEN: ${{ secrets.GODELIAN_AGENT_TOKEN }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: claude/aion-brain-architecture-27f8ji
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the repository
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install -r requirements.txt
+
+      - name: Refuse a live dispatch without the dedicated workspace-agent token
+        if: inputs.action == 'dispatch'
+        shell: bash
+        run: |
+          if [[ -z "${GODELIAN_AGENT_TOKEN:-}" ]]; then
+            echo "Repository secret GODELIAN_AGENT_TOKEN is not configured." >&2
+            echo "An OPENAI_API_KEY is not substituted: the current protocol targets the workspace-agent trigger." >&2
+            exit 2
+          fi
+
+      - name: Dispatch the bounded asynchronous batch
+        if: inputs.action == 'dispatch'
+        shell: bash
+        env:
+          RETRY_TASK: ${{ inputs.retry_task }}
+        run: |
+          args=(dispatch --workers 2)
+          if [[ -n "$RETRY_TASK" ]]; then
+            args+=(--retry "$RETRY_TASK")
+          fi
+          PYTHONPATH=src python3 experiments/dispatch_review_batch.py "${args[@]}" \
+            | tee artifacts/witness_batches/godelian-review-v1/dispatch_report.json
+
+      - name: Fold state and render the witness nerve
+        shell: bash
+        run: |
+          mkdir -p artifacts/witness_batches/godelian-review-v1
+          PYTHONPATH=src python3 experiments/dispatch_review_batch.py status \
+            | tee artifacts/witness_batches/godelian-review-v1/status.json
+          PYTHONPATH=src python3 experiments/dispatch_review_batch.py render
+
+      - name: Verify the focused witness-weave tests
+        run: python -m pytest tests/test_witness_batch.py -q
+
+      - name: Upload the journal and views even if a verifier declined
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godelian-review-v1-${{ github.run_id }}
+          path: |
+            artifacts/witness_batches/godelian-review-v1/
+            artifacts/s7_audit/audit_adjudication.envelope.json
+            artifacts/r4/instrument_benchmark.envelope.json
+          if-no-files-found: warn
+
+      - name: Commit durable transport state
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "hypercomplexbrain-witness-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          git add -f \
+            artifacts/witness_batches/godelian-review-v1/ \
+            artifacts/s7_audit/audit_adjudication.envelope.json \
+            artifacts/r4/instrument_benchmark.envelope.json
+          if git diff --cached --quiet; then
+            echo "No witness state changed."
+            exit 0
+          fi
+          git commit -m "Record Godelian witness batch state [skip ci]"
+          git pull --rebase origin claude/aion-brain-architecture-27f8ji
+          git push origin HEAD:claude/aion-brain-architecture-27f8ji
