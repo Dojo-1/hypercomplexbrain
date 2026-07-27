@@ -61,6 +61,10 @@ __all__ = ["EvidenceEnvelope", "ProofEnvelope", "VerificationResult",
 
 SCHEMA_VERSION = "hypercomplexbrain.evidence.v1"
 
+#: Duplicated from :class:`aionq.witness.VerificationMode` to keep this module
+#: importable without the network layer.  A test asserts the two agree.
+_INDEPENDENT_MODES = frozenset({"recomputed"})
+
 
 # --------------------------------------------------------------------------
 # Digests.  Everything hashed here is read from disk at the moment of use.
@@ -160,16 +164,28 @@ class EvidenceEnvelope:
     timestamp: str = ""
     signature_status: str = "unsigned"
     typed_remainders: list = field(default_factory=list)
+    verification_mode: str = "not_requested"
+    witness_environment: str = ""
+    witness_notes: str = ""
 
     @property
     def independent(self) -> bool:
-        """False when producer and verifier are the same party.
+        """A different party is necessary and not sufficient.
 
-        Not an error.  A self-verified envelope is still better than prose --
-        it binds a result to a command and a hash.  But it is not independent
-        witnessing, and calling it that is the thing this round exists to stop.
+        Two conditions, and the second was added when an external verifier
+        became reachable.  A distinct party who merely *agrees* with the
+        producer's arithmetic has added a signature, not a computation; if the
+        producer's number is wrong the attestation is wrong the same way.  Only
+        a party that RECOMPUTED -- ran the command in its own environment and
+        produced its own artifact digests, compared here rather than there --
+        makes an envelope independently witnessed.
+
+        See :mod:`aionq.witness`.  Keeping this property permissive would have
+        rebuilt self-witnessing at higher cost and with a second logo on it.
         """
-        return bool(self.verifier) and self.verifier != self.producer
+        if not self.verifier or self.verifier == self.producer:
+            return False
+        return self.verification_mode in _INDEPENDENT_MODES
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -305,12 +321,22 @@ def verify(envelope, repo_root=None, check_commit: bool = True) -> VerificationR
             f"{envelope.claim_id}: {len(envelope.seeds)} seeds produced only "
             f"{n_eff} distinct inputs; the remainder are repeats.")
 
-    # 5. Independence, recorded rather than assumed.
+    # 5. A contradicted recomputation is a failure, not a warning.
+    if envelope.verification_mode == "contradicted":
+        failures.append(
+            f"{envelope.claim_id}: an independent recomputation produced "
+            "different artifacts. The producer's result and the verifier's "
+            "result are not averaged and the newer one does not win; the "
+            "envelope fails until the disagreement is explained.")
+
+    # 6. Independence, recorded rather than assumed.
     if envelope.evidence_tag in _TAGS_REQUIRING_EVIDENCE and not envelope.independent:
         warnings.append(
-            f"{envelope.claim_id}: producer and verifier are the same party "
-            f"({envelope.producer!r}). This envelope binds a result to a command "
-            "and a hash, which is real; it is NOT independent witnessing.")
+            f"{envelope.claim_id}: not independently witnessed "
+            f"(producer={envelope.producer!r}, verifier={envelope.verifier!r}, "
+            f"mode={envelope.verification_mode!r}). Binding a result to a command "
+            "and a hash is real; a second party agreeing without recomputing is "
+            "a signature, not a computation.")
 
     return VerificationResult(ok=not failures, failures=failures, warnings=warnings,
                               effective_n=n_eff, independent=envelope.independent)

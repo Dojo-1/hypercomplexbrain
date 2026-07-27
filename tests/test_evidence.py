@@ -167,7 +167,7 @@ def test_self_verification_is_recorded_as_such(artifact):
     result = verify(env, check_commit=False)
     assert result.ok                                     # still binds a hash
     assert not result.independent
-    assert any("NOT independent witnessing" in w for w in result.warnings)
+    assert any("not independently witnessed" in w for w in result.warnings)
 
 
 def test_a_registry_edit_alone_cannot_promote_a_claim():
@@ -258,3 +258,110 @@ def test_saved_envelopes_round_trip(tmp_path, artifact):
     from aionq.evidence import load_envelope
     path = save_envelope(_envelope(artifact), tmp_path / "e.json")
     assert verify(load_envelope(path), check_commit=False).ok
+
+
+# --------------------------------------------------------------------------
+# External witnessing (Godelian-1): a second party is necessary, not sufficient
+# --------------------------------------------------------------------------
+
+def _reply(payload):
+    """A fake transport standing in for the live agent."""
+    return lambda endpoint, body, headers: json.dumps(payload)
+
+
+def test_a_distinct_party_that_only_agrees_is_not_independent(artifact):
+    """Attestation adds a signature, not a computation.
+
+    If the producer's number is wrong, an attestation is wrong the same way.
+    This is the failure this whole module exists to refuse.
+    """
+    from aionq.witness import VerificationMode, apply_witness, parse_response
+    env = _envelope(artifact, producer="me", verifier="")
+    env, result = apply_witness(env, parse_response(json.dumps(
+        {"mode": "attested", "notes": "looks right"})))
+    assert env.verifier == "godelian-1"          # a genuinely different party
+    assert env.verification_mode == VerificationMode.ATTESTED
+    assert not result.independent                # and still not independent
+
+
+def test_recomputation_with_matching_digests_is_independent(artifact):
+    from aionq.witness import VerificationMode, apply_witness, parse_response
+    env = _envelope(artifact, producer="me", verifier="")
+    reply = {"mode": "recomputed",
+             "artifacts": {str(artifact): file_digest(artifact)},
+             "environment": "godelian-1 sandbox"}
+    env, result = apply_witness(env, parse_response(json.dumps(reply)))
+    assert env.verification_mode == VerificationMode.RECOMPUTED
+    assert result.ok and result.independent
+
+
+def test_a_contradicted_recomputation_fails_the_envelope(artifact):
+    """The outcome worth having a membrane for.
+
+    The two results are not averaged and the newer one does not win.
+    """
+    from aionq.witness import VerificationMode, apply_witness, parse_response
+    env = _envelope(artifact, producer="me", verifier="")
+    reply = {"mode": "recomputed",
+             "artifacts": {str(artifact): "sha256:" + "0" * 64}}
+    env, result = apply_witness(env, parse_response(json.dumps(reply)))
+    assert env.verification_mode == VerificationMode.CONTRADICTED
+    assert not result.ok
+    assert not result.independent
+    assert any("not averaged" in f for f in result.failures)
+    assert any(r["kind"] == "empirical_residual" for r in env.typed_remainders)
+
+
+def test_a_verifier_that_reports_no_digest_is_a_contradiction_not_a_pass(artifact):
+    from aionq.witness import VerificationMode, apply_witness, parse_response
+    env = _envelope(artifact, producer="me", verifier="")
+    env, result = apply_witness(env, parse_response(
+        json.dumps({"mode": "recomputed", "artifacts": {}})))
+    assert env.verification_mode == VerificationMode.CONTRADICTED
+    assert not result.ok
+
+
+def test_an_unreadable_reply_is_declined_not_guessed():
+    from aionq.witness import VerificationMode, parse_response
+    assert parse_response(json.dumps({"blah": 1})).mode == VerificationMode.DECLINED
+    assert parse_response(json.dumps({"mode": "verified!"})).mode == \
+        VerificationMode.DECLINED
+
+
+def test_the_challenge_withholds_nothing_but_answers_nothing(artifact):
+    """The verifier gets the command and the digests, never the artifact body.
+
+    A verifier handed the answer can only agree.
+    """
+    from aionq.witness import build_request
+    prompt = build_request(_envelope(artifact)).to_prompt()
+    assert "python3 experiments/run_example.py" in prompt
+    assert "expected_artifacts" in prompt
+    assert "auroc" in prompt                     # the producer's claim, for comparison
+    assert "Do NOT copy the digests" in prompt
+
+
+def test_the_token_is_never_placed_in_an_envelope(artifact, monkeypatch):
+    from aionq.witness import apply_witness, build_request, parse_response
+    monkeypatch.setenv("GODELIAN_AGENT_TOKEN", "sk-secret-value")
+    env = _envelope(artifact, producer="me", verifier="")
+    env, _ = apply_witness(env, parse_response(json.dumps({"mode": "attested"})))
+    assert "sk-secret-value" not in json.dumps(env.to_dict())
+    assert "sk-secret-value" not in build_request(env).to_prompt()
+
+
+def test_a_missing_token_names_the_variable_and_not_a_value(monkeypatch):
+    from aionq.witness import WitnessError, build_request, request_witness
+    for name in ("GODELIAN_AGENT_TOKEN", "AGENT_ACCESS_TOKEN"):
+        monkeypatch.delenv(name, raising=False)
+    env = EvidenceEnvelope(claim_id="X-R4-Y", evidence_tag="M", command="run",
+                           observed_result={})
+    with pytest.raises(WitnessError, match="GODELIAN_AGENT_TOKEN"):
+        request_witness(build_request(env))
+
+
+def test_the_two_definitions_of_independence_agree():
+    """`evidence` duplicates the mode set to stay importable without the network."""
+    from aionq.evidence import _INDEPENDENT_MODES
+    from aionq.witness import VerificationMode
+    assert _INDEPENDENT_MODES == VerificationMode.INDEPENDENT_MODES

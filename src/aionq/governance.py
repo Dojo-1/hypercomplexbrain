@@ -1190,6 +1190,46 @@ CLAIMS = [
                        "cleanly and proves nothing about its conclusion",
                        "this is the R4-F historical regression case: a claim the "
                        "repository already held, which the new membrane rejects")),
+    Claim("METHOD-R4-EXTERNAL_WITNESS", EvidenceTag.PROVED,
+          "Independence requires RECOMPUTATION, not agreement. An external party "
+          "that reads an envelope and concurs is recorded as `attested` and does "
+          "NOT make the envelope independent; only `recomputed` -- the verifier "
+          "ran the recorded command in its own environment and reported its own "
+          "artifact digests, compared on the producer side -- sets independent. "
+          "A `contradicted` recomputation FAILS the envelope: the two results are "
+          "not averaged and the newer one does not win.",
+          artifact="src/aionq/witness.py",
+          assumptions=("a distinct party is necessary and not sufficient: if the "
+                       "producer's number is wrong, an attestation is wrong in "
+                       "exactly the same way, so attestation adds a signature "
+                       "rather than a computation",
+                       "the challenge carries the command and the expected "
+                       "digests but never the artifact body -- a verifier handed "
+                       "the answer can only agree",
+                       "digest comparison happens on the producer side against "
+                       "digests already recorded, so the verifier reports and "
+                       "does not adjudicate",
+                       "an unparseable reply is `declined`, never guessed: a "
+                       "verifier whose answer cannot be read has verified nothing")),
+    Claim("BRIDGE-R4-GODELIAN_1", EvidenceTag.AXIOMATIZED,
+          "A Godelian-1 workspace agent can serve as the independent verifier "
+          "this repository cannot be for itself.",
+          artifact="src/aionq/witness.py::GODELIAN_1_ENDPOINT",
+          surrogate="the endpoint is reachable through this container's proxy and "
+                    "returns HTTP 401 without a bearer token -- that is ALL that "
+                    "has been established. No handshake has run: no token is "
+                    "present in this environment, so zero envelopes have been "
+                    "externally witnessed and every one still reports "
+                    "producer == verifier.",
+          assumptions=("the protocol is exercised end to end against a fake "
+                       "transport in 9 tests; the transport is the only untested "
+                       "component and it is the one requiring a credential",
+                       "whether the agent will actually RECOMPUTE rather than "
+                       "attest is an empirical question about that agent, not a "
+                       "property this code can guarantee. `attested` is an "
+                       "accepted answer and is recorded as non-independent",
+                       "the token is read from the environment and never written "
+                       "to an envelope, a log, or a repository file")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",
