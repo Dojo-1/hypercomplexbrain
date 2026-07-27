@@ -16,6 +16,9 @@ on:
         required: false
         default: ""
         type: string
+  push:
+    paths:
+      - "manifests/godelian_dispatch_request.json"
 
 # One batch writer at a time. The journal is append-only, but two simultaneous
 # pushes would still create an avoidable branch race.
@@ -50,7 +53,7 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: Refuse a live dispatch without the dedicated workspace-agent token
-        if: inputs.action == 'dispatch'
+        if: github.event_name == 'push' || inputs.action == 'dispatch'
         shell: bash
         run: |
           if [[ -z "${GODELIAN_AGENT_TOKEN:-}" ]]; then
@@ -60,13 +63,14 @@ jobs:
           fi
 
       - name: Dispatch the bounded asynchronous batch
-        if: inputs.action == 'dispatch'
+        if: github.event_name == 'push' || inputs.action == 'dispatch'
         shell: bash
         env:
           RETRY_TASK: ${{ inputs.retry_task }}
         run: |
+          mkdir -p artifacts/witness_batches/godelian-review-v1
           args=(dispatch --workers 2)
-          if [[ -n "$RETRY_TASK" ]]; then
+          if [[ -n "${RETRY_TASK:-}" ]]; then
             args+=(--retry "$RETRY_TASK")
           fi
           PYTHONPATH=src python3 experiments/dispatch_review_batch.py "${args[@]}" \
