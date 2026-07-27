@@ -91,6 +91,32 @@ jobs:
             | tee artifacts/witness_batches/godelian-review-v1/status.json
           PYTHONPATH=src python3 experiments/dispatch_review_batch.py render
 
+      - name: Write a durable runner outcome even on failure
+        if: always()
+        shell: bash
+        env:
+          RUNNER_STATUS: ${{ job.status }}
+          REQUESTED_ACTION: ${{ inputs.action }}
+          RETRY_TASK: ${{ inputs.retry_task }}
+        run: |
+          mkdir -p artifacts/witness_batches/godelian-review-v1
+          python - <<'PY'
+          import json, os, pathlib, time
+          path = pathlib.Path("artifacts/witness_batches/godelian-review-v1/runner_outcome.json")
+          path.write_text(json.dumps({
+              "schema": "hypercomplexbrain.witness_runner_outcome.v1",
+              "run_id": os.environ.get("GITHUB_RUN_ID", ""),
+              "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT", ""),
+              "event_name": os.environ.get("GITHUB_EVENT_NAME", ""),
+              "head_sha": os.environ.get("GITHUB_SHA", ""),
+              "job_status_at_outcome_step": os.environ.get("RUNNER_STATUS", "unknown"),
+              "requested_action": os.environ.get("REQUESTED_ACTION") or "dispatch",
+              "retry_task": os.environ.get("RETRY_TASK", ""),
+              "recorded_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+              "interpretation": "This records runner execution only. It is not a witness verdict."
+          }, indent=2, sort_keys=True))
+          PY
+
       - name: Upload the journal and views even if a verifier declined
         if: always()
         uses: actions/upload-artifact@v4
