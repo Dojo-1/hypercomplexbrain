@@ -272,3 +272,42 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+# --------------------------------------------------------------------------
+# Addendum: "orthogonality by tensor fields and diamond holonomy and return"
+# --------------------------------------------------------------------------
+#
+# A proposal was made that channel orthogonality is "simply achieved by
+# converting to tensor fields and intramanifolding in diamond holonomy and
+# return".  Decoded: measure the GROUP commutator W = U_A U_B U_A^-1 U_B^-1 --
+# a closed 4-cycle, forward on each channel then back -- in the tensor (adjoint)
+# representation rather than the vector one, where a central factor dies.
+#
+# Measured, at theta = pi/4 over all 21 Fano channel pairs:
+#
+#     vector rep   ||W - I||        1.023492   (identical across all 21 pairs)
+#     tensor rep   ||W (x) W - I||  4.026401   (identical across all 21 pairs)
+#     returns to identity           NO, in either representation
+#     ratio tensor / vector         3.93
+#
+# The proposal does not hold as stated.  The Kronecker square DOUBLES the defect
+# rather than cancelling it: W (x) W = I requires W = +-I, and a Fano diamond
+# produces a generic rotation, not a central element.  The adjoint does kill a
+# -I -- that part of the intuition is right, and it is the +-I subtlety R186-QSigma
+# raised -- but these diamonds never land there.  Sweeping theta from 1e-3 to pi,
+# the defect grows monotonically and vanishes only in the trivial limit.
+#
+# What it DOES establish is better than what was claimed.  The diamond defect and
+# the Lie-algebra commutator are THE SAME INVARIANT, one order apart:
+#
+#     theta      max||W - I||     / theta^2      ||[G_A, G_B]|| max
+#     1e-4       1.777778e-08     1.777778       1.777778
+#     1e-3       1.777778e-06     1.777778       1.777778
+#     1e-2       1.777758e-04     1.777758       1.777778
+#
+# Agreement to six figures.  So the finite diamond route and the infinitesimal
+# commutator route are two independent instruments reading one quantity, and the
+# S8 result -- Fano's crosstalk spread is exactly zero while no random system gets
+# below 0.372 -- now holds under both.  A proposal that fails as a fix and
+# succeeds as a second measurement is worth more than one that merely agrees.
