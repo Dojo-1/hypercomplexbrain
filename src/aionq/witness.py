@@ -73,6 +73,7 @@ class VerificationMode:
     RECOMPUTED = "recomputed"       # ran the command and produced its own digest
     CONTRADICTED = "contradicted"   # ran it and got something else
     DECLINED = "declined"           # could not or would not
+    PENDING = "pending"             # run accepted, verdict not yet available
     NOT_REQUESTED = "not_requested"
 
     #: The only mode that can make an envelope independent.
@@ -135,6 +136,7 @@ class WitnessResponse:
     """What came back, parsed but not yet believed."""
 
     mode: str
+    conversation_url: str = ""
     artifacts: dict = field(default_factory=dict)
     observed_result: dict = field(default_factory=dict)
     environment: str = ""
@@ -211,6 +213,24 @@ def parse_response(body) -> WitnessResponse:
     the arrangement this module exists to break.
     """
     data = body if isinstance(body, dict) else json.loads(body)
+
+    # The live endpoint is ASYNCHRONOUS.  Measured against Godelian-1: the
+    # trigger returns HTTP 202 with a body of exactly
+    #
+    #     {"conversation_url": "https://chatgpt.com/c/<id>"}
+    #
+    # and no verdict.  The first version of this parser saw no "mode" key and
+    # returned DECLINED, which is the safe reading -- an unreadable answer is not
+    # a verification -- but it is the WRONG one: the run was accepted and is
+    # still going.  Recording it as declined would blame the verifier for the
+    # protocol's own latency.  PENDING says what actually happened, carries the
+    # handle needed to collect the verdict, and is not independent.
+    if "conversation_url" in data and "mode" not in data:
+        return WitnessResponse(mode=VerificationMode.PENDING,
+                               conversation_url=str(data["conversation_url"]),
+                               notes="trigger accepted; verdict not yet returned",
+                               raw=data)
+
     inner = data
     for key in ("output", "result", "response", "content"):
         if isinstance(inner.get(key), (dict, str)):
@@ -229,6 +249,7 @@ def parse_response(body) -> WitnessResponse:
         mode = VerificationMode.DECLINED
     return WitnessResponse(
         mode=mode,
+        conversation_url=str(data.get("conversation_url", "")),
         artifacts=dict(inner.get("artifacts") or {}),
         observed_result=dict(inner.get("observed_result") or {}),
         environment=str(inner.get("environment", "")),
@@ -270,6 +291,8 @@ def apply_witness(envelope: EvidenceEnvelope, response: WitnessResponse
                          if mode in (VerificationMode.RECOMPUTED,
                                      VerificationMode.ATTESTED,
                                      VerificationMode.CONTRADICTED) else "")
+    if response.conversation_url:
+        envelope.witness_conversation_url = response.conversation_url
     envelope.witness_environment = response.environment
     envelope.witness_notes = response.notes
     return envelope, verify(envelope)

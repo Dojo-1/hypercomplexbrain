@@ -365,3 +365,22 @@ def test_the_two_definitions_of_independence_agree():
     from aionq.evidence import _INDEPENDENT_MODES
     from aionq.witness import VerificationMode
     assert _INDEPENDENT_MODES == VerificationMode.INDEPENDENT_MODES
+
+
+def test_an_accepted_but_unfinished_run_is_pending_not_declined(artifact):
+    """The live endpoint returns 202 with only a conversation_url.
+
+    Reading that as `declined` is safe and wrong: the run was accepted and is
+    still going. Blaming the verifier for the protocol's latency would make
+    every real handshake look like a refusal.
+    """
+    from aionq.witness import VerificationMode, apply_witness, parse_response
+    reply = parse_response(json.dumps(
+        {"conversation_url": "https://chatgpt.com/c/6a670bfc"}))
+    assert reply.mode == VerificationMode.PENDING
+    env, result = apply_witness(_envelope(artifact, producer="me", verifier=""),
+                                reply)
+    assert env.verification_mode == VerificationMode.PENDING
+    assert env.witness_conversation_url.endswith("6a670bfc")
+    assert env.verifier == ""            # nothing has verified anything yet
+    assert not result.independent

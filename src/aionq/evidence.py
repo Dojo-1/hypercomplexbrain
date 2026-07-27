@@ -167,6 +167,7 @@ class EvidenceEnvelope:
     verification_mode: str = "not_requested"
     witness_environment: str = ""
     witness_notes: str = ""
+    witness_conversation_url: str = ""
 
     @property
     def independent(self) -> bool:

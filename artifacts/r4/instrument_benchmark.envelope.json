@@ -1,7 +1,7 @@
 {
   "claim_id": "METRIC-R4-INSTRUMENT_COST",
   "command": "PYTHONPATH=src python3 experiments/run_instrument_benchmark.py",
-  "commit_sha": "7551344706f3d594c872d7a99214c7f1aecbfbd4",
+  "commit_sha": "891eeb3b1604a2b2a61761b6dc769e4cb531c393",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -16,22 +16,22 @@
     "instance:ring9+3chords:dim4"
   ],
   "observed_result": {
-    "median_ratio_quaternion_cached": 11.217740020342532,
-    "median_ratio_quaternion_uncached": 18.568236724274602,
+    "median_ratio_quaternion_cached": 12.501337917727723,
+    "median_ratio_quaternion_uncached": 21.237995801273286,
     "sample_size": 1,
     "timing_batches": 12
   },
   "platform": "linux",
   "producer": "experiments/run_instrument_benchmark.py",
   "raw_artifacts": {
-    "artifacts/r4/instrument_benchmark.json": "sha256:9eb13259f1e4ce62b632d87a9ca579685310b0c43d9437b109d364e203b7cf39"
+    "artifacts/r4/instrument_benchmark.json": "sha256:95fbf3e84865b2ef70143e247dd3fe76fe600afa6a3e3235a49c43d313961294"
   },
   "schema_version": "hypercomplexbrain.evidence.v1",
   "seeds": [
     0
   ],
   "signature_status": "unsigned",
-  "timestamp": "2026-07-27T06:51:58Z",
+  "timestamp": "2026-07-27T07:44:10Z",
   "typed_remainders": [
     {
       "carrier": "median_ratio_vs_sheaf",
@@ -45,6 +45,7 @@
   },
   "verification_mode": "not_requested",
   "verifier": "",
+  "witness_conversation_url": "",
   "witness_environment": "",
   "witness_notes": "",
   "working_directory": ""
