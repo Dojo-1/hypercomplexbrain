@@ -52,6 +52,12 @@ jobs:
           python -m pip install -e .
           python -m pip install -r requirements.txt
 
+      # The external side effect comes only after the scheduler's own kill
+      # conditions pass. A syntactically valid but untested dispatcher is not
+      # entitled to spend a verifier run.
+      - name: Verify the focused witness-weave tests before dispatch
+        run: python -m pytest tests/test_witness_batch.py -q
+
       - name: Refuse a live dispatch without the dedicated workspace-agent token
         if: github.event_name == 'push' || inputs.action == 'dispatch'
         shell: bash
@@ -77,15 +83,13 @@ jobs:
             | tee artifacts/witness_batches/godelian-review-v1/dispatch_report.json
 
       - name: Fold state and render the witness nerve
+        if: always()
         shell: bash
         run: |
           mkdir -p artifacts/witness_batches/godelian-review-v1
           PYTHONPATH=src python3 experiments/dispatch_review_batch.py status \
             | tee artifacts/witness_batches/godelian-review-v1/status.json
           PYTHONPATH=src python3 experiments/dispatch_review_batch.py render
-
-      - name: Verify the focused witness-weave tests
-        run: python -m pytest tests/test_witness_batch.py -q
 
       - name: Upload the journal and views even if a verifier declined
         if: always()
