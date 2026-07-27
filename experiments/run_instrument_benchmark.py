@@ -178,6 +178,11 @@ def main() -> int:
         # so rather than letting 12 batches read as 12 experiments.
         input_hashes=["instance:ring9+3chords:dim4"],
         raw_artifacts={"artifacts/r4/instrument_benchmark.json": file_digest(path)},
+        # This file embeds CPU model, library versions and raw timings. Any
+        # honest recomputation elsewhere yields a different digest, so comparing
+        # digests across parties would report `contradicted` for a verifier that
+        # did everything correctly.
+        environment_dependent=["artifacts/r4/instrument_benchmark.json"],
         uncertainty={"statistic": "median", "interval": "bootstrap 95%"},
         producer="experiments/run_instrument_benchmark.py",
         verifier="",

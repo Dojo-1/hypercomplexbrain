@@ -158,6 +158,13 @@ class EvidenceEnvelope:
     input_hashes: list = field(default_factory=list)
     seeds: list = field(default_factory=list)
     raw_artifacts: dict = field(default_factory=dict)   # path -> digest
+    #: Artifacts whose CONTENT is a function of the environment -- timings, CPU
+    #: model, library versions.  An honest recomputation of one of these on any
+    #: other machine produces a different digest, so digest equality is the wrong
+    #: check and would report `contradicted` for a verifier that did everything
+    #: right.  Listed here, they are checked for existence and integrity against
+    #: the producer's own copy, and excluded from cross-party digest comparison.
+    environment_dependent: list = field(default_factory=list)
     uncertainty: dict = field(default_factory=dict)
     producer: str = ""
     verifier: str = ""

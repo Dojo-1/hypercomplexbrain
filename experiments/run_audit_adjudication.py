@@ -389,6 +389,54 @@ def main() -> int:
     path = OUT / "audit_adjudication.json"
     path.write_text(json.dumps(checks, indent=2, sort_keys=True))
     print(f"\nwrote {path}")
+
+    # An evidence envelope for a DETERMINISTIC artifact.  Unlike the timing
+    # benchmark, nothing here depends on the machine: the octonion census is an
+    # integer count, the CM primes are arithmetic, the cohomology dimensions are
+    # ranks, and the Berry phase converges to 1e-9 at fixed step count.  So a
+    # digest comparison across parties is the RIGHT check here, and a mismatch
+    # would be a real disagreement rather than a different CPU.  This is the
+    # claim to send for independent recomputation first.
+    from aionq.evidence import (EvidenceEnvelope, current_commit,
+                                environment_digest, file_digest, save_envelope)
+    envelope = EvidenceEnvelope(
+        claim_id="EXP-S7-AUDIT_REPLICATION",
+        evidence_tag="M",
+        command="PYTHONPATH=src python3 experiments/run_audit_adjudication.py",
+        observed_result={
+            "sample_size": 84,
+            "berry_worst_abs_error": checks["A_berry_phase"]["worst_abs_error"],
+            "octonion_associative_triples": checks["B_octonion_census"]["n_associative"],
+            "cm_violations": len(checks["C_cm_curve"]["violations"]),
+            "euler_identity_violations": len(checks["E_euler_identity"]["violations"]),
+        },
+        commit_sha=current_commit(),
+        environment=environment_digest(),
+        seeds=[11, 23, 37],
+        # 84 individually-checked items, enumerated.  The first version recorded
+        # five coarse family labels and declared sample_size 84; the verifier
+        # rejected it, correctly -- five hashes certify five observations, not
+        # eighty-four, and summarising the inputs while itemising the count is
+        # exactly the inflation the rule exists to catch.
+        input_hashes=(
+            [f"berry:theta0={r['theta0']:.6f}" for r in checks["A_berry_phase"]["rows"]]
+            + [f"octonion:{i},{j},{k}" for i in range(1, 8)
+               for j in range(i + 1, 8) for k in range(j + 1, 8)]
+            + [f"cm:p={r['p']}" for r in checks["C_cm_curve"]["sample"]]
+            + [f"cm:p={p}" for p in range(3, 200)
+               if all(p % q for q in range(2, int(p ** 0.5) + 1))]),
+        raw_artifacts={"artifacts/s7_audit/audit_adjudication.json": file_digest(path)},
+        environment_dependent=[],          # deterministic: compare digests
+        producer="experiments/run_audit_adjudication.py",
+        verifier="",
+        typed_remainders=[{
+            "kind": "empirical_residual",
+            "carrier": "float formatting in the JSON",
+            "comparison": "values are exact counts and ranks, but their decimal "
+                          "rendering could differ across numpy versions; a digest "
+                          "mismatch should be inspected before being believed"}])
+    save_envelope(envelope, OUT / "audit_adjudication.envelope.json")
+    print(f"wrote {OUT / 'audit_adjudication.envelope.json'}")
     return 0
 
 

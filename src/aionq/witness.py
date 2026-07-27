@@ -122,6 +122,7 @@ class WitnessRequest:
     #: CONNECT 403.  A challenge that cannot be executed is not a challenge, and
     #: the wasted attempt was the protocol's fault, not the verifier's.
     source: dict = field(default_factory=dict)
+    environment_dependent: list = field(default_factory=list)
     protocol_version: str = "hypercomplexbrain.witness.v2"
 
     def to_prompt(self) -> str:
@@ -147,6 +148,7 @@ class WitnessRequest:
                         "that is a defect in this challenge, not in you."},
             "requires": ["outbound network to the source", "python3", "numpy"],
             "expected_artifacts": self.expected_artifacts,
+            "environment_dependent": self.environment_dependent,
             "producer_observed_result": self.observed_result,
             "reply_schema": {
                 "mode": "recomputed | reviewed | attested | declined",
@@ -186,6 +188,7 @@ def build_request(envelope: EvidenceEnvelope, repository: str | None = None,
         command=envelope.command,
         commit_sha=envelope.commit_sha,
         expected_artifacts=dict(envelope.raw_artifacts),
+        environment_dependent=list(envelope.environment_dependent),
         observed_result=dict(envelope.observed_result),
         **kwargs)
 
@@ -299,7 +302,19 @@ def apply_witness(envelope: EvidenceEnvelope, response: WitnessResponse
 
     if mode == VerificationMode.RECOMPUTED:
         mismatches = []
-        for path, declared in envelope.raw_artifacts.items():
+        comparable = {k: v for k, v in envelope.raw_artifacts.items()
+                      if k not in set(envelope.environment_dependent)}
+        if not comparable:
+            # Nothing this verifier produced can be compared by digest.  Saying
+            # "independent" here would certify agreement that was never checked.
+            envelope.verification_mode = VerificationMode.REVIEWED
+            envelope.verifier = response.verifier_identity
+            envelope.witness_environment = response.environment
+            envelope.witness_notes = (
+                "recomputed, but every artifact is environment-dependent so no "
+                "digest comparison was possible: " + response.notes)
+            return envelope, verify(envelope)
+        for path, declared in comparable.items():
             theirs = response.artifacts.get(path)
             if theirs is None:
                 mismatches.append(f"{path}: verifier reported no digest")
