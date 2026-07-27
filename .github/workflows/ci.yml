@@ -41,7 +41,7 @@ jobs:
         run: python -c "import aionq, aionq.residency, aionq.evidence, aionq.recognition.metrics; print('import ok')"
 
       - name: Correctness suite
-        run: python -m pytest -q -rs
+        run: python -m pytest -q -rs --junitxml=artifacts/test-results/pytest.xml
 
       - name: Verify every committed evidence envelope
         run: python -m aionq.verify_envelopes artifacts
@@ -49,10 +49,12 @@ jobs:
       - name: Benchmark smoke test (not gated on timing)
         run: python experiments/run_instrument_benchmark.py
 
-      - name: Upload raw artifacts
+      - name: Upload raw artifacts and test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: artifacts-${{ matrix.os }}-py${{ matrix.python }}
-          path: artifacts/r4/
+          path: |
+            artifacts/r4/
+            artifacts/test-results/
           if-no-files-found: warn
