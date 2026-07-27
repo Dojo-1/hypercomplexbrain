@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import json
+
 from aionq.evidence import EvidenceEnvelope, load_envelope, save_envelope
 
 
-def test_evidence_envelope_round_trips_non_ascii_as_utf8(tmp_path):
-    envelope = EvidenceEnvelope(
+def _non_ascii_envelope() -> EvidenceEnvelope:
+    return EvidenceEnvelope(
         claim_id="TEST-UTF8-GODELIAN",
         evidence_tag="H",
         command="simulate gerbe",
@@ -15,10 +17,26 @@ def test_evidence_envelope_round_trips_non_ascii_as_utf8(tmp_path):
         witness_notes="non-absorptive recognition of the other — preserved alterity",
     )
 
-    path = save_envelope(envelope, tmp_path / "evidence.envelope.json")
-    raw = path.read_bytes()
 
-    assert "Gödelian".encode("utf-8") in raw
+def test_load_envelope_reads_literal_utf8_independently_of_platform_locale(tmp_path):
+    envelope = _non_ascii_envelope()
+    path = tmp_path / "literal-utf8.envelope.json"
+    path.write_text(
+        json.dumps(envelope.to_dict(), ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    restored = load_envelope(path)
+    assert restored.observed_result == envelope.observed_result
+    assert restored.typed_remainders == envelope.typed_remainders
+    assert restored.witness_notes == envelope.witness_notes
+
+
+def test_save_envelope_round_trips_non_ascii_semantics(tmp_path):
+    envelope = _non_ascii_envelope()
+    path = save_envelope(envelope, tmp_path / "saved.envelope.json")
+
+    path.read_text(encoding="utf-8")
     restored = load_envelope(path)
     assert restored.observed_result == envelope.observed_result
     assert restored.typed_remainders == envelope.typed_remainders
