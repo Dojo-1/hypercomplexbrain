@@ -26,6 +26,16 @@ and collapsing them would rebuild the same failure at higher cost:
     not, which is why ``contradicted`` is a first-class outcome rather than an
     error to be retried away.
 
+``reviewed``
+    The agent examined the ARGUMENT rather than re-running the command, and
+    returned findings about it.  This is a third axis, added after the first live
+    handshake and not present in the original design.  A critic can establish
+    that a claim is suggestive but unproven, or evocative but underspecified,
+    which no amount of digest-matching detects -- and it can do so without ever
+    reproducing a number.  It is genuinely more than ``attested``, because it can
+    DISAGREE while the arithmetic is right.  It is not ``recomputed``, because it
+    produces no second computation.  It does not set ``independent``.
+
 ``contradicted``
     The agent recomputed and got something else.  This is the outcome worth
     having a membrane for.  It does not fail silently and it does not average
@@ -70,6 +80,7 @@ class VerificationMode:
     """What the external party actually did.  Not what it claimed to conclude."""
 
     ATTESTED = "attested"           # agreed with the producer's own numbers
+    REVIEWED = "reviewed"           # examined the argument, returned findings
     RECOMPUTED = "recomputed"       # ran the command and produced its own digest
     CONTRADICTED = "contradicted"   # ran it and got something else
     DECLINED = "declined"           # could not or would not
@@ -77,6 +88,10 @@ class VerificationMode:
     NOT_REQUESTED = "not_requested"
 
     #: The only mode that can make an envelope independent.
+    #:
+    #: ``REVIEWED`` is deliberately absent.  Argument-independence and
+    #: arithmetic-independence are different axes and collapsing them would let a
+    #: well-argued wrong number climb the evidence lattice.
     INDEPENDENT_MODES = frozenset({RECOMPUTED})
 
 
@@ -100,7 +115,14 @@ class WitnessRequest:
     expected_artifacts: dict           # path -> digest the producer observed
     observed_result: dict
     repository: str = "jesusvilela/hypercomplexbrain"
-    protocol_version: str = "hypercomplexbrain.witness.v1"
+    #: How the verifier is expected to OBTAIN the code.  The first live challenge
+    #: omitted this and instructed a verifier to "run the command in a clean
+    #: checkout" while supplying no clone URL and assuming outbound network.
+    #: Godelian-1 spent 2m55s discovering that its container blocks GitHub with
+    #: CONNECT 403.  A challenge that cannot be executed is not a challenge, and
+    #: the wasted attempt was the protocol's fault, not the verifier's.
+    source: dict = field(default_factory=dict)
+    protocol_version: str = "hypercomplexbrain.witness.v2"
 
     def to_prompt(self) -> str:
         return json.dumps({
@@ -119,10 +141,15 @@ class WitnessRequest:
                 "numbers and agree without having run anything; that is an "
                 "acceptable answer and it will be recorded as non-independent."),
             "command": self.command,
+            "source": self.source or {
+                "note": "NO SOURCE SUPPLIED. If you cannot obtain the code, "
+                        "answer 'declined' immediately rather than searching -- "
+                        "that is a defect in this challenge, not in you."},
+            "requires": ["outbound network to the source", "python3", "numpy"],
             "expected_artifacts": self.expected_artifacts,
             "producer_observed_result": self.observed_result,
             "reply_schema": {
-                "mode": "recomputed | attested | declined",
+                "mode": "recomputed | reviewed | attested | declined",
                 "artifacts": {"<path>": "sha256:<hex>"},
                 "observed_result": "<object, if recomputed>",
                 "environment": "<free-form description of where it ran>",
@@ -147,11 +174,13 @@ class WitnessResponse:
 
 # --------------------------------------------------------------------------
 
-def build_request(envelope: EvidenceEnvelope, repository: str | None = None
-                  ) -> WitnessRequest:
+def build_request(envelope: EvidenceEnvelope, repository: str | None = None,
+                  source: dict | None = None) -> WitnessRequest:
     kwargs = {}
     if repository:
         kwargs["repository"] = repository
+    if source:
+        kwargs["source"] = source
     return WitnessRequest(
         claim_id=envelope.claim_id,
         command=envelope.command,
@@ -245,7 +274,7 @@ def parse_response(body) -> WitnessResponse:
 
     mode = str(inner.get("mode", VerificationMode.DECLINED)).lower()
     if mode not in {VerificationMode.RECOMPUTED, VerificationMode.ATTESTED,
-                    VerificationMode.DECLINED}:
+                    VerificationMode.REVIEWED, VerificationMode.DECLINED}:
         mode = VerificationMode.DECLINED
     return WitnessResponse(
         mode=mode,
@@ -290,6 +319,7 @@ def apply_witness(envelope: EvidenceEnvelope, response: WitnessResponse
     envelope.verifier = (response.verifier_identity
                          if mode in (VerificationMode.RECOMPUTED,
                                      VerificationMode.ATTESTED,
+                                     VerificationMode.REVIEWED,
                                      VerificationMode.CONTRADICTED) else "")
     if response.conversation_url:
         envelope.witness_conversation_url = response.conversation_url

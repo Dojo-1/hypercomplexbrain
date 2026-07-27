@@ -1147,8 +1147,9 @@ CLAIMS = [
                        "12 timing batches on ONE instance, and was rejected")),
     Claim("METRIC-R4-INSTRUMENT_COST", EvidenceTag.MEASURED,
           "On this container (Xeon 2.10GHz, Python 3.11.15, numpy 2.4.6) the "
-          "quaternion instrument costs 13.54x the sheaf instrument cached and "
-          "22.78x uncached, median over 12 randomised batches of 40 reps. The "
+          "quaternion instrument costs 11.2x to 13.5x the sheaf instrument "
+          "cached and 18.6x to 22.8x uncached -- the range over three repeat "
+          "runs of 12 randomised batches, NOT a single figure. The "
           "docstring's 17.22x/27.81x were measured on different hardware and are "
           "reproduced here as HISTORICAL, not as constants.",
           artifact="experiments/run_instrument_benchmark.py",
@@ -1159,9 +1160,20 @@ CLAIMS = [
                        "instance are repeated measurements, not twelve experiments",
                        "interval is the cached-to-uncached range, not a bootstrap "
                        "CI; per-condition bootstrap CIs are in the raw artifact",
-                       "13.54 vs the previously recorded 17.22 on the same code is "
-                       "the finding: the ratio moved 21% by changing machine, "
-                       "which is why no test and no CI job gates on it")),
+                       "CORRECTED. The first statement of this claim said the "
+                       "ratio 'moved 21% by changing machine'. Three runs of the "
+                       "SAME code on the SAME container gave cached ratios of "
+                       "11.22, 12.50 and 13.54 -- a 21% spread with the machine "
+                       "held fixed. Attributing the movement to hardware was "
+                       "wrong; run-to-run variance on a shared container is the "
+                       "same size. The point survives and is stronger: the ratio "
+                       "is not a property of the algorithms, and no test or CI "
+                       "job gates on it",
+                       "the interval (13.54, 22.78) is the cached-to-uncached "
+                       "range from one run and is NOT a bound on either quantity "
+                       "across runs; per-condition bootstrap CIs in the raw "
+                       "artifact are within-run and do not capture between-run "
+                       "spread")),
     Claim("RET-R4-REGISTRY_SELF_WITNESS", EvidenceTag.RETIRED,
           "The governance registry establishes the evidence status of its claims. "
           "(Implicit in every round from R0 to S7, and in the tests that assert "

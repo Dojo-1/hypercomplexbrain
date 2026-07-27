@@ -576,6 +576,10 @@ def _quaternion_basis() -> np.ndarray:
     comparison, but it is a sixth of what was claimed.
 
     R4-B.  Those figures are HISTORICAL AND ENVIRONMENT-SPECIFIC, not constants.
+    Three repeat runs on ONE container gave cached ratios of 11.22, 12.50 and
+    13.54 -- so even holding hardware fixed the figure moves 21%, and quoting any
+    one of them as "the" ratio would be the same mistake as "131x" in a smaller
+    font.
     They are reproduced by ``experiments/run_instrument_benchmark.py``, which
     emits raw timings plus a Python/NumPy/BLAS/CPU envelope; a wall-clock ratio
     is not asserted anywhere in the correctness suite, because a loaded CI runner

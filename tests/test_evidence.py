@@ -384,3 +384,44 @@ def test_an_accepted_but_unfinished_run_is_pending_not_declined(artifact):
     assert env.witness_conversation_url.endswith("6a670bfc")
     assert env.verifier == ""            # nothing has verified anything yet
     assert not result.independent
+
+
+def test_a_reviewer_is_a_real_verifier_and_still_not_independent(artifact):
+    """The third axis, added after the first live handshake.
+
+    Godelian-1 is a critic, not an execution environment. It can establish that
+    a claim is suggestive but unproven -- which no digest comparison detects --
+    and it can disagree while the arithmetic is right. That is more than
+    attestation and it is not recomputation, so it names a verifier and leaves
+    `independent` False. Collapsing the two axes would let a well-argued wrong
+    number climb the lattice.
+    """
+    from aionq.witness import VerificationMode, apply_witness, parse_response
+    env, result = apply_witness(
+        _envelope(artifact, producer="me", verifier=""),
+        parse_response(json.dumps({
+            "mode": "reviewed",
+            "notes": "sample_size 1 is correct but the interval conflates two "
+                     "conditions rather than bounding one"})))
+    assert env.verification_mode == VerificationMode.REVIEWED
+    assert env.verifier == "godelian-1"
+    assert not result.independent
+    assert VerificationMode.REVIEWED not in VerificationMode.INDEPENDENT_MODES
+
+
+def test_a_challenge_without_a_source_says_so_instead_of_implying_one(artifact):
+    """The defect the first live handshake exposed, as a check.
+
+    The v1 challenge told a verifier to run a command "in a clean checkout" and
+    supplied no clone URL. Godelian-1 spent 2m55s discovering its container
+    blocks GitHub. That was the protocol's fault.
+    """
+    from aionq.witness import build_request
+    prompt = build_request(_envelope(artifact)).to_prompt()
+    assert "NO SOURCE SUPPLIED" in prompt
+    assert "answer 'declined' immediately" in prompt
+    assert "requires" in prompt
+
+    supplied = build_request(_envelope(artifact),
+                             source={"clone": "https://example.invalid/r.git"})
+    assert "NO SOURCE SUPPLIED" not in supplied.to_prompt()

@@ -43,10 +43,10 @@
     "interval": "bootstrap 95%",
     "statistic": "median"
   },
-  "verification_mode": "not_requested",
+  "verification_mode": "declined",
   "verifier": "",
   "witness_conversation_url": "",
-  "witness_environment": "",
-  "witness_notes": "",
+  "witness_environment": "ChatGPT cloud container, root user, /workspace cwd, Python 3.12.13. Network access to GitHub and package repositories was blocked with HTTP 403 proxy/tunnel errors.",
+  "witness_notes": "I could not run the benchmark in a clean checkout. Direct git clone of jesusvilela/hypercomplexbrain failed with CONNECT tunnel 403. A local 7z repository archive exists in /workspace/agent_files, but no 7z-compatible extractor was installed, and both apt and pip installation attempts were blocked by the same 403 network policy. No artifact was produced, so no independent SHA-256 can be reported.",
   "working_directory": ""
 }
