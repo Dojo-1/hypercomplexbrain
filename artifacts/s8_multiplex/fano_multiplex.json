@@ -1,0 +1,66 @@
+{
+  "cayley_dickson_ladder": [
+    {
+      "algebra": "H",
+      "assoc_triples": 1,
+      "dim": 4,
+      "is_steiner": true,
+      "pair_multiplicity_max": 1,
+      "pair_multiplicity_min": 1,
+      "steiner_lines": 1,
+      "units": 3
+    },
+    {
+      "algebra": "O",
+      "assoc_triples": 7,
+      "dim": 8,
+      "is_steiner": true,
+      "pair_multiplicity_max": 1,
+      "pair_multiplicity_min": 1,
+      "steiner_lines": 7,
+      "units": 7
+    },
+    {
+      "algebra": "S16",
+      "assoc_triples": 203,
+      "dim": 16,
+      "is_steiner": false,
+      "pair_multiplicity_max": 9,
+      "pair_multiplicity_min": 1,
+      "steiner_lines": 35,
+      "units": 15
+    }
+  ],
+  "control": {
+    "n_beating_fano": 0,
+    "n_matching_fano": 91,
+    "spread_median": 0.48016134531151367,
+    "spread_min": 0.37232103992516463,
+    "trials": 2000,
+    "worst_crosstalk_max": 1.8856180831641267,
+    "worst_crosstalk_median": 1.8856180831641267,
+    "worst_crosstalk_min": 1.7777777777777777
+  },
+  "design": {
+    "is_steiner_S237": true,
+    "max_pair_multiplicity": 1,
+    "mean_overlap": 1.0,
+    "n_triples": 7,
+    "pairs_covered": 21,
+    "worst_overlap": 1
+  },
+  "fano_separation": {
+    "crosstalk_spread": 0.0,
+    "mean_crosstalk": 1.7777777777777775,
+    "n_commuting_pairs": 0,
+    "worst_crosstalk": 1.7777777777777777
+  },
+  "ladder_finding": "The weave does NOT lift. H (3 units, 1 triple) and O (7 units, 7 triples) are exactly the Steiner systems S(2,3,3) and S(2,3,7), the projective lines of PG(1,2) and PG(2,2). At dimension 16 the sedenions have 203 associative triples where PG(3,2) has 35, and pairs are covered between 1 and 9 times -- a redundant covering rather than a packing. Zero divisors appear at exactly the rung where the design shatters. The Fano multiplexing structure is a property of the octonions specifically, not of the ladder.",
+  "not_done": [
+    "signature (2,2): SU(1,1) channels where rotations become boosts. Named in the prompt, not implemented -- an unbounded generator has no finite Frobenius norm to compare, so the metric above does not transfer and a different separability measure is needed first.",
+    "a decoder: without one, 'separable' means 'generators commute', which is necessary and not sufficient for recovering the symbols.",
+    "a classical control: Walsh-Hadamard multiplexing on 8 channels is the obvious matched baseline and is not run here."
+  ],
+  "scope": "This measures GENERATOR COMMUTATOR NORMS, which is separability of multiplexed rotations. It is NOT a channel-capacity result, NOT a decoding-error-rate result, and NOT a quantum advantage claim. No quantum hardware, no noise model, no receiver. What it establishes is a property of the design; what it would take to matter is a decoder and a matched classical multiplexing baseline at equal resource, neither of which exists here.",
+  "verdict": "H_FANO SURVIVES"
+}
