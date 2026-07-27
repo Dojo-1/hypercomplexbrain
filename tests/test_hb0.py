@@ -147,7 +147,7 @@ def test_gerbe_perturbation_is_detected():
     eye = np.eye(2)
     changed = eye.copy()
     changed[0, 0] = 2.0
-    cell = GerbeCell("g", ("a", "b", "c"), changed, eye, eye, eye, eye)
+    cell = GerbeCell("g", ("a", "b", "c"), changed, eye, eye, eye)
     assert cell.coherence_defect() > 0.0
 
 
