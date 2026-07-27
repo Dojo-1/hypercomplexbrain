@@ -38,13 +38,16 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: Import the package on this platform
-        run: python -c "import aionq, aionq.residency, aionq.evidence, aionq.recognition.metrics; print('import ok')"
+        run: python -c "import aionq, aionq.residency, aionq.evidence, aionq.hb0, aionq.recognition.metrics; print('import ok')"
 
       - name: Correctness suite
         run: python -m pytest -q -rs --junitxml=artifacts/test-results/pytest.xml
 
       - name: Verify every committed evidence envelope
         run: python -m aionq.verify_envelopes artifacts
+
+      - name: HB-0 coupled architecture smoke
+        run: python experiments/run_hb0_smoke.py
 
       - name: Benchmark smoke test (not gated on timing)
         run: python experiments/run_instrument_benchmark.py
