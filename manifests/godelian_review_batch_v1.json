@@ -1,0 +1,63 @@
+{
+  "schema": "hypercomplexbrain.witness_batch.v1",
+  "batch_id": "godelian-review-v1",
+  "repository": "jesusvilela/hypercomplexbrain",
+  "ref": "claude/aion-brain-architecture-27f8ji",
+  "journal": "artifacts/witness_batches/godelian-review-v1/events.jsonl",
+  "max_workers": 2,
+  "tasks": [
+    {
+      "task_id": "s7-deterministic-recompute",
+      "claim_id": "EXP-S7-AUDIT_REPLICATION",
+      "envelope": "artifacts/s7_audit/audit_adjudication.envelope.json",
+      "requested_mode": "recomputed",
+      "source": {
+        "provider": "connected GitHub connector",
+        "repository": "jesusvilela/hypercomplexbrain",
+        "ref": "25beeee8fc1d6f7a746e0b5cf9958109c9951870",
+        "required_files": [
+          "pyproject.toml",
+          "requirements.txt",
+          "experiments/run_audit_adjudication.py",
+          "src/aionq/cayley_dickson.py",
+          "src/aionq/sheaf.py",
+          "src/aionq/evidence.py"
+        ],
+        "instruction": "Materialize the required files through the authenticated GitHub connector. Do not depend on unauthenticated git clone or a 7z archive."
+      },
+      "requires": [
+        "authenticated access to the connected private GitHub repository",
+        "Python 3.10 or newer",
+        "numpy",
+        "scipy"
+      ],
+      "notes": "This is the first recomputation candidate because the recorded artifact is declared environment-independent. Re-run the command and report your own artifact SHA-256; a mismatch is a first-class contradiction, not a retry signal.",
+      "verifier": "godelian-1"
+    },
+    {
+      "task_id": "r4-benchmark-review",
+      "claim_id": "METRIC-R4-INSTRUMENT_COST",
+      "envelope": "artifacts/r4/instrument_benchmark.envelope.json",
+      "requested_mode": "reviewed",
+      "source": {
+        "provider": "connected GitHub connector",
+        "repository": "jesusvilela/hypercomplexbrain",
+        "ref": "891eeb3b1604a2b2a61761b6dc769e4cb531c393",
+        "required_files": [
+          "experiments/run_instrument_benchmark.py",
+          "src/aionq/sheaf.py",
+          "src/aionq/statistics.py",
+          "src/aionq/evidence.py",
+          "artifacts/r4/instrument_benchmark.envelope.json",
+          "artifacts/r4/instrument_benchmark.json"
+        ],
+        "instruction": "Materialize the required files through the authenticated GitHub connector. The timing artifact is environment-dependent, so review methodology, attribution, uncertainty and scope rather than demanding cross-machine digest equality."
+      },
+      "requires": [
+        "authenticated access to the connected private GitHub repository"
+      ],
+      "notes": "Review whether the benchmark supports only an environment-specific cost observation, whether cache correctness is separated from timing, and whether any prose overstates the measured ratios. Do not call this independently recomputed unless you actually run it and still respect environment dependence.",
+      "verifier": "godelian-1"
+    }
+  ]
+}
