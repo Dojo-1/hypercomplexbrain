@@ -362,3 +362,42 @@ if __name__ == "__main__":
 # physical radio.  What is established is that the geometry supports a coherent
 # readout whose signal is exactly the non-commutation and whose null is exact --
 # which is the necessary precondition for a modulation scheme, not one.
+
+
+# --------------------------------------------------------------------------
+# Addendum 3: keeping the commutator ALGEBRA-VALUED instead of taking its norm
+# --------------------------------------------------------------------------
+#
+# Everything above measured ||[G_A, G_B]|| -- a scalar.  That is a collapse: the
+# commutator is an ELEMENT of so(8), and its norm discards where it points.  The
+# question a decoder actually needs is not how much leaks but WHERE it lands.
+#
+# Projected onto the channel basis, the answer is striking:
+#
+#     max |<G_C, [G_A, G_B]>| over all 7 channels x 21 pairs  =  5.14e-17
+#
+# The crosstalk is EXACTLY ORTHOGONAL to the signal space.  And the dimensions
+# close: dim so(8) = 28, channels span 7, the 21 pairwise commutators span 21,
+# 7 + 21 = 28, and rank(signal + crosstalk) = 28.  An exact orthogonal splitting
+# of the whole Lie algebra into a signal block and an interference block.
+#
+# THE CONTROL SAYS HALF OF THAT IS GENERIC.  Over 1000 random triple systems:
+#
+#     signal PERP crosstalk                 1000/1000     <- NOT a Fano property
+#     crosstalk rank 21 (independent modes)  497/1000     <- discriminating
+#     full 7+21 split of so(8)               497/1000     median rank 15
+#
+# So the orthogonality is real and belongs to the construction, not the design;
+# claiming it as a Fano result would have been the prettiest error of this round.
+# What the design DOES buy is full rank: Fano reaches 21 independent crosstalk
+# modes where a random system does so about half the time and typically lands at
+# 15, leaving six directions of interference it cannot tell apart.
+#
+# That is the decoder-relevant property, and it is what the scalar norm hid.
+# Twenty-one independent modes orthogonal to the signal means the interference is
+# fully invertible: 21 measurements, 21 unknowns, no contamination of the 7
+# channel coordinates.  A rank-15 system cannot do that whatever its magnitudes
+# look like -- and its magnitudes look fine, which is exactly why the norm was
+# the wrong instrument.
+#
+# The scalar was hiding a rank.
