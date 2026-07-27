@@ -1,0 +1,118 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "QSigma-R5 - Witness-Weave Scheduler and Nerve Visualisation",
+  "committed_before_any_implementation": true,
+  "baseline": {
+    "commit_sha": "c8fe77e4579e70f6e7c8a73f207e57364e07b499",
+    "tests_reported_by_commit": 261,
+    "tests_independently_rerun_in_this_round": false,
+    "live_witness_rank": "NONE",
+    "known_live_state": {
+      "METRIC-R4-INSTRUMENT_COST": "declined",
+      "EXP-S7-AUDIT_REPLICATION": "not_requested"
+    },
+    "note": "The reported test count and prior runs are repository claims until freshly executed. No CI workflow run is attached to the baseline commit."
+  },
+  "question": "Can multiple Godelian-1 verification tasks be dispatched concurrently and resumed safely without turning pending handles, retries, duplicate tasks, or attestation cycles into evidence?",
+  "prediction": "A bounded asynchronous dispatcher with an append-only journal will submit independent tasks, preserve each conversation URL as a transport handle, recover its state after interruption, and leave evidence rank unchanged until a terminal reviewed or recomputed result is explicitly ingested.",
+  "evidence_floor": "H for the scheduler design; P only for deterministic state-fold and non-inflation invariants proved by code-level tests; M only after a real multi-task agent batch returns externally witnessed outcomes.",
+  "invariants": [
+    "PENDING is a transport state, never evidence.",
+    "A conversation URL is a handle to agent-side state, not a verdict.",
+    "A task is dispatched at most once per (batch_id, task_id, attempt) unless retry is explicit.",
+    "The append-only journal is the durable source of dispatch provenance; agent memory is useful execution state but not the evidence ledger.",
+    "Secrets and bearer tokens never enter manifests, prompts saved to disk, journals, envelopes, logs, or Git history.",
+    "Environment-dependent artifacts are never promoted by cross-machine digest equality.",
+    "Evidence is not summed across tasks or parties; the witness nerve retains the max-ranked direct act per claim.",
+    "Attestation cycles cannot manufacture REVIEWED or INDEPENDENT status.",
+    "Reordering journal events with identical per-task sequence numbers does not change the folded batch state.",
+    "A malformed or contradictory response is preserved, never averaged with the producer result and never retried into disappearance."
+  ],
+  "files_expected_to_change": [
+    "src/aionq/witness.py",
+    "src/aionq/witness_batch.py",
+    "experiments/dispatch_review_batch.py",
+    "manifests/godelian_review_batch_v1.json",
+    "tests/test_witness_batch.py",
+    "docs/WITNESS_WEAVE.md",
+    "README.md"
+  ],
+  "initial_batch": [
+    {
+      "task_id": "s7-deterministic-recompute",
+      "claim_id": "EXP-S7-AUDIT_REPLICATION",
+      "envelope": "artifacts/s7_audit/audit_adjudication.envelope.json",
+      "requested_mode": "recomputed",
+      "reason": "The artifact is declared deterministic and is therefore the strongest existing candidate for a genuine independent digest comparison."
+    },
+    {
+      "task_id": "r4-benchmark-review",
+      "claim_id": "METRIC-R4-INSTRUMENT_COST",
+      "envelope": "artifacts/r4/instrument_benchmark.envelope.json",
+      "requested_mode": "reviewed",
+      "reason": "The artifact is environment-dependent; a cross-machine digest match is the wrong criterion, so the task asks for methodological review rather than fake independence."
+    }
+  ],
+  "controls_and_attacks": [
+    {
+      "name": "duplicate task",
+      "procedure": "Insert the same task twice and dispatch. PASS iff only one network request is made for its current attempt and the duplicate is recorded as skipped."
+    },
+    {
+      "name": "pending inflation",
+      "procedure": "Return only a conversation_url. PASS iff state is PENDING, verifier remains empty, evidence rank remains NONE, and resume does not dispatch it again by default."
+    },
+    {
+      "name": "journal reordering",
+      "procedure": "Shuffle independent events while retaining per-task sequence numbers. PASS iff folded state is unchanged."
+    },
+    {
+      "name": "crash boundary",
+      "procedure": "Simulate a transport result after request acceptance but before envelope mutation. PASS iff the journal preserves the returned handle and the task can be reconciled without a second implicit dispatch."
+    },
+    {
+      "name": "secret leakage",
+      "procedure": "Set a sentinel token and inspect every persisted artifact. PASS iff the sentinel is absent."
+    },
+    {
+      "name": "attestation-ring ACAF",
+      "procedure": "Generate witness rings over 2..64 parties and arbitrary duplicate attestations. PASS iff rank never exceeds ATTESTED without a direct reviewed or recomputed act."
+    },
+    {
+      "name": "contradiction preservation",
+      "procedure": "Ingest a recomputed response with a mismatched deterministic digest. PASS iff the envelope is CONTRADICTED, the residual is typed, and no retry silently replaces it."
+    },
+    {
+      "name": "environment-dependent recompute",
+      "procedure": "Return a recomputed benchmark with a different timing digest. PASS iff it degrades to REVIEWED rather than CONTRADICTED or INDEPENDENT because no comparable artifact exists."
+    }
+  ],
+  "resource_budget": {
+    "runtime_dependencies": "stdlib only beyond the repository's existing dependencies",
+    "default_workers": 2,
+    "maximum_workers": 8,
+    "network_calls": "one trigger per non-skipped task attempt",
+    "no_background_claim": "The command submits requests and records handles; it does not promise that this ChatGPT session will later collect them automatically."
+  },
+  "kill_conditions": [
+    "Any pending or duplicate task raises the evidence rank.",
+    "A retry occurs without an explicit new attempt event.",
+    "A bearer token appears in any persisted file or user-visible command line.",
+    "An attestation cycle reaches REVIEWED or INDEPENDENT.",
+    "An environment-dependent artifact is called contradicted solely because its cross-machine digest differs.",
+    "The dispatcher cannot reconstruct its state from the append-only journal after interruption.",
+    "The visualisation reports a stronger status than the folded journal and envelopes support."
+  ],
+  "stop_condition": "Stop after the scheduler, journal, ingestion path, adversarial tests, and GitHub-renderable witness-nerve visualisation. Do not begin QTau-Germinal, add another cognitive organ, or claim an independent witness until a real external response is ingested.",
+  "promotion_rule": {
+    "S_to_H": "the batch protocol and failure surfaces are typed",
+    "H_to_P": "only deterministic software invariants such as idempotent dispatch and attestation-cycle rank bounds",
+    "H_to_M": "a real batch is submitted and its externally returned modes, handles, environments, and artifacts are recorded",
+    "independent": "reserved for a direct recomputation with comparable deterministic artifacts and matching digests"
+  },
+  "typed_remainder": {
+    "kind": "operational_remainder",
+    "carrier": "Godelian-1 completion and response collection",
+    "statement": "The trigger endpoint returns a pending conversation URL but this environment exposes no supported verdict-polling API. Completion must be ingested from an explicit response artifact or a future connector; the scheduler must not invent a background capability."
+  }
+}
