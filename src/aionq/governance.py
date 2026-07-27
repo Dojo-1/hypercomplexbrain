@@ -1242,6 +1242,30 @@ CLAIMS = [
                        "accepted answer and is recorded as non-independent",
                        "the token is read from the environment and never written "
                        "to an envelope, a log, or a repository file")),
+    Claim("MATH-R4-ATTESTATION_CYCLE", EvidenceTag.PROVED,
+          "For a witness graph G and an attestation cycle C on the same claim, "
+          "evidence_rank(G + C) = max(evidence_rank(G), ATTESTED). No number of "
+          "mutually-attesting parties reaches REVIEWED or INDEPENDENT: a ring in "
+          "which A vouches for B, B for C and C for A passes every "
+          "producer != verifier check while nobody has computed anything.",
+          artifact="src/aionq/witness_nerve.py",
+          assumptions=("evidence_rank is a MAX over per-act ranks, not a sum and "
+                       "not a path composition. Both alternatives were rejected "
+                       "at design time because each makes the attestation cycle "
+                       "profitable: summing lets ten signatures outweigh one "
+                       "measurement",
+                       "FIRST STATED WRONGLY. The original theorem was the "
+                       "stronger claim that attestation cycles are INERT, "
+                       "evidence_rank(G) = evidence_rank(G - C). The test "
+                       "falsified it in under a minute with assert 0 == 1: when "
+                       "the ring is the only support, removing it drops ATTESTED "
+                       "to NONE. An attestation is not nothing, it is bounded. "
+                       "The theorem was corrected, not the test",
+                       "this is the finite shadow of the Payor/Loeb situation -- "
+                       "box(box P -> P) -> box P fails when the boxes belong to "
+                       "different parties who only quote each other. NO claim is "
+                       "made about the modal statement; only the finite one is "
+                       "implemented and tested")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",

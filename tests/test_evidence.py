@@ -425,3 +425,89 @@ def test_a_challenge_without_a_source_says_so_instead_of_implying_one(artifact):
     supplied = build_request(_envelope(artifact),
                              source={"clone": "https://example.invalid/r.git"})
     assert "NO SOURCE SUPPLIED" not in supplied.to_prompt()
+
+
+# --------------------------------------------------------------------------
+# The witness relation as a nerve: evidence is a graph property
+# --------------------------------------------------------------------------
+
+def _wg(*acts):
+    from aionq.witness_nerve import WitnessAct, WitnessGraph
+    return WitnessGraph([WitnessAct(*a) for a in acts])
+
+
+def test_an_attestation_cycle_cannot_manufacture_independence():
+    """The theorem, in the form that survived its own test.
+
+    A attests to B, B to C, C to A. Every `producer != verifier` check passes,
+    every party is verified by someone else, and nobody computed anything. The
+    rank is capped at ATTESTED however large the ring gets.
+
+    The first version of this test asserted the STRONGER claim that removing the
+    cycle leaves the rank unchanged -- that attestation cycles are inert. It
+    failed immediately (`assert 0 == 1`): when the ring is the only support,
+    removing it drops ATTESTED to NONE. An attestation is not nothing; it is
+    bounded. The theorem was corrected, not the test.
+    """
+    from aionq.witness_nerve import EvidenceRank, attestation_cycles, evidence_rank
+    ring = _wg(("K-R4-X", "A", "B", "attested"),
+               ("K-R4-X", "B", "C", "attested"),
+               ("K-R4-X", "C", "A", "attested"))
+    assert len(attestation_cycles(ring)) >= 1
+    assert evidence_rank(ring, "K-R4-X") == EvidenceRank.ATTESTED
+    assert evidence_rank(ring, "K-R4-X") < EvidenceRank.INDEPENDENT
+
+    # max(existing, ATTESTED): a ring cannot lift a reviewed claim either.
+    reviewed = _wg(("K-R4-Y", "A", "R", "reviewed"))
+    assert evidence_rank(reviewed, "K-R4-Y") == EvidenceRank.REVIEWED
+    for act in ring.acts:
+        from aionq.witness_nerve import WitnessAct
+        reviewed.add(WitnessAct("K-R4-Y", act.producer, act.verifier, act.mode))
+    assert evidence_rank(reviewed, "K-R4-Y") == EvidenceRank.REVIEWED
+
+
+def test_adding_parties_to_a_ring_never_raises_the_rank():
+    """Evidence must be orbit-collapsed under inserting attestation cycles."""
+    from aionq.witness_nerve import WitnessAct, evidence_rank
+    ring = _wg(("K-R4-X", "A", "B", "attested"), ("K-R4-X", "B", "A", "attested"))
+    before = evidence_rank(ring, "K-R4-X")
+    for extra in "CDEFGH":
+        ring.add(WitnessAct("K-R4-X", extra, "A", "attested"))
+        ring.add(WitnessAct("K-R4-X", "A", extra, "attested"))
+        assert evidence_rank(ring, "K-R4-X") == before
+
+
+def test_one_recomputation_outranks_any_number_of_attestations():
+    from aionq.witness_nerve import WitnessAct, EvidenceRank, evidence_rank, is_independent
+    g = _wg(*[("K-R4-X", "A", f"P{i}", "attested") for i in range(20)])
+    assert not is_independent(g, "K-R4-X")
+    g.add(WitnessAct("K-R4-X", "A", "Z", "recomputed"))
+    assert evidence_rank(g, "K-R4-X") == EvidenceRank.INDEPENDENT
+    assert is_independent(g, "K-R4-X")
+
+
+def test_a_self_loop_transmits_nothing_however_it_was_done():
+    """R4's producer == verifier rule, restated so that it composes."""
+    from aionq.witness_nerve import EvidenceRank, evidence_rank
+    g = _wg(("K-R4-X", "A", "A", "recomputed"))
+    assert evidence_rank(g, "K-R4-X") == EvidenceRank.NONE
+
+
+def test_a_contradiction_transmits_no_support_though_it_is_informative():
+    from aionq.witness_nerve import EvidenceRank, evidence_rank
+    g = _wg(("K-R4-X", "A", "B", "contradicted"))
+    assert evidence_rank(g, "K-R4-X") == EvidenceRank.NONE
+
+
+def test_review_sits_strictly_between_attestation_and_recomputation():
+    from aionq.witness_nerve import MODE_RANK
+    assert MODE_RANK["attested"] < MODE_RANK["reviewed"] < MODE_RANK["recomputed"]
+
+
+def test_the_live_witness_graph_is_honest_about_itself():
+    """This repository's actual state, computed rather than asserted."""
+    from aionq.witness_nerve import EvidenceRank, evidence_rank
+    live = _wg(("METRIC-R4-INSTRUMENT_COST",
+                "experiments/run_instrument_benchmark.py",
+                "godelian-1", "declined"))
+    assert evidence_rank(live, "METRIC-R4-INSTRUMENT_COST") == EvidenceRank.NONE
