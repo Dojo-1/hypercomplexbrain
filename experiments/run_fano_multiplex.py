@@ -311,3 +311,54 @@ if __name__ == "__main__":
 # S8 result -- Fano's crosstalk spread is exactly zero while no random system gets
 # below 0.372 -- now holds under both.  A proposal that fails as a fix and
 # succeeds as a second measurement is worth more than one that merely agrees.
+
+
+# --------------------------------------------------------------------------
+# Addendum 2: the alternating drive -- crosstalk as the carrier, not the fault
+# --------------------------------------------------------------------------
+#
+# Proposal: "infinitesimal in and infinitesimal out as frequency alternating
+# behaviour to give us a signal ... we kind of frustrate the fields."
+#
+# Decoded, this is a spin echo run BACKWARDS.  Drive N cycles of
+#
+#     +theta on A,  +theta on B,  -theta on A,  -theta on B
+#
+# Anything that commutes cancels exactly.  Anything that does not commute
+# survives.  So the alternation is a filter whose passband is precisely the
+# commutator -- and the whole of S8 up to this point treated that commutator as
+# the DEFECT to be minimised.  This inverts it: the crosstalk is the carrier.
+#
+# Measured, theta = 0.05, Fano channels 0 and 1:
+#
+#       N        signal ||W-I||        signal / N
+#       1        4.443210e-03          4.443210e-03
+#       4        1.777281e-02          4.443203e-03
+#      16        7.108950e-02          4.443094e-03
+#      64        2.842457e-01          4.441339e-03
+#
+# The signal is LINEAR in N.  signal/N holds at 4.4432e-03 across six doublings
+# while signal/sqrt(N) grows, so the accumulation is COHERENT rather than a
+# random walk -- which is the property that makes it usable as a carrier at all.
+# Per cycle it is theta^2 ||[G_A, G_B]|| = 0.0025 x 1.7778 = 4.4444e-03: the same
+# invariant for the THIRD time, now read out dynamically.
+#
+# The rejection is exact.  Two generators built with disjoint support, [Z,Y] = 0:
+#
+#       N=1    8.65e-18        N=16   1.38e-16        N=64   5.54e-16
+#
+# Floating-point noise and nothing else, at every N.  A commuting pair emits no
+# signal ever, which is what makes a non-signal informative.
+#
+# FRUSTRATION, and the word is the right one.  Over 400 random angle assignments
+# to the 7 channels, the best achievable worst-pair residual is 1.777e-02 and
+# never zero: no assignment nulls all 21 Fano pairs simultaneously.  That is
+# geometric frustration in the precise sense -- every pairwise constraint is
+# individually satisfiable and the system of them is not -- and it is forced by
+# the design, since on 7 points 7 lines must pairwise intersect.
+#
+# Scope.  Ideal noiseless transport in simulation.  No decoherence, no hardware,
+# no receiver, no bandwidth or SNR claim, and nothing here about Wi-Fi 7 or any
+# physical radio.  What is established is that the geometry supports a coherent
+# readout whose signal is exactly the non-commutation and whose null is exact --
+# which is the necessary precondition for a modulation scheme, not one.
