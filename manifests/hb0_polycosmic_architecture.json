@@ -1,0 +1,367 @@
+{
+  "name": "hb0-polycosmic-hypercomplex-kernel",
+  "version": "0.1.0-hypothesis",
+  "evidence_floor": "H",
+  "base_geometry": "dynamic_cover",
+  "consciousness_claim": false,
+  "agi_claim": false,
+  "population": {
+    "worldlet_count": 32,
+    "identity_regimes": 4,
+    "worldlets_per_regime": 8
+  },
+  "worldlets": [
+    {
+      "id": "W_somatic_template_0",
+      "identity_regime": "somatic",
+      "multiplicity": 4,
+      "carrier": "section_R4",
+      "local_geometry": "poincare_ball",
+      "algebra_regime": "real_control",
+      "clocks": ["fast", "meso"],
+      "observers": ["self", "auditor"],
+      "boundary": "permeability-gated local chart",
+      "remainder_channels": ["identity", "transport", "attribution"],
+      "flat_sheaf_role": false
+    },
+    {
+      "id": "W_somatic_template_1",
+      "identity_regime": "somatic",
+      "multiplicity": 4,
+      "carrier": "section_R4",
+      "local_geometry": "poincare_ball",
+      "algebra_regime": "quaternion_diagnostic",
+      "clocks": ["fast", "meso"],
+      "observers": ["self", "auditor"],
+      "boundary": "permeability-gated local chart",
+      "remainder_channels": ["identity", "transport", "attribution"],
+      "flat_sheaf_role": false
+    },
+    {
+      "id": "W_episodic_template_0",
+      "identity_regime": "episodic",
+      "multiplicity": 4,
+      "carrier": "section_R4",
+      "local_geometry": "fisher_metric",
+      "algebra_regime": "real_control",
+      "clocks": ["meso", "slow"],
+      "observers": ["self", "auditor"],
+      "boundary": "permeability-gated local chart",
+      "remainder_channels": ["identity", "transport", "attribution"],
+      "flat_sheaf_role": false
+    },
+    {
+      "id": "W_episodic_template_1",
+      "identity_regime": "episodic",
+      "multiplicity": 4,
+      "carrier": "section_R4",
+      "local_geometry": "fisher_metric",
+      "algebra_regime": "quaternion_diagnostic",
+      "clocks": ["meso", "slow"],
+      "observers": ["self", "auditor"],
+      "boundary": "permeability-gated local chart",
+      "remainder_channels": ["identity", "transport", "attribution"],
+      "flat_sheaf_role": false
+    },
+    {
+      "id": "W_social_template_0",
+      "identity_regime": "social",
+      "multiplicity": 4,
+      "carrier": "section_R4",
+      "local_geometry": "euclidean_control",
+      "algebra_regime": "real_control",
+      "clocks": ["fast", "meso"],
+      "observers": ["self", "auditor"],
+      "boundary": "permeability-gated local chart",
+      "remainder_channels": ["identity", "transport", "attribution"],
+      "flat_sheaf_role": false
+    },
+    {
+      "id": "W_social_template_1",
+      "identity_regime": "social",
+      "multiplicity": 4,
+      "carrier": "section_R4",
+      "local_geometry": "euclidean_control",
+      "algebra_regime": "quaternion_diagnostic",
+      "clocks": ["fast", "meso"],
+      "observers": ["self", "auditor"],
+      "boundary": "permeability-gated local chart",
+      "remainder_channels": ["identity", "transport", "attribution"],
+      "flat_sheaf_role": false
+    },
+    {
+      "id": "W_prospective_template_0",
+      "identity_regime": "prospective",
+      "multiplicity": 4,
+      "carrier": "section_R4",
+      "local_geometry": "riemannian_chart",
+      "algebra_regime": "real_control",
+      "clocks": ["meso", "slow"],
+      "observers": ["self", "auditor"],
+      "boundary": "permeability-gated local chart",
+      "remainder_channels": ["identity", "transport", "attribution"],
+      "flat_sheaf_role": false
+    },
+    {
+      "id": "W_prospective_template_1",
+      "identity_regime": "prospective",
+      "multiplicity": 4,
+      "carrier": "section_R4",
+      "local_geometry": "riemannian_chart",
+      "algebra_regime": "quaternion_diagnostic",
+      "clocks": ["meso", "slow"],
+      "observers": ["self", "auditor"],
+      "boundary": "permeability-gated local chart",
+      "remainder_channels": ["identity", "transport", "attribution"],
+      "flat_sheaf_role": false
+    }
+  ],
+  "tendrils": [
+    {
+      "id": "T_local_chart",
+      "source_role": "within-regime worldlet",
+      "target_role": "within-regime worldlet",
+      "relation": "invertible chart functor",
+      "forward_transport": "orthogonal or metric-compatible local chart map",
+      "return_transport": "declared inverse or pseudoinverse",
+      "preserved": ["dimension", "declared norm", "provenance"],
+      "transformed": ["coordinates", "phase"],
+      "lost": [],
+      "typed_remainder": {
+        "name": "[R]_transport",
+        "channel": "transport",
+        "carrier": "source local section",
+        "instrument": "round-trip L2 defect"
+      }
+    },
+    {
+      "id": "T_cross_regime",
+      "source_role": "identity regime A",
+      "target_role": "identity regime B",
+      "relation": "comparison profunctor",
+      "forward_transport": "declared comparison functor J_ab",
+      "return_transport": "declared return functor J_ba",
+      "preserved": ["regime provenance", "norm when certified"],
+      "transformed": ["identity chart", "observer frame"],
+      "lost": ["untransported private distinctions"],
+      "typed_remainder": {
+        "name": "[R]_id",
+        "channel": "identity",
+        "carrier": "identity ecology",
+        "instrument": "round-trip regime defect"
+      }
+    },
+    {
+      "id": "T_boundary_holoport",
+      "source_role": "boundary invariant",
+      "target_role": "interior section",
+      "relation": "linear reconstruction correspondence",
+      "forward_transport": "Moore-Penrose reconstruction",
+      "return_transport": "boundary map applied to reconstruction",
+      "preserved": ["measured boundary invariants"],
+      "transformed": ["boundary observation to interior candidate"],
+      "lost": ["null-space interior component"],
+      "typed_remainder": {
+        "name": "[R]_transport",
+        "channel": "transport",
+        "carrier": "boundary/interior pair",
+        "instrument": "held-out reconstruction error"
+      }
+    },
+    {
+      "id": "T_recognition",
+      "source_role": "self-model",
+      "target_role": "other-model",
+      "relation": "non-absorptive recognition profunctor",
+      "forward_transport": "construct calibrated model of other",
+      "return_transport": "viewpoint swap and response update",
+      "preserved": ["alterity", "private remainder", "telos constraints"],
+      "transformed": ["viewpoint", "local ontology"],
+      "lost": ["untranslatable private state"],
+      "typed_remainder": {
+        "name": "[R]_transport",
+        "channel": "transport",
+        "carrier": "recognition pair",
+        "instrument": "deck and return defect"
+      }
+    },
+    {
+      "id": "T_evidence_invariant",
+      "source_role": "raw evidence",
+      "target_role": "auditor",
+      "relation": "anti-Lob invariant channel",
+      "forward_transport": "artifact reference to evidence envelope",
+      "return_transport": "evidence envelope to identical artifact reference",
+      "preserved": ["artifact digest", "claim id", "evidence tag", "correction history"],
+      "transformed": [],
+      "lost": [],
+      "typed_remainder": {
+        "name": "[R]_emp",
+        "channel": "empirical",
+        "carrier": "evidence envelope",
+        "instrument": "exact reference equality"
+      }
+    }
+  ],
+  "identity": {
+    "local_holonomies": ["somatic", "episodic", "social", "prospective"],
+    "comparison_functors": ["J_somatic_episodic", "J_episodic_social", "J_social_prospective", "J_prospective_somatic"],
+    "higher_coherence": ["G_somatic_episodic_social", "G_episodic_social_prospective"],
+    "viability_constraints": ["round_trip", "plurality", "non_absorption", "fragmentation_bound"],
+    "immune_actions": ["integrate", "quarantine", "repair", "bud", "retire"],
+    "remainder": {
+      "name": "[R]_id",
+      "channel": "identity",
+      "carrier": "identity_ecology",
+      "status": "H/S until instrumented"
+    }
+  },
+  "clocks": [
+    {"id": "fast", "period": 1, "rate": 1.0, "role": "local inference"},
+    {"id": "meso", "period": 4, "rate": 0.1, "role": "coalition consolidation"},
+    {"id": "slow", "period": 16, "rate": 0.01, "role": "identity, evidence, correction"}
+  ],
+  "qualities": [
+    "grounding",
+    "self_reflection",
+    "godelian_identity",
+    "other_recognition",
+    "mutual_resonance",
+    "adiabatic_patience",
+    "ergocetic_exploration",
+    "erdodetic_return",
+    "embodiment",
+    "temporal_polyphony",
+    "contextual_composition",
+    "local_global_literacy",
+    "holoportive_reconstruction",
+    "metaplasticity",
+    "judicial_correction",
+    "remainder_stewardship"
+  ],
+  "dynamics": {
+    "hyperedges": [
+      {
+        "id": "H_recognition",
+        "members": ["self-model", "other-model", "auditor"],
+        "constraint": "recognition requires preserved difference, return fidelity, and non-absorption"
+      },
+      {
+        "id": "H_morphogenesis",
+        "members": ["persistent remainder", "held-out task", "width control", "auditor"],
+        "constraint": "a new worldlet may bud only after beating a compute-matched width control"
+      }
+    ],
+    "gerbe_cells": [
+      {"id": "G_0", "members": ["somatic", "episodic", "social"], "observable": "Frobenius triple-overlap defect"},
+      {"id": "G_1", "members": ["episodic", "social", "prospective"], "observable": "Frobenius triple-overlap defect"}
+    ],
+    "breathing": {
+      "model": "Bordon reservoir",
+      "capacity": 50.0,
+      "refill_rate": 0.6,
+      "invariant_draw": 0.4,
+      "speculative_draw": "0.01 * step compute",
+      "invariant_never_cut": true
+    },
+    "weaving": {"rule": "activate tendrils only when return fidelity and coherence gates pass"},
+    "deweaving": {"rule": "retire a relation with provenance and [R]_attr; never delete correction history"},
+    "morphogenesis": {"rule": "spawn only for persistent remainder plus held-out gain over width control and bounded fragmentation"},
+    "governance": {
+      "model": "componentwise contact/Hamiltonian envelope plus viability region",
+      "forbidden": "post-hoc weighted scalar promotion"
+    },
+    "repair": {"rule": "rollback a step that exits the viability region"}
+  },
+  "quantum_transport": {
+    "simulator_only": true,
+    "advantage_claim": false,
+    "entanglement": "ideal Bell pair state-vector simulation",
+    "holoportation": "ideal one-qubit teleportation with classical correction branches",
+    "tunnelling": "two-level Hamiltonian toy model",
+    "classical_known_state_control": "copy the two known amplitudes; fidelity 1.0",
+    "hardware_evidence": "none"
+  },
+  "controls": [
+    "euclidean_capacity_matched",
+    "hyperbolic_scalar_fibers",
+    "dynamic_hypergraph_real",
+    "hypercomplex_fixed_graph",
+    "single_clock_polyholonomy",
+    "polyholonomy_one_global_clock",
+    "shuffled_transport_maps",
+    "shuffled_remainder_channels",
+    "full_hb0"
+  ],
+  "observables": [
+    "transport round-trip defect",
+    "gerbe coherence defect",
+    "identity round-trip fidelity",
+    "identity plurality effective rank",
+    "fragmentation risk",
+    "mutual-recognition deck defect",
+    "absorption pressure",
+    "holoportive reconstruction nullity and error",
+    "resource envelope and reservoir pressure",
+    "false promotion and Lob-trap rate",
+    "morphogenesis gain over width control",
+    "quantum branch fidelity and matched classical fidelity"
+  ],
+  "evidence": [
+    {
+      "id": "DEF-HB0-QUALITY_FIELD",
+      "tag": "P",
+      "statement": "the runtime stores sixteen named quality coordinates and refuses weighted_sum promotion",
+      "artifact": "aionq.hb0.MindQualityField"
+    },
+    {
+      "id": "DEF-HB0-TYPED_REMAINDER",
+      "tag": "P",
+      "statement": "every HB-0 remainder names a channel, carrier, status, and statement",
+      "artifact": "aionq.hb0.RemainderEnvelope"
+    },
+    {
+      "id": "HYP-HB0-COMPETENCE",
+      "tag": "H",
+      "statement": "the full architecture improves held-out task competence at matched compute",
+      "kill_condition": "full_hb0 fails to Pareto-dominate simpler controls across preregistered tasks"
+    },
+    {
+      "id": "HYP-HB0-RECOGNITION",
+      "tag": "H",
+      "statement": "mutual-recognition coupling improves coordination while preserving private difference",
+      "kill_condition": "a scalar similarity baseline matches coordination, calibration, and non-absorption"
+    },
+    {
+      "id": "HYP-HB0-MORPHOGENESIS",
+      "tag": "H",
+      "statement": "budding a new worldlet outperforms adding matched width for persistent translation failures",
+      "kill_condition": "matched width equals or exceeds held-out gain"
+    },
+    {
+      "id": "HYP-HB0-LOCAL_GEOMETRY",
+      "tag": "H",
+      "statement": "heterogeneous local geometry adds a discriminator beyond Euclidean controls",
+      "kill_condition": "capacity-matched Euclidean charts reproduce all effects"
+    },
+    {
+      "id": "SEM-HB0-QUANTUM",
+      "tag": "S",
+      "statement": "teleportation and tunnelling routines are simulator-only transport operators, not cognitive or hardware advantage"
+    },
+    {
+      "id": "SEM-HB0-NON_SENTIENCE",
+      "tag": "S",
+      "statement": "self, identity, recognition, and mind qualities are engineering abstractions; no sentience or consciousness inference is licensed"
+    }
+  ],
+  "falsifiers": [
+    {"id": "F-HB0-HYPERCOMPLEX", "kill_if": "dimension-matched real controls reproduce hypercomplex diagnostics"},
+    {"id": "F-HB0-HIGHER_ORDER", "kill_if": "pairwise graph controls reproduce hyperedge and gerbe effects"},
+    {"id": "F-HB0-POLYHOLONOMY", "kill_if": "one-vector or one-holonomy identity matches drift recovery and plurality"},
+    {"id": "F-HB0-MULTICLOCK", "kill_if": "one global clock matches adaptation, retention, and identity stability"},
+    {"id": "F-HB0-MORPHOGENESIS", "kill_if": "adding width matches every topology mutation gain"},
+    {"id": "F-HB0-QUANTUM", "kill_if": "the quantum route has no capability or resource advantage over its matched classical control"},
+    {"id": "F-HB0-CONSCIOUSNESS", "kill_if": "always; this manifest contains no instrument capable of supporting a consciousness claim"}
+  ]
+}
