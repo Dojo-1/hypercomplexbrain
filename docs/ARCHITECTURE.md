@@ -755,6 +755,16 @@ measuring it high makes it *think better*. That gap is the largest one remaining
 cognitive gerbe, quantum identity ecology. Retained as scaffolding, load-bearing
 nowhere.
 
+**R — retired (Round QΣ-R4).** The governance registry establishes the evidence
+status of its claims (it establishes that a hand-authored file agrees with
+itself; promotion to P/A/M now requires an `EvidenceEnvelope` that verifies
+against the filesystem, so a registry edit is no longer evidence); and
+`formal/RecognitionChamber.lean` states P1–P5 (the file was always honestly
+labelled uncompiled, but nothing refused to count it — a `ProofEnvelope` with
+`build_status != "built"` now is refused, and one that *does* build but rests on
+an axiom is flagged, which is the Wall-Sheaf failure mode as a check rather than
+as a memory).
+
 **R — retired (Round S7, against an external corrections audit).** The Gödelian
 remainder is measured by the norm of a first cohomology class, `[R] = ‖H¹‖`
 (retired in *both* regimes: in the continuous Berry setting the obstruction is a
@@ -805,6 +815,7 @@ capacity as a count of holonomies.
 | S4-G100 | Reversible Recognition Chamber: aperture, ordered roles, nest gate, 10 preregistered gates | ✅ 193 tests; 6/10 gates fail, chamber retired, S3 claim superseded as basis-dependent |
 | S5 | moving-frame orbit audit; basis-free Laplacian instrument | ✅ 208 tests; exactly orbit-collapsed AND strongest (0.964 vs 0.776) |
 | S6 | ACAF adversarial sweep: 950 instances, 4 families; falsified a P-tagged claim and fixed the instrument | ✅ 211 tests; invariance 950/950 after fix, accuracy scoped by topology |
+| QΣ-R4 | Witnessed Reproducibility Membrane: fail-closed portfolio, evidence envelopes, portable RSS, cross-platform CI | ✅ 242 tests on **Linux only**; 20/20 attacks behave as specified; **48 of 81** prior claims carry no envelope |
 | S7 | adjudicating an external corrections audit of the source archive: its checkable claims re-run here, its central verdict sharpened | ✅ 222 tests; 3/3 replications exact, `[R] = ‖H¹‖` retired in **both** regimes |
 | QΣ-R3A | measured free-conversion metric; re-test base geometry against it | not started |
 | QΣ-R3B | four-cell causal organ (self/other/memory/auditor), ΔY with uncertainty | specified, not run |

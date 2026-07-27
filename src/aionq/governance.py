@@ -200,6 +200,7 @@ class Registry:
 
     def __init__(self, claims=()) -> None:
         self._claims: dict[str, Claim] = {}
+        self._envelopes: dict[str, list] = {}
         for c in claims:
             self.add(c)
 
@@ -247,6 +248,68 @@ class Registry:
         if not c.citable and c.tag != EvidenceTag.SEMANTIC:
             raise GovernanceError(f"{cid} is not citable in {section}")
         return c
+
+    # ---- R4-D: the registry stops being its own witness -------------------
+
+    def attach_envelope(self, claim_id: str, envelope) -> None:
+        """Record the artifact a claim rests on.  Verified, not merely stored."""
+        from .evidence import verify
+        claim = self._claims[claim_id]
+        result = verify(envelope)
+        if not result.ok:
+            raise GovernanceError(
+                f"{claim_id}: envelope rejected -- " + "; ".join(result.failures))
+        self._envelopes.setdefault(claim_id, []).append(envelope)
+
+    def envelopes(self, claim_id: str) -> list:
+        return list(self._envelopes.get(claim_id, ()))
+
+    def promote(self, claim_id: str, to_tag: str, envelope=None) -> Claim:
+        """Change a claim's tag.  Only an artifact can do it, never an edit.
+
+        R4-D.  This is the method the round exists for.  Before it, a claim's
+        evidence status was whatever the source file said, and the tests checked
+        that the file agreed with itself.  Promotion to P, A or M now requires an
+        envelope that verifies against the filesystem -- so editing the ledger
+        alone cannot move a claim up the lattice, which was the whole complaint.
+
+        Demotion and retirement need no envelope: weakening a claim is always
+        allowed, and requiring evidence to admit an error would be exactly the
+        wrong asymmetry.
+        """
+        from .evidence import EvidenceTag_REQUIRING_EVIDENCE, verify
+        claim = self._claims[claim_id]
+        if to_tag not in EvidenceTag.ALL:
+            raise GovernanceError(f"unknown evidence tag {to_tag!r}")
+        rank = {EvidenceTag.RETIRED: 0, EvidenceTag.SEMANTIC: 1,
+                EvidenceTag.HYPOTHESIS: 2, EvidenceTag.MEASURED: 3,
+                EvidenceTag.AXIOMATIZED: 3, EvidenceTag.PROVED: 4}
+        if rank[to_tag] > rank[claim.tag]:
+            if to_tag not in EvidenceTag_REQUIRING_EVIDENCE:
+                raise GovernanceError(f"{claim_id}: no promotion path to {to_tag}")
+            if envelope is None:
+                raise GovernanceError(
+                    f"{claim_id}: promotion {claim.tag} -> {to_tag} requires an "
+                    "EvidenceEnvelope. A registry edit is not evidence.")
+            result = verify(envelope)
+            if not result.ok:
+                raise GovernanceError(
+                    f"{claim_id}: promotion refused -- " + "; ".join(result.failures))
+            self._envelopes.setdefault(claim_id, []).append(envelope)
+        claim.tag = to_tag
+        return claim
+
+    def unwitnessed(self, tags=None) -> list:
+        """Claims at an evidence-requiring tag that carry no verified envelope.
+
+        This list is long, and that is the honest state of the repository rather
+        than a bug in the membrane. It is reported so the gap is a number instead
+        of an impression.
+        """
+        from .evidence import EvidenceTag_REQUIRING_EVIDENCE
+        wanted = tags or EvidenceTag_REQUIRING_EVIDENCE
+        return sorted(c.id for c in self._claims.values()
+                      if c.tag in wanted and not self._envelopes.get(c.id))
 
     def audit(self) -> dict:
         """Summary for CI."""
@@ -1026,6 +1089,107 @@ CLAIMS = [
                        "same failure mode this repository has now recorded seven "
                        "times under a different name: the correct shape with the "
                        "old comparison still inside it")),
+    # ---- Round R4: the witnessed reproducibility membrane -------------------
+    Claim("MATH-R4-OPAQUE_MONOTONICITY", EvidenceTag.PROVED,
+          "Appending an instruction to a circuit cannot DECREASE the reported "
+          "q_sim_upper. The portfolio minimum is now taken over VALID paths only, "
+          "and a path carrying an instruction the classifier cannot price is "
+          "marked opaque_instruction and excluded rather than summed without it.",
+          artifact="src/aionq/residency.py::_portfolio_t_count",
+          assumptions=("the previous code summed `if cls != OPAQUE: total += cost`, "
+                       "so an unpriced instruction was OMITTED from the total and "
+                       "the partial figure entered min(). The direction of that "
+                       "error is an understated simulation cost, i.e. an OVERSTATED "
+                       "quantum advantage",
+                       "an operation with no unitary AND no declared width was "
+                       "charged as one qubit; it is now UNPRICEABLE and the bound "
+                       "is reported as unknown rather than as a small number",
+                       "not exhibited: a concrete circuit on which the OLD code "
+                       "actually lowered the bound. The defect is established by "
+                       "inspection and closed by construction; the monotonicity "
+                       "invariant is what is tested going forward")),
+    Claim("METHOD-R4-EVIDENCE_ENVELOPE", EvidenceTag.MEASURED,
+          "A claim's evidence status can no longer be changed by editing the "
+          "ledger. Registry.promote() to P/A/M requires an EvidenceEnvelope that "
+          "verifies against the filesystem: artifact digests are recomputed from "
+          "disk, the commit is read from git, the environment is recomputed here. "
+          "20 preregistered attacks run; all 20 behave as specified.",
+          artifact="src/aionq/evidence.py",
+          sample_size=20, interval=(20, 20),
+          null="the previous state, in which registry tests established only that "
+               "the hand-authored ledger agreed with itself",
+          assumptions=("interval is the attack count, not a bootstrap CI: each "
+                       "attack is a deterministic pass/fail, not a sample",
+                       "48 of 81 claims currently carry NO envelope. That is the "
+                       "honest state of the ledger and is reported by "
+                       "Registry.unwitnessed() as a number rather than an "
+                       "impression",
+                       "producer and verifier are the same party for every "
+                       "envelope this repository has so far written. The membrane "
+                       "RECORDS that rather than counting it as independence")),
+    Claim("METHOD-R4-EFFECTIVE_SAMPLE_SIZE", EvidenceTag.PROVED,
+          "Sample size is certified against DISTINCT input hashes, never against "
+          "the length of the seed list. An envelope declaring n seeds whose "
+          "inputs hash identically has effective n = 1, and verification fails "
+          "if it claims more.",
+          artifact="src/aionq/evidence.py::effective_sample_size",
+          assumptions=("BORROWED from the sibling codebase m1-bordon v0.8.0, "
+                       "audited here: its six-seed TRANSFER gate reported "
+                       "-0.00219727 identically at all six seeds because the "
+                       "bursty generator `e = ((t/block)*7 + k*31) % N` never "
+                       "consults the RNG. Measured: 1 distinct trace across 6 "
+                       "seeds, against 6 for each of ZIPF, DRIFT and PREDICT",
+                       "the ensemble existed precisely to prevent one lucky seed "
+                       "being read as a stable result; for that one phase the fix "
+                       "reported n=1 six times",
+                       "the rule fired on its own author: the first envelope "
+                       "written for the R4 benchmark declared sample_size 12 for "
+                       "12 timing batches on ONE instance, and was rejected")),
+    Claim("METRIC-R4-INSTRUMENT_COST", EvidenceTag.MEASURED,
+          "On this container (Xeon 2.10GHz, Python 3.11.15, numpy 2.4.6) the "
+          "quaternion instrument costs 13.54x the sheaf instrument cached and "
+          "22.78x uncached, median over 12 randomised batches of 40 reps. The "
+          "docstring's 17.22x/27.81x were measured on different hardware and are "
+          "reproduced here as HISTORICAL, not as constants.",
+          artifact="experiments/run_instrument_benchmark.py",
+          sample_size=1, interval=(13.54, 22.78),
+          null="the hypothesis that a timing ratio measured once is a property of "
+               "the algorithms rather than of a machine",
+          assumptions=("sample_size is 1: twelve timing batches on ONE nerve "
+                       "instance are repeated measurements, not twelve experiments",
+                       "interval is the cached-to-uncached range, not a bootstrap "
+                       "CI; per-condition bootstrap CIs are in the raw artifact",
+                       "13.54 vs the previously recorded 17.22 on the same code is "
+                       "the finding: the ratio moved 21% by changing machine, "
+                       "which is why no test and no CI job gates on it")),
+    Claim("RET-R4-REGISTRY_SELF_WITNESS", EvidenceTag.RETIRED,
+          "The governance registry establishes the evidence status of its claims. "
+          "(Implicit in every round from R0 to S7, and in the tests that assert "
+          "registry[...].tag == EvidenceTag.MEASURED.)",
+          corrections=("it establishes that a hand-authored file agrees with "
+                       "itself. It does not establish that the cited command ran, "
+                       "that the stored interval came from the cited artifact, or "
+                       "that the artifact belongs to the cited commit",
+                       "superseded by METHOD-R4-EVIDENCE_ENVELOPE, which makes "
+                       "promotion depend on an artifact rather than on an edit",
+                       "the retirement is not retroactive: the 48 currently "
+                       "unwitnessed claims keep their tags and are listed by "
+                       "Registry.unwitnessed(). Silently demoting them would "
+                       "destroy the record of what was claimed and when")),
+    Claim("RET-R4-UNCOMPILED_LEAN_AS_PROOF", EvidenceTag.RETIRED,
+          "formal/RecognitionChamber.lean states P1-P5 for the recognition "
+          "chamber. (Registered in Round S4-G100 with the honest note that no "
+          "Lean toolchain is present.)",
+          corrections=("the note was accurate and had no mechanism behind it. A "
+                       "ProofEnvelope with build_status != 'built' is now REFUSED, "
+                       "so an uncompiled file cannot be cited as a proof even by "
+                       "accident",
+                       "the same check flags a proof that BUILDS but rests on an "
+                       "axiom -- the Wall-Sheaf failure mode, where "
+                       "`theorem P_neq_NP := ambrose_singer_bridge ...` compiles "
+                       "cleanly and proves nothing about its conclusion",
+                       "this is the R4-F historical regression case: a claim the "
+                       "repository already held, which the new membrane rejects")),
     Claim("RET-S1-TRANSCENDENCE_SENTINEL", EvidenceTag.RETIRED,
           "The Hecke-Mahler-inspired sparse expanding-gap sentinel earns a place "
           "in the architecture as a novelty diagnostic.",
@@ -1079,6 +1243,7 @@ def _link_supersessions(reg: Registry) -> None:
         ("EXP-S4-SHEAF_LOCALISATION_BASIS_DEPENDENT", "EXP-S5-INVARIANT_LOCALISATION"),
         ("EXP-S5-INVARIANT_LOCALISATION", "EXP-S6-ACAF_REPLICATION"),
         ("MATH-S5-LAPLACIAN_INVARIANT", "MATH-S6-LAPLACIAN_INVARIANT_SAFE"),
+        ("RET-R4-REGISTRY_SELF_WITNESS", "METHOD-R4-EVIDENCE_ENVELOPE"),
     ):
         old, new = reg[old_id], reg[new_id]
         if old.superseded_by is None:

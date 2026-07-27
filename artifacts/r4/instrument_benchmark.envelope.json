@@ -1,0 +1,48 @@
+{
+  "claim_id": "METRIC-R4-INSTRUMENT_COST",
+  "command": "PYTHONPATH=src python3 experiments/run_instrument_benchmark.py",
+  "commit_sha": "b466cb75b5064a5c9d2fa8a6105fc7fe08dbfcf0",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "evidence_tag": "M",
+  "input_hashes": [
+    "instance:ring9+3chords:dim4"
+  ],
+  "observed_result": {
+    "median_ratio_quaternion_cached": 12.848662217127858,
+    "median_ratio_quaternion_uncached": 21.67469677638633,
+    "sample_size": 1,
+    "timing_batches": 12
+  },
+  "platform": "linux",
+  "producer": "experiments/run_instrument_benchmark.py",
+  "raw_artifacts": {
+    "artifacts/r4/instrument_benchmark.json": "sha256:2d85ab0d8979e3c8e33a20ce1e8d30bfabd8024ed4488f6abdeda6bccd81b8be"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    0
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-27T06:33:08Z",
+  "typed_remainders": [
+    {
+      "carrier": "median_ratio_vs_sheaf",
+      "comparison": "one machine, one BLAS, one instance; the ratio is not a property of the algorithms",
+      "kind": "scalar_constant"
+    }
+  ],
+  "uncertainty": {
+    "interval": "bootstrap 95%",
+    "statistic": "median"
+  },
+  "verifier": "",
+  "working_directory": ""
+}

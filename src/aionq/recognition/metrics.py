@@ -18,6 +18,7 @@ or 1 instead of the chance 0.5 it deserves.
 
 from __future__ import annotations
 
+import sys
 import time
 import tracemalloc
 
@@ -25,6 +26,53 @@ try:                                   # Unix only; absent on Windows
     import resource
 except ImportError:                    # pragma: no cover - platform dependent
     resource = None
+
+
+def _ru_maxrss_kib():
+    """``ru_maxrss`` normalised to KiB, or None where it is unavailable.
+
+    R4-C.  ``ru_maxrss`` is in KiB on Linux and in BYTES on macOS -- a 1024x
+    discrepancy under one field name, which is a silent unit error rather than a
+    visible failure.  It is also a PROCESS-LIFETIME maximum, so a later condition
+    in the same process inherits an earlier condition's peak; the field name now
+    says so, and per-condition attribution is a separate function.
+    """
+    if resource is None:                # pragma: no cover - platform dependent
+        return None
+    raw = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    if sys.platform == "darwin":        # pragma: no cover - platform dependent
+        return raw / 1024.0
+    return raw
+
+def isolated_peak_rss_kib(module: str, function: str, *args, timeout: float = 120.0):
+    """Peak RSS of ``module.function(*args)`` run in a FRESH process, in KiB.
+
+    R4-C.  This is the only honest way to attribute resident memory to one
+    condition with ``getrusage``: the in-process figure is a lifetime maximum
+    that a later condition inherits from an earlier one, so two conditions can
+    report the same peak while consuming very different memory.  A fresh process
+    has no history to inherit.
+
+    Returns None where the platform supplies no RSS at all, rather than 0.0.
+    Arguments must be JSON-encodable; this is a measurement helper, not an RPC.
+    """
+    import json
+    import subprocess
+
+    src = (
+        "import json,sys,resource\n"
+        f"import {module} as m\n"
+        f"m.{function}(*json.loads({json.dumps(json.dumps(list(args)))}))\n"
+        "print(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)\n"
+    )
+    proc = subprocess.run([sys.executable, "-c", src], capture_output=True,
+                          text=True, timeout=timeout)
+    if proc.returncode != 0:
+        raise RuntimeError(f"isolated measurement failed: {proc.stderr.strip()[:400]}")
+    raw = float(proc.stdout.strip().splitlines()[-1])
+    return raw / 1024.0 if sys.platform == "darwin" else raw
+
+
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 
@@ -35,7 +83,7 @@ from ..statistics import bootstrap_ci, summarize
 
 __all__ = ["auroc", "brier_score", "candidate_diversity", "ResourceLedger",
            "measure_resources", "ConditionResult", "effect_region_observed",
-           "normalise_scores"]
+           "normalise_scores", "isolated_peak_rss_kib"]
 
 
 def normalise_scores(scores) -> np.ndarray:
@@ -91,7 +139,11 @@ class ResourceLedger:
     peak_kib: float = 0.0
     candidate_evaluations: int = 0
     parameter_count: int = 0
-    max_rss_kib: float = 0.0
+    # R4-C: renamed from `max_rss_kib`.  The old name claimed two things it did
+    # not deliver -- KiB units on every platform, and attribution to THIS
+    # condition.  It is a process-lifetime maximum, and it is None where the
+    # platform does not supply one, rather than 0.0 pretending to be a reading.
+    process_lifetime_peak_rss_kib: float | None = None
 
     def __str__(self) -> str:  # pragma: no cover - display only
         return (f"{self.wall_seconds:.3f}s  peak {self.peak_kib:.0f} KiB  "
@@ -122,10 +174,10 @@ def measure_resources(ledger: ResourceLedger):
         _cur, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
         ledger.peak_kib = max(ledger.peak_kib, peak / 1024.0)
-        if resource is not None:
-            ledger.max_rss_kib = max(
-                ledger.max_rss_kib,
-                float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
+        rss = _ru_maxrss_kib()
+        if rss is not None:
+            prev = ledger.process_lifetime_peak_rss_kib
+            ledger.process_lifetime_peak_rss_kib = rss if prev is None else max(prev, rss)
 
 
 # --------------------------------------------------------------------------
@@ -161,7 +213,8 @@ class ConditionResult:
         out["instability"] = self.instability
         out["resources"] = {"wall_seconds": self.resources.wall_seconds,
                             "peak_kib": self.resources.peak_kib,
-                            "max_rss_kib": self.resources.max_rss_kib,
+                            "process_lifetime_peak_rss_kib":
+                                self.resources.process_lifetime_peak_rss_kib,
                             "candidate_evaluations":
                                 self.resources.candidate_evaluations,
                             "parameter_count": self.resources.parameter_count}

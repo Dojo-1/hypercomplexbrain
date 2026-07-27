@@ -887,6 +887,7 @@ def test_resource_accounting_works_without_the_unix_resource_module():
             _ = [0.0] * 10000
         assert led.wall_seconds >= 0.0
         assert led.peak_kib > 0.0, "tracemalloc must still supply the peak figure"
-        assert led.max_rss_kib == 0.0, "RSS is omitted, not faked, without resource"
+        assert led.process_lifetime_peak_rss_kib is None, \
+            "RSS is omitted, not faked, where the platform supplies none"
     finally:
         m.resource = saved

@@ -554,6 +554,7 @@ def _instr_sheaf(sheaf, cycles, rng):
 
 
 _QUATERNION_BASIS: np.ndarray | None = None
+_QUATERNION_BASIS_BUILDS: int = 0
 
 
 def _quaternion_basis() -> np.ndarray:
@@ -572,14 +573,40 @@ def _quaternion_basis() -> np.ndarray:
 
     So caching buys about 1.6x, and the quaternionic instrument costs ~17x the
     matrix one either way.  That is still worth reporting in a compute-matched
-    comparison, but it is a sixth of what was claimed.  Locked by
-    ``test_quaternion_cache_speedup_is_measured_not_asserted``.
+    comparison, but it is a sixth of what was claimed.
+
+    R4-B.  Those figures are HISTORICAL AND ENVIRONMENT-SPECIFIC, not constants.
+    They are reproduced by ``experiments/run_instrument_benchmark.py``, which
+    emits raw timings plus a Python/NumPy/BLAS/CPU envelope; a wall-clock ratio
+    is not asserted anywhere in the correctness suite, because a loaded CI runner
+    would then fail a test about arithmetic.  What the suite proves instead is
+    the functional claim -- one construction, then reuse -- via the counter
+    below.
     """
-    global _QUATERNION_BASIS
+    global _QUATERNION_BASIS, _QUATERNION_BASIS_BUILDS
     if _QUATERNION_BASIS is None:
+        _QUATERNION_BASIS_BUILDS += 1
         _QUATERNION_BASIS = np.stack(
             [left_multiplication_matrix(e).reshape(-1) for e in np.eye(4)], axis=1)
     return _QUATERNION_BASIS
+
+
+def quaternion_basis_builds() -> int:
+    """How many times the cached basis has actually been constructed.
+
+    R4-B.  The previous test timed cached-quaternion against sheaf and accepted
+    any ratio in (3, 60).  That checks neither the uncached path nor reuse: a
+    cache that silently rebuilt every call would sit comfortably inside the
+    interval.  Reuse is a counting question, so it is counted.
+    """
+    return _QUATERNION_BASIS_BUILDS
+
+
+def reset_quaternion_basis() -> None:
+    """Drop the cache AND the build counter.  For tests; restores global state."""
+    global _QUATERNION_BASIS, _QUATERNION_BASIS_BUILDS
+    _QUATERNION_BASIS = None
+    _QUATERNION_BASIS_BUILDS = 0
 
 
 def _nearest_unit_quaternion(g: np.ndarray) -> np.ndarray:

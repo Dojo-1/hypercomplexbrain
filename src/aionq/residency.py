@@ -79,6 +79,7 @@ __all__ = [
     "classify_instruction",
     "simulation_residency",
     "certified_residency",
+    "PathStatus",
     "naive_residency",
     "stabilizer_renyi_entropy",
     "max_bipartite_entanglement",
@@ -171,6 +172,21 @@ class TransitionClass:
     CLIFFORD = "clifford"          # stabilizer-simulable
     NONCLIFFORD = "nonclifford"    # pays stabilizer-rank cost
     OPAQUE = "opaque"              # unclassifiable: charged at full support width
+    UNPRICEABLE = "unpriceable"    # not even a support width is available
+
+
+class PathStatus:
+    """Outcome of one compiler-portfolio candidate.  Only VALID may be minimised.
+
+    The distinction exists because the previous code had exactly one outcome --
+    "a number" -- and so a path that failed to price an instruction was
+    indistinguishable from one that priced every instruction at zero.
+    """
+
+    VALID = "valid"
+    OPAQUE_INSTRUCTION = "opaque_instruction"
+    TRANSPILE_FAILED = "transpile_failed"
+    UNSUPPORTED_REPRESENTATION = "unsupported_representation"
 
 
 @dataclass
@@ -194,8 +210,11 @@ class ResidencyReport:
     q_sim_lower: float = 0.0
     lower_justification: str = "none: no lower-bound technology applied"
     portfolio: dict = field(default_factory=dict)
+    portfolio_status: dict = field(default_factory=dict)
     class_counts: dict = field(default_factory=dict)
     notes: list = field(default_factory=list)
+    q_sim_upper_known: bool = True
+    typed_remainders: list = field(default_factory=list)
 
     @property
     def interval(self) -> tuple[float, float]:
@@ -211,13 +230,16 @@ class ResidencyReport:
             f"qubits             : {self.n_qubits}",
             f"T-count (best)     : {self.t_count:.1f}",
             f"log2 C_sim (upper) : {self.log2_sim_cost:.2f}",
-            f"q_sim interval     : [{self.q_sim_lower:.4f}, {self.q_sim_upper:.4f}]",
+            f"q_sim interval     : [{self.q_sim_lower:.4f}, "
+            + ("UNKNOWN]" if not self.q_sim_upper_known else f"{self.q_sim_upper:.4f}]"),
             f"Q_naive (draft def): {self.q_naive:.4f}",
             f"overstatement gap  : {self.gap:+.4f}",
             f"lower bound        : {self.lower_justification}",
         ]
         if self.portfolio:
             lines.append(f"compiler portfolio : {self.portfolio}")
+        if self.portfolio_status:
+            lines.append(f"path status        : {self.portfolio_status}")
         lines.append(f"classes            : {self.class_counts}")
         lines.extend(f"note: {n}" for n in self.notes)
         return "\n".join(lines)
@@ -331,7 +353,14 @@ def classify_instruction(operation, eps: float = DEFAULT_EPS) -> tuple[str, floa
         return (TransitionClass.PERMUTATION if is_perm else TransitionClass.CLIFFORD), 0.0
 
     if matrix is None:
-        width = getattr(operation, "num_qubits", 1)
+        width = getattr(operation, "num_qubits", None)
+        if width is None:
+            # R4-A.  This used to default to 1, which prices an unknown-width
+            # operation as a single qubit -- an UNDER-charge, and therefore an
+            # understated simulation cost.  An operation whose support is unknown
+            # is not opaque-but-priced; it is unpriceable, and the bound built
+            # from it is not a bound.
+            return TransitionClass.UNPRICEABLE, float("inf")
         return TransitionClass.OPAQUE, float(width) / ALPHA_BG
 
     # Controlled versions of a non-Clifford base gate.  A controlled rotation is
@@ -396,29 +425,52 @@ def _portfolio_t_count(circuit: QuantumCircuit, eps: float,
     general.  The returned figure is therefore compiler-dependent, and the
     per-level breakdown is reported so that dependence is visible rather than
     hidden inside a single number.
+
+    R4-A.  This function used to skip opaque instructions when summing:
+
+        for op in _walk(compiled):
+            cls, cost = classify_instruction(op, eps=eps)
+            if cls != TransitionClass.OPAQUE:   # <- the defect
+                total += cost
+
+    An unpriced instruction was therefore *omitted* rather than invalidating the
+    path, and the resulting partial total went straight into ``min``.  Injecting
+    an opaque gate could make a circuit look CHEAPER to simulate -- a quiet
+    OVERSTATEMENT of quantum advantage, the one direction this metric is least
+    entitled to be wrong in.  Now a path carrying an unpriced instruction is
+    marked ``opaque_instruction`` and is not a candidate at all.
     """
     from qiskit import transpile
 
     results: dict[str, float] = {}
+    status: dict[str, str] = {}
     best = math.inf
     for level in levels:
+        key = f"opt{level}"
         try:
             compiled = transpile(circuit, basis_gates=CLIFFORD_T_BASIS,
                                  optimization_level=level, seed_transpiler=11)
         except _EXPECTED as exc:
             # One optimisation level failing is survivable; ALL of them failing
-            # returns nan, which is why `best` is not silently defaulted to 0.
+            # leaves no candidate, which is why `best` is not defaulted to 0.
             _swallow(f"clifford_t_cost/transpile(opt{level})", circuit, exc)
+            status[key] = PathStatus.TRANSPILE_FAILED
             continue
-        total = 0.0
+        total, opaque_seen = 0.0, False
         for op in _walk(compiled):
             cls, cost = classify_instruction(op, eps=eps)
-            if cls != TransitionClass.OPAQUE:
-                total += cost
-        results[f"opt{level}"] = total
+            if cls == TransitionClass.OPAQUE:
+                opaque_seen = True
+                break                       # the path is already invalid
+            total += cost
+        if opaque_seen:
+            status[key] = PathStatus.OPAQUE_INSTRUCTION
+            continue
+        status[key] = PathStatus.VALID
+        results[key] = total
         best = min(best, total)
 
-    return (best if best < math.inf else float("nan")), results
+    return (best if best < math.inf else float("nan")), results, status
 
 
 def simulation_residency(
@@ -440,6 +492,8 @@ def simulation_residency(
     quantum_edges = 0
     total_edges = 0
     basis_confined = True  # does the core ever leave the computational basis?
+    remainders: list = []
+    unpriceable = 0
 
     for op in _walk(circuit):
         cls, cost = classify_instruction(op, eps=eps)
@@ -449,7 +503,14 @@ def simulation_residency(
             if not _is_diagonal(op):
                 basis_confined = False
 
-        if cls == TransitionClass.OPAQUE:
+        if cls == TransitionClass.UNPRICEABLE:
+            unpriceable += 1
+            remainders.append({
+                "kind": "empirical_residual",
+                "carrier": f"instruction {getattr(op, 'name', '?')!r}",
+                "comparison": "no unitary representation AND no declared support "
+                              "width, so no implemented strategy prices it"})
+        elif cls == TransitionClass.OPAQUE:
             opaque_exponent += cost * alpha
         else:
             t_total += cost
@@ -467,8 +528,11 @@ def simulation_residency(
     # cheapest compilation available, so that syntactic padding and cancelling
     # non-Clifford blocks do not inflate the score.
     portfolio_counts: dict = {}
+    portfolio_status: dict = {}
     if portfolio:
-        best_t, portfolio_counts = _portfolio_t_count(circuit, eps)
+        best_t, portfolio_counts, portfolio_status = _portfolio_t_count(circuit, eps)
+        # Only a VALID path may lower the bound.  `results` now contains valid
+        # paths only, so `best_t` is NaN precisely when none survived.
         if best_t == best_t:  # not NaN
             t_total = min(t_total, best_t)
     log2_stabrank = alpha * t_total + opaque_exponent
@@ -507,20 +571,38 @@ def simulation_residency(
     if portfolio_counts and len(set(portfolio_counts.values())) > 1:
         notes.append(f"T-count is compiler-dependent across the portfolio: "
                      f"{portfolio_counts}. The reported figure is the minimum.")
+    invalid = {k: v for k, v in portfolio_status.items() if v != PathStatus.VALID}
+    if invalid:
+        notes.append(f"portfolio paths excluded from the minimum: {invalid}. An "
+                     "excluded path cannot lower the reported bound.")
+    if portfolio and not portfolio_counts and portfolio_status:
+        notes.append("no valid compiler path survived; the bound falls back to the "
+                     "direct instruction walk, which prices every instruction and "
+                     "is therefore still sound.")
+
+    known = unpriceable == 0
+    if not known:
+        notes.append(f"{unpriceable} unpriceable instruction(s): q_sim_upper is "
+                     "UNKNOWN, not low. No implemented strategy bounds this core, "
+                     "and reporting a number here would be an understatement "
+                     "dressed as a measurement.")
 
     return ResidencyReport(
         n_qubits=n,
         t_count=t_total,
         opaque_exponent=opaque_exponent,
-        q_sim_upper=q_upper,
+        q_sim_upper=q_upper if known else float("nan"),
         q_naive=q_naive,
-        log2_sim_cost=log2_cost,
+        log2_sim_cost=log2_cost if known else float("inf"),
         raw_exponent=raw,
         q_sim_lower=0.0,
         lower_justification="none: no lower-bound technology applied",
         portfolio=portfolio_counts,
+        portfolio_status=portfolio_status,
         class_counts=counts,
         notes=notes,
+        q_sim_upper_known=known,
+        typed_remainders=remainders,
     )
 
 

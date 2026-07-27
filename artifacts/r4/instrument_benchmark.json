@@ -1,0 +1,114 @@
+{
+  "commit_sha": "b466cb75b5064a5c9d2fa8a6105fc7fe08dbfcf0",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "instance": {
+    "cycles": 4,
+    "edges": 12,
+    "fiber_dim": 4,
+    "worldlets": 9
+  },
+  "note": "Ratios are environment-specific measurements, not constants. No CI job gates on them.",
+  "numpy": "2.4.6",
+  "numpy_blas": "{'name': 'scipy-openblas', 'found': True, 'version': '0.3.31.188.0', 'detection method': 'pkgconfig', 'include directory': '/opt/_internal/cpython-3.11.14/lib/python3.11/site-packages/scipy_openblas64",
+  "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+  "protocol": {
+    "batches": 12,
+    "order": "randomised per batch",
+    "reps_per_batch": 40,
+    "statistic": "median with bootstrap CI",
+    "warmup_reps": 5
+  },
+  "python": "3.11.15",
+  "raw_seconds": {
+    "quaternion_cached": [
+      0.0009003943000010395,
+      0.0009460587000006626,
+      0.0009347154500005672,
+      0.0009375334249995149,
+      0.0009398203750009771,
+      0.0008974975499995708,
+      0.0008938513250001279,
+      0.0008794752000000017,
+      0.0009819587750001801,
+      0.0009131410500003767,
+      0.0008761026249999304,
+      0.0008851389749992222
+    ],
+    "quaternion_uncached": [
+      0.0016131039249984269,
+      0.0015772508500020877,
+      0.001812922625001079,
+      0.001715858050002339,
+      0.0014761772499980452,
+      0.0015238110499979029,
+      0.001497950749998722,
+      0.0015354824500008134,
+      0.0015163681249987348,
+      0.0014734230249985104,
+      0.0015501722999999856,
+      0.0015095975750000433
+    ],
+    "sheaf": [
+      7.62495999993007e-05,
+      6.881817500072884e-05,
+      6.634289999851717e-05,
+      9.330160000047272e-05,
+      6.381262499814966e-05,
+      7.596292499840729e-05,
+      7.232767499942838e-05,
+      6.357790000208752e-05,
+      7.552960000225539e-05,
+      6.42017499984604e-05,
+      6.354880000003504e-05,
+      7.79042749996961e-05
+    ]
+  },
+  "schema": "hypercomplexbrain.benchmark.v1",
+  "statistics": {
+    "quaternion_cached": {
+      "bootstrap_ci_seconds": [
+        0.0008986850329687002,
+        0.0009330974181255354
+      ],
+      "max_seconds": 0.0009819587750001801,
+      "median_ratio_vs_sheaf": 12.848662217127858,
+      "median_seconds": 0.000906767675000708,
+      "min_seconds": 0.0008761026249999304,
+      "n_batches": 12,
+      "reps_per_batch": 40
+    },
+    "quaternion_uncached": {
+      "bootstrap_ci_seconds": [
+        0.0015168796977595809,
+        0.0016261945406253987
+      ],
+      "max_seconds": 0.001812922625001079,
+      "median_ratio_vs_sheaf": 21.67469677638633,
+      "median_seconds": 0.0015296467499993581,
+      "min_seconds": 0.0014734230249985104,
+      "n_batches": 12,
+      "reps_per_batch": 40
+    },
+    "sheaf": {
+      "bootstrap_ci_seconds": [
+        6.750021078061628e-05,
+        7.687939057248037e-05
+      ],
+      "max_seconds": 9.330160000047272e-05,
+      "median_ratio_vs_sheaf": 1.0,
+      "median_seconds": 7.057292500007861e-05,
+      "min_seconds": 6.354880000003504e-05,
+      "n_batches": 12,
+      "reps_per_batch": 40
+    }
+  }
+}
