@@ -1,0 +1,36 @@
+{
+  "accepted_observed": {
+    "absorption": 0.05,
+    "compute": 11.200000000000001,
+    "fragmentation": 0.22222222222222224,
+    "gluing_defect": 4.0973836046016485e-17,
+    "identity_defect": 0.0,
+    "lob_trap": 0.0,
+    "plurality": 0.6013858560998032
+  },
+  "accepted_step": true,
+  "clocks": 3,
+  "evidence_status": "calibration_only",
+  "gerbe_cells": 2,
+  "identity_plurality": 0.6013858560998032,
+  "identity_regimes": 4,
+  "manifest_checks": 154,
+  "mutual_recognition": 1.7200000000000002,
+  "mutual_resonance": 0.5860188981644572,
+  "reconstruction_fidelity": 0.01831563888873418,
+  "reconstruction_nullity": 1,
+  "rejected_reasons": [
+    "non_absorption"
+  ],
+  "rejected_step": false,
+  "rollback_exact": true,
+  "schema": "hypercomplexbrain.hb0.smoke.v1",
+  "seed": 11,
+  "teleportation_advantage_claim": false,
+  "teleportation_fidelity": 1.0000000000000002,
+  "tendrils": 32,
+  "tunnelling_advantage_claim": false,
+  "tunnelling_norm_defect": 0.0,
+  "tunnelling_transfer_probability": 0.21101407630865637,
+  "worldlets": 32
+}

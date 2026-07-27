@@ -1,0 +1,53 @@
+{
+  "claim_id": "EXP-HB0-SMOKE_REPRODUCES",
+  "command": "PYTHONPATH=src python3 experiments/run_hb0_smoke.py",
+  "commit_sha": "685044d63de54f6782576f1b84f502b4f8cfdea7",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "hb0-smoke:seed=11"
+  ],
+  "observed_result": {
+    "manifest_checks": 154,
+    "mutual_recognition": 1.7200000000000002,
+    "repeat_runs": 2,
+    "sample_size": 1,
+    "teleportation_advantage_claim": false,
+    "tests_passed_on_their_branch": 287,
+    "tunnelling_advantage_claim": false
+  },
+  "platform": "",
+  "producer": "gpt/polycosmic-hb0-kernel",
+  "raw_artifacts": {
+    "artifacts/r4/cross_witness/hb0_smoke.claude_recomputation.json": "sha256:447adf6163e107ae9977d0fbd97826b56e688dcb0ecfce37b9b46c12076a8d7b"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    11
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-27T11:12:32Z",
+  "typed_remainders": [
+    {
+      "carrier": "cross-platform reproduction",
+      "comparison": "Linux only; Windows and macOS remain unmeasured, and a same-OS recomputation is the weakest form of independence that still counts as one",
+      "kind": "empirical_residual"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "recomputed",
+  "verifier": "claude-code",
+  "witness_conversation_url": "",
+  "witness_environment": "fresh git worktree of origin/gpt/polycosmic-hb0-kernel, Linux, python 3.11.15, numpy 2.4.6",
+  "witness_notes": "Ran their suite (287 passed) and their smoke twice in a checkout they did not prepare; byte-identical across runs. What this DOES establish: the HB-0 smoke is deterministic and reproduces away from its author. What it does NOT establish: any HB-0 competence claim -- their own self-audit already tags that H/S, and this recomputation does not touch it. Nor is it cross-PLATFORM: same OS, same interpreter, one machine.",
+  "working_directory": ""
+}
