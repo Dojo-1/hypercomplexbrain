@@ -1,0 +1,52 @@
+{
+  "claim_id": "MATH-S7-FLAT_HOLONOMY_ON_A_NERVE",
+  "command": "(review only -- the claim is the artifact)",
+  "commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "P",
+  "input_hashes": [
+    "claim:MATH-S7-FLAT_HOLONOMY_ON_A_NERVE"
+  ],
+  "observed_result": {
+    "assumptions": [
+      "the converse half IS a theorem: Ambrose-Singer gives that nonzero curvature forces nontrivial holonomy. Only the forward implication fails, and the external audit's 'neither biconditional holds' is loose on this point",
+      "this places every cellular-sheaf result in this repository in the flat-monodromy regime -- the one the audit's Angle 3 identifies as the OPPOSITE of the Berry/Chern regime the archive's chain invokes at its first step"
+    ],
+    "question_for_the_reviewer": "Is 'curvature vanishes identically on a graph' the right statement, or merely 'curvature is not defined'? Those are different and I may have chosen the more convenient one.",
+    "statement": "A nerve is a 1-complex: its cochain complex terminates at C^1, so the space of 2-cochains is zero and EVERY notion of curvature on it vanishes identically, while the holonomy around a cycle is a generic orthogonal matrix (defect 2.00 to 3.97 at fiber_dim 2,3,4,8). This is a counterexample, on this repository's own object, to the archive's 'non-trivial holonomy <=> non-trivial curvature'.",
+    "tag": "P"
+  },
+  "platform": "",
+  "producer": "claude-code",
+  "raw_artifacts": {
+    "experiments/run_audit_adjudication.py": "sha256:993137171f89aba045f041da94ed36d3cff901a1dc3f916edf71ac292b821dfe",
+    "src/aionq/sheaf.py": "sha256:5cc6063e09dee7234c2fbef882a4fc25abc6a4a3e1a1ef6e39dfc6ac2101911f"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-27T11:10:17Z",
+  "typed_remainders": [
+    {
+      "carrier": "MATH-S7-FLAT_HOLONOMY_ON_A_NERVE",
+      "comparison": "a review binds a reading of an argument to a commit; it does not bind a number to a measurement, and it cannot promote this claim",
+      "kind": "semantic_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}

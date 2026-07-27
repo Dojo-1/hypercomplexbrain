@@ -1,20 +1,28 @@
 {
-  "schema": "hypercomplexbrain.witness_batch.v1",
   "batch_id": "godelian-review-v1",
-  "repository": "jesusvilela/hypercomplexbrain",
-  "ref": "claude/aion-brain-architecture-27f8ji",
   "journal": "artifacts/witness_batches/godelian-review-v1/events.jsonl",
   "max_workers": 2,
+  "notes_r4_addendum": "Seven adversarial review tasks folded in from a session that expired mid-dispatch. Each names a claim its author would most like to be wrong about and asks for the specific hole rather than for approval. A `reviewed` verdict cannot promote any of them -- reviewed is excluded from VerificationMode.INDEPENDENT_MODES -- but it can retire one, and that is the point.",
+  "ref": "claude/aion-brain-architecture-27f8ji",
+  "repository": "jesusvilela/hypercomplexbrain",
+  "schema": "hypercomplexbrain.witness_batch.v1",
   "tasks": [
     {
-      "task_id": "s7-deterministic-recompute",
       "claim_id": "EXP-S7-AUDIT_REPLICATION",
       "envelope": "artifacts/s7_audit/audit_adjudication.envelope.json",
+      "notes": "This is the first recomputation candidate because the recorded artifact is declared environment-independent. Re-run the command and report your own artifact SHA-256; a mismatch is a first-class contradiction, not a retry signal.",
       "requested_mode": "recomputed",
+      "requires": [
+        "authenticated access to the connected private GitHub repository",
+        "Python 3.10 or newer",
+        "numpy",
+        "scipy"
+      ],
       "source": {
+        "instruction": "Materialize the required files through the authenticated GitHub connector. Do not depend on unauthenticated git clone or a 7z archive.",
         "provider": "connected GitHub connector",
-        "repository": "jesusvilela/hypercomplexbrain",
         "ref": "25beeee8fc1d6f7a746e0b5cf9958109c9951870",
+        "repository": "jesusvilela/hypercomplexbrain",
         "required_files": [
           "pyproject.toml",
           "requirements.txt",
@@ -22,27 +30,24 @@
           "src/aionq/cayley_dickson.py",
           "src/aionq/sheaf.py",
           "src/aionq/evidence.py"
-        ],
-        "instruction": "Materialize the required files through the authenticated GitHub connector. Do not depend on unauthenticated git clone or a 7z archive."
+        ]
       },
-      "requires": [
-        "authenticated access to the connected private GitHub repository",
-        "Python 3.10 or newer",
-        "numpy",
-        "scipy"
-      ],
-      "notes": "This is the first recomputation candidate because the recorded artifact is declared environment-independent. Re-run the command and report your own artifact SHA-256; a mismatch is a first-class contradiction, not a retry signal.",
+      "task_id": "s7-deterministic-recompute",
       "verifier": "godelian-1"
     },
     {
-      "task_id": "r4-benchmark-review",
       "claim_id": "METRIC-R4-INSTRUMENT_COST",
       "envelope": "artifacts/r4/instrument_benchmark.envelope.json",
+      "notes": "Review whether the benchmark supports only an environment-specific cost observation, whether cache correctness is separated from timing, and whether any prose overstates the measured ratios. Do not call this independently recomputed unless you actually run it and still respect environment dependence.",
       "requested_mode": "reviewed",
+      "requires": [
+        "authenticated access to the connected private GitHub repository"
+      ],
       "source": {
+        "instruction": "Materialize the required files through the authenticated GitHub connector. The timing artifact is environment-dependent, so review methodology, attribution, uncertainty and scope rather than demanding cross-machine digest equality.",
         "provider": "connected GitHub connector",
-        "repository": "jesusvilela/hypercomplexbrain",
         "ref": "891eeb3b1604a2b2a61761b6dc769e4cb531c393",
+        "repository": "jesusvilela/hypercomplexbrain",
         "required_files": [
           "experiments/run_instrument_benchmark.py",
           "src/aionq/sheaf.py",
@@ -50,13 +55,156 @@
           "src/aionq/evidence.py",
           "artifacts/r4/instrument_benchmark.envelope.json",
           "artifacts/r4/instrument_benchmark.json"
-        ],
-        "instruction": "Materialize the required files through the authenticated GitHub connector. The timing artifact is environment-dependent, so review methodology, attribution, uncertainty and scope rather than demanding cross-machine digest equality."
+        ]
       },
+      "task_id": "r4-benchmark-review",
+      "verifier": "godelian-1"
+    },
+    {
+      "claim_id": "MATH-S7-EULER_H1_IDENTITY",
+      "envelope": "artifacts/r4/review_batch/s7-euler-h1-identity-review.envelope.json",
+      "notes": "Is dim H^1 = dim H^0 + (b1 - 1) d correct for a cellular sheaf on a connected graph over R, and does it follow from rank-nullity on the two-term complex? If it holds, does the CONCLUSION follow -- that ||H^1|| cannot measure the obstruction to global sections because it increases with the section space? Name any hypothesis used without being stated.",
+      "requested_mode": "reviewed",
       "requires": [
         "authenticated access to the connected private GitHub repository"
       ],
-      "notes": "Review whether the benchmark supports only an environment-specific cost observation, whether cache correctness is separated from timing, and whether any prose overstates the measured ratios. Do not call this independently recomputed unless you actually run it and still respect environment dependence.",
+      "source": {
+        "instruction": "Materialize the required files through the authenticated GitHub connector. This is a REVIEW task: no command needs running and no digest is compared. Attack the argument.",
+        "provider": "connected GitHub connector",
+        "ref": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+        "repository": "jesusvilela/hypercomplexbrain",
+        "required_files": [
+          "experiments/run_audit_adjudication.py",
+          "src/aionq/sheaf.py"
+        ]
+      },
+      "task_id": "s7-euler-h1-identity-review",
+      "verifier": "godelian-1"
+    },
+    {
+      "claim_id": "RET-S7-H1_AS_REMAINDER",
+      "envelope": "artifacts/r4/review_batch/ret-s7-h1-as-remainder-review.envelope.json",
+      "notes": "I retired [R] = ||H^1|| in BOTH regimes. Is the second half too strong? Is there a reading -- a different norm, coefficient system, relative or compactly-supported version -- on which the archive's usage survives? I would rather be corrected than have retired something salvageable.",
+      "requested_mode": "reviewed",
+      "requires": [
+        "authenticated access to the connected private GitHub repository"
+      ],
+      "source": {
+        "instruction": "Materialize the required files through the authenticated GitHub connector. This is a REVIEW task: no command needs running and no digest is compared. Attack the argument.",
+        "provider": "connected GitHub connector",
+        "ref": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+        "repository": "jesusvilela/hypercomplexbrain",
+        "required_files": [
+          "docs/MANIFOLD_REFERENCE.md",
+          "experiments/run_audit_adjudication.py"
+        ]
+      },
+      "task_id": "ret-s7-h1-as-remainder-review",
+      "verifier": "godelian-1"
+    },
+    {
+      "claim_id": "MATH-R4-ATTESTATION_CYCLE",
+      "envelope": "artifacts/r4/review_batch/r4-attestation-cycle-review.envelope.json",
+      "notes": "I first claimed the STRONGER result that attestation cycles are inert and my own test falsified it within a minute. Is the corrected version also wrong? Is a MAX over per-act ranks the right aggregation, or does it discard information a lattice would keep? Does the Payor/Loeb analogy overreach -- I claim only the finite shadow.",
+      "requested_mode": "reviewed",
+      "requires": [
+        "authenticated access to the connected private GitHub repository"
+      ],
+      "source": {
+        "instruction": "Materialize the required files through the authenticated GitHub connector. This is a REVIEW task: no command needs running and no digest is compared. Attack the argument.",
+        "provider": "connected GitHub connector",
+        "ref": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+        "repository": "jesusvilela/hypercomplexbrain",
+        "required_files": [
+          "src/aionq/witness_nerve.py",
+          "tests/test_evidence.py"
+        ]
+      },
+      "task_id": "r4-attestation-cycle-review",
+      "verifier": "godelian-1"
+    },
+    {
+      "claim_id": "MATH-S7-FLAT_HOLONOMY_ON_A_NERVE",
+      "envelope": "artifacts/r4/review_batch/s7-flat-holonomy-on-a-nerve-review.envelope.json",
+      "notes": "Is 'curvature vanishes identically on a graph' the right statement, or merely 'curvature is not defined'? Those are different and I may have chosen the more convenient one.",
+      "requested_mode": "reviewed",
+      "requires": [
+        "authenticated access to the connected private GitHub repository"
+      ],
+      "source": {
+        "instruction": "Materialize the required files through the authenticated GitHub connector. This is a REVIEW task: no command needs running and no digest is compared. Attack the argument.",
+        "provider": "connected GitHub connector",
+        "ref": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+        "repository": "jesusvilela/hypercomplexbrain",
+        "required_files": [
+          "experiments/run_audit_adjudication.py",
+          "src/aionq/sheaf.py"
+        ]
+      },
+      "task_id": "s7-flat-holonomy-on-a-nerve-review",
+      "verifier": "godelian-1"
+    },
+    {
+      "claim_id": "MATH-R4-OPAQUE_MONOTONICITY",
+      "envelope": "artifacts/r4/review_batch/r4-opaque-monotonicity-review.envelope.json",
+      "notes": "I established the defect by inspection and closed it by construction, but never exhibited a circuit on which the OLD code actually lowered the bound. Is monotonicity provable as stated, or does it need hypotheses about the compiler portfolio I have not written down?",
+      "requested_mode": "reviewed",
+      "requires": [
+        "authenticated access to the connected private GitHub repository"
+      ],
+      "source": {
+        "instruction": "Materialize the required files through the authenticated GitHub connector. This is a REVIEW task: no command needs running and no digest is compared. Attack the argument.",
+        "provider": "connected GitHub connector",
+        "ref": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+        "repository": "jesusvilela/hypercomplexbrain",
+        "required_files": [
+          "src/aionq/residency.py",
+          "tests/test_evidence.py"
+        ]
+      },
+      "task_id": "r4-opaque-monotonicity-review",
+      "verifier": "godelian-1"
+    },
+    {
+      "claim_id": "METHOD-R4-EFFECTIVE_SAMPLE_SIZE",
+      "envelope": "artifacts/r4/review_batch/r4-effective-sample-size-review.envelope.json",
+      "notes": "Where does certifying sample size against distinct INPUT hashes misfire? A Monte-Carlo integration with one input and many seeds genuinely has n > 1 in a sense my rule denies. Is the rule too strong, or is the fix to separate 'distinct inputs' from 'independent draws' as two quantities?",
+      "requested_mode": "reviewed",
+      "requires": [
+        "authenticated access to the connected private GitHub repository"
+      ],
+      "source": {
+        "instruction": "Materialize the required files through the authenticated GitHub connector. This is a REVIEW task: no command needs running and no digest is compared. Attack the argument.",
+        "provider": "connected GitHub connector",
+        "ref": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+        "repository": "jesusvilela/hypercomplexbrain",
+        "required_files": [
+          "src/aionq/evidence.py",
+          "tests/test_evidence.py"
+        ]
+      },
+      "task_id": "r4-effective-sample-size-review",
+      "verifier": "godelian-1"
+    },
+    {
+      "claim_id": "MATH-S6-BRIDGE_BLINDNESS",
+      "envelope": "artifacts/r4/review_batch/s6-bridge-blindness-review.envelope.json",
+      "notes": "Is the AUROC cap argument airtight, or does it assume the defect model I happened to use?",
+      "requested_mode": "reviewed",
+      "requires": [
+        "authenticated access to the connected private GitHub repository"
+      ],
+      "source": {
+        "instruction": "Materialize the required files through the authenticated GitHub connector. This is a REVIEW task: no command needs running and no digest is compared. Attack the argument.",
+        "provider": "connected GitHub connector",
+        "ref": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+        "repository": "jesusvilela/hypercomplexbrain",
+        "required_files": [
+          "experiments/run_bridge_ceiling.py",
+          "src/aionq/sheaf.py"
+        ]
+      },
+      "task_id": "s6-bridge-blindness-review",
       "verifier": "godelian-1"
     }
   ]

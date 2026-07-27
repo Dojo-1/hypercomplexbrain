@@ -1,0 +1,51 @@
+{
+  "claim_id": "MATH-S6-BRIDGE_BLINDNESS",
+  "command": "(review only -- the claim is the artifact)",
+  "commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "P",
+  "input_hashes": [
+    "claim:MATH-S6-BRIDGE_BLINDNESS"
+  ],
+  "observed_result": {
+    "assumptions": [
+      "removing a bridge disconnects the nerve, so it lies on no cycle and appears in no cycle-basis vector"
+    ],
+    "question_for_the_reviewer": "Is the AUROC cap argument airtight, or does it assume the defect model I happened to use?",
+    "statement": "An overlap that lies in no cycle (a bridge) carries zero holonomy information: every cycle in the nerve has the same holonomy whether that overlap is defective or not. EVERY cycle-based instrument is blind to it, not approximately but identically, and the achievable AUROC is capped by the nerve before any method runs.",
+    "tag": "P"
+  },
+  "platform": "",
+  "producer": "claude-code",
+  "raw_artifacts": {
+    "experiments/run_bridge_ceiling.py": "sha256:d01daaa44caf15792d927b80308143c134c3f256b259a49e3096f41b6166a896",
+    "src/aionq/sheaf.py": "sha256:5cc6063e09dee7234c2fbef882a4fc25abc6a4a3e1a1ef6e39dfc6ac2101911f"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-27T11:10:17Z",
+  "typed_remainders": [
+    {
+      "carrier": "MATH-S6-BRIDGE_BLINDNESS",
+      "comparison": "a review binds a reading of an argument to a commit; it does not bind a number to a measurement, and it cannot promote this claim",
+      "kind": "semantic_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}

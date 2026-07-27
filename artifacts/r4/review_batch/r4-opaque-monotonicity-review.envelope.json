@@ -1,0 +1,53 @@
+{
+  "claim_id": "MATH-R4-OPAQUE_MONOTONICITY",
+  "command": "(review only -- the claim is the artifact)",
+  "commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "P",
+  "input_hashes": [
+    "claim:MATH-R4-OPAQUE_MONOTONICITY"
+  ],
+  "observed_result": {
+    "assumptions": [
+      "the previous code summed `if cls != OPAQUE: total += cost`, so an unpriced instruction was OMITTED from the total and the partial figure entered min(). The direction of that error is an understated simulation cost, i.e. an OVERSTATED quantum advantage",
+      "an operation with no unitary AND no declared width was charged as one qubit; it is now UNPRICEABLE and the bound is reported as unknown rather than as a small number",
+      "not exhibited: a concrete circuit on which the OLD code actually lowered the bound. The defect is established by inspection and closed by construction; the monotonicity invariant is what is tested going forward"
+    ],
+    "question_for_the_reviewer": "I established the defect by inspection and closed it by construction, but never exhibited a circuit on which the OLD code actually lowered the bound. Is monotonicity provable as stated, or does it need hypotheses about the compiler portfolio I have not written down?",
+    "statement": "Appending an instruction to a circuit cannot DECREASE the reported q_sim_upper. The portfolio minimum is now taken over VALID paths only, and a path carrying an instruction the classifier cannot price is marked opaque_instruction and excluded rather than summed without it.",
+    "tag": "P"
+  },
+  "platform": "",
+  "producer": "claude-code",
+  "raw_artifacts": {
+    "src/aionq/residency.py": "sha256:c939d1bd528ab88d0707c9387fcefe59a549977f41909ad0103ea8c4bec2aee8",
+    "tests/test_evidence.py": "sha256:64bdbb203a6396f00adb3b84fa3e8e2582066262cc46ab1097574a9ccd9500c4"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-27T11:10:17Z",
+  "typed_remainders": [
+    {
+      "carrier": "MATH-R4-OPAQUE_MONOTONICITY",
+      "comparison": "a review binds a reading of an argument to a commit; it does not bind a number to a measurement, and it cannot promote this claim",
+      "kind": "semantic_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}

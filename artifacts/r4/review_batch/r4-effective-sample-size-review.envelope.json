@@ -1,0 +1,53 @@
+{
+  "claim_id": "METHOD-R4-EFFECTIVE_SAMPLE_SIZE",
+  "command": "(review only -- the claim is the artifact)",
+  "commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "P",
+  "input_hashes": [
+    "claim:METHOD-R4-EFFECTIVE_SAMPLE_SIZE"
+  ],
+  "observed_result": {
+    "assumptions": [
+      "BORROWED from the sibling codebase m1-bordon v0.8.0, audited here: its six-seed TRANSFER gate reported -0.00219727 identically at all six seeds because the bursty generator `e = ((t/block)*7 + k*31) % N` never consults the RNG. Measured: 1 distinct trace across 6 seeds, against 6 for each of ZIPF, DRIFT and PREDICT",
+      "the ensemble existed precisely to prevent one lucky seed being read as a stable result; for that one phase the fix reported n=1 six times",
+      "the rule fired on its own author: the first envelope written for the R4 benchmark declared sample_size 12 for 12 timing batches on ONE instance, and was rejected"
+    ],
+    "question_for_the_reviewer": "Where does certifying sample size against distinct INPUT hashes misfire? A Monte-Carlo integration with one input and many seeds genuinely has n > 1 in a sense my rule denies. Is the rule too strong, or is the fix to separate 'distinct inputs' from 'independent draws' as two quantities?",
+    "statement": "Sample size is certified against DISTINCT input hashes, never against the length of the seed list. An envelope declaring n seeds whose inputs hash identically has effective n = 1, and verification fails if it claims more.",
+    "tag": "P"
+  },
+  "platform": "",
+  "producer": "claude-code",
+  "raw_artifacts": {
+    "src/aionq/evidence.py": "sha256:1a8c7ce9e6e18aa5c370361d81b4f50b3073333b26f5c03ff8deccfafaebd219",
+    "tests/test_evidence.py": "sha256:64bdbb203a6396f00adb3b84fa3e8e2582066262cc46ab1097574a9ccd9500c4"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-27T11:10:17Z",
+  "typed_remainders": [
+    {
+      "carrier": "METHOD-R4-EFFECTIVE_SAMPLE_SIZE",
+      "comparison": "a review binds a reading of an argument to a commit; it does not bind a number to a measurement, and it cannot promote this claim",
+      "kind": "semantic_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}

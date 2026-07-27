@@ -1,0 +1,53 @@
+{
+  "claim_id": "MATH-R4-ATTESTATION_CYCLE",
+  "command": "(review only -- the claim is the artifact)",
+  "commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "P",
+  "input_hashes": [
+    "claim:MATH-R4-ATTESTATION_CYCLE"
+  ],
+  "observed_result": {
+    "assumptions": [
+      "evidence_rank is a MAX over per-act ranks, not a sum and not a path composition. Both alternatives were rejected at design time because each makes the attestation cycle profitable: summing lets ten signatures outweigh one measurement",
+      "FIRST STATED WRONGLY. The original theorem was the stronger claim that attestation cycles are INERT, evidence_rank(G) = evidence_rank(G - C). The test falsified it in under a minute with assert 0 == 1: when the ring is the only support, removing it drops ATTESTED to NONE. An attestation is not nothing, it is bounded. The theorem was corrected, not the test",
+      "this is the finite shadow of the Payor/Loeb situation -- box(box P -> P) -> box P fails when the boxes belong to different parties who only quote each other. NO claim is made about the modal statement; only the finite one is implemented and tested"
+    ],
+    "question_for_the_reviewer": "I first claimed the STRONGER result that attestation cycles are inert and my own test falsified it within a minute. Is the corrected version also wrong? Is a MAX over per-act ranks the right aggregation, or does it discard information a lattice would keep? Does the Payor/Loeb analogy overreach -- I claim only the finite shadow.",
+    "statement": "For a witness graph G and an attestation cycle C on the same claim, evidence_rank(G + C) = max(evidence_rank(G), ATTESTED). No number of mutually-attesting parties reaches REVIEWED or INDEPENDENT: a ring in which A vouches for B, B for C and C for A passes every producer != verifier check while nobody has computed anything.",
+    "tag": "P"
+  },
+  "platform": "",
+  "producer": "claude-code",
+  "raw_artifacts": {
+    "src/aionq/witness_nerve.py": "sha256:909cbd19ba426622bed3cd24acf00986184ec2dc5a3d7f6337c3eebb4e05180f",
+    "tests/test_evidence.py": "sha256:64bdbb203a6396f00adb3b84fa3e8e2582066262cc46ab1097574a9ccd9500c4"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-27T11:10:17Z",
+  "typed_remainders": [
+    {
+      "carrier": "MATH-R4-ATTESTATION_CYCLE",
+      "comparison": "a review binds a reading of an argument to a commit; it does not bind a number to a measurement, and it cannot promote this claim",
+      "kind": "semantic_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}

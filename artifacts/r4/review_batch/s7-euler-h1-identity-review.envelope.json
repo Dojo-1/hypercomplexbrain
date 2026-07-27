@@ -1,0 +1,52 @@
+{
+  "claim_id": "MATH-S7-EULER_H1_IDENTITY",
+  "command": "(review only -- the claim is the artifact)",
+  "commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "P",
+  "input_hashes": [
+    "claim:MATH-S7-EULER_H1_IDENTITY"
+  ],
+  "observed_result": {
+    "assumptions": [
+      "H^0 = ker delta, H^1 = coker delta, both over the reals; the identity is an equality of dimensions and a single violation would indicate a rank-computation bug, not a weaker effect",
+      "a tree (b1 = 0) is the boundary case: dim H^1 = 0 and dim H^0 = fiber_dim for EVERY choice of transitions, which is MATH-S6-BRIDGE_BLINDNESS reached from the cohomological side"
+    ],
+    "question_for_the_reviewer": "Is dim H^1 = dim H^0 + (b1 - 1) d correct for a cellular sheaf on a connected graph over R, and does it follow from rank-nullity on the two-term complex? If it holds, does the CONCLUSION follow -- that ||H^1|| cannot measure the obstruction to global sections because it increases with the section space? Name any hypothesis used without being stated.",
+    "statement": "For a cellular sheaf on a connected graph with n vertices, m edges and b1 = m - n + 1, rank-nullity on the two-term complex forces dim H^1 = dim H^0 + (b1 - 1) * fiber_dim. Verified on 16 instances across four nerve families and four fiber dimensions, 0 violations.",
+    "tag": "P"
+  },
+  "platform": "",
+  "producer": "claude-code",
+  "raw_artifacts": {
+    "experiments/run_audit_adjudication.py": "sha256:993137171f89aba045f041da94ed36d3cff901a1dc3f916edf71ac292b821dfe",
+    "src/aionq/sheaf.py": "sha256:5cc6063e09dee7234c2fbef882a4fc25abc6a4a3e1a1ef6e39dfc6ac2101911f"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-27T11:10:17Z",
+  "typed_remainders": [
+    {
+      "carrier": "MATH-S7-EULER_H1_IDENTITY",
+      "comparison": "a review binds a reading of an argument to a commit; it does not bind a number to a measurement, and it cannot promote this claim",
+      "kind": "semantic_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}
