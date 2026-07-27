@@ -1,6 +1,6 @@
 {
   "schema": "hypercomplexbrain.witness_dispatch_request.v1",
-  "request_id": "godelian-review-v1-initial-20260727",
+  "request_id": "godelian-review-v1-observable-runner-20260727",
   "batch_manifest": "manifests/godelian_review_batch_v1.json",
   "preregistration": "manifests/qsigma_r5_witness_weave_preregistration.json",
   "requested_action": "dispatch",
@@ -9,8 +9,9 @@
     "r4-benchmark-review"
   ],
   "requested_by": "Jesus Vilela Jato",
-  "requested_at": "2026-07-27T00:00:00+02:00",
+  "requested_at": "2026-07-27T10:00:00+02:00",
   "authority_boundary": "The request authorizes asynchronous trigger calls only. PENDING conversation handles are not evidence; no retry, promotion, or response interpretation is authorized beyond the committed batch protocol.",
   "token_policy": "Read GODELIAN_AGENT_TOKEN only from the GitHub Actions secret store. Never persist or echo it.",
-  "stop_condition": "After recording handles, folded status, visualization, and focused-test outcome, stop. Do not begin QTau-Germinal or another architecture lift."
+  "runner_observability": "This trigger requires runner_outcome.json to be committed even if focused tests fail or the workspace-agent token is absent.",
+  "stop_condition": "After recording runner outcome, handles, folded status, visualization, and focused-test outcome, stop. Do not begin QTau-Germinal or another architecture lift."
 }
