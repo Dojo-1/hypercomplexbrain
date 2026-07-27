@@ -1,0 +1,14 @@
+{
+  "schema": "hypercomplexbrain.review_questions.v1",
+  "note": "The seven questions dispatched to Godelian-1 before this session's container expired. The dispatcher that sent them has been superseded by aionq.witness_batch, which is better engineered (append-only journal, retry, status, render). These QUESTIONS are what was worth keeping: each names a claim I would most like to be wrong about, and each asks for the specific hole rather than for approval. Fold them into manifests/godelian_review_batch_v1.json.",
+  "live_handles": "artifacts/r4/review_batch/dispatch.json",
+  "questions": {
+    "MATH-S7-EULER_H1_IDENTITY": "Is dim H^1 = dim H^0 + (b1 - 1) d correct for a cellular sheaf on a connected graph over R, and does it follow from rank-nullity on the two-term complex? If it holds, does the CONCLUSION follow -- that ||H^1|| cannot measure the obstruction to global sections because it increases with the section space? Name any hypothesis used without being stated.",
+    "RET-S7-H1_AS_REMAINDER": "I retired [R] = ||H^1|| in BOTH regimes. Is the second half too strong? Is there a reading -- a different norm, coefficient system, relative or compactly-supported version -- on which the archive's usage survives? I would rather be corrected than have retired something salvageable.",
+    "MATH-R4-ATTESTATION_CYCLE": "I first claimed the STRONGER result that attestation cycles are inert and my own test falsified it within a minute. Is the corrected version also wrong? Is a MAX over per-act ranks the right aggregation, or does it discard information a lattice would keep? Does the Payor/Loeb analogy overreach -- I claim only the finite shadow.",
+    "MATH-S7-FLAT_HOLONOMY_ON_A_NERVE": "Is 'curvature vanishes identically on a graph' the right statement, or merely 'curvature is not defined'? Those are different and I may have chosen the more convenient one.",
+    "MATH-R4-OPAQUE_MONOTONICITY": "I established the defect by inspection and closed it by construction, but never exhibited a circuit on which the OLD code actually lowered the bound. Is monotonicity provable as stated, or does it need hypotheses about the compiler portfolio I have not written down?",
+    "METHOD-R4-EFFECTIVE_SAMPLE_SIZE": "Where does certifying sample size against distinct INPUT hashes misfire? A Monte-Carlo integration with one input and many seeds genuinely has n > 1 in a sense my rule denies. Is the rule too strong, or is the fix to separate 'distinct inputs' from 'independent draws' as two quantities?",
+    "MATH-S6-BRIDGE_BLINDNESS": "Is the AUROC cap argument airtight, or does it assume the defect model I happened to use?"
+  }
+}
