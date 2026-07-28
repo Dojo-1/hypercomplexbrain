@@ -1,0 +1,116 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "QSigma-R6 - The Unitary Price of Hyperbolic Depth",
+  "committed_before_any_implementation": true,
+  "baseline": {
+    "commit_sha": "8130b41",
+    "tests_reported_by_commit": 335,
+    "tests_independently_rerun_in_this_round": true,
+    "tests_rerun_result": "335 passed",
+    "qiskit_version": "2.5.1",
+    "numpy_version": "2.4.6"
+  },
+  "scope_justification": {
+    "why_a_new_round": "QSigma-R5's stop condition forbids beginning QTau-Germinal, adding a cognitive organ, or claiming independent witnessing. This round does none of those. It measures a COST on a surface that already exists in this repository (src/aionq/splitform.py, which already identifies signature (2,2) over R as the split form and names SO(2,2) acting on the Q=+1 pseudo-sphere). No organ is added; an existing structure is priced against the quantum substrate.",
+    "r5_status": "OPEN and unchanged. Nine Godelian-1 tasks remain PENDING. This round makes no witness claim and does not touch the witness batch.",
+    "prompted_by": "Three archives (UTAI-an-Uber-Topos-AI, TELOS, UNIVERSE_OS) were supplied with the instruction to keep the substrate quantum and not neglect Qiskit. A census of those archives found 1472 files, 37 of which compute on the (2,2) hyperboloid, and ZERO occurrences of the string 'qiskit'. The quantum substrate is, across the whole corpus, currently a vocabulary rather than an execution surface. This round tests whether it can be one."
+  },
+  "question": "The programme's cognitive substrate is the Q = +1 pseudo-sphere in R^{2,2} with SO(2,2) acting on it. Quantum computation is unitary. Non-compact groups have no faithful finite-dimensional unitary representation. So: what exactly does hyperbolic depth cost on a unitary substrate, and is the cost avoidable?",
+  "setup": {
+    "identification": "Q(x) = x0^2 + x1^2 - x2^2 - x3^2 with Q = +1 is identified with SL(2,R) via x -> M = [[x0+x2, x1+x3], [-x1+x3, x0-x2]], for which det M = Q(x) exactly. SO(2,2)_0 acts by M -> A M B^{-1}.",
+    "coordinates": "The swirl parameterisation used by the TELOS archive, x = (cosh(rho) cos(phi), cosh(rho) sin(phi), sinh(rho) cos(psi), sinh(rho) sin(psi)), is adopted unchanged so that any result transfers back to that codebase without re-derivation.",
+    "block_encoding": "A real 2x2 M with spectral norm s is encoded as U = [[M/s, sqrt(I - (M/s)(M/s)^T)], [sqrt(I - (M/s)^T(M/s)), -(M/s)^T]], a real orthogonal 4x4, i.e. a 2-qubit gate (1 system + 1 ancilla). The top-left block is recovered by post-selecting the ancilla on |0>."
+  },
+  "predictions": [
+    {
+      "id": "P1",
+      "statement": "The hyperboloid point at depth rho has singular values exactly (e^rho, e^-rho), Frobenius norm squared exactly 2 cosh(2 rho), and condition number exactly e^{2 rho}. It is an orthogonal (hence unitary) matrix if and only if rho = 0.",
+      "consequence": "The entire non-Euclidean content of the substrate - the rho direction - is exactly the part that is not a gate. The compact directions phi and psi are free.",
+      "tolerance": "1e-12 over a swept grid of rho in [0,3], phi and psi in [-pi,pi]."
+    },
+    {
+      "id": "P2",
+      "statement": "tr M = 2 cosh(rho) cos(phi). Under phi uniform on [0,2pi), the fraction of points whose SL(2,R) conjugacy class is ELLIPTIC (|tr| < 2) is exactly (2/pi) * arcsin(sech(rho)), which decays as (4/pi) e^{-rho}.",
+      "consequence": "The unitarily-conjugable fraction of the substrate decays exponentially in hyperbolic depth, with an exactly predicted rate and prefactor.",
+      "tolerance": "Monte Carlo over 200000 samples per rho; |empirical - analytic| < 4 * binomial standard error."
+    },
+    {
+      "id": "P3",
+      "statement": "For a block-encoded step at depth rho, the ancilla-|0> post-selection probability averaged over Haar-random single-qubit inputs is exactly (1 + e^{-4 rho}) / 2, and the worst-case (contracting singular direction) probability is exactly e^{-4 rho}. For L composed steps of a pure boost the worst case is exactly e^{-4 L rho}.",
+      "consequence": "Average-case cost saturates at 1/2 and is NOT the exponential; the exponential lives in the worst case and in the subnormalisation. Stating only the average would understate the cost, and stating only the worst case would overstate it.",
+      "tolerance": "1e-10 against Qiskit Statevector probabilities."
+    },
+    {
+      "id": "P4",
+      "statement": "If a closed loop's NET holonomy has rho_net = 0, the net element is exactly orthogonal and its circuit needs no ancilla and no post-selection: success probability exactly 1. Step-wise block encoding of the same loop still pays the P3 cost at every step.",
+      "consequence": "Echoing the weave (arranging boosts so the product returns to the compact subgroup) removes the cost ONLY when the net element may be compiled directly. It does not remove the cost when intermediate states must be materialised. This is a design constraint on the architecture, not a free win.",
+      "tolerance": "net-element circuit unitary to 1e-12; step-wise success probability matching P3."
+    }
+  ],
+  "controls_and_attacks": [
+    {
+      "name": "encoding fidelity",
+      "procedure": "For every M used, extract the top-left 2x2 block of the compiled Qiskit Operator and compare to M / ||M||_2. PASS iff max abs difference < 1e-12. A failure invalidates every measurement in this round and no claim survives it."
+    },
+    {
+      "name": "compact-direction null",
+      "procedure": "Set rho = 0 and sweep phi, psi. PASS iff the element is orthogonal to 1e-12 and the measured success probability is 1.0 to 1e-10, i.e. the free directions are measurably free."
+    },
+    {
+      "name": "wrong-instrument control",
+      "procedure": "Also compute the Frobenius norm of the SO(2,2) GENERATORS as Round S8 did for so(8), and record that it diverges with rapidity. PASS iff the report states explicitly that the norm is the wrong invariant here and the trace / conjugacy class is the right one. This control exists because S8 left (2,2) unimplemented for exactly this reason."
+    },
+    {
+      "name": "elliptic is not unitary",
+      "procedure": "Find elements with |tr| < 2 and rho > 0 and confirm they are NOT orthogonal. PASS iff such elements exist and are non-orthogonal, establishing that conjugacy to a rotation does not imply being a rotation."
+    },
+    {
+      "name": "determinant drift",
+      "procedure": "Verify det M = 1 to 1e-12 across the whole sweep, so that any observed non-unitarity is hyperbolic depth and not numerical loss of the constraint."
+    },
+    {
+      "name": "randomised loop closure",
+      "procedure": "Generate random word products in the six SO(2,2) generators, keep those with |rho_net| < 1e-9, and check P4 on them. PASS iff every such loop compiles to an exactly unitary net element."
+    }
+  ],
+  "kill_conditions": [
+    "Any point with rho > 1e-9 is found orthogonal to 1e-12. P1 dies.",
+    "The elliptic fraction departs from (2/pi) arcsin(sech(rho)) by more than 4 binomial standard errors at any swept rho. P2 dies.",
+    "Measured post-selection probability departs from the closed forms in P3 by more than 1e-10. P3 dies.",
+    "A loop with rho_net = 0 fails to compile to a unitary. P4 dies and the echo design principle dies with it.",
+    "The block encoding does not reproduce M / ||M||_2 in its top-left block. The whole round is void.",
+    "Any claim of quantum ADVANTAGE is made. This round measures a cost; it does not and cannot demonstrate an advantage, and asserting one is a kill condition on the round's own honesty."
+  ],
+  "explicitly_not_claimed": [
+    "That the (2,2) substrate is useful for quantum computation.",
+    "That hyperbolic memory capacity survives the cost measured here.",
+    "That any TELOS, UTAI or UNIVERSE_OS component has been executed, tested, or verified. They were read.",
+    "That this round produces any witnessed or independent evidence. Its verifier is this machine.",
+    "Anything about physical hardware. Everything is exact linear algebra and Qiskit's statevector, with no device and no noise model."
+  ],
+  "evidence_floor": {
+    "P": "P1, P2, P3, P4 as exact algebraic identities, proved by derivation and checked by test.",
+    "M": "The Qiskit-measured post-selection probabilities and the Monte Carlo elliptic fractions.",
+    "S": "The architectural design principle (echo the weave so net holonomy is compact). It remains SPECULATIVE until a reservoir is actually built that way and measured against one that is not.",
+    "H_to_M": "requires the experiment to run to completion with all six controls passing",
+    "independent": "not reachable in this round"
+  },
+  "files_expected_to_change": [
+    "src/aionq/hyperbolic_qubit.py",
+    "experiments/run_hyperbolic_qubit_cost.py",
+    "tests/test_hyperbolic_qubit.py",
+    "docs/QUANTUM_SUBSTRATE_COST.md",
+    "docs/ARCHIVE_AUDIT_UTAI_TELOS_UNIVERSE.md"
+  ],
+  "resource_budget": {
+    "runtime_dependencies": "qiskit 2.5.1 and numpy, both already required by this repository",
+    "network_calls": "none",
+    "expected_runtime": "under two minutes on one core"
+  },
+  "stop_condition": "Stop after the exact algebra, the Qiskit cost measurement, the six controls, and the archive audit. Do not build a reservoir, do not add a cognitive organ, do not touch the QSigma-R5 witness batch, and do not claim the echo principle works until something is built with it.",
+  "typed_remainder": {
+    "kind": "representation_remainder",
+    "carrier": "SU(1,1) and SO(2,2) non-compactness",
+    "statement": "A non-compact simple Lie group has no faithful finite-dimensional unitary representation. Every finite-width qubit encoding of the hyperbolic directions is therefore either non-unitary (paid for by post-selection, as measured here) or a truncation of an infinite-dimensional representation (paid for by truncation error, which this round does NOT measure). The truncation branch is left open and typed rather than silently omitted."
+  }
+}
