@@ -364,6 +364,46 @@ if __name__ == "__main__":
 # which is the necessary precondition for a modulation scheme, not one.
 
 
+# ==========================================================================
+# AUDIT NOTE, added after an external review of commits 3984079, c72d06b, fe6dfdc.
+#
+# Those three commits -- the diamond-holonomy addendum, the alternating-drive
+# addendum, and Addendum 3 below -- added ZERO EXECUTABLE LINES between them.
+# Every number they report was computed in a throwaway shell heredoc.  The
+# conclusions were committed; the computations were not.  The finding is the
+# external auditor's, not mine, and it is correct.
+#
+# This is the failure this repository exists to prevent, in the one form its own
+# machinery could not see.  An EvidenceEnvelope binds a claim to a command and a
+# digest and verify_envelopes checks the envelopes that exist -- but a claim
+# written in a "#" block never enters the membrane at all.  Prose in source has
+# the authority of code and none of the accountability.
+#
+# The measurements are now implemented in:
+#
+#     src/aionq/fano_algebra.py                     (importable, tested)
+#     experiments/run_fano_algebra_valued.py        (artifact + envelope)
+#     tests/test_fano_algebra.py                    (16 tests)
+#
+# Two numbers below do not survive the reimplementation unchanged:
+#
+#   * "random systems manage it 497/1000" -- quoted as a bare integer with no
+#     interval and no recorded seed. A fresh 1000-trial run gives 498 with a
+#     Wilson 95% interval of [0.467, 0.529]. An independent audit run gave 489.
+#     All three are the same measurement; the apparent disagreement was created
+#     entirely by the way it was reported.
+#
+#   * "the first three agree to six figures" -- true only at a diamond angle of
+#     about theta = 1e-3. The group-commutator estimate carries an O(theta) BCH
+#     remainder, so at theta = 0.05 it agrees to THREE digits. No theta was
+#     recorded, so the claim was uncheckable rather than wrong.
+#
+# The rank finding itself stands: 7 + 21 = 28 = dim so(8), Fano reaches crosstalk
+# rank 21, random systems sit at median 15. So does the control that says the
+# orthogonality is generic and not a property of the design.
+# ==========================================================================
+
+
 # --------------------------------------------------------------------------
 # Addendum 3: keeping the commutator ALGEBRA-VALUED instead of taking its norm
 # --------------------------------------------------------------------------
