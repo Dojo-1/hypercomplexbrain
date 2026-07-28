@@ -159,11 +159,65 @@ section wrote "number of distinguishable states" where it had only measured
   numbers. The compactification argument does not depend on the Bell probe; the
   entanglement diagnostic does.
 
-## What is now open
+## The three gates, closed at R6d
 
-The audit's remaining gates that this round did **not** run: the full information
-sandwich `I_PGM ≤ I_acc ≤ χ ≤ log₂N` with an exact Holevo flag/success
-decomposition, data-processing under random CPTP post-processing, and the
-`q → 0` boundary limit. Those are the next slice, and the naming point stands:
-`Tendril.deweave()` means governance retirement, not `M⁻¹`, and a physical
-inverse needs its own name.
+`PYTHONPATH=src python3 experiments/run_holevo_sandwich.py` → **ALL GATES PASS**
+(14 checks, 29 tests).
+
+**A. The sandwich holds**, `I_PGM ≤ I_acc ≤ χ ≤ log₂N`, at every depth. `I_acc`
+is a supremum over all POVMs and is deliberately **not estimated** — it is
+reported as the bracket `[I_PGM, χ]`, because an estimate of it would be the one
+number in the round that could be quietly tuned.
+
+**The flag decomposition is exact** (residual < 1e-12):
+
+```
+χ  =  p̄·S(σ̂)  +  [ h₂(p̄) − ⟨h₂(pᵢ)⟩ ]
+      success branch      the flag itself
+```
+
+The bracket is a Jensen gap, nonnegative because `h₂` is concave, and **exactly
+zero when every codeword sits at one depth**. So in a fixed-depth codebook the
+erasure flag carries *no* information and all of χ lives in the success branch
+weighted by survival. It becomes informative only when depths differ — and then
+it reports the *depth spread*, not the message. Both directions are asserted;
+otherwise the identity is vacuous.
+
+**B. Data processing holds** over 12 random CPTP maps (Kraus completeness exact
+to 6.7e-16 by Stinespring construction): χ contracts, trace distance contracts,
+fidelity does not decrease. Note the test *not* run: `I_PGM(Φ(ensemble)) ≤
+I_PGM(ensemble)` is **not implied** — the PGM is chosen for whichever ensemble it
+is handed, so a better measurement on a worse ensemble can beat a worse one on a
+better ensemble. The implied statement, and the one checked, is
+`I_PGM(Φ(ensemble)) ≤ χ(ensemble)`.
+
+**C. The boundary limit converges, and one claim died on the way.**
+
+The first random codebook showed χ *rising* with depth, which looked like a
+finding: deeper is more informative. **The control killed it.** A deterministic
+evenly-spaced codebook dips from 0.901726 at ρ=0.1 to 0.898532 at ρ=0.25 before
+rising, and two of five random seeds converge from *above*. "χ increases with
+depth" is withdrawn as an artifact of one draw, and
+`test_chi_is_not_monotone_in_depth` pins the counterexample so it cannot quietly
+come back.
+
+What survives is stronger than what did not, and it has a closed form. At
+infinite depth `A` becomes rank one, so `|v⟩` becomes a **product** state of norm²
+= ½. Hence `p̄ → ½`, every `S(ωᵢ) → h₂(½) = 1` bit, and by the decomposition:
+
+> **χ → ½·S(σ̂) ≤ 1 bit.**
+
+The grid codebook's product states average to the maximally mixed state on `ℂ⁴`,
+so `S(σ̂) = 2` and **χ = 1.000000000 bit exactly**, with a tail spread of 6.2e-15
+over ρ ∈ [8, 16].
+
+**The channel does not die at depth.** It converges to a boundary channel worth
+at most one bit per use, carried entirely by the two angular coordinates — which
+is exactly what R6b's saturating angular Fisher information predicted, now at the
+level of a codebook rather than a metric.
+
+## Still open
+
+The naming point stands: `Tendril.deweave()` means governance retirement, not
+`M⁻¹`, and a physical inverse needs its own name. And `I_acc` itself remains a
+bracket, not a number.
