@@ -1,0 +1,60 @@
+{
+  "claim_id": "MATH-R6-DD_CLASS_DEGREE",
+  "command": "PYTHONPATH=src python3 experiments/run_dd_class_degree_audit.py",
+  "commit_sha": "586a3f6a2b7814e212572e7595f2da351904fc29",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "P",
+  "input_hashes": [
+    "windings:1,1,1",
+    "windings:1,1,0",
+    "windings:2,3,4",
+    "windings:3,-2,5",
+    "windings:-1,-1,-1",
+    "windings:0,7,9",
+    "windings:7,0,0",
+    "windings:6,6,6",
+    "windings:12,-5,1",
+    "windings:-3,4,-8"
+  ],
+  "observed_result": {
+    "mismatches": 0,
+    "rank_H3": 1,
+    "rank_H6": 0,
+    "sample_size": 10,
+    "verdict": "SETTLED"
+  },
+  "platform": "",
+  "producer": "experiments/run_dd_class_degree_audit.py",
+  "raw_artifacts": {
+    "artifacts/dd_class_audit/dd_class_degree_audit.json": "sha256:85f23b3ef62617ff317e3170c5f4cb015b4ff8e6242565e43c6a0d113386354a"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    20260728
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-28T08:35:31Z",
+  "typed_remainders": [
+    {
+      "carrier": "the reviewed construction itself",
+      "comparison": "this settles the DEGREE, not the theorem. The review's HRR encoder, its imposed cyclic order, and its measured phase winding are not in this repository. Thm 3's quantitative claim could still fail for reasons the quoted argument does not give",
+      "kind": "scope_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}

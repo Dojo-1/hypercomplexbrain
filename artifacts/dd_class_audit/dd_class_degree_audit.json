@@ -1,0 +1,151 @@
+{
+  "A_cohomology_ranks": {
+    "H^0": 1,
+    "H^1": 3,
+    "H^2": 3,
+    "H^3": 1,
+    "H^4": 0,
+    "H^5": 0,
+    "H^6": 0,
+    "H^7": 0
+  },
+  "A_verdict": "the quoted statement is TRUE: H^6(T^3;Z)=0, because T^3 is a closed 3-manifold and cohomology vanishes above the dimension. It is true for a reason unrelated to windings, gerbes, or the construction under review.",
+  "B_mismatches": [],
+  "B_triple_winding_products": [
+    {
+      "agrees": true,
+      "dd_class": 1,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": 1,
+      "windings": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "agrees": true,
+      "dd_class": 0,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": 0,
+      "windings": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "agrees": true,
+      "dd_class": 24,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": 24,
+      "windings": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "agrees": true,
+      "dd_class": -30,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": -30,
+      "windings": [
+        3,
+        -2,
+        5
+      ]
+    },
+    {
+      "agrees": true,
+      "dd_class": -1,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": -1,
+      "windings": [
+        -1,
+        -1,
+        -1
+      ]
+    },
+    {
+      "agrees": true,
+      "dd_class": 0,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": 0,
+      "windings": [
+        0,
+        7,
+        9
+      ]
+    },
+    {
+      "agrees": true,
+      "dd_class": 0,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": 0,
+      "windings": [
+        7,
+        0,
+        0
+      ]
+    },
+    {
+      "agrees": true,
+      "dd_class": 216,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": 216,
+      "windings": [
+        6,
+        6,
+        6
+      ]
+    },
+    {
+      "agrees": true,
+      "dd_class": -60,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": -60,
+      "windings": [
+        12,
+        -5,
+        1
+      ]
+    },
+    {
+      "agrees": true,
+      "dd_class": 96,
+      "generators_are_cocycles": true,
+      "triple_is_cocycle": true,
+      "w1w2w3": 96,
+      "windings": [
+        -3,
+        4,
+        -8
+      ]
+    }
+  ],
+  "B_verdict": "the Dixmier-Douady class lives in H^3(T^3;Z)=Z, where the triple cup product of three DEGREE-1 winding classes pairs with the fundamental class to give exactly w1w2w3. Winding numbers are degree one; c1 is degree two. The demotion is computed in the wrong degree.",
+  "C_cochain_versus_class": {
+    "class_is_zero": true,
+    "cochain_is_identically_zero": false,
+    "example_degree_six_cochain_value": 1,
+    "rank_H3_T3": 1,
+    "rank_H6_T3": 0,
+    "reason": "H^6 of a closed 3-manifold is zero above the dimension; the cochain need not be, and the Dixmier-Douady class lives in H^3, where rank is 1, not in H^6, where rank is 0"
+  },
+  "C_verdict": "'vanishes' conflates a zero CLASS with a zero COCHAIN. The degree-6 cochain evaluates to 1 on a basis tuple; its class is nevertheless zero because the group it would live in is.",
+  "conclusion": "The stated ground for the demotion cannot be the ground. Whether Thm 3 holds for the review's actual construction is NOT settled here -- that construction is not in hand, and the structural claim (HRR binding is a Cech cocycle) was never in dispute.",
+  "quoted_reason_for_demotion": "the cup product c1 u c1 u c1 in H^6(T^3) = 0 (vanishes)",
+  "subject": "peer review of 'The Sheaf of Becoming' v2, Thm 3 demotion",
+  "tier": "P -- exact integer arithmetic, answer forced by the algebra and known before the run; this is proof-checking, not evidence",
+  "verdict": "SETTLED"
+}
