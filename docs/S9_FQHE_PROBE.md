@@ -1,8 +1,9 @@
 # S9 Fractional Quantum Hall Probe
 
-**Status:** preregistered at commit `91777d9`; the numerical instrument is
-implemented and test-covered, while the primary many-body measurement has not
-yet run at this checkpoint.
+**Status:** preregistered at commit `91777d9`, implemented at `abc56ba`, and
+executed once at the frozen parameter point. The four controls passed. The
+coarse target was killed by the preregistered frame-integrity and strict
+bundle-isolation gates; the confirmation mesh and gauge attacks were not run.
 
 S9 is a controls-first numerical probe of one fixed finite-size interacting
 Hofstadter system. It asks whether the two lowest many-body levels form an
@@ -218,11 +219,70 @@ python -m pytest -q --basetemp=.agent/pytest-s9-full
 ```
 
 These commands are the intended execution surface, not a report that they have
-already passed. The result document must preserve controls before target outcomes,
-the full gate ledger, raw and rounded Chern values, mesh-local numerical
-diagnostics, seeds, environment, and runtime provenance.
+already passed unless accompanied by a committed result artifact. The result
+document must preserve controls before target outcomes, the full gate ledger,
+raw and rounded Chern values, mesh-local numerical diagnostics, seeds,
+environment, and runtime provenance.
 
-## 6. Interpretation ceiling
+## 6. Initial frozen-point result
+
+The first controls-first execution is preserved in
+[`artifacts/s9_fqhe/fqhe_probe.json`](../artifacts/s9_fqhe/fqhe_probe.json) with
+its evidence envelope. It returned `KILLED_PARAMETER_POINT`.
+
+All controls passed:
+
+```text
+S9-G1..G4  static construction                         PASS
+S9-C1      atomic zero-Chern control                   PASS
+S9-C2      one-particle representation control        PASS
+S9-C3      filled-band integer-Hall orientation       PASS
+```
+
+The coarse `7 x 7` target produced:
+
+```text
+maximum eigenpair residual       7.66767472123799e-11
+maximum frame Gram defect        0.8320612640498583
+maximum pair splitting           1.580957587066223e-13
+global rank-two width W          0.2797220978672943
+minimum external gap Delta       0.27549415203417027
+W / Delta                        1.0153467716171327
+minimum neighbor singular value  0.36232661193440646
+raw determinant-bundle C         1.0
+maximum plaquette phase          0.25217114588717854
+```
+
+Thus the mesh-local gate record is:
+
+```text
+S9-G5  FAIL  eigsh returned a badly non-orthogonal basis inside an
+             essentially exactly degenerate low-energy space
+S9-G6  FAIL  W / Delta >= 1
+S9-G7  PASS  neighbor overlaps remained invertible
+S9-G8  PASS  plaquette phases remained inside the branch margin
+S9-G9  PASS  the raw coarse Chern sum was integral
+S9-G10 NOT_RUN  the 9 x 9 mesh was not admitted
+S9-G11 NOT_RUN  local-frame attacks were not admitted
+```
+
+The raw coarse `C = 1` is telemetry, not an authorized topological-response
+result. G5 invalidated the supplied eigenvector frame, G6 independently
+invalidated strict rank-two isolation, the confirmation mesh did not run, and
+no value was divided by two.
+
+The initial runner's aggregate `gate_ledger` and
+`triggered_kill_conditions` contain a reporting defect: they collapse
+coarse-mesh PASS results and downstream `NOT_RUN` states into failures. In
+particular, `KILLED_OVERLAP`, `KILLED_BRANCH`, `KILLED_NONINTEGRAL_CHERN`,
+`KILLED_MESH_DISAGREEMENT`, and `KILLED_GAUGE_VARIANCE` are not observations
+from this run. The immutable mesh-local payload above remains the source for
+the initial result. A separately preregistered numerical-instrument correction
+may repair the degenerate eigenspace frame and tri-state ledger, but it may not
+change the model, mesh, seed, thresholds, width definition, or the fact that
+this original run was killed.
+
+## 7. Interpretation ceiling
 
 If every control and target gate passes, S9 supports only this statement:
 
