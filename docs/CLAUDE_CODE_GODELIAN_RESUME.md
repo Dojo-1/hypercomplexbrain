@@ -3,7 +3,7 @@
 This is a direct Claude Code prompt for resuming the interrupted witness batch without
 creating duplicate remote runs.
 
-## Frozen evidence floor
+## Historical frozen evidence floor
 
 - Repository: `jesusvilela/hypercomplexbrain`
 - Branch: `claude/aion-brain-architecture-27f8ji`
@@ -14,12 +14,34 @@ creating duplicate remote runs.
   - `s7-deterministic-recompute`
   - `r4-benchmark-review`
 
-At this floor, the repository contains no committed
+At that historical floor, the repository contained no committed
 `artifacts/witness_batches/godelian-review-v1/events.jsonl`, `runner_outcome.json`,
 or `WITNESS_NERVE.md`. The deterministic S7 envelope still reads
 `verification_mode = not_requested`; the R4 benchmark envelope retains the earlier
 `declined` attempt. Therefore no new terminal witness, pending handle, or runner outcome is
 durably established yet.
+
+## Current reconciled floor
+
+The later `artifacts/r4/review_batch/dispatch.json` artifact contains seven
+pending review handles. They have been imported into the append-only journal
+with source digest
+`sha256:22e4540fc5f777462b78403ce389f307c5e81335db0f82ff42214dd9d52286a7`.
+
+Current folded classes:
+
+- `s7-deterministic-recompute`: `NOT_REQUESTED`;
+- `r4-benchmark-review`: historical `DECLINED`;
+- seven adversarial reviews: `PENDING`, attempt 1, rank `NONE`.
+
+Re-running the import is idempotent:
+
+```bash
+PYTHONPATH=src python3 experiments/dispatch_review_batch.py reconcile \
+  artifacts/r4/review_batch/dispatch.json
+```
+
+Do not dispatch any of those seven tasks. Their handles already exist.
 
 ## Non-negotiable invariant
 
@@ -92,6 +114,17 @@ outcome. If a returned handle exists, recover it into the append-only journal an
 **Do not make a second network request.** If no artifact settles whether the endpoint accepted
 the request, record `dispatch_unknown`; only a user-authorized explicit retry attempt may proceed.
 
+For a compatible pending-handle JSON artifact, use the validated importer:
+
+```bash
+PYTHONPATH=src python3 experiments/dispatch_review_batch.py reconcile HANDLES.json
+```
+
+It accepts a legacy HTTPS `chatgpt.com/c/...` handle only as migration input,
+or a publishable `sha256:<digest>` handle reference. It requires an unambiguous
+manifest claim and `pending` status, stores only the opaque reference and source
+digest, and refuses conflicting task/attempt references.
+
 ### D. Handles were returned and are pending
 
 Commit the journal and folded status immediately. `PENDING` carries evidence rank zero. The
@@ -110,6 +143,8 @@ python -m pytest -q
 ```
 
 Preserve contradictions. Never average or retry them away.
+Repeated ingestion of the exact same response digest is idempotent. A different
+terminal response for the same attempt is still refused.
 
 ## Step 3 — Commit the reconciliation, not a desired story
 
@@ -123,6 +158,17 @@ The commit must include only the state actually observed:
 - exact commands and raw artifact hashes.
 
 Do not claim independent witnessing merely because a runner started or a conversation exists.
+
+Before any authorized trigger, run:
+
+```bash
+PYTHONPATH=src python3 experiments/dispatch_review_batch.py dispatch --dry-run
+```
+
+The CLI reads `manifests/godelian_dispatch_request.json` as an allowlist. At the
+current floor it can authorize only `s7-deterministic-recompute` and
+`r4-benchmark-review`; the latter still requires an explicit retry because its
+envelope is declined. Adding tasks to the batch manifest is not authorization.
 
 ## Optional second transport: OpenAI Batch API
 

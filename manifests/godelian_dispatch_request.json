@@ -8,7 +8,8 @@
     "s7-deterministic-recompute",
     "r4-benchmark-review"
   ],
-  "requested_by": "Jesus Vilela Jato",
+  "authorized_retry_tasks": [],
+  "requested_by": "repository-owner",
   "requested_at": "2026-07-27T10:00:00+02:00",
   "authority_boundary": "The request authorizes asynchronous trigger calls only. PENDING conversation handles are not evidence; no retry, promotion, or response interpretation is authorized beyond the committed batch protocol.",
   "token_policy": "Read GODELIAN_AGENT_TOKEN only from the GitHub Actions secret store. Never persist or echo it.",

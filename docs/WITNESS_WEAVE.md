@@ -77,18 +77,23 @@ workspace-agent interface exposes a trigger and conversation URL, but no
 supported verdict-polling endpoint.  The absence of a poller is an honest typed
 remainder, not an invitation to invent background execution.
 
-## First batch
+## Batch and authority boundary
 
 [`manifests/godelian_review_batch_v1.json`](../manifests/godelian_review_batch_v1.json)
-contains two orthogonal tasks.
+contains nine tasks.  The committed external-dispatch request
+[`manifests/godelian_dispatch_request.json`](../manifests/godelian_dispatch_request.json)
+authorizes only the first two.  Adding a task to the batch manifest does not
+grant permission to contact an external verifier.
 
 | Task | Claim | Requested act | Why |
 |---|---|---|---|
 | `s7-deterministic-recompute` | `EXP-S7-AUDIT_REPLICATION` | `recomputed` | Octonion counts, CM arithmetic, cohomology ranks and fixed-step Berry output are declared deterministic; digest comparison is meaningful. |
 | `r4-benchmark-review` | `METRIC-R4-INSTRUMENT_COST` | `reviewed` | Timings depend on CPU, BLAS and runtime; methodological review is meaningful, cross-machine byte equality is not. |
 
-The tasks are dispatched concurrently, but evidence is never aggregated across
-them.  They answer different questions in different fibers.
+Seven later review tasks already had conversation handles in the legacy
+`artifacts/r4/review_batch/dispatch.json` artifact.  Those handles are now
+reconciled into the journal as `PENDING`; they were not re-dispatched.  Evidence
+is never aggregated across tasks.
 
 ## Operational commands
 
@@ -97,8 +102,16 @@ the shell environment without committing it or placing its value on a command
 line.
 
 ```bash
-# Submit all tasks that have no recorded attempt.
-PYTHONPATH=src python3 experiments/dispatch_review_batch.py dispatch
+# Preview authorized actions: no writes and no network calls.
+PYTHONPATH=src python3 experiments/dispatch_review_batch.py dispatch --dry-run
+
+# Restrict an authorized dispatch to one explicitly named task.
+PYTHONPATH=src python3 experiments/dispatch_review_batch.py dispatch \
+  --task s7-deterministic-recompute
+
+# Import already-issued legacy handles; this makes no network call.
+PYTHONPATH=src python3 experiments/dispatch_review_batch.py reconcile \
+  artifacts/r4/review_batch/dispatch.json
 
 # Fold the append-only journal; this never contacts the agent.
 PYTHONPATH=src python3 experiments/dispatch_review_batch.py status
@@ -110,14 +123,14 @@ PYTHONPATH=src python3 experiments/dispatch_review_batch.py render
 PYTHONPATH=src python3 experiments/dispatch_review_batch.py ingest \
   s7-deterministic-recompute response.json
 
-# Retry only after a declined/failed/contradicted attempt, and only explicitly.
-PYTHONPATH=src python3 experiments/dispatch_review_batch.py dispatch \
-  --retry s7-deterministic-recompute
 ```
 
 `dispatch` returns after the trigger calls have returned.  A `202`-style
 conversation handle is recorded as `PENDING`; the command does not wait for a
 future verdict and does not claim that this ChatGPT session will collect it.
+The CLI enforces the committed request as an allowlist.  `--dry-run` appends no
+journal event, creates no reservation, and invokes no transport.  A retry also
+requires a task id in `authorized_retry_tasks`; the current request grants none.
 
 ## Append-only journal
 
@@ -144,6 +157,10 @@ The critical crash boundary is split in two:
 2. `transport_returned` is written immediately after a response, before the
    envelope is mutated.
 
+A recovered pre-journal handle is written at ordinal 20 as
+`handle_reconciled`, with the source artifact digest.  Re-importing the same
+task/attempt/URL is idempotent; a different URL is a conflict.
+
 A process that dies after receiving a conversation URL therefore leaves a
 handle in the journal.  A process that dies after only `dispatch_started`
 produces an uncertain state that is not replayed automatically.  The remaining
@@ -152,7 +169,13 @@ append; exact-once delivery would require endpoint-supported idempotency keys.
 
 ## Current and generated visualization
 
-Before the first live R⁵ dispatch, the source evidence state is:
+The current folded state is generated in:
+
+```text
+artifacts/witness_batches/godelian-review-v1/WITNESS_NERVE.md
+```
+
+Its state classes are:
 
 ```mermaid
 flowchart LR
@@ -160,6 +183,8 @@ flowchart LR
   C1 -.->|NOT_REQUESTED| G["Godelian-1"]
   R4["r4-benchmark-review"] --> C2{"METRIC-R4-INSTRUMENT_COST\nrank=NONE"}
   C2 -.->|DECLINED historical attempt| G
+  L["7 reconciled review handles"] --> C3{"7 adversarial claims\nrank=NONE each"}
+  C3 -.->|PENDING| G
 ```
 
 After dispatch or ingestion, generate rather than hand-edit the live view:
@@ -181,6 +206,10 @@ The test suite includes:
 - uncertain crash boundaries;
 - exact secret-string search in persisted output;
 - explicit versus implicit retry;
+- idempotent legacy-handle reconciliation and conflicting-handle rejection;
+- envelope state as a safety floor when no journal event exists;
+- task selection, committed authorization allowlist, and zero-write dry run;
+- same-response ingestion idempotence and different-response rejection;
 - deterministic matching and contradictory recomputation;
 - environment-dependent digest mismatch;
 - attestation rings from 2 through 64 parties with duplicate edges.

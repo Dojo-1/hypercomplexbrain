@@ -59,3 +59,33 @@ artifacts/**/plots/*
 *.jpeg
 *.svg
 *.gif
+
+# ---------------------------------------------------------------------------
+# Local agent state and privacy boundary: never publish.
+# ---------------------------------------------------------------------------
+.agent/
+.pytest_tmp/
+artifacts/witness_batches/**/*.lock
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*recovery_codes*
+*recovery-code*
+*.log
+
+# Local installers, mobile builds, media, and download-manager payloads.
+*.apk
+*.aab
+*.exe
+*.msi
+*.pkg
+*.rpm
+*.torrent
+*.ogg
+*.mp4
+*.winmd
+*.nfo
