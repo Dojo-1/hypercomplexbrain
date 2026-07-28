@@ -1,0 +1,328 @@
+{
+  "checks": {
+    "cocycle_associativity": true,
+    "cocycle_composition": true,
+    "distances_match_closed_forms": true,
+    "inverse_pair_costs_e_minus_4rho": true,
+    "kappa_nonnegative": true,
+    "operational_volume_is_finite": true,
+    "qfi_is_diagonal": true,
+    "qfi_matches_closed_form": true,
+    "source_is_lorentzian_not_riemannian": true
+  },
+  "cocycle": {
+    "finding": "source return defect is exactly zero and streamed survival is e^{-4 rho}: undoing a movement costs what making it cost. Source reversibility is not operational reversibility.",
+    "inverse_pairs": [
+      {
+        "e_minus_4rho": 0.30119421191220214,
+        "kappa": 0.6000000000000001,
+        "p_direct": 1.0,
+        "p_stream": 0.301194211912202,
+        "rho": 0.3,
+        "two_rho": 0.6
+      },
+      {
+        "e_minus_4rho": 0.09071795328941251,
+        "kappa": 1.2,
+        "p_direct": 1.0,
+        "p_stream": 0.09071795328941251,
+        "rho": 0.6,
+        "two_rho": 1.2
+      },
+      {
+        "e_minus_4rho": 0.01831563888873418,
+        "kappa": 2.0,
+        "p_direct": 1.0,
+        "p_stream": 0.01831563888873418,
+        "rho": 1.0,
+        "two_rho": 2.0
+      },
+      {
+        "e_minus_4rho": 0.0024787521766663585,
+        "kappa": 3.0,
+        "p_direct": 1.0,
+        "p_stream": 0.0024787521766663585,
+        "rho": 1.5,
+        "two_rho": 3.0
+      },
+      {
+        "e_minus_4rho": 0.00033546262790251185,
+        "kappa": 4.000000000000002,
+        "p_direct": 1.0,
+        "p_stream": 0.00033546262790251066,
+        "rho": 2.0,
+        "two_rho": 4.0
+      },
+      {
+        "e_minus_4rho": 4.5399929762484854e-05,
+        "kappa": 5.000000000000006,
+        "p_direct": 1.0,
+        "p_stream": 4.5399929762484285e-05,
+        "rho": 2.5,
+        "two_rho": 5.0
+      },
+      {
+        "e_minus_4rho": 6.14421235332821e-06,
+        "kappa": 6.000000000000025,
+        "p_direct": 1.0,
+        "p_stream": 6.144212353327904e-06,
+        "rho": 3.0,
+        "two_rho": 6.0
+      }
+    ],
+    "min_kappa": 6.409396943185541e-06,
+    "worst_associativity_error": 8.881784197001252e-16,
+    "worst_composition_error": 6.661338147750939e-16
+  },
+  "distance_checks": {
+    "fuchs_van_de_graaf_holds": true,
+    "pairs": 200,
+    "worst_root_fidelity_error": 8.881784197001252e-16,
+    "worst_trace_distance_error": 3.885780586188048e-16
+  },
+  "operational_volume": {
+    "closed_form": "sqrt(2) * pi^3",
+    "externally_reported": 62.01255336059963,
+    "note": "finiteness is the claim; the constant is a correction",
+    "ratio_to_reported": 0.7071067811865475,
+    "value": 43.84949699997263
+  },
+  "probe": [
+    {
+      "concurrence_closed_form": 0.8435506876218067,
+      "p_bell_closed_form": 0.650597105956101,
+      "p_bell_measured": 0.6505971059561008,
+      "rho": 0.3
+    },
+    {
+      "concurrence_closed_form": 0.5522861542782048,
+      "p_bell_closed_form": 0.5453589766447062,
+      "p_bell_measured": 0.545358976644706,
+      "rho": 0.6
+    },
+    {
+      "concurrence_closed_form": 0.2658022288340797,
+      "p_bell_closed_form": 0.5091578194443671,
+      "p_bell_measured": 0.509157819444367,
+      "rho": 1.0
+    },
+    {
+      "concurrence_closed_form": 0.0993279274194332,
+      "p_bell_closed_form": 0.5012393760883331,
+      "p_bell_measured": 0.501239376088333,
+      "rho": 1.5
+    },
+    {
+      "concurrence_closed_form": 0.03661899347368653,
+      "p_bell_closed_form": 0.5001677313139512,
+      "p_bell_measured": 0.5001677313139512,
+      "rho": 2.0
+    },
+    {
+      "concurrence_closed_form": 0.013475282221304556,
+      "p_bell_closed_form": 0.5000226999648812,
+      "p_bell_measured": 0.5000226999648814,
+      "rho": 2.5
+    },
+    {
+      "concurrence_closed_form": 0.004957473893560379,
+      "p_bell_closed_form": 0.5000030721061767,
+      "p_bell_measured": 0.5000030721061766,
+      "rho": 3.0
+    }
+  ],
+  "qfi": {
+    "radial_decays_as": "8 e^{-4 rho}, the R6 cost exponent",
+    "rows": [
+      {
+        "J_ff": 2.3988174838107583,
+        "J_pp": 0.20357093971538162,
+        "J_rr": 3.4481020868250263,
+        "max_offdiag": 3.928055929455979e-11,
+        "rel_error": 3.7074336574679624e-10,
+        "rho": 0.3
+      },
+      {
+        "J_ff": 1.6931063769229522,
+        "J_pp": 0.4883295294183334,
+        "J_rr": 0.7981501769598095,
+        "max_offdiag": 8.280368362437595e-12,
+        "rel_error": 2.3855956296141294e-10,
+        "rho": 0.6
+      },
+      {
+        "J_ff": 1.2889862052299348,
+        "J_pp": 0.7476450723527297,
+        "J_rr": 0.149258882937651,
+        "max_offdiag": 4.919426621640336e-12,
+        "rel_error": 1.8396620972343233e-10,
+        "rho": 1.0
+      },
+      {
+        "J_ff": 1.1020528888148808,
+        "J_pp": 0.9029046153515085,
+        "J_rr": 0.019879293254204844,
+        "max_offdiag": 3.8117842216061435e-12,
+        "rel_error": 9.904702824242092e-11,
+        "rho": 1.5
+      },
+      {
+        "J_ff": 1.0369667403170832,
+        "J_pp": 0.9637041847325364,
+        "J_rr": 0.0026846016076154276,
+        "max_offdiag": 1.7213328852611527e-11,
+        "rel_error": 3.298321479243529e-10,
+        "rho": 2.0
+      },
+      {
+        "J_ff": 1.0135212938350273,
+        "J_pp": 0.9865695058297599,
+        "J_rr": 0.0003632159282985306,
+        "max_offdiag": 6.042166766901892e-12,
+        "rel_error": 6.085319325583524e-10,
+        "rho": 2.5
+      },
+      {
+        "J_ff": 1.0049636485014166,
+        "J_pp": 0.9950486397740101,
+        "J_rr": 4.915400087630273e-05,
+        "max_offdiag": 1.3698348011477468e-11,
+        "rel_error": 7.539138329543378e-10,
+        "rho": 3.0
+      }
+    ],
+    "worst_offdiagonal": 3.928055929455979e-11,
+    "worst_relative_error": 7.539138329543378e-10
+  },
+  "round": "QSigma-R6b",
+  "seed": 20260728,
+  "single_correction": {
+    "closed_form": "sqrt(2) * pi^3",
+    "externally_reported": 62.01255336059963,
+    "note": "finiteness is the claim; the constant is a correction",
+    "ratio_to_reported": 0.7071067811865475,
+    "value": 43.84949699997263
+  },
+  "source_signature": {
+    "all_lorentzian": true,
+    "any_riemannian": false,
+    "finding": "g = diag(-1, cosh^2 rho, -sinh^2 rho), signature (1,2). The Q=+1 pseudo-sphere is AdS_3-like and Lorentzian, NOT positive-definite hyperbolic 3-space. The measure cosh rho sinh rho ~ e^{2 rho}/2 was right; calling it 'hyperbolic volume' was not.",
+    "rows": [
+      {
+        "eigenvalues": [
+          -1.0,
+          -0.09273260912113383,
+          1.0927326091211338
+        ],
+        "is_riemannian": false,
+        "n_negative": 2,
+        "n_positive": 1,
+        "n_zero": 0,
+        "sqrt_abs_det": 0.3183267910741206
+      },
+      {
+        "eigenvalues": [
+          -1.0,
+          -0.4053277836621873,
+          1.4053277836621871
+        ],
+        "is_riemannian": false,
+        "n_negative": 2,
+        "n_positive": 1,
+        "n_zero": 0,
+        "sqrt_abs_det": 0.7547306777060862
+      },
+      {
+        "eigenvalues": [
+          -1.3810978455418155,
+          -1.0,
+          2.3810978455418157
+        ],
+        "is_riemannian": false,
+        "n_negative": 2,
+        "n_positive": 1,
+        "n_zero": 0,
+        "sqrt_abs_det": 1.8134302039235093
+      },
+      {
+        "eigenvalues": [
+          -4.533830997888882,
+          -1.0,
+          5.533830997888883
+        ],
+        "is_riemannian": false,
+        "n_negative": 2,
+        "n_positive": 1,
+        "n_zero": 0,
+        "sqrt_abs_det": 5.00893746370495
+      },
+      {
+        "eigenvalues": [
+          -13.154116418008245,
+          -1.0,
+          14.154116418008243
+        ],
+        "is_riemannian": false,
+        "n_negative": 2,
+        "n_positive": 1,
+        "n_zero": 0,
+        "sqrt_abs_det": 13.644958598563877
+      },
+      {
+        "eigenvalues": [
+          -36.604974262393924,
+          -1.0,
+          37.60497426239392
+        ],
+        "is_riemannian": false,
+        "n_negative": 2,
+        "n_positive": 1,
+        "n_zero": 0,
+        "sqrt_abs_det": 37.101605288894376
+      },
+      {
+        "eigenvalues": [
+          -100.35781806122796,
+          -1.0,
+          101.35781806122793
+        ],
+        "is_riemannian": false,
+        "n_negative": 2,
+        "n_positive": 1,
+        "n_zero": 0,
+        "sqrt_abs_det": 100.85657868513961
+      }
+    ]
+  },
+  "verdict": "DERIVATION VERIFIED",
+  "volume_form_distortion": [
+    {
+      "ratio": 4.076367775849571,
+      "rho": 0.3
+    },
+    {
+      "ratio": 1.0763386118065492,
+      "rho": 0.6
+    },
+    {
+      "ratio": 0.20914193459252275,
+      "rho": 1.0
+    },
+    {
+      "ratio": 0.028078701230880892,
+      "rho": 1.5
+    },
+    {
+      "ratio": 0.00379596313968392,
+      "rho": 2.0
+    },
+    {
+      "ratio": 0.0005136532312497894,
+      "rho": 2.5
+    },
+    {
+      "ratio": 6.951404107625951e-05,
+      "rho": 3.0
+    }
+  ]
+}

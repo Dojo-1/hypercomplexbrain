@@ -7,8 +7,23 @@ The programme's cognitive substrate is the Q = +1 pseudo-sphere in R^{2,2},
 with SO(2,2) moving points around on it.  Quantum computation is unitary.  Those
 two facts are in tension, and the tension is not a matter of engineering effort:
 
-    A non-compact simple Lie group has no faithful finite-dimensional unitary
-    representation.
+    A connected non-compact SEMISIMPLE Lie group has no faithful
+    finite-dimensional unitary representation.
+
+CORRECTED at R6b, on an external auditor's guard.  This originally read "simple".
+``so(2,2) = sl(2,R) + sl(2,R)`` has two ideals, so SO_0(2,2) is semisimple and NOT
+simple.  The obstruction survives verbatim under the corrected word -- a connected
+semisimple Lie group with a faithful finite-dimensional unitary representation
+must be compact -- but the word was wrong and a wrong word in a theorem statement
+is not a small thing.
+
+A second guard from the same audit, recorded here because this module's title
+says "hyperbolic".  The induced metric on the Q = +1 pseudo-sphere is
+``g = diag(-1, cosh^2 rho, -sinh^2 rho)``, signature (1,2): an AdS_3-like
+LORENTZIAN geometry, not positive-definite hyperbolic 3-space.  The depth
+coordinate behaves hyperbolically and the measure ``cosh rho sinh rho`` is right,
+but "hyperbolic" in the Riemannian sense is the wrong name for the space.  See
+:func:`aionq.quantum_channel_geometry.induced_metric_signature`, which checks it.
 
 SO(2,2) is non-compact.  So the hyperbolic directions of this substrate cannot
 be gates, in any width, ever.  This module does not argue about that; it prices
