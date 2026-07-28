@@ -1437,6 +1437,26 @@ def test_round_s7_claims_are_registered():
 
 
 # --------------------------------------------------------------------------
+# Round S9: preregistered finite-size fractional-Hall parameter point
+# --------------------------------------------------------------------------
+
+def test_round_s9_records_the_isolation_kill_without_promoting_chern_telemetry():
+    from aionq.governance import registry, EvidenceTag
+
+    hypothesis = registry["FQHE-S9-FINITE_SIZE"]
+    result = registry["FQHE-S9-ISOLATION_KILL"]
+
+    assert hypothesis.superseded_by == result.id
+    assert result.supersedes == hypothesis.id
+    assert result.tag == EvidenceTag.MEASURED
+    assert result.interval == pytest.approx(
+        (1.01534677161674, 1.01534677161674)
+    )
+    assert "no C/2 label is authorized" in result.statement
+    assert result.artifact == "artifacts/s9_fqhe/fqhe_probe.corrected.json"
+
+
+# --------------------------------------------------------------------------
 # The swallow ledger (external peer review: bare `except Exception`)
 # --------------------------------------------------------------------------
 

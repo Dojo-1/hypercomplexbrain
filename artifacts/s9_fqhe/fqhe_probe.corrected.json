@@ -1,0 +1,1310 @@
+{
+  "bundle_normalized_response": {
+    "interpretation_authorized": false,
+    "magnitude": null,
+    "reason": "the preregistered topological signature did not pass",
+    "value": null
+  },
+  "controls_first": {
+    "atomic_zero_chern": {
+      "ground_index": 0,
+      "meshes": {
+        "7x7": {
+          "chern": 0.0,
+          "integer_residual": 0.0,
+          "maximum_absolute_plaquette_phase": 0.0,
+          "minimum_overlap_singular_value": 1.0,
+          "plaquette_phases": [
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "rounded_chern": 0
+        },
+        "9x9": {
+          "chern": 0.0,
+          "integer_residual": 0.0,
+          "maximum_absolute_plaquette_phase": 0.0,
+          "minimum_overlap_singular_value": 1.0,
+          "plaquette_phases": [
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "rounded_chern": 0
+        }
+      },
+      "onsite": "epsilon_r = r/24",
+      "pass": true,
+      "twist_independence_defect": 0.0,
+      "unique_product_ground_gap": 0.04166666666666666
+    },
+    "integer_hall_orientation": {
+      "mesh_agreement": true,
+      "meshes": {
+        "7x7": {
+          "chern": {
+            "chern": 1.0,
+            "integer_residual": 0.0,
+            "maximum_absolute_plaquette_phase": 0.21781919764550062,
+            "minimum_overlap_singular_value": 0.8809121538592931,
+            "plaquette_phases": [
+              [
+                0.08601751992693962,
+                0.11612443890969301,
+                0.1701443835174319,
+                0.20281645854357855,
+                0.17014438351743166,
+                0.11612443890969151,
+                0.0860175199269421
+              ],
+              [
+                0.09409863409965288,
+                0.12592467436693924,
+                0.1831344891929641,
+                0.21781919764550062,
+                0.18313448919296496,
+                0.12592467436693958,
+                0.09409863409965422
+              ],
+              [
+                0.09115280177983234,
+                0.12232943881315665,
+                0.17831401550664439,
+                0.21221395656493855,
+                0.17831401550664247,
+                0.1223294388131557,
+                0.09115280177983259
+              ],
+              [
+                0.07991004403421709,
+                0.10885303567228832,
+                0.1608316612951973,
+                0.1922834272021623,
+                0.16083166129519896,
+                0.10885303567228823,
+                0.07991004403421668
+              ],
+              [
+                0.06966994450571416,
+                0.09694803280963904,
+                0.14627954303164648,
+                0.17631146781495743,
+                0.14627954303164603,
+                0.09694803280963954,
+                0.06966994450571327
+              ],
+              [
+                0.06728173650638641,
+                0.09422738480197403,
+                0.14309228905324148,
+                0.17291458027415582,
+                0.14309228905324298,
+                0.09422738480197362,
+                0.0672817365063869
+              ],
+              [
+                0.07411107140700665,
+                0.10206496668918176,
+                0.15241964748684772,
+                0.18296671232110345,
+                0.15241964748684786,
+                0.10206496668918133,
+                0.07411107140700461
+              ]
+            ],
+            "rounded_chern": 1
+          },
+          "maximum_eigenpair_residual": 6.469774637856054e-15,
+          "maximum_orthonormality_defect": 2.4425019937384755e-15,
+          "mesh": [
+            7,
+            7
+          ],
+          "minimum_band_gap": 1.5561533843826152,
+          "occupied_rank": 6,
+          "pass": true
+        },
+        "9x9": {
+          "chern": {
+            "chern": 1.0000000000000002,
+            "integer_residual": 2.220446049250313e-16,
+            "maximum_absolute_plaquette_phase": 0.1294437406434139,
+            "minimum_overlap_singular_value": 0.9270141380977915,
+            "plaquette_phases": [
+              [
+                0.05098438174824304,
+                0.06159062258181403,
+                0.0825081493620197,
+                0.10751872717154161,
+                0.11973694648202796,
+                0.1075187271715381,
+                0.08250814936202075,
+                0.06159062258181542,
+                0.05098438174824249
+              ],
+              [
+                0.05524901506955767,
+                0.06637636321453425,
+                0.08834033177366513,
+                0.11464847312460891,
+                0.1275226470692343,
+                0.1146484731246091,
+                0.08834033177366449,
+                0.06637636321453272,
+                0.05524901506955823
+              ],
+              [
+                0.05625195433320903,
+                0.06750984849875862,
+                0.0897418403243012,
+                0.11639251032321188,
+                0.1294437406434139,
+                0.1163925103232133,
+                0.08974184032430095,
+                0.06750984849875916,
+                0.05625195433320785
+              ],
+              [
+                0.05340088601172386,
+                0.06429553024372968,
+                0.08578718276932283,
+                0.11150098606872091,
+                0.12407139782204978,
+                0.11150098606872215,
+                0.08578718276932208,
+                0.06429553024373034,
+                0.05340088601172326
+              ],
+              [
+                0.048334521590248966,
+                0.058646125068604525,
+                0.07899309584440009,
+                0.10333250061274861,
+                0.11522518564324241,
+                0.10333250061274953,
+                0.07899309584440041,
+                0.05864612506860334,
+                0.04833452159024913
+              ],
+              [
+                0.043619230610904766,
+                0.053466470156083766,
+                0.07296141138305301,
+                0.09638227829558527,
+                0.10786273340661391,
+                0.09638227829558646,
+                0.07296141138305308,
+                0.05346647015608403,
+                0.04361923061090578
+              ],
+              [
+                0.04124217304066244,
+                0.05088668204262145,
+                0.0700375688718149,
+                0.09313991134966841,
+                0.10450017165491232,
+                0.09313991134966874,
+                0.07003756887181524,
+                0.050886682042620944,
+                0.04124217304065897
+              ],
+              [
+                0.042057772047379455,
+                0.05176934692550511,
+                0.0710314775385493,
+                0.09423157348187156,
+                0.10562606658409944,
+                0.09423157348187301,
+                0.07103147753855003,
+                0.05176934692550523,
+                0.042057772047379614
+              ],
+              [
+                0.04578399205990164,
+                0.05583451766634796,
+                0.07569365997280628,
+                0.09949068811442287,
+                0.11113281928970878,
+                0.09949068811442158,
+                0.07569365997280583,
+                0.05583451766634792,
+                0.04578399205990151
+              ]
+            ],
+            "rounded_chern": 1
+          },
+          "maximum_eigenpair_residual": 5.988657379835579e-15,
+          "maximum_orthonormality_defect": 2.8865813014531818e-15,
+          "mesh": [
+            9,
+            9
+          ],
+          "minimum_band_gap": 1.5462118843519894,
+          "occupied_rank": 6,
+          "pass": true
+        }
+      },
+      "orientation": 1,
+      "pass": true
+    },
+    "one_particle_representation": {
+      "maximum_spectrum_defect": 0.0,
+      "pass": true,
+      "twists": [
+        {
+          "matrix_defect": 0.0,
+          "spectrum_defect": 0.0,
+          "theta_x": 0.0,
+          "theta_y": 0.0
+        },
+        {
+          "matrix_defect": 0.0,
+          "spectrum_defect": 0.0,
+          "theta_x": 0.8975979010256552,
+          "theta_y": 1.7951958020513104
+        },
+        {
+          "matrix_defect": 0.0,
+          "spectrum_defect": 0.0,
+          "theta_x": 2.792526803190927,
+          "theta_y": 0.6981317007977318
+        }
+      ]
+    },
+    "static_construction": {
+      "basis_dimension": 2024,
+      "basis_exact_combination_order": true,
+      "gates": {
+        "S9-G1": true,
+        "S9-G2": true,
+        "S9-G3": true,
+        "S9-G4": true
+      },
+      "hermiticity_defect": 0.0,
+      "maximum_plaquette_flux_defect": 4.440892098500626e-16,
+      "pass": true,
+      "twist_periodicity_defects": {
+        "theta_x": 2.482534153247273e-16,
+        "theta_y": 4.965068306494546e-16
+      }
+    }
+  },
+  "controls_pass": true,
+  "environment": {
+    "blas": {
+      "name": "scipy-openblas",
+      "version": "0.3.31.188.0"
+    },
+    "machine": "AMD64",
+    "numpy_version": "2.4.5",
+    "platform_release": "11",
+    "platform_system": "Windows",
+    "python_implementation": "CPython",
+    "python_version": "3.13.14",
+    "scipy_version": "1.17.1",
+    "thread_environment": {
+      "MKL_NUM_THREADS": null,
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "gate_ledger": {
+    "S9-C1": {
+      "pass": true,
+      "status": "PASS"
+    },
+    "S9-C2": {
+      "pass": true,
+      "status": "PASS"
+    },
+    "S9-C3": {
+      "pass": true,
+      "status": "PASS"
+    },
+    "S9-G1": {
+      "pass": true,
+      "status": "PASS"
+    },
+    "S9-G10": {
+      "pass": null,
+      "reason": "both target meshes were not measured",
+      "status": "NOT_RUN"
+    },
+    "S9-G11": {
+      "mesh_states": {
+        "7x7": {
+          "pass": true,
+          "status": "PASS"
+        },
+        "9x9": {
+          "pass": null,
+          "reason": "coarse instrument or isolation gate failed",
+          "status": "NOT_RUN"
+        }
+      },
+      "pass": null,
+      "reason": "completed meshes passed, but a required mesh was not run",
+      "status": "INCOMPLETE"
+    },
+    "S9-G2": {
+      "pass": true,
+      "status": "PASS"
+    },
+    "S9-G3": {
+      "pass": true,
+      "status": "PASS"
+    },
+    "S9-G4": {
+      "pass": true,
+      "status": "PASS"
+    },
+    "S9-G5": {
+      "mesh_states": {
+        "7x7": {
+          "pass": true,
+          "status": "PASS"
+        },
+        "9x9": {
+          "pass": null,
+          "reason": "coarse instrument or isolation gate failed",
+          "status": "NOT_RUN"
+        }
+      },
+      "pass": null,
+      "reason": "an evaluated mesh passed but a required mesh was not run",
+      "status": "INCOMPLETE"
+    },
+    "S9-G6": {
+      "mesh_states": {
+        "7x7": {
+          "pass": false,
+          "status": "FAIL"
+        },
+        "9x9": {
+          "pass": null,
+          "reason": "coarse instrument or isolation gate failed",
+          "status": "NOT_RUN"
+        }
+      },
+      "pass": false,
+      "reason": "at least one evaluated mesh failed",
+      "status": "FAIL"
+    },
+    "S9-G7": {
+      "mesh_states": {
+        "7x7": {
+          "pass": true,
+          "status": "PASS"
+        },
+        "9x9": {
+          "pass": null,
+          "reason": "coarse instrument or isolation gate failed",
+          "status": "NOT_RUN"
+        }
+      },
+      "pass": null,
+      "reason": "an evaluated mesh passed but a required mesh was not run",
+      "status": "INCOMPLETE"
+    },
+    "S9-G8": {
+      "mesh_states": {
+        "7x7": {
+          "pass": true,
+          "status": "PASS"
+        },
+        "9x9": {
+          "pass": null,
+          "reason": "coarse instrument or isolation gate failed",
+          "status": "NOT_RUN"
+        }
+      },
+      "pass": null,
+      "reason": "an evaluated mesh passed but a required mesh was not run",
+      "status": "INCOMPLETE"
+    },
+    "S9-G9": {
+      "mesh_states": {
+        "7x7": {
+          "pass": true,
+          "status": "PASS"
+        },
+        "9x9": {
+          "pass": null,
+          "reason": "coarse instrument or isolation gate failed",
+          "status": "NOT_RUN"
+        }
+      },
+      "pass": null,
+      "reason": "an evaluated mesh passed but a required mesh was not run",
+      "status": "INCOMPLETE"
+    }
+  },
+  "gauge_attacks": {
+    "7x7": {
+      "maximum_chern_difference": 3.3306690738754696e-16,
+      "mesh": [
+        7,
+        7
+      ],
+      "pass": true,
+      "replicates": [
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.25217114588717987,
+          "minimum_overlap_singular_value": 0.8747412569814039,
+          "pass": true,
+          "replicate": 0
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.25217114588717904,
+          "minimum_overlap_singular_value": 0.874741256981403,
+          "pass": true,
+          "replicate": 1
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871794,
+          "minimum_overlap_singular_value": 0.8747412569814036,
+          "pass": true,
+          "replicate": 2
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.2521711458871787,
+          "minimum_overlap_singular_value": 0.8747412569814037,
+          "pass": true,
+          "replicate": 3
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871796,
+          "minimum_overlap_singular_value": 0.8747412569814035,
+          "pass": true,
+          "replicate": 4
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.25217114588717987,
+          "minimum_overlap_singular_value": 0.8747412569814031,
+          "pass": true,
+          "replicate": 5
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.25217114588718,
+          "minimum_overlap_singular_value": 0.8747412569814036,
+          "pass": true,
+          "replicate": 6
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.2521711458871797,
+          "minimum_overlap_singular_value": 0.8747412569814037,
+          "pass": true,
+          "replicate": 7
+        },
+        {
+          "chern": 0.9999999999999999,
+          "difference_from_unscrambled": 3.3306690738754696e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871794,
+          "minimum_overlap_singular_value": 0.8747412569814033,
+          "pass": true,
+          "replicate": 8
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871802,
+          "minimum_overlap_singular_value": 0.8747412569814034,
+          "pass": true,
+          "replicate": 9
+        },
+        {
+          "chern": 0.9999999999999999,
+          "difference_from_unscrambled": 3.3306690738754696e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871788,
+          "minimum_overlap_singular_value": 0.8747412569814036,
+          "pass": true,
+          "replicate": 10
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.25217114588717926,
+          "minimum_overlap_singular_value": 0.8747412569814033,
+          "pass": true,
+          "replicate": 11
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.2521711458871794,
+          "minimum_overlap_singular_value": 0.8747412569814036,
+          "pass": true,
+          "replicate": 12
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.2521711458871796,
+          "minimum_overlap_singular_value": 0.8747412569814036,
+          "pass": true,
+          "replicate": 13
+        },
+        {
+          "chern": 0.9999999999999999,
+          "difference_from_unscrambled": 3.3306690738754696e-16,
+          "maximum_absolute_plaquette_phase": 0.25217114588717954,
+          "minimum_overlap_singular_value": 0.874741256981404,
+          "pass": true,
+          "replicate": 14
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871798,
+          "minimum_overlap_singular_value": 0.8747412569814034,
+          "pass": true,
+          "replicate": 15
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.25217114588717954,
+          "minimum_overlap_singular_value": 0.8747412569814036,
+          "pass": true,
+          "replicate": 16
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871797,
+          "minimum_overlap_singular_value": 0.8747412569814035,
+          "pass": true,
+          "replicate": 17
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.252171145887179,
+          "minimum_overlap_singular_value": 0.8747412569814035,
+          "pass": true,
+          "replicate": 18
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.25217114588717976,
+          "minimum_overlap_singular_value": 0.8747412569814035,
+          "pass": true,
+          "replicate": 19
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871798,
+          "minimum_overlap_singular_value": 0.8747412569814034,
+          "pass": true,
+          "replicate": 20
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.25217114588717965,
+          "minimum_overlap_singular_value": 0.8747412569814037,
+          "pass": true,
+          "replicate": 21
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871797,
+          "minimum_overlap_singular_value": 0.874741256981404,
+          "pass": true,
+          "replicate": 22
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871788,
+          "minimum_overlap_singular_value": 0.8747412569814034,
+          "pass": true,
+          "replicate": 23
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.252171145887179,
+          "minimum_overlap_singular_value": 0.8747412569814035,
+          "pass": true,
+          "replicate": 24
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871797,
+          "minimum_overlap_singular_value": 0.8747412569814036,
+          "pass": true,
+          "replicate": 25
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.25217114588717937,
+          "minimum_overlap_singular_value": 0.8747412569814037,
+          "pass": true,
+          "replicate": 26
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.25217114588717937,
+          "minimum_overlap_singular_value": 0.8747412569814034,
+          "pass": true,
+          "replicate": 27
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871793,
+          "minimum_overlap_singular_value": 0.8747412569814038,
+          "pass": true,
+          "replicate": 28
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.2521711458871796,
+          "minimum_overlap_singular_value": 0.8747412569814035,
+          "pass": true,
+          "replicate": 29
+        },
+        {
+          "chern": 1.0,
+          "difference_from_unscrambled": 2.220446049250313e-16,
+          "maximum_absolute_plaquette_phase": 0.2521711458871794,
+          "minimum_overlap_singular_value": 0.8747412569814035,
+          "pass": true,
+          "replicate": 30
+        },
+        {
+          "chern": 1.0000000000000002,
+          "difference_from_unscrambled": 0.0,
+          "maximum_absolute_plaquette_phase": 0.25217114588717965,
+          "minimum_overlap_singular_value": 0.874741256981404,
+          "pass": true,
+          "replicate": 31
+        }
+      ]
+    },
+    "not_run": {
+      "9x9": {
+        "pass": null,
+        "reason": "coarse instrument or isolation gate failed",
+        "status": "NOT_RUN"
+      }
+    }
+  },
+  "hypotheses": {
+    "S9-FQH-H1": {
+      "pass": false,
+      "reason": "an evaluated frame or isolation gate failed",
+      "status": "KILLED"
+    },
+    "S9-FQH-H2": {
+      "pass": null,
+      "reason": "H1 did not establish an isolated rank-two bundle",
+      "status": "NOT_RUN"
+    },
+    "S9-FQH-H3": {
+      "pass": null,
+      "reason": "coarse gauge telemetry cannot replace both meshes",
+      "status": "INCOMPLETE"
+    }
+  },
+  "implementation_commit": "ea3e3b06135da64c118c4d2b5b0911e50fe2f688",
+  "initial_artifact": "artifacts/s9_fqhe/fqhe_probe.json",
+  "initial_artifact_digest": "sha256:c570cb3b1ff41f977a3b6c9cfcc06bec022b47968018476b0f5cef291c396e56",
+  "instrument_correction": "manifests/s9_fqhe_instrument_correction.json",
+  "instrument_correction_commit": "6d12fd3702d474ed7351eb54b4791555d5399cd2",
+  "instrument_correction_digest": "sha256:b62ab9a49402c903f6e93e0f0b02b19851788b8343bf05fb1450ad60afb7f233",
+  "interpretation_ceiling": {
+    "architectural_interpretation": "At most S: any analogy to repository cognition, holonomy, sheaves, carriers, or holoportation remains speculative and is not promoted by this experiment.",
+    "independent": "Not reachable in this round; the local runner and local verifier share the same repository and machine.",
+    "instrument": "The FHS determinant-link calculation is a numerical operator with explicit gauge and branch controls; a computed integer is not treated as self-authenticating.",
+    "target": "At most M: a reproducible finite-size numerical signature at one fixed lattice, filling, Hamiltonian, and two twist meshes."
+  },
+  "model": {
+    "Lx": 6,
+    "Ly": 4,
+    "alpha": [
+      1,
+      4
+    ],
+    "eigensolver_seed": 2026072801,
+    "gauge_scramble_seed": 2026072802,
+    "gauge_scrambles": 32,
+    "hilbert_dimension": 2024,
+    "particles": 3,
+    "sites": 24,
+    "twist_meshes": [
+      [
+        7,
+        7
+      ],
+      [
+        9,
+        9
+      ]
+    ]
+  },
+  "preregistration": "manifests/s9_fqhe_preregistration.json",
+  "preregistration_commit": "91777d9",
+  "preregistration_digest": "sha256:858d9e46c008d52c30fd1c2d8e9500f8ba5dc6dd0beeecd16a01c5830ad26fcb",
+  "resource_budget": {
+    "configured_maximum_elapsed_seconds": 1800.0,
+    "configured_maximum_resident_bytes": 2147483648,
+    "observed_elapsed_seconds": 4.936402299965266,
+    "observed_peak_resident_bytes": 97271808,
+    "status": "WITHIN_LIMITS"
+  },
+  "schema": "hypercomplexbrain.s9_fqhe_probe.v2",
+  "status": "KILLED_PARAMETER_POINT",
+  "target": {
+    "7x7": {
+      "chern": {
+        "chern": 1.0000000000000002,
+        "integer_residual": 2.220446049250313e-16,
+        "maximum_absolute_plaquette_phase": 0.2521711458871796,
+        "minimum_overlap_singular_value": 0.8747412569814036,
+        "plaquette_phases": [
+          [
+            0.0654261481683048,
+            0.09258454862151769,
+            0.13483728784651103,
+            0.15578816945194,
+            0.1348372878478418,
+            0.09258454862501567,
+            0.06542614816992458
+          ],
+          [
+            0.0467826492610009,
+            0.07049501380653513,
+            0.10797654514433873,
+            0.12674167160042,
+            0.10797654514124157,
+            0.07049501380403578,
+            0.04678264925907534
+          ],
+          [
+            0.053369728758073325,
+            0.07826154780458862,
+            0.11732872980074142,
+            0.13679641399126424,
+            0.11732872979909342,
+            0.0782615478032446,
+            0.0533697287580733
+          ],
+          [
+            0.0809105383334752,
+            0.11123625847082733,
+            0.15823726468834648,
+            0.18154451535006705,
+            0.1582372646957215,
+            0.11123625847883019,
+            0.08091053833347403
+          ],
+          [
+            0.11061118011238937,
+            0.14803375269815885,
+            0.20675604789787608,
+            0.23639065076262913,
+            0.20675604789177013,
+            0.14803375269273117,
+            0.11061118010986631
+          ],
+          [
+            0.11840563463242014,
+            0.15794549970988997,
+            0.22040774164481847,
+            0.2521711458871796,
+            0.22040774164135463,
+            0.1579454997103058,
+            0.11840563463356571
+          ],
+          [
+            0.09705795203321435,
+            0.13105946453612266,
+            0.18396234389094593,
+            0.21038098441780997,
+            0.1839623438899146,
+            0.1310594645398847,
+            0.09705795203321582
+          ]
+        ],
+        "rounded_chern": 1
+      },
+      "eigenvalues": [
+        [
+          [
+            -8.321196274317005,
+            -8.321196274317,
+            -8.027181988452238
+          ],
+          [
+            -8.268313317511078,
+            -8.26831331751107,
+            -7.972379569925692
+          ],
+          [
+            -8.145427573371089,
+            -8.145427573371085,
+            -7.849080377498437
+          ],
+          [
+            -8.043485551885503,
+            -8.0434855518855,
+            -7.753683669115388
+          ],
+          [
+            -8.043485551885505,
+            -8.0434855518855,
+            -7.753683669115378
+          ],
+          [
+            -8.145427573371089,
+            -8.14542757337108,
+            -7.849080377498445
+          ],
+          [
+            -8.268313317511083,
+            -8.268313317511076,
+            -7.972379569925691
+          ]
+        ],
+        [
+          [
+            -8.32067765688351,
+            -8.320677656883506,
+            -8.033797592721953
+          ],
+          [
+            -8.267699063214215,
+            -8.267699063214211,
+            -7.979793835411055
+          ],
+          [
+            -8.144508734195906,
+            -8.144508734195902,
+            -7.858975594558291
+          ],
+          [
+            -8.042196557584008,
+            -8.042196557584003,
+            -7.766702405549786
+          ],
+          [
+            -8.042196557584006,
+            -8.042196557584004,
+            -7.766702405549791
+          ],
+          [
+            -8.144508734195911,
+            -8.144508734195899,
+            -7.858975594558296
+          ],
+          [
+            -8.267699063214208,
+            -8.267699063214202,
+            -7.979793835411055
+          ]
+        ],
+        [
+          [
+            -8.320388904390063,
+            -8.320388904390057,
+            -8.033286862919422
+          ],
+          [
+            -8.267356807569952,
+            -8.267356807569941,
+            -7.979185398440913
+          ],
+          [
+            -8.143995476394347,
+            -8.143995476394347,
+            -7.858139712936563
+          ],
+          [
+            -8.04147417644979,
+            -8.041474176449784,
+            -7.765771117646516
+          ],
+          [
+            -8.041474176449784,
+            -8.04147417644978,
+            -7.765771117646516
+          ],
+          [
+            -8.143995476394343,
+            -8.143995476394334,
+            -7.858139712936548
+          ],
+          [
+            -8.26735680756995,
+            -8.267356807569936,
+            -7.9791853984409205
+          ]
+        ],
+        [
+          [
+            -8.32103678278521,
+            -8.321036782785203,
+            -8.031271561856808
+          ],
+          [
+            -8.268124476943187,
+            -8.268124476943168,
+            -7.97698693286182
+          ],
+          [
+            -8.145145408351057,
+            -8.145145408351041,
+            -7.855275203561966
+          ],
+          [
+            -8.043090285761817,
+            -8.04309028576181,
+            -7.761838233524025
+          ],
+          [
+            -8.043090285761814,
+            -8.043090285761812,
+            -7.761838233524024
+          ],
+          [
+            -8.145145408351047,
+            -8.145145408351045,
+            -7.8552752035619635
+          ],
+          [
+            -8.268124476943166,
+            -8.268124476943163,
+            -7.976986932861815
+          ]
+        ],
+        [
+          [
+            -8.321036782785217,
+            -8.32103678278521,
+            -8.03127156185682
+          ],
+          [
+            -8.268124476943177,
+            -8.268124476943166,
+            -7.976986932861817
+          ],
+          [
+            -8.14514540835105,
+            -8.145145408351048,
+            -7.855275203561966
+          ],
+          [
+            -8.043090285761814,
+            -8.043090285761812,
+            -7.761838233524035
+          ],
+          [
+            -8.04309028576181,
+            -8.043090285761805,
+            -7.761838233524027
+          ],
+          [
+            -8.14514540835105,
+            -8.145145408351043,
+            -7.85527520356197
+          ],
+          [
+            -8.26812447694317,
+            -8.268124476943159,
+            -7.976986932861815
+          ]
+        ],
+        [
+          [
+            -8.320388904390061,
+            -8.320388904390061,
+            -8.033286862919415
+          ],
+          [
+            -8.26735680756995,
+            -8.267356807569929,
+            -7.979185398440915
+          ],
+          [
+            -8.14399547639435,
+            -8.143995476394336,
+            -7.858139712936554
+          ],
+          [
+            -8.041474176449777,
+            -8.041474176449775,
+            -7.765771117646519
+          ],
+          [
+            -8.041474176449787,
+            -8.041474176449782,
+            -7.76577111764651
+          ],
+          [
+            -8.143995476394347,
+            -8.143995476394336,
+            -7.858139712936552
+          ],
+          [
+            -8.26735680756995,
+            -8.267356807569948,
+            -7.979185398440925
+          ]
+        ],
+        [
+          [
+            -8.320677656883507,
+            -8.320677656883504,
+            -8.033797592721946
+          ],
+          [
+            -8.267699063214218,
+            -8.267699063214215,
+            -7.979793835411052
+          ],
+          [
+            -8.144508734195897,
+            -8.144508734195895,
+            -7.858975594558294
+          ],
+          [
+            -8.042196557584,
+            -8.042196557583999,
+            -7.76670240554977
+          ],
+          [
+            -8.042196557584008,
+            -8.042196557584006,
+            -7.766702405549774
+          ],
+          [
+            -8.1445087341959,
+            -8.14450873419589,
+            -7.858975594558286
+          ],
+          [
+            -8.267699063214213,
+            -8.267699063214211,
+            -7.979793835411048
+          ]
+        ]
+      ],
+      "gates": {
+        "S9-G5": true,
+        "S9-G6": false,
+        "S9-G7": true,
+        "S9-G8": true,
+        "S9-G9": true
+      },
+      "global_bundle_width": 0.27972209786723035,
+      "instrument_and_isolation_pass": false,
+      "isolation_gap": 0.2754941520342138,
+      "isolation_ratio": 1.0153467716167401,
+      "maximum_eigenpair_residual": 7.656829915388426e-11,
+      "maximum_internal_splitting": 2.1316282072803006e-14,
+      "maximum_orthonormality_defect": 2.220446049250313e-15,
+      "maximum_span_preservation_sine": 1.94460544817738e-15,
+      "mesh": [
+        7,
+        7
+      ],
+      "minimum_overlap_singular_value": 0.8747412569814036,
+      "required_isolation_gap": 1e-06,
+      "status": "MEASURED"
+    },
+    "9x9": {
+      "reason": "coarse instrument or isolation gate failed",
+      "status": "NOT_RUN"
+    }
+  },
+  "triggered_kill_conditions": [
+    "KILLED_BUNDLE_ISOLATION"
+  ],
+  "typed_remainder": {
+    "carrier": "thermodynamic phase identification and physical Hall transport",
+    "kind": "finite_size_topological_remainder",
+    "statement": "An isolated rank-two finite-size bundle with total Chern magnitude one is compatible with the bosonic nu=1/2 Laughlin/FQH signature. It is not sufficient by itself to establish a thermodynamic phase, fractional charge, anyon statistics, robustness to perturbations, or hardware behavior. Those remain separate preregistered experiments."
+  }
+}

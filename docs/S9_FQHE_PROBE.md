@@ -1,9 +1,9 @@
 # S9 Fractional Quantum Hall Probe
 
-**Status:** preregistered at commit `91777d9`, implemented at `abc56ba`, and
-executed once at the frozen parameter point. The four controls passed. The
-coarse target was killed by the preregistered frame-integrity and strict
-bundle-isolation gates; the confirmation mesh and gauge attacks were not run.
+**Status:** `KILLED_PARAMETER_POINT`. The first run and its correction cycle
+are both preserved. The deterministic QR/Rayleigh--Ritz correction repaired the
+degenerate frame, but the unchanged parameter point still failed the
+preregistered strict bundle-isolation gate. No `C/2` response is authorized.
 
 S9 is a controls-first numerical probe of one fixed finite-size interacting
 Hofstadter system. It asks whether the two lowest many-body levels form an
@@ -311,6 +311,61 @@ states and uses `INCOMPLETE` or `NOT_RUN` for missing downstream evidence.
 Kill labels may arise only from an evaluated `FAIL`. Gauge attacks run on every
 completed mesh independently, while global H3 remains incomplete unless both
 required target meshes are admitted.
+
+### Corrected single-rerun result
+
+The versioned rerun is preserved in
+[`artifacts/s9_fqhe/fqhe_probe.corrected.json`](../artifacts/s9_fqhe/fqhe_probe.corrected.json).
+It reran every control and the identical coarse target. The original artifact
+digest remained `c570cb3b1ff41f977a3b6c9cfcc06bec022b47968018476b0f5cef291c396e56`.
+
+The correction repaired the numerical frame:
+
+```text
+maximum eigenpair residual       7.65682991538843e-11
+maximum frame Gram defect        2.22044604925031e-15
+maximum span-preservation sine   1.94460544817738e-15
+maximum pair splitting           2.13162820728030e-14
+global rank-two width W          0.279722097867230
+minimum external gap Delta       0.275494152034214
+W / Delta                        1.01534677161674
+minimum neighbor singular value  0.874741256981404
+raw determinant-bundle C         1.0000000000000002
+maximum plaquette phase          0.252171145887180
+```
+
+At the measured `7 x 7` mesh, G5 and G7--G9 passed. G6 failed because
+`W/Delta >= 1`. The `9 x 9` mesh was therefore correctly not admitted.
+All 32 local `U(2)` attacks on the completed coarse frame passed with maximum
+Chern change `0.0`.
+
+The global tri-state ledger is:
+
+```text
+S9-G5   INCOMPLETE  coarse PASS; confirmation NOT_RUN
+S9-G6   FAIL        coarse W/Delta = 1.01534677161674
+S9-G7   INCOMPLETE  coarse PASS; confirmation NOT_RUN
+S9-G8   INCOMPLETE  coarse PASS; confirmation NOT_RUN
+S9-G9   INCOMPLETE  coarse PASS; confirmation NOT_RUN
+S9-G10  NOT_RUN     two-mesh agreement not evaluated
+S9-G11  INCOMPLETE  32/32 coarse attacks PASS; confirmation NOT_RUN
+```
+
+Consequently:
+
+```text
+S9-FQH-H1  KILLED
+S9-FQH-H2  NOT_RUN
+S9-FQH-H3  INCOMPLETE
+triggered kill: KILLED_BUNDLE_ISOLATION
+```
+
+The corrected envelope binds the two distinct committed inputs, scopes the
+measurement to the `7 x 7` target actually executed, and verifies locally.
+It has no independent witness. The raw coarse `C = 1` remains useful topology
+telemetry, but it cannot be promoted to the preregistered fractional-Hall
+signature because the low-energy pair is not strictly isolated under the
+frozen `W/Delta < 1` definition.
 
 ## 7. Interpretation ceiling
 
