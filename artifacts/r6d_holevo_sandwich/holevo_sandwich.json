@@ -1,0 +1,353 @@
+{
+  "boundary_limit": {
+    "boundary_chi": 0.9999999999999998,
+    "boundary_p_bar": 0.4999999999999999,
+    "finding": "chi converges to a NONZERO constant as q -> 0, and the constant has a closed form. At infinite depth A becomes rank one, so |v> becomes a PRODUCT state with norm^2 = 1/2: p_bar -> 1/2, every S(omega_i) -> h2(1/2) = 1 bit, and by the flag decomposition chi -> (1/2) S(sigmahat) <= 1 bit. The evenly-spaced grid codebook averages to the maximally mixed state on C^4, so S(sigmahat) = 2 and chi = 1.000000000 bit exactly. The channel does not die at depth; it converges to a boundary channel worth at most one bit per use, carried entirely by the two angular coordinates.",
+    "grid_codebook_sweep": [
+      {
+        "I_PGM": 0.38734856311940646,
+        "chi": 0.9017255830998009,
+        "p_bar": 0.8351600230178196,
+        "rho": 0.1,
+        "success_branch_bits": 0.9017255830998008
+      },
+      {
+        "I_PGM": 0.3828555988221527,
+        "chi": 0.8985321830693501,
+        "p_bar": 0.6839397205857211,
+        "rho": 0.25,
+        "success_branch_bits": 0.8985321830693507
+      },
+      {
+        "I_PGM": 0.41715332836546976,
+        "chi": 0.9486790362440263,
+        "p_bar": 0.5676676416183062,
+        "rho": 0.5,
+        "success_branch_bits": 0.9486790362440263
+      },
+      {
+        "I_PGM": 0.44598573157931004,
+        "chi": 0.9920524976341961,
+        "p_bar": 0.5091578194443669,
+        "rho": 1.0,
+        "success_branch_bits": 0.9920524976341963
+      },
+      {
+        "I_PGM": 0.45110772676173627,
+        "chi": 0.9998515464725732,
+        "p_bar": 0.500167731313951,
+        "rho": 2.0,
+        "success_branch_bits": 0.9998515464725729
+      },
+      {
+        "I_PGM": 0.45120327601308335,
+        "chi": 0.9999972800058152,
+        "p_bar": 0.5000030721061766,
+        "rho": 3.0,
+        "success_branch_bits": 0.9999972800058153
+      },
+      {
+        "I_PGM": 0.45120502664228207,
+        "chi": 0.9999999501812417,
+        "p_bar": 0.5000000562675873,
+        "rho": 4.0,
+        "success_branch_bits": 0.9999999501812421
+      },
+      {
+        "I_PGM": 0.4512050587063703,
+        "chi": 0.999999999087537,
+        "p_bar": 0.5000000010305767,
+        "rho": 5.0,
+        "success_branch_bits": 0.9999999990875373
+      },
+      {
+        "I_PGM": 0.4512050592936442,
+        "chi": 0.9999999999832871,
+        "p_bar": 0.5000000000188756,
+        "rho": 6.0,
+        "success_branch_bits": 0.9999999999832874
+      },
+      {
+        "I_PGM": 0.4512050593045974,
+        "chi": 0.9999999999999938,
+        "p_bar": 0.5000000000000062,
+        "rho": 8.0,
+        "success_branch_bits": 0.9999999999999942
+      },
+      {
+        "I_PGM": 0.4512050593046017,
+        "chi": 1.0,
+        "p_bar": 0.49999999999999994,
+        "rho": 12.0,
+        "success_branch_bits": 0.9999999999999999
+      },
+      {
+        "I_PGM": 0.4512050593046011,
+        "chi": 0.9999999999999998,
+        "p_bar": 0.4999999999999999,
+        "rho": 16.0,
+        "success_branch_bits": 0.9999999999999998
+      }
+    ],
+    "grid_monotone": false,
+    "limit_estimate": 0.9999999999999998,
+    "monotonicity_verdict": "FALSIFIED. The grid codebook dips from 0.901726 at rho=0.1 to 0.898532 at rho=0.25 before rising, and only 3 of 5 random seeds are monotone -- the other two converge from ABOVE in the fourth decimal. 'chi increases with depth' was an artifact of one random codebook and is withdrawn. What survives is convergence, not monotonicity.",
+    "random_codebook_seeds": [
+      {
+        "chi_by_depth": [
+          0.8688098939019724,
+          0.923981973947406,
+          0.9226851822164447,
+          0.9226635611670357
+        ],
+        "monotone_increasing": false,
+        "seed": 100
+      },
+      {
+        "chi_by_depth": [
+          0.6004341764211607,
+          0.6473909735142095,
+          0.6635436064376697,
+          0.663580965731323
+        ],
+        "monotone_increasing": true,
+        "seed": 101
+      },
+      {
+        "chi_by_depth": [
+          0.8729103724903593,
+          0.9409867673367464,
+          0.9456915222396837,
+          0.9456863461850915
+        ],
+        "monotone_increasing": false,
+        "seed": 102
+      },
+      {
+        "chi_by_depth": [
+          0.7938507199438928,
+          0.9038575499328646,
+          0.9181088299093593,
+          0.9181261325121406
+        ],
+        "monotone_increasing": true,
+        "seed": 103
+      },
+      {
+        "chi_by_depth": [
+          0.7516747573801174,
+          0.8691902226030922,
+          0.8879336477036729,
+          0.8879633298798895
+        ],
+        "monotone_increasing": true,
+        "seed": 104
+      }
+    ],
+    "seeds_monotone": 3,
+    "tail_spread": 6.217248937900877e-15
+  },
+  "checks": {
+    "boundary_chi_at_most_one_bit": true,
+    "boundary_limit_converges": true,
+    "boundary_limit_is_nonzero": true,
+    "boundary_p_bar_is_one_half": true,
+    "data_processing_holds": true,
+    "depth_monotonicity_is_falsified": true,
+    "fidelity_does_not_decrease": true,
+    "fixed_depth_flag_carries_nothing": true,
+    "flag_decomposition_exact": true,
+    "grid_saturates_the_one_bit_bound": true,
+    "kraus_complete": true,
+    "mixed_depth_flag_carries_something": true,
+    "sandwich_ordering_holds": true,
+    "trace_distance_contracts": true
+  },
+  "data_processing": {
+    "all_contract": true,
+    "chi_before": 0.7755762848563729,
+    "trials": [
+      {
+        "I_PGM_after": 0.03158152678837293,
+        "chi_after": 0.2462357289600554,
+        "contracts": true,
+        "trial": 0
+      },
+      {
+        "I_PGM_after": 0.014568048827717138,
+        "chi_after": 0.18038802026370138,
+        "contracts": true,
+        "trial": 1
+      },
+      {
+        "I_PGM_after": 0.02136724656301526,
+        "chi_after": 0.2107197932588094,
+        "contracts": true,
+        "trial": 2
+      },
+      {
+        "I_PGM_after": 0.028654020776308287,
+        "chi_after": 0.23018922906918715,
+        "contracts": true,
+        "trial": 3
+      },
+      {
+        "I_PGM_after": 0.02288866273667609,
+        "chi_after": 0.2241402610832266,
+        "contracts": true,
+        "trial": 4
+      },
+      {
+        "I_PGM_after": 0.015392794397176598,
+        "chi_after": 0.1815007070009358,
+        "contracts": true,
+        "trial": 5
+      },
+      {
+        "I_PGM_after": 0.01690658091009973,
+        "chi_after": 0.18939793181194164,
+        "contracts": true,
+        "trial": 6
+      },
+      {
+        "I_PGM_after": 0.013984808559114999,
+        "chi_after": 0.18088594079759357,
+        "contracts": true,
+        "trial": 7
+      },
+      {
+        "I_PGM_after": 0.01706591203120244,
+        "chi_after": 0.18421423915770196,
+        "contracts": true,
+        "trial": 8
+      },
+      {
+        "I_PGM_after": 0.02375115710923864,
+        "chi_after": 0.23376593904296383,
+        "contracts": true,
+        "trial": 9
+      },
+      {
+        "I_PGM_after": 0.01501749338243627,
+        "chi_after": 0.18322555712903665,
+        "contracts": true,
+        "trial": 10
+      },
+      {
+        "I_PGM_after": 0.02337514703590295,
+        "chi_after": 0.21728311422747515,
+        "contracts": true,
+        "trial": 11
+      }
+    ],
+    "worst_fidelity_decrease": 0.0,
+    "worst_kraus_completeness_deviation": 6.661338147750939e-16,
+    "worst_trace_distance_increase": 0.0
+  },
+  "flag_carries_only_depth_spread": {
+    "finding": "the Jensen gap h2(pbar) - <h2(p_i)> is exactly zero when all codewords sit at one depth, so in a fixed-depth codebook the erasure flag carries NO information and all of chi lives in the success branch. It becomes informative only when depths differ, and then it reports the depth spread, not the message",
+    "fixed_depth_flag_bits": 1.1102230246251565e-16,
+    "mixed_depth_flag_bits": 0.09858520284776584,
+    "mixed_residual": 5.551115123125783e-16
+  },
+  "n_codewords": 8,
+  "round": "QSigma-R6d",
+  "sandwich": {
+    "ordering_holds_everywhere": true,
+    "rows": [
+      {
+        "I_PGM": 0.3154649631947971,
+        "chi": 0.8095228343289314,
+        "decomposition_residual": 1.1102230246251565e-16,
+        "flag_bits": 1.1102230246251565e-16,
+        "log2_N": 3.0,
+        "p_bar": 0.8351600230178194,
+        "rho": 0.1,
+        "success_branch_bits": 0.8095228343289314
+      },
+      {
+        "I_PGM": 0.2713463568371927,
+        "chi": 0.79216335155297,
+        "decomposition_residual": 4.440892098500626e-16,
+        "flag_bits": 0.0,
+        "log2_N": 3.0,
+        "p_bar": 0.683939720585721,
+        "rho": 0.25,
+        "success_branch_bits": 0.7921633515529705
+      },
+      {
+        "I_PGM": 0.267863349963695,
+        "chi": 0.8206829961131323,
+        "decomposition_residual": 1.1102230246251565e-16,
+        "flag_bits": 0.0,
+        "log2_N": 3.0,
+        "p_bar": 0.5676676416183062,
+        "rho": 0.5,
+        "success_branch_bits": 0.8206829961131322
+      },
+      {
+        "I_PGM": 0.2724981714763785,
+        "chi": 0.8466767510252199,
+        "decomposition_residual": 6.661338147750939e-16,
+        "flag_bits": 0.0,
+        "log2_N": 3.0,
+        "p_bar": 0.5091578194443669,
+        "rho": 1.0,
+        "success_branch_bits": 0.8466767510252206
+      },
+      {
+        "I_PGM": 0.2705808772878531,
+        "chi": 0.848917825876071,
+        "decomposition_residual": 2.220446049250313e-16,
+        "flag_bits": 1.1102230246251565e-16,
+        "log2_N": 3.0,
+        "p_bar": 0.5001677313139512,
+        "rho": 2.0,
+        "success_branch_bits": 0.8489178258760707
+      },
+      {
+        "I_PGM": 0.26999675550131963,
+        "chi": 0.8485085204254817,
+        "decomposition_residual": 1.1102230246251565e-16,
+        "flag_bits": 0.0,
+        "log2_N": 3.0,
+        "p_bar": 0.5000030721061766,
+        "rho": 3.0,
+        "success_branch_bits": 0.8485085204254819
+      },
+      {
+        "I_PGM": 0.26989998065580906,
+        "chi": 0.8484302684442775,
+        "decomposition_residual": 3.3306690738754696e-16,
+        "flag_bits": 0.0,
+        "log2_N": 3.0,
+        "p_bar": 0.5000000010305767,
+        "rho": 5.0,
+        "success_branch_bits": 0.8484302684442778
+      },
+      {
+        "I_PGM": 0.26989816186419946,
+        "chi": 0.8484287733154361,
+        "decomposition_residual": 7.771561172376096e-16,
+        "flag_bits": 0.0,
+        "log2_N": 3.0,
+        "p_bar": 0.5000000000000062,
+        "rho": 8.0,
+        "success_branch_bits": 0.8484287733154369
+      },
+      {
+        "I_PGM": 0.2698981573453737,
+        "chi": 0.8484287695996557,
+        "decomposition_residual": 3.3306690738754696e-16,
+        "flag_bits": 0.0,
+        "log2_N": 3.0,
+        "p_bar": 0.4999999999999999,
+        "rho": 12.0,
+        "success_branch_bits": 0.8484287695996561
+      }
+    ],
+    "worst_decomposition_residual": 7.771561172376096e-16
+  },
+  "seed": 20260728,
+  "verdict": "ALL GATES PASS"
+}

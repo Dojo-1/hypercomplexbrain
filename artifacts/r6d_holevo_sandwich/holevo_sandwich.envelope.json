@@ -1,0 +1,75 @@
+{
+  "claim_id": "EXP-R6D-HOLEVO_SANDWICH",
+  "command": "PYTHONPATH=src python3 experiments/run_holevo_sandwich.py",
+  "commit_sha": "353122b8ed00bc9fb24ddb0e731c17fd149ac1d2",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "codebook:rho=0.100000,n=8,seed=20260728",
+    "codebook:rho=0.250000,n=8,seed=20260728",
+    "codebook:rho=0.500000,n=8,seed=20260728",
+    "codebook:rho=1.000000,n=8,seed=20260728",
+    "codebook:rho=2.000000,n=8,seed=20260728",
+    "codebook:rho=3.000000,n=8,seed=20260728",
+    "codebook:rho=5.000000,n=8,seed=20260728",
+    "codebook:rho=8.000000,n=8,seed=20260728",
+    "codebook:rho=12.000000,n=8,seed=20260728"
+  ],
+  "observed_result": {
+    "chi_boundary_limit": 0.9999999999999998,
+    "data_processing_holds": true,
+    "sample_size": 9,
+    "verdict": "ALL GATES PASS",
+    "worst_decomposition_residual": 7.771561172376096e-16
+  },
+  "platform": "",
+  "producer": "experiments/run_holevo_sandwich.py",
+  "raw_artifacts": {
+    "artifacts/r6d_holevo_sandwich/holevo_sandwich.json": "sha256:89e04933fbe5abed8cb114ab775cc6d7f41abbb67bfebffbadd9f55f1128e6ac"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    20260728,
+    20260729,
+    100,
+    101,
+    102,
+    103,
+    104
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-28T18:30:30Z",
+  "typed_remainders": [
+    {
+      "carrier": "accessible information",
+      "comparison": "I_acc is a supremum over all POVMs and is NOT estimated here. It is reported as the bracket [I_PGM, chi]. An estimate would be the one number in this round that could be quietly tuned",
+      "kind": "scope_remainder"
+    },
+    {
+      "carrier": "codebook size and geometry",
+      "comparison": "chi depends on N and on the angular spread of the codebook. The depth-monotonicity finding is reported only because it survives a deterministic grid codebook and five independent seeds; no claim is made for arbitrary codebooks or asymptotic N",
+      "kind": "scope_remainder"
+    },
+    {
+      "carrier": "capacity",
+      "comparison": "one-shot, single use, no coding theorem, no regularisation, no advantage",
+      "kind": "scope_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}

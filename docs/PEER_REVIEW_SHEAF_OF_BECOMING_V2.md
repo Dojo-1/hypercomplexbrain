@@ -190,9 +190,19 @@ of that ledger on a unitary substrate: at hyperbolic depth ρ on the (2,2)
 pseudo-sphere, a block-encoded step costs `e^{−4ρ}` in the worst case and
 saturates at 1/2 in the Haar average.
 
-Putting them in the same currency. On the `Q = +1` hyperboloid the volume element
-in swirl coordinates is `cosh ρ · sinh ρ dρ dφ dψ`, so the number of
-distinguishable states out to depth ρ grows as **`e^{2ρ}`**. The cost of reaching
+Putting them in the same currency. On the `Q = +1` pseudo-sphere the volume
+element in swirl coordinates is `cosh ρ · sinh ρ dρ dφ dψ`, so the *source*
+measure out to depth ρ grows as **`e^{2ρ}`**.
+
+> **Corrected at R6b.** This section originally wrote "number of distinguishable
+> states", which assumes what R6b measures. Source measure is not operational
+> distinguishability, and the whole point of R6b is that the second does not
+> inherit the growth of the first: the radial quantum Fisher information decays
+> as `8e^{-4ρ}` and the total operational Fisher volume is the **constant
+> `√2 π³`**. The table below is therefore an upper bound reasoning about measure,
+> not a count of resolvable states — and the real answer is stronger than either
+> row of it. Also: the `Q = +1` pseudo-sphere is Lorentzian (signature (1,2)),
+> not hyperbolic 3-space. See `docs/OPERATIONAL_INFORMATION.md`. The cost of reaching
 depth ρ is **`e^{4ρ}`** shots, worst case. Capacity per shot:
 
 | regime | capacity | cost | capacity/shot |

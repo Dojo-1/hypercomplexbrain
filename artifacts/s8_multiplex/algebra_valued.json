@@ -1,0 +1,143 @@
+{
+  "adjudication_497_vs_489": {
+    "both_inside_interval": true,
+    "external_audit_measured": 489,
+    "s8_comment_claimed": 497,
+    "this_run": 498,
+    "trials": 1000,
+    "verdict": "SAME MEASUREMENT. The interval is about +-3 percentage points, so an 8-count difference on 1000 draws is noise. Neither party was wrong; both quoted a Monte Carlo proportion as a bare integer with no interval and no recorded seed, which is what made it look like a disagreement.",
+    "wilson_95_fraction": [
+      0.4670769344782838,
+      0.5289383731160618
+    ]
+  },
+  "alternating_drive": [
+    {
+      "cycles": 1,
+      "per_cycle": 0.004443210013709254,
+      "total": 0.004443210013709254
+    },
+    {
+      "cycles": 2,
+      "per_cycle": 0.004443208643109604,
+      "total": 0.008886417286219209
+    },
+    {
+      "cycles": 4,
+      "per_cycle": 0.004443203160713543,
+      "total": 0.01777281264285417
+    },
+    {
+      "cycles": 8,
+      "per_cycle": 0.004443181231169882,
+      "total": 0.035545449849359055
+    },
+    {
+      "cycles": 16,
+      "per_cycle": 0.004443093513644635,
+      "total": 0.07108949621831416
+    },
+    {
+      "cycles": 32,
+      "per_cycle": 0.0044427426539339135,
+      "total": 0.14216776492588523
+    },
+    {
+      "cycles": 64,
+      "per_cycle": 0.004441339381325586,
+      "total": 0.2842457204048375
+    }
+  ],
+  "alternating_leading_order_prediction": 0.004444444444444445,
+  "alternating_note": "linear to leading order; ||U^N - I|| is a chord and falls below the arc by O((N phi)^2), so per-cycle must drift downward. It does, by 4.2e-04 over six doublings. The N=1 value sits 2.8e-04 below theta^2 ||[G_A,G_B]||, which is the O(theta) BCH remainder of the group commutator.",
+  "alternating_per_cycle_at_N1": 0.004443210013709254,
+  "alternating_relative_drift_1_to_64": 0.0004210092203376497,
+  "alternating_relative_error_at_N1": 0.00027774691541810297,
+  "audit_finding": "commits 3984079, c72d06b, fe6dfdc added zero executable lines; the measurements they report were never persisted. Finding is the external audit's.",
+  "checks": {
+    "algebra_splits_7_21_28": true,
+    "control_median_is_deficient": true,
+    "diamond_converges": true,
+    "dispute_resolved": true,
+    "drive_drift_is_curvature_not_noise": true,
+    "drive_leading_order_matches": true,
+    "fano_reaches_full_rank": true,
+    "orthogonality_holds": true
+  },
+  "diamond_converges_as": "O(theta); six-figure agreement needs theta ~ 1e-3",
+  "diamond_holonomy_convergence": [
+    {
+      "abs_error": 0.007887201298497404,
+      "matching_digits": 2,
+      "theta": 0.2,
+      "value": 1.7698905764792803
+    },
+    {
+      "abs_error": 0.0019744309360201218,
+      "matching_digits": 2,
+      "theta": 0.1,
+      "value": 1.7758033468417576
+    },
+    {
+      "abs_error": 0.0004937722940765443,
+      "matching_digits": 3,
+      "theta": 0.05,
+      "value": 1.7772840054837011
+    },
+    {
+      "abs_error": 7.901094102935602e-05,
+      "matching_digits": 4,
+      "theta": 0.02,
+      "value": 1.7776987668367483
+    },
+    {
+      "abs_error": 1.9752998625444107e-05,
+      "matching_digits": 4,
+      "theta": 0.01,
+      "value": 1.7777580247791522
+    },
+    {
+      "abs_error": 4.938266102927358e-06,
+      "matching_digits": 5,
+      "theta": 0.005,
+      "value": 1.7777728395116748
+    },
+    {
+      "abs_error": 1.9753074842476792e-07,
+      "matching_digits": 6,
+      "theta": 0.001,
+      "value": 1.7777775802470293
+    }
+  ],
+  "exact_commutator_norm": 1.7777777777777777,
+  "random_control": {
+    "full_rank_count": 498,
+    "full_rank_fraction": 0.498,
+    "max_rank": 21,
+    "median_rank": 15.0,
+    "min_rank": 10,
+    "seed": 20260728,
+    "trials": 1000,
+    "wilson_95": [
+      0.4670769344782838,
+      0.5289383731160618
+    ]
+  },
+  "rank_decomposition": {
+    "crosstalk_rank": 21,
+    "n_channels": 7,
+    "n_pairs": 21,
+    "signal_rank": 7,
+    "so8_dim": 28,
+    "splits_the_algebra": true,
+    "union_rank": 28
+  },
+  "round": "S8 (addenda, implemented)",
+  "signal_crosstalk_projection": {
+    "n_products": 147,
+    "worst_abs_inner": 3.289549702593056e-17,
+    "worst_normalised_inner": 1.1331166295920986e-17
+  },
+  "theta_squared_times_norm": 0.004444444444444445,
+  "verdict": "ALL RECONFIRMED"
+}
