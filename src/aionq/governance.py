@@ -1089,6 +1089,29 @@ CLAIMS = [
                        "same failure mode this repository has now recorded seven "
                        "times under a different name: the correct shape with the "
                        "old comparison still inside it")),
+    # ---- Round S9: finite-size fractional-Hall probe -------------------------
+    Claim("FQHE-S9-FINITE_SIZE", EvidenceTag.HYPOTHESIS,
+          "At the fixed 6x4, alpha=1/4, N_b=3 hard-core-boson Hofstadter "
+          "parameter point, the two lowest states form an isolated rank-two "
+          "bundle whose determinant-line Chern number has magnitude one and "
+          "the same orientation as the filled-band integer-Hall control.",
+          artifact="manifests/s9_fqhe_preregistration.json",
+          kill_condition="Void the instrument if any static, atomic, one-particle "
+                         "or integer-Hall control fails. Kill this parameter "
+                         "point if the rank-two bundle is not isolated, an "
+                         "overlap is singular, the FHS result is nonintegral or "
+                         "mesh-dependent, its magnitude/orientation disagrees "
+                         "with the preregistration, or a local U(2) frame "
+                         "scramble changes it.",
+          assumptions=("The manifest was committed before any S9 control or "
+                       "target diagonalization.",
+                       "A pass is only a finite-size numerical signature at one "
+                       "fixed parameter point; it is not a thermodynamic phase "
+                       "proof or a Hall-transport measurement.",
+                       "The determinant-link FHS instrument acts on a "
+                       "degenerate rank-two Berry bundle. Flat graph-sheaf "
+                       "monodromy and the rank-one identity helper are not "
+                       "substitutes for this calculation.")),
     # ---- Round R4: the witnessed reproducibility membrane -------------------
     Claim("MATH-R4-OPAQUE_MONOTONICITY", EvidenceTag.PROVED,
           "Appending an instruction to a circuit cannot DECREASE the reported "
