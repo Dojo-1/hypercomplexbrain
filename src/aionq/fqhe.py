@@ -75,9 +75,16 @@ class FQHEEigensolverError(RuntimeError):
     undeclared solver-parameter retry.
     """
 
-    def __init__(self, message: str, *, partial_eigenpairs: int = 0) -> None:
+    def __init__(
+        self,
+        message: str,
+        *,
+        partial_eigenpairs: int = 0,
+        failure_kind: str = "EIGENSOLVER",
+    ) -> None:
         super().__init__(message)
         self.partial_eigenpairs = int(partial_eigenpairs)
+        self.failure_kind = str(failure_kind)
 
 
 class FQHEResourceLimit(RuntimeError):
@@ -193,12 +200,13 @@ class EigensolverConfig:
 
 @dataclass(frozen=True)
 class Eigensystem:
-    """Sorted eigenpairs with solver-independent numerical diagnostics."""
+    """Rayleigh--Ritz eigenpairs and their recomputed diagnostics."""
 
     eigenvalues: np.ndarray
     eigenvectors: np.ndarray
     residual_norms: np.ndarray
     orthonormality_defect: float
+    span_preservation_sine: float
 
 
 @dataclass(frozen=True)
@@ -599,7 +607,13 @@ def lowest_eigensystem(
     *,
     v0: np.ndarray,
 ) -> Eigensystem:
-    """Compute the required low-energy eigensystem without adaptive retry."""
+    """Compute and deterministically repair the returned full Ritz span.
+
+    Exactly one ARPACK call supplies ``config.k`` raw vectors.  The committed
+    S9 correction then performs reduced QR on that *complete* span, checks its
+    numerical rank, diagonalizes ``Q† H Q``, and recomputes every Ritz value,
+    residual, and Gram diagnostic.  No retry or solver-parameter change occurs.
+    """
 
     if not sparse.issparse(hamiltonian):
         raise ValueError("hamiltonian must be a SciPy sparse matrix")
@@ -644,20 +658,110 @@ def lowest_eigensystem(
             partial_eigenpairs=partial,
         ) from error
 
-    eigenvalues = np.asarray(eigenvalues, dtype=float)
-    eigenvectors = np.asarray(eigenvectors, dtype=np.complex128)
+    raw_eigenvalues = np.asarray(eigenvalues, dtype=float)
+    raw_eigenvectors = np.asarray(eigenvectors, dtype=np.complex128)
     if (
-        eigenvalues.shape != (config.k,)
-        or eigenvectors.shape != (dimension, config.k)
+        raw_eigenvalues.shape != (config.k,)
+        or raw_eigenvectors.shape != (dimension, config.k)
     ):
         raise FQHEEigensolverError(
             "eigensolver returned fewer eigenpairs than required",
-            partial_eigenpairs=int(eigenvalues.size),
+            partial_eigenpairs=int(raw_eigenvalues.size),
+            failure_kind="MISSING_EIGENPAIRS",
         )
+    if not np.all(np.isfinite(raw_eigenvalues)) or not np.all(
+        np.isfinite(raw_eigenvectors)
+    ):
+        raise FQHEEigensolverError(
+            "eigensolver returned non-finite values",
+            partial_eigenpairs=config.k,
+            failure_kind="NONFINITE_RITZ_OUTPUT",
+        )
+
+    # The SVD is used only to evaluate numerical rank and to obtain an
+    # independent orthonormal basis for the principal-angle diagnostic.  The
+    # repaired frame itself is the deterministic reduced QR frame required by
+    # the correction manifest.
+    try:
+        raw_left_singular, raw_singular_values, _ = np.linalg.svd(
+            raw_eigenvectors,
+            full_matrices=False,
+        )
+        numerical_rank = int(np.linalg.matrix_rank(raw_eigenvectors))
+        q, _ = np.linalg.qr(raw_eigenvectors, mode="reduced")
+    except np.linalg.LinAlgError as error:
+        raise FQHEEigensolverError(
+            "Ritz-span factorization failed",
+            partial_eigenpairs=config.k,
+            failure_kind="RITZ_SPAN_FACTORIZATION",
+        ) from error
+    if numerical_rank != config.k:
+        raise FQHEEigensolverError(
+            "returned Ritz span lost numerical rank: "
+            f"expected {config.k}, measured {numerical_rank}",
+            partial_eigenpairs=config.k,
+            failure_kind="RITZ_SPAN_RANK_LOSS",
+        )
+    if (
+        raw_singular_values.shape != (config.k,)
+        or q.shape != (dimension, config.k)
+        or not np.all(np.isfinite(raw_singular_values))
+        or not np.all(np.isfinite(q))
+    ):
+        raise FQHEEigensolverError(
+            "Ritz-span factorization returned non-finite output",
+            partial_eigenpairs=config.k,
+            failure_kind="NONFINITE_RITZ_SPAN",
+        )
+
+    raw_span_basis = raw_left_singular[:, : config.k]
+    span_residual = q - raw_span_basis @ (
+        raw_span_basis.conj().T @ q
+    )
+    span_preservation_sine = float(np.linalg.norm(span_residual, ord=2))
+    span_roundoff_limit = (
+        128.0
+        * float(np.finfo(np.float64).eps)
+        * max(raw_eigenvectors.shape)
+    )
+    if (
+        not math.isfinite(span_preservation_sine)
+        or span_preservation_sine > span_roundoff_limit
+    ):
+        raise FQHEEigensolverError(
+            "QR did not preserve the returned Ritz span within numerical "
+            f"roundoff: sine={span_preservation_sine:.3e}, "
+            f"limit={span_roundoff_limit:.3e}",
+            partial_eigenpairs=config.k,
+            failure_kind="RITZ_SPAN_NOT_PRESERVED",
+        )
+
+    projected = q.conj().T @ (matrix @ q)
+    projected = 0.5 * (projected + projected.conj().T)
+    if not np.all(np.isfinite(projected)):
+        raise FQHEEigensolverError(
+            "projected Ritz Hamiltonian is non-finite",
+            partial_eigenpairs=config.k,
+            failure_kind="NONFINITE_PROJECTED_HAMILTONIAN",
+        )
+    try:
+        eigenvalues, rotations = np.linalg.eigh(projected)
+    except np.linalg.LinAlgError as error:
+        raise FQHEEigensolverError(
+            "Rayleigh--Ritz diagonalization failed",
+            partial_eigenpairs=config.k,
+            failure_kind="RAYLEIGH_RITZ_DIAGONALIZATION",
+        ) from error
+    eigenvalues = np.asarray(eigenvalues, dtype=float)
+    eigenvectors = np.asarray(q @ rotations, dtype=np.complex128)
     if not np.all(np.isfinite(eigenvalues)) or not np.all(
         np.isfinite(eigenvectors)
     ):
-        raise FQHEEigensolverError("eigensolver returned non-finite values")
+        raise FQHEEigensolverError(
+            "Rayleigh--Ritz repair returned non-finite output",
+            partial_eigenpairs=config.k,
+            failure_kind="NONFINITE_RAYLEIGH_RITZ_OUTPUT",
+        )
     order = np.argsort(eigenvalues, kind="stable")
     eigenvalues = eigenvalues[order]
     eigenvectors = eigenvectors[:, order]
@@ -680,6 +784,7 @@ def lowest_eigensystem(
         eigenvectors=eigenvectors,
         residual_norms=residual_norms,
         orthonormality_defect=orthonormality_defect,
+        span_preservation_sine=span_preservation_sine,
     )
 
 

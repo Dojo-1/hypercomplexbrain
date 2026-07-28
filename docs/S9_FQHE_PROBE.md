@@ -198,18 +198,36 @@ focused verification first:
 python -m pytest -q tests/test_fqhe.py --basetemp=.agent/pytest-s9-fqhe
 ```
 
-Then run the controls-first probe:
+The historical first run used:
 
 ```powershell
-python experiments/run_fqhe_probe.py
+python experiments/run_fqhe_probe.py --manifest manifests/s9_fqhe_preregistration.json
 ```
 
-The runner is expected to write:
+At the correction implementation commit, the one authorized corrected rerun
+must name both frozen inputs:
+
+```powershell
+python experiments/run_fqhe_probe.py `
+  --manifest manifests/s9_fqhe_preregistration.json `
+  --correction manifests/s9_fqhe_instrument_correction.json
+```
+
+The original runner wrote:
 
 ```text
 artifacts/s9_fqhe/fqhe_probe.json
 artifacts/s9_fqhe/fqhe_probe.envelope.json
 ```
+
+The correction runner verifies those files without modifying them and writes:
+
+```text
+artifacts/s9_fqhe/fqhe_probe.corrected.json
+artifacts/s9_fqhe/fqhe_probe.corrected.envelope.json
+```
+
+It refuses to overwrite an existing corrected output.
 
 Validate the focused and repository-wide contracts after artifact generation:
 
@@ -281,6 +299,18 @@ the initial result. A separately preregistered numerical-instrument correction
 may repair the degenerate eigenspace frame and tri-state ledger, but it may not
 change the model, mesh, seed, thresholds, width definition, or the fact that
 this original run was killed.
+
+The committed amendment is
+[`manifests/s9_fqhe_instrument_correction.json`](../manifests/s9_fqhe_instrument_correction.json).
+It authorizes exactly one rerun with deterministic full-three-vector reduced QR
+followed by Rayleigh--Ritz diagonalization of `Q†HQ`. This repairs only the
+returned basis inside the same Ritz span. The runner recomputes all three Ritz
+values, residuals, the Gram defect, and the span-preservation diagnostic; it
+does not retry ARPACK. Gate aggregation now preserves per-mesh `PASS`/`FAIL`
+states and uses `INCOMPLETE` or `NOT_RUN` for missing downstream evidence.
+Kill labels may arise only from an evaluated `FAIL`. Gauge attacks run on every
+completed mesh independently, while global H3 remains incomplete unless both
+required target meshes are admitted.
 
 ## 7. Interpretation ceiling
 

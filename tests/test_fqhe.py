@@ -237,6 +237,76 @@ def test_nearly_degenerate_eigenspace_is_compared_by_projector():
     assert np.allclose(projector_left, projector_right, atol=1e-11)
 
 
+def test_exact_degenerate_nonorthogonal_return_is_repaired_in_same_span(
+    monkeypatch,
+):
+    matrix = sparse.diags(
+        [0.0, 0.0, 2.0, 3.0, 4.0],
+        format="csr",
+        dtype=np.complex128,
+    )
+    root_two = np.sqrt(2.0)
+    raw = np.zeros((5, 3), dtype=np.complex128)
+    raw[0, 0] = 1.0
+    raw[0, 1] = 1.0 / root_two
+    raw[1, 1] = 1.0 / root_two
+    raw[2, 2] = 1.0
+    calls = 0
+
+    def nonorthogonal_return(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return np.array([0.0, 0.0, 2.0]), raw.copy()
+
+    monkeypatch.setattr(fqhe_module, "eigsh", nonorthogonal_return)
+    result = fqhe_module.lowest_eigensystem(
+        matrix,
+        EigensolverConfig(k=3, ncv=4),
+        v0=np.ones(5, dtype=np.complex128),
+    )
+
+    raw_gram_defect = np.max(np.abs(raw.conj().T @ raw - np.eye(3)))
+    expected_projector = np.diag([1.0, 1.0, 1.0, 0.0, 0.0])
+    repaired_projector = result.eigenvectors @ result.eigenvectors.conj().T
+    assert calls == 1
+    assert raw_gram_defect > 0.7
+    assert np.allclose(result.eigenvalues, [0.0, 0.0, 2.0], atol=1e-14)
+    assert np.max(result.residual_norms) <= 1e-14
+    assert result.orthonormality_defect <= 1e-14
+    assert result.span_preservation_sine <= 1e-14
+    assert np.allclose(repaired_projector, expected_projector, atol=1e-14)
+
+
+def test_rank_loss_in_raw_ritz_span_is_typed_without_retry(monkeypatch):
+    matrix = sparse.diags(
+        [0.0, 0.0, 2.0, 3.0, 4.0],
+        format="csr",
+        dtype=np.complex128,
+    )
+    raw = np.zeros((5, 3), dtype=np.complex128)
+    raw[0, 0] = 1.0
+    raw[0, 1] = 1.0
+    raw[2, 2] = 1.0
+    calls = 0
+
+    def rank_deficient_return(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return np.array([0.0, 0.0, 2.0]), raw.copy()
+
+    monkeypatch.setattr(fqhe_module, "eigsh", rank_deficient_return)
+    with pytest.raises(FQHEEigensolverError) as captured:
+        fqhe_module.lowest_eigensystem(
+            matrix,
+            EigensolverConfig(k=3, ncv=4),
+            v0=np.ones(5, dtype=np.complex128),
+        )
+
+    assert calls == 1
+    assert captured.value.partial_eigenpairs == 3
+    assert captured.value.failure_kind == "RITZ_SPAN_RANK_LOSS"
+
+
 def test_bundle_spectral_report_uses_global_width_and_minimum_gap():
     levels = np.array(
         [
@@ -341,6 +411,82 @@ def test_preregistration_blob_is_frozen_before_the_runner():
     assert manifest["formal_model"]["lattice"]["Lx"] == 6
     assert manifest["formal_model"]["particles"]["hilbert_dimension"] == 2024
     assert digest.startswith("sha256:")
+
+
+def test_correction_blob_and_initial_evidence_are_frozen():
+    correction, digest = fqhe_runner._load_correction(
+        fqhe_runner.CORRECTION
+    )
+
+    assert correction["supersedes_no_evidence"]
+    assert correction["corrected_execution_and_ledger"]["rerun_count"] == 1
+    assert (
+        fqhe_runner.file_digest(fqhe_runner.INITIAL_OUT_FILE)
+        == correction["prior_record"]["initial_artifact_digest"]
+    )
+    assert digest.startswith("sha256:")
+
+
+def test_partial_mesh_ledger_preserves_evaluated_states():
+    coarse = {
+        "status": "MEASURED",
+        "gates": {
+            "S9-G5": True,
+            "S9-G6": False,
+            "S9-G7": True,
+            "S9-G8": True,
+            "S9-G9": True,
+        },
+    }
+    confirmation = {
+        "status": "NOT_RUN",
+        "reason": "coarse isolation failed",
+    }
+
+    frame = fqhe_runner._aggregate_mesh_gate(
+        "S9-G5", coarse, confirmation
+    )
+    isolation = fqhe_runner._aggregate_mesh_gate(
+        "S9-G6", coarse, confirmation
+    )
+    overlap = fqhe_runner._aggregate_mesh_gate(
+        "S9-G7", coarse, confirmation
+    )
+
+    assert frame["status"] == "INCOMPLETE"
+    assert frame["pass"] is None
+    assert frame["mesh_states"]["7x7"]["status"] == "PASS"
+    assert frame["mesh_states"]["9x9"]["status"] == "NOT_RUN"
+    assert isolation["status"] == "FAIL"
+    assert isolation["mesh_states"]["7x7"]["status"] == "FAIL"
+    assert overlap["status"] == "INCOMPLETE"
+    assert overlap["mesh_states"]["7x7"]["status"] == "PASS"
+
+
+def test_kill_labels_fire_only_for_evaluated_failures():
+    ledger = {
+        gate: fqhe_runner._gate_state("NOT_RUN")
+        for gate in (
+            "S9-G5",
+            "S9-G6",
+            "S9-G7",
+            "S9-G8",
+            "S9-G9",
+            "S9-G10",
+            "S9-G11",
+        )
+    }
+    ledger["S9-G5"] = fqhe_runner._gate_state("INCOMPLETE")
+    ledger["S9-G6"] = fqhe_runner._gate_state("FAIL")
+    ledger["S9-G7"] = fqhe_runner._gate_state("INCOMPLETE")
+
+    kills = fqhe_runner._triggered_kills(
+        ledger,
+        h1_status="KILLED",
+        h2_status="NOT_RUN",
+    )
+
+    assert kills == ["KILLED_BUNDLE_ISOLATION"]
 
 
 def test_preregistered_control_stack_passes_without_running_target():
