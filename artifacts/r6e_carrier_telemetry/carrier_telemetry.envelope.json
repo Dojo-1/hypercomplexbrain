@@ -1,0 +1,72 @@
+{
+  "claim_id": "EXP-R6E-CARRIER_TELEMETRY",
+  "command": "PYTHONPATH=src python3 experiments/run_carrier_telemetry.py",
+  "commit_sha": "35b2277a24be618124b3ed0540dd43ea2b948602",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "clean:rho=0.200000,phi=0.000000,psi=0.000000",
+    "clean:rho=0.250000,phi=0.300000,psi=0.200000",
+    "clean:rho=0.300000,phi=0.600000,psi=0.400000",
+    "clean:rho=0.350000,phi=0.900000,psi=0.600000",
+    "telescope:n=1",
+    "telescope:n=2",
+    "telescope:n=3",
+    "telescope:n=5",
+    "telescope:n=8",
+    "fault:false_ascent",
+    "fault:energy_leakage",
+    "fault:bridge_absorption"
+  ],
+  "observed_result": {
+    "clean_trace_silent": true,
+    "confusion_diagonal": true,
+    "sample_size": 11,
+    "verdict": "ALL GATES PASS",
+    "worst_telescoping_diff": 0.0
+  },
+  "platform": "",
+  "producer": "experiments/run_carrier_telemetry.py",
+  "raw_artifacts": {
+    "artifacts/r6e_carrier_telemetry/carrier_telemetry.json": "sha256:27cccd7d9795600b4e4ccc94aeabcbd1132adbf53a668c2e9c842aae0a74bf07"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    20260728
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-28T20:30:36Z",
+  "typed_remainders": [
+    {
+      "carrier": "usefulness",
+      "comparison": "this is an instrument. Nothing in this round shows it finds a fault nobody already knew about; every fault it caught was injected on purpose. Its value is S until it catches one that was not",
+      "kind": "instrument_remainder"
+    },
+    {
+      "carrier": "'energy'",
+      "comparison": "kappa is a log-norm defect in nats with no physical content. The word is retained only because the supplied schema uses it, and a reader who takes it for joules will be wrong",
+      "kind": "naming_remainder"
+    },
+    {
+      "carrier": "the atlas cross-check",
+      "comparison": "their numbers reproduce this repository's operators, which raises the rank of THEIR claim, not of this envelope. Their module is unpushed and their artifact is an uploaded file that is not committed here",
+      "kind": "witness_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}
