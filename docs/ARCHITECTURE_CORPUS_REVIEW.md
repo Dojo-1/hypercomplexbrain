@@ -184,3 +184,13 @@ Public and unread: `QuantumNNSNR`, `aigit`.
 Everything above is read from README and claims files, not from source or
 execution. That is one tier below what this repository asks of itself, and the
 review is tagged accordingly: **M-reported, not recomputed.**
+
+---
+
+**Superseded in part.** `ARCHITECTURE_CORPUS_REVIEW_II.md` reads the CI
+workflow and dependency manifest of `connection_laplacian_lean` rather than its
+README, and revises two things stated above: that repository, not λSAT, holds
+the account's strongest verifier, and the `external_checker` field proposed in
+"What I would move between them" cannot be a single string. The repositories
+listed as "Not read" here are private (404 unauthenticated); the second review
+retracts any inference drawn from their descriptions.
