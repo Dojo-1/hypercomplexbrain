@@ -381,7 +381,13 @@ def random_control_summary(
     trials: int,
     seed: int,
 ) -> dict:
-    """Run the preregistered matched random-triple control."""
+    """Run the preregistered random-support control.
+
+    The control matches the Fano construction only on the number of distinct
+    triple supports.  It is not conditioned on signal rank.  The joint
+    signal/crosstalk rank contingency is therefore part of the returned
+    evidence rather than something inferred from marginal rank counts.
+    """
 
     if trials <= 0:
         raise ValueError("trials must be positive")
@@ -392,6 +398,9 @@ def random_control_summary(
     joint_ranks = []
     cross_grams = []
     finite_condition_numbers = []
+    rank_contingency: dict[tuple[int, int], int] = {}
+    exterior_square_rank_mismatches = 0
+    joint_sum_rank_mismatches = 0
     first_rank_deficient = None
 
     for trial in range(trials):
@@ -402,6 +411,18 @@ def random_control_summary(
         signal_ranks.append(report["signal_rank"])
         crosstalk_ranks.append(report["crosstalk_rank"])
         joint_ranks.append(report["joint_rank"])
+        rank_key = (report["signal_rank"], report["crosstalk_rank"])
+        rank_contingency[rank_key] = rank_contingency.get(rank_key, 0) + 1
+        expected_crosstalk_rank = (
+            report["signal_rank"] * (report["signal_rank"] - 1) // 2
+        )
+        exterior_square_rank_mismatches += int(
+            report["crosstalk_rank"] != expected_crosstalk_rank
+        )
+        joint_sum_rank_mismatches += int(
+            report["joint_rank"]
+            != report["signal_rank"] + report["crosstalk_rank"]
+        )
         cross_grams.append(report["max_abs_cross_gram"])
         if report["joint_condition_number"] is not None:
             finite_condition_numbers.append(report["joint_condition_number"])
@@ -409,6 +430,7 @@ def random_control_summary(
             first_rank_deficient = {
                 "trial": trial,
                 "triples": [list(triple) for triple in triples],
+                "signal_rank": report["signal_rank"],
                 "crosstalk_rank": report["crosstalk_rank"],
                 "joint_rank": report["joint_rank"],
             }
@@ -423,19 +445,60 @@ def random_control_summary(
     return {
         "trials": trials,
         "seed": seed,
+        "matching_scope": (
+            "Seven distinct 3-subsets sampled without replacement; not "
+            "conditioned on signal rank."
+        ),
         "signal_rank_counts": counts(signal_ranks),
         "crosstalk_rank_counts": counts(crosstalk_ranks),
         "joint_rank_counts": counts(joint_ranks),
-        "full_crosstalk_rank_count": int(np.count_nonzero(np.asarray(crosstalk_ranks) == 21)),
+        "signal_crosstalk_rank_contingency": [
+            {
+                "signal_rank": signal_rank,
+                "crosstalk_rank": crosstalk_rank,
+                "count": count,
+            }
+            for (signal_rank, crosstalk_rank), count
+            in sorted(rank_contingency.items())
+        ],
+        "observed_rank_relation": {
+            "relation": "rank(C) = choose(rank(S), 2)",
+            "mismatch_count": exterior_square_rank_mismatches,
+            "scope": f"the {trials} seeded random-support controls only",
+        },
+        "observed_joint_rank_relation": {
+            "relation": "rank([S C]) = rank(S) + rank(C)",
+            "mismatch_count": joint_sum_rank_mismatches,
+            "scope": f"the {trials} seeded random-support controls only",
+        },
+        "full_signal_rank_count": int(
+            np.count_nonzero(np.asarray(signal_ranks) == 7)
+        ),
+        "full_crosstalk_rank_count": int(
+            np.count_nonzero(np.asarray(crosstalk_ranks) == 21)
+        ),
         "full_joint_rank_count": int(np.count_nonzero(np.asarray(joint_ranks) == 28)),
         "median_crosstalk_rank": float(np.median(crosstalk_ranks)),
         "max_cross_gram": float(np.max(cross_grams)),
         "finite_joint_condition_count": len(finite_condition_numbers),
+        "finite_joint_condition_minimum": (
+            float(np.min(finite_condition_numbers))
+            if finite_condition_numbers
+            else None
+        ),
         "finite_joint_condition_median": (
             float(np.median(finite_condition_numbers))
             if finite_condition_numbers
             else None
         ),
+        "finite_joint_condition_maximum": (
+            float(np.max(finite_condition_numbers))
+            if finite_condition_numbers
+            else None
+        ),
+        "finite_joint_condition_numbers": [
+            float(value) for value in finite_condition_numbers
+        ],
         "first_rank_deficient": first_rank_deficient,
     }
 
@@ -457,7 +520,9 @@ def find_rank_deficient_control(summary: dict) -> dict:
     return {
         "trial": record["trial"],
         "triples": record["triples"],
+        "signal_rank": int(record["signal_rank"]),
         "crosstalk_rank": rank,
+        "joint_rank": int(record["joint_rank"]),
         "nullity": basis.n_crosstalk - rank,
         "smallest_reported_singular_value": float(singular[-1]),
         "coefficient_distance": float(np.linalg.norm(null_vector)),

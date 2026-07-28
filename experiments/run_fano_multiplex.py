@@ -290,7 +290,7 @@ if __name__ == "__main__":
 # a closed 4-cycle, forward on each channel then back -- in the tensor (adjoint)
 # representation rather than the vector one, where a central factor dies.
 #
-# Measured, at theta = pi/4 over all 21 Fano channel pairs:
+# Historical unverified report, at theta = pi/4 over all 21 Fano channel pairs:
 #
 #     vector rep   ||W - I||        1.023492   (identical across all 21 pairs)
 #     tensor rep   ||W (x) W - I||  4.026401   (identical across all 21 pairs)
@@ -340,7 +340,7 @@ if __name__ == "__main__":
 # commutator -- and the whole of S8 up to this point treated that commutator as
 # the DEFECT to be minimised.  This inverts it: the crosstalk is the carrier.
 #
-# Measured, theta = 0.05, Fano channels 0 and 1:
+# Historical unverified report, theta = 0.05, Fano channels 0 and 1:
 #
 #       N        signal ||W-I||        signal / N
 #       1        4.443210e-03          4.443210e-03
@@ -395,28 +395,34 @@ if __name__ == "__main__":
 #
 #     max |<G_C, [G_A,G_B]>| over all 7 channels x 21 pairs  =  4.23e-17
 #
-# The crosstalk is EXACTLY ORTHOGONAL to the signal space.  And the dimensions
-# close: dim so(8) = 28, channels span 7, the 21 pairwise commutators span 21,
-# 7 + 21 = 28, and rank(signal + crosstalk) = 28.  An exact orthogonal splitting
-# of the whole Lie algebra into a signal block and an interference block.
+# The executable successor measures numerical orthogonality to 4.23e-17.  And
+# the dimensions close numerically: dim so(8) = 28, channels span 7, the 21
+# pairwise commutators span 21, 7 + 21 = 28, and rank(signal + crosstalk) = 28.
+# This is a well-conditioned numerical splitting under the declared tolerance,
+# not a symbolic proof of exact orthogonality.
 #
 # THE PREREGISTERED CONTROL says half of that is generic.  With seed 20260727:
 #
 #     signal PERP crosstalk                 1000/1000     <- NOT a Fano property
-#     crosstalk rank 21 (independent modes)  489/1000     <- discriminating
-#     full 7+21 split of so(8)               489/1000     median rank 15
+#     signal/crosstalk rank 7/21             489/1000
+#     full 7+21 split of so(8)               489/1000
+#     rank(C)=choose(rank(S),2) mismatches          0
 #
-# So the orthogonality is real and belongs to the construction, not the design;
-# claiming it as a Fano result would have been the prettiest error of this round.
-# What the design DOES buy is full rank: Fano reaches 21 independent crosstalk
-# modes where a random system does so about half the time and typically lands at
-# 15, leaving six directions of interference it cannot tell apart.
+# So numerical orthogonality belongs to the construction, not the design.  The
+# original comparative rank interpretation was also too strong: every sampled
+# full-signal-rank control had crosstalk rank 21, and every deficient crosstalk
+# rank was explained by deficient signal rank.  This relaxed control does not
+# show that Fano uniquely buys full rank.
 #
-# That is the decoder-relevant property, and it is what the scalar norm hid.
-# Twenty-one independent modes orthogonal to the signal means the interference is
-# invertible under the declared LOCAL LINEAR observation y = S a + C b + eps:
+# The primary Fano result remains decoder-relevant: twenty-one independent modes
+# numerically orthogonal to the signal mean the interference is invertible under
+# the declared LOCAL LINEAR observation y = S a + C b + eps:
 # 21 measurements, 21 unknowns, no contamination of the 7 channel coordinates.
 # A rank-15 system cannot do that under this model whatever its magnitudes look
-# like.  This does not establish global recovery from finite group products.
+# like.  But this particular rank-deficient control also loses signal modes, so
+# it is not a crosstalk-only comparison.  A post-hoc descriptive check found the
+# Fano joint basis better conditioned than all 489 full-rank sampled controls;
+# that observation was not preregistered.  None of this establishes global
+# recovery from finite group products.
 #
 # The scalar was hiding a rank.

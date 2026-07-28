@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -19,10 +22,17 @@ from aionq.fano_decoder import (
     so8_matrix,
 )
 
+ROOT = Path(__file__).resolve().parent.parent
+
 
 @pytest.fixture(scope="module")
 def fano_basis():
     return algebra_basis(fano_lines())
+
+
+@pytest.fixture(scope="module")
+def random_controls():
+    return random_control_summary(trials=1000, seed=20260727)
 
 
 def test_so8_coordinate_map_is_a_frobenius_isometry():
@@ -83,9 +93,16 @@ def test_noiseless_joint_and_split_decoders_recover_all_coefficients(fano_basis)
 
 
 def test_scalar_norm_collapses_distinct_algebra_directions(fano_basis):
-    left = fano_basis.crosstalk[:, 0]
-    right = fano_basis.crosstalk[:, 1]
+    left = (
+        fano_basis.crosstalk[:, 0]
+        * fano_basis.crosstalk_raw_norms[0]
+    )
+    right = (
+        fano_basis.crosstalk[:, 1]
+        * fano_basis.crosstalk_raw_norms[1]
+    )
     assert np.isclose(np.linalg.norm(left), np.linalg.norm(right), atol=1e-14)
+    assert np.isclose(np.linalg.norm(left), 16.0 / 9.0, atol=1e-14)
     assert np.linalg.norm(left - right) > 0.5
 
 
@@ -135,10 +152,64 @@ def test_noise_rmse_matches_the_actual_decoder_covariance(fano_basis):
         assert abs(row["empirical_over_expected"] - 1.0) <= 0.15
 
 
-def test_rank_deficient_control_has_an_exact_coefficient_alias():
-    summary = random_control_summary(trials=1000, seed=20260727)
-    alias = find_rank_deficient_control(summary)
+def test_random_control_persists_signal_crosstalk_rank_confound(
+    random_controls,
+):
+    contingency = random_controls["signal_crosstalk_rank_contingency"]
+    assert sum(row["count"] for row in contingency) == 1000
+    assert random_controls["observed_rank_relation"]["mismatch_count"] == 0
+    assert (
+        random_controls["observed_joint_rank_relation"]["mismatch_count"]
+        == 0
+    )
+    for row in contingency:
+        assert row["crosstalk_rank"] == (
+            row["signal_rank"] * (row["signal_rank"] - 1) // 2
+        )
+    assert (
+        random_controls["full_signal_rank_count"]
+        == random_controls["full_crosstalk_rank_count"]
+        == random_controls["full_joint_rank_count"]
+    )
+
+
+def test_rank_deficient_control_has_an_exact_coefficient_alias(
+    random_controls,
+):
+    alias = find_rank_deficient_control(random_controls)
+    assert alias["signal_rank"] < 7
     assert alias["crosstalk_rank"] < 21
+    assert alias["crosstalk_rank"] == (
+        alias["signal_rank"] * (alias["signal_rank"] - 1) // 2
+    )
     assert alias["nullity"] >= 1
     assert alias["coefficient_distance"] >= 1.0 - 1e-12
     assert alias["observation_distance"] <= 1e-10
+
+
+def test_persisted_artifact_labels_post_hoc_and_control_verdicts():
+    payload = json.loads(
+        (ROOT / "artifacts/s8_decoder/fano_decoder.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    control = payload["matched_random_control"]
+    conditioning = payload["post_hoc_conditioning"]
+    scalar = payload["scalar_collapse_attack"]
+    provenance = payload["runtime_provenance"]
+
+    assert control["observed_rank_relation"]["mismatch_count"] == 0
+    assert control["rank_interpretation"]["status"] == (
+        "SIGNAL_RANK_CONFOUNDED"
+    )
+    assert conditioning["status"] == (
+        "POST_HOC_DESCRIPTIVE_NOT_PREREGISTERED"
+    )
+    assert conditioning["random_support_count_at_or_below_fano"] == 0
+    assert scalar["comparison"] == "raw unnormalized pairwise commutators"
+    assert np.isclose(scalar["left_norm"], 16.0 / 9.0, atol=1e-14)
+    assert payload["verdicts"]["S8-DEC-C1"]["pass"]
+    assert payload["verdicts"]["S8-DEC-C2"]["pass"]
+    assert payload["verdicts"]["overall"]["executed_controls_pass"]
+    assert provenance["numpy_version"]
+    assert provenance["numpy_bit_generator"] == "PCG64"
