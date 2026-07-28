@@ -1,0 +1,499 @@
+{
+  "P1_depth_is_the_bill": {
+    "all_zero_depth_points_orthogonal": true,
+    "n_points": 180,
+    "n_zero_depth_points": 18,
+    "orthogonal_points_with_positive_depth": [],
+    "verdict": "SURVIVES",
+    "worst_det_error": 3.352873534367973e-14,
+    "worst_frobenius_error": 1.1368683772161603e-13,
+    "worst_singular_value_error": 7.105427357601002e-15
+  },
+  "P2_elliptic_fraction": {
+    "rows": [
+      {
+        "analytic": 1.0,
+        "empirical": 1.0,
+        "large_rho_asymptote": 1.2732395447351628,
+        "rho": 0.0,
+        "z_score": 0.0
+      },
+      {
+        "analytic": 0.9364438615684888,
+        "empirical": 0.937435,
+        "large_rho_asymptote": 1.1520747821994453,
+        "rho": 0.1,
+        "z_score": 1.8168944126797575
+      },
+      {
+        "analytic": 0.8424774779762138,
+        "empirical": 0.84224,
+        "large_rho_asymptote": 0.9915999544772238,
+        "rho": 0.25,
+        "z_score": 0.2915330921303585
+      },
+      {
+        "analytic": 0.6941799067521923,
+        "empirical": 0.694075,
+        "large_rho_asymptote": 0.7722588210404313,
+        "rho": 0.5,
+        "z_score": 0.10182382616211315
+      },
+      {
+        "analytic": 0.5618774126380537,
+        "empirical": 0.56091,
+        "large_rho_asymptote": 0.6014357745600878,
+        "rho": 0.75,
+        "z_score": 0.8719832560316827
+      },
+      {
+        "analytic": 0.44883402865717004,
+        "empirical": 0.4465,
+        "large_rho_asymptote": 0.46839865219455334,
+        "rho": 1.0,
+        "z_score": 2.0986358894420687
+      },
+      {
+        "analytic": 0.2795193584646814,
+        "empirical": 0.27834,
+        "large_rho_asymptote": 0.28409814352407076,
+        "rho": 1.5,
+        "z_score": 1.175286432564515
+      },
+      {
+        "analytic": 0.17127363118923972,
+        "empirical": 0.170405,
+        "large_rho_asymptote": 0.17231423441478907,
+        "rho": 2.0,
+        "z_score": 1.0310971477515287
+      },
+      {
+        "analytic": 0.10428007442121494,
+        "empirical": 0.10384,
+        "large_rho_asymptote": 0.10451386627747937,
+        "rho": 2.5,
+        "z_score": 0.6439532514852425
+      },
+      {
+        "analytic": 0.0633385652745385,
+        "empirical": 0.062615,
+        "large_rho_asymptote": 0.06339086426239751,
+        "rho": 3.0,
+        "z_score": 1.3285175114278391
+      }
+    ],
+    "samples_per_rho": 200000,
+    "seed": 20260728,
+    "verdict": "SURVIVES",
+    "worst_z_score": 2.0986358894420687
+  },
+  "P3_post_selection_cost": {
+    "average_case": [
+      {
+        "measured": 1.0,
+        "predicted": 1.0,
+        "rho": 0.0
+      },
+      {
+        "measured": 0.8351600230178198,
+        "predicted": 0.8351600230178197,
+        "rho": 0.1
+      },
+      {
+        "measured": 0.6839397205857212,
+        "predicted": 0.6839397205857212,
+        "rho": 0.25
+      },
+      {
+        "measured": 0.5676676416183063,
+        "predicted": 0.5676676416183064,
+        "rho": 0.5
+      },
+      {
+        "measured": 0.524893534183932,
+        "predicted": 0.5248935341839319,
+        "rho": 0.75
+      },
+      {
+        "measured": 0.5091578194443671,
+        "predicted": 0.5091578194443671,
+        "rho": 1.0
+      },
+      {
+        "measured": 0.5012393760883331,
+        "predicted": 0.5012393760883331,
+        "rho": 1.5
+      },
+      {
+        "measured": 0.5001677313139512,
+        "predicted": 0.5001677313139512,
+        "rho": 2.0
+      },
+      {
+        "measured": 0.5000226999648812,
+        "predicted": 0.5000226999648812,
+        "rho": 2.5
+      },
+      {
+        "measured": 0.5000030721061767,
+        "predicted": 0.5000030721061767,
+        "rho": 3.0
+      }
+    ],
+    "note": "average-case cost saturates at 1/2 and is NOT exponential; the exponential is in the worst case and in the subnormalisation, where L steps at depth rho cost e^{-4 L rho}",
+    "verdict": "SURVIVES",
+    "worst_average_error": 1.1102230246251565e-16,
+    "worst_case_chain": [
+      {
+        "L": 1,
+        "measured": 0.4493289641172216,
+        "n_qubits": 2,
+        "predicted": 0.44932896411722156,
+        "rho": 0.2
+      },
+      {
+        "L": 2,
+        "measured": 0.20189651799465544,
+        "n_qubits": 3,
+        "predicted": 0.20189651799465538,
+        "rho": 0.2
+      },
+      {
+        "L": 3,
+        "measured": 0.09071795328941253,
+        "n_qubits": 4,
+        "predicted": 0.09071795328941247,
+        "rho": 0.2
+      },
+      {
+        "L": 4,
+        "measured": 0.040762203978366225,
+        "n_qubits": 5,
+        "predicted": 0.04076220397836621,
+        "rho": 0.2
+      },
+      {
+        "L": 1,
+        "measured": 0.2018965179946555,
+        "n_qubits": 2,
+        "predicted": 0.20189651799465538,
+        "rho": 0.4
+      },
+      {
+        "L": 2,
+        "measured": 0.04076220397836625,
+        "n_qubits": 3,
+        "predicted": 0.04076220397836621,
+        "rho": 0.4
+      },
+      {
+        "L": 3,
+        "measured": 0.008229747049020037,
+        "n_qubits": 4,
+        "predicted": 0.008229747049020023,
+        "rho": 0.4
+      },
+      {
+        "L": 4,
+        "measured": 0.001661557273173937,
+        "n_qubits": 5,
+        "predicted": 0.001661557273173934,
+        "rho": 0.4
+      },
+      {
+        "L": 1,
+        "measured": 0.04076220397836622,
+        "n_qubits": 2,
+        "predicted": 0.04076220397836621,
+        "rho": 0.8
+      },
+      {
+        "L": 2,
+        "measured": 0.0016615572731739348,
+        "n_qubits": 3,
+        "predicted": 0.001661557273173934,
+        "rho": 0.8
+      },
+      {
+        "L": 3,
+        "measured": 6.77287364908539e-05,
+        "n_qubits": 4,
+        "predicted": 6.772873649085378e-05,
+        "rho": 0.8
+      },
+      {
+        "L": 4,
+        "measured": 2.7607725720372016e-06,
+        "n_qubits": 5,
+        "predicted": 2.7607725720371986e-06,
+        "rho": 0.8
+      }
+    ],
+    "worst_chain_error": 1.1102230246251565e-16
+  },
+  "P4_echo_the_weave": {
+    "failures": [],
+    "interpretation": "the net element of an echoed loop is exactly a rotation and costs nothing; the same loop with its intermediate states materialised still pays at every step, so echoing is a compilation constraint, not a free win",
+    "median_stepwise_success_first4": 0.3109064902180022,
+    "min_stepwise_success_first4": 8.371985401446576e-05,
+    "n_closed_loops": 200,
+    "n_net_orthogonal": 200,
+    "verdict": "SURVIVES"
+  },
+  "controls": {
+    "C1_encoding_fidelity": {
+      "verdict": "PASS",
+      "worst_error": 5.551115123125783e-16
+    },
+    "C2_compact_null": {
+      "rows": [
+        {
+          "orthogonal": true,
+          "phi": 0.0,
+          "psi": 0.0,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 0.0,
+          "psi": 1.1,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 0.0,
+          "psi": 2.7,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 0.4,
+          "psi": 0.0,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 0.4,
+          "psi": 1.1,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 0.4,
+          "psi": 2.7,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 0.9,
+          "psi": 0.0,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 0.9,
+          "psi": 1.1,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 0.9,
+          "psi": 2.7,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 1.5708,
+          "psi": 0.0,
+          "success_probability": 0.9999999999999999
+        },
+        {
+          "orthogonal": true,
+          "phi": 1.5708,
+          "psi": 1.1,
+          "success_probability": 0.9999999999999999
+        },
+        {
+          "orthogonal": true,
+          "phi": 1.5708,
+          "psi": 2.7,
+          "success_probability": 0.9999999999999999
+        },
+        {
+          "orthogonal": true,
+          "phi": 2.3,
+          "psi": 0.0,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 2.3,
+          "psi": 1.1,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 2.3,
+          "psi": 2.7,
+          "success_probability": 1.0
+        },
+        {
+          "orthogonal": true,
+          "phi": 3.0,
+          "psi": 0.0,
+          "success_probability": 0.9999999999999999
+        },
+        {
+          "orthogonal": true,
+          "phi": 3.0,
+          "psi": 1.1,
+          "success_probability": 0.9999999999999999
+        },
+        {
+          "orthogonal": true,
+          "phi": 3.0,
+          "psi": 2.7,
+          "success_probability": 0.9999999999999999
+        }
+      ],
+      "verdict": "PASS"
+    },
+    "C3_wrong_instrument": {
+      "finding": "the generators are bounded and their norms are IDENTICAL for compact and non-compact alike, so at the algebra level the Frobenius norm cannot even distinguish the two kinds; at the group level it diverges for boosts and is constant for rotations, so it reports rapidity and nothing else. S8's typed remainder said 'the generators are unbounded'. They are not. The unboundedness is in the group.",
+      "generator_frobenius_norms": {
+        "J01": 1.4142135623730951,
+        "J23": 1.4142135623730951,
+        "K02": 1.4142135623730951,
+        "K03": 1.4142135623730951,
+        "K12": 1.4142135623730951,
+        "K13": 1.4142135623730951
+      },
+      "generator_norms_all_equal": true,
+      "rows": [
+        {
+          "abs_trace_sl2_boost": 2.0,
+          "abs_trace_sl2_rotation": 2.0,
+          "generator_frobenius": {
+            "J01": 1.4142135623730951,
+            "J23": 1.4142135623730951,
+            "K02": 1.4142135623730951,
+            "K03": 1.4142135623730951,
+            "K12": 1.4142135623730951,
+            "K13": 1.4142135623730951
+          },
+          "group_frobenius_boost_K02": 2.0,
+          "group_frobenius_rotation_J01": 2.0,
+          "rho": 0.0
+        },
+        {
+          "abs_trace_sl2_boost": 2.2552519304127614,
+          "abs_trace_sl2_rotation": 1.7551651237807455,
+          "generator_frobenius": {
+            "J01": 1.4142135623730951,
+            "J23": 1.4142135623730951,
+            "K02": 1.4142135623730951,
+            "K03": 1.4142135623730951,
+            "K12": 1.4142135623730951,
+            "K13": 1.4142135623730951
+          },
+          "group_frobenius_boost_K02": 2.2552519304127614,
+          "group_frobenius_rotation_J01": 2.0,
+          "rho": 0.5
+        },
+        {
+          "abs_trace_sl2_boost": 3.086161269630488,
+          "abs_trace_sl2_rotation": 1.0806046117362793,
+          "generator_frobenius": {
+            "J01": 1.4142135623730951,
+            "J23": 1.4142135623730951,
+            "K02": 1.4142135623730951,
+            "K03": 1.4142135623730951,
+            "K12": 1.4142135623730951,
+            "K13": 1.4142135623730951
+          },
+          "group_frobenius_boost_K02": 3.086161269630488,
+          "group_frobenius_rotation_J01": 2.0,
+          "rho": 1.0
+        },
+        {
+          "abs_trace_sl2_boost": 7.5243913821672646,
+          "abs_trace_sl2_rotation": 0.8322936730942843,
+          "generator_frobenius": {
+            "J01": 1.4142135623730951,
+            "J23": 1.4142135623730951,
+            "K02": 1.4142135623730951,
+            "K03": 1.4142135623730951,
+            "K12": 1.4142135623730951,
+            "K13": 1.4142135623730951
+          },
+          "group_frobenius_boost_K02": 7.5243913821672646,
+          "group_frobenius_rotation_J01": 1.9999999999999998,
+          "rho": 2.0
+        },
+        {
+          "abs_trace_sl2_boost": 20.13532399155665,
+          "abs_trace_sl2_rotation": 1.9799849932008873,
+          "generator_frobenius": {
+            "J01": 1.4142135623730951,
+            "J23": 1.4142135623730951,
+            "K02": 1.4142135623730951,
+            "K03": 1.4142135623730951,
+            "K12": 1.4142135623730951,
+            "K13": 1.4142135623730951
+          },
+          "group_frobenius_boost_K02": 20.135323991556646,
+          "group_frobenius_rotation_J01": 1.9999999999999982,
+          "rho": 3.0
+        }
+      ],
+      "verdict": "PASS"
+    },
+    "C4_elliptic_is_not_unitary": {
+      "verdict": "PASS",
+      "witnesses": [
+        {
+          "condition_number": 1.822118800390509,
+          "conjugacy_class": "elliptic",
+          "orthogonal": false,
+          "phi": 1.5707963267948966,
+          "rho": 0.3
+        },
+        {
+          "condition_number": 4.953032424395114,
+          "conjugacy_class": "elliptic",
+          "orthogonal": false,
+          "phi": 1.5707963267948966,
+          "rho": 0.8
+        },
+        {
+          "condition_number": 20.085536923187675,
+          "conjugacy_class": "elliptic",
+          "orthogonal": false,
+          "phi": 1.5707963267948966,
+          "rho": 1.5
+        }
+      ]
+    },
+    "C5_determinant_drift": {
+      "verdict": "PASS",
+      "worst_det_error": 3.352873534367973e-14,
+      "worst_q22_error": 5.140332604014475e-14
+    },
+    "C6_randomised_loop_closure": {
+      "see": "P4_echo_the_weave"
+    }
+  },
+  "preregistration": "manifests/qsigma_r6_unitary_price_preregistration.json",
+  "round": "QSigma-R6",
+  "summary": {
+    "C1_encoding_fidelity": "PASS",
+    "C2_compact_null": "PASS",
+    "C3_wrong_instrument": "PASS",
+    "C4_elliptic_is_not_unitary": "PASS",
+    "C5_determinant_drift": "PASS",
+    "P1_depth_is_the_bill": "SURVIVES",
+    "P2_elliptic_fraction": "SURVIVES",
+    "P3_post_selection_cost": "SURVIVES",
+    "P4_echo_the_weave": "SURVIVES"
+  }
+}

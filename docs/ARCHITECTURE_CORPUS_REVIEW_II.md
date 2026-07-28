@@ -229,11 +229,18 @@ The following returned **HTTP 404 unauthenticated**, i.e. private:
 Per §1, their descriptions are not evidence about their contents. Two open
 questions that only `add_repo` can answer, stated as questions:
 
-- Does `nnn-hyperbolic-ramdisk` implement a (+,+,−,−) metric, and if so does it
-  handle the unboundedness of the SU(1,1) generators — the exact obstacle that
-  left the (2,2) half of Round S8 unimplemented? Both the Frobenius-norm and
-  the rank arguments need re-deriving in split signature, and if that repo has
-  done it, S8 does not need to.
+- Does `nnn-hyperbolic-ramdisk` implement a (+,+,−,−) metric, and if so what
+  invariant does it use to separate channels in split signature?
+
+  *Corrected at QΣ-R6.* This question originally read "does it handle the
+  unboundedness of the SU(1,1) generators — the exact obstacle that left the
+  (2,2) half of Round S8 unimplemented?" That premise is false. The `so(2,2)`
+  generators are bounded, with Frobenius norm exactly √2 — **all six of them,
+  compact and non-compact alike**, so the norm cannot even tell the two kinds
+  apart. The unboundedness is in the group, not the algebra, and the invariant
+  that survives is the conjugacy class `|tr|` against 2. See
+  `docs/QUANTUM_SUBSTRATE_COST.md` §C3. The (2,2) half of S8 was blocked by an
+  imported instrument, not by the geometry.
 - Does `-lang.s1` contain a specification of `T_Σ_n_geom` that names its own
   kill conditions? It is the most recently updated repository in the account
   after this one.
