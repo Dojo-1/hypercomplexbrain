@@ -1,0 +1,101 @@
+{
+  "checks": {
+    "cartan_parameter_is_depth": true,
+    "compact_motion_is_isometric": true,
+    "hopf_fibre_is_global_phase": true,
+    "hopf_is_bloch": true,
+    "kak_reconstructs": true,
+    "ladder_stops_at_zero_divisors": true,
+    "noncompact_motion_is_not": true,
+    "quotient_volume_finite": true,
+    "state_is_sign_blind_exactly": true,
+    "swirl_angles_are_cartan_angles": true
+  },
+  "compact_is_isometry": {
+    "mechanism": "compact directions act by local unitaries and move a state inside its unitary orbit, changing no singular value, so their Fisher information saturates; the non-compact direction moves BETWEEN orbits by changing the singular values, and that is what decays as e^{-4 rho}",
+    "singular_value_change_under_noncompact_step": 1.3369181383856295,
+    "worst_singular_value_change_under_compact_step": 1.0658141036401503e-14
+  },
+  "hopf": {
+    "fibration": "S^1 -> SL(2,R) -> H^2, the Lorentzian sibling of S^1 -> S^3 -> S^2",
+    "finding": "the Hopf map IS the density-matrix map and its fibre IS the global phase; quotienting by the fibre is what taking a density matrix means",
+    "worst_hopf_minus_bloch": 2.220446049250313e-16,
+    "worst_norm_deviation": 4.440892098500626e-16,
+    "worst_phase_variation": 4.440892098500626e-16
+  },
+  "ladder": {
+    "rungs": [
+      {
+        "algebra": "R",
+        "associative": true,
+        "commutative": true,
+        "dim": 1,
+        "fibration": "S^0 -> S^1 -> S^1",
+        "is_division_algebra": true
+      },
+      {
+        "algebra": "C",
+        "associative": true,
+        "commutative": true,
+        "dim": 2,
+        "fibration": "S^1 -> S^3 -> S^2",
+        "is_division_algebra": true
+      },
+      {
+        "algebra": "H",
+        "associative": true,
+        "commutative": false,
+        "dim": 4,
+        "fibration": "S^3 -> S^7 -> S^4",
+        "is_division_algebra": true
+      },
+      {
+        "algebra": "O",
+        "associative": false,
+        "commutative": false,
+        "dim": 8,
+        "fibration": "S^7 -> S^15 -> S^8",
+        "is_division_algebra": true
+      },
+      {
+        "algebra": "S (sedenions)",
+        "associative": false,
+        "commutative": false,
+        "dim": 16,
+        "fibration": null,
+        "is_division_algebra": false,
+        "why_it_stops": "zero divisors exist, so there is no norm multiplicativity and no Hopf fibration; see aionq.cayley_dickson"
+      }
+    ],
+    "zero_divisors_by_dimension": {
+      "16": true,
+      "2": false,
+      "4": false,
+      "8": false
+    }
+  },
+  "projective_quotient": {
+    "closes": "the external derivation's 'before projective quotienting'",
+    "volume": {
+      "closed_form": "pi^3 / sqrt(2)",
+      "quotient_order": 2,
+      "quotiented": 21.924748499986315,
+      "reason": "omega is quadratic in v, so the sign of A is invisible; the operational space is PSL(2,R) = SL(2,R)/{+-1}",
+      "unquotiented": 43.84949699997263
+    },
+    "worst_sign_sensitivity": 0.0
+  },
+  "round": "QSigma-R6c",
+  "samples": 400,
+  "seed": 20260728,
+  "swirl_is_kak": {
+    "consequence": "R6b's QFI is diagonal in (rho,phi,psi) because the Cartan decomposition is orthogonal, not by luck",
+    "relation": "alpha = -(phi-psi)/2, beta = (phi+psi)/2  (mod pi)",
+    "worst_alpha_error_doubled_angle": 1.3322676295501878e-15,
+    "worst_beta_error_doubled_angle": 1.787596980229968e-15,
+    "worst_depth_error": 6.661338147750939e-16,
+    "worst_reconstruction": 1.4210854715202004e-14,
+    "worst_reconstruction_error": 1.4210854715202004e-14
+  },
+  "verdict": "ALL IDENTITIES HOLD"
+}

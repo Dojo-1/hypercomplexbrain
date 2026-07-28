@@ -69,6 +69,15 @@ writing `√8` as `4` instead of `2√2` produces. `det J = 8q²(1−q²)`, so
 
 Verified two ways: symbolic substitution and numerical quadrature agree to 1e-8.
 
+**Closed at R6c.** That value is *before the projective quotient*, which the
+derivation flagged and left open. `ω(A) = ω(−A)` **exactly** — 0.0, not 1e-16,
+because `|v⟩⟨v|` is quadratic in `v` — so the operational space is
+`PSL(2,ℝ) = SL(2,ℝ)/{±1}` and the volume halves:
+
+```
+operational Fisher volume  =  √2 π³ / 2  =  π³/√2  ≈  21.925
+```
+
 **The correction does not touch the argument.** What matters is that the integral
 *converges* while the source measure diverges — a finite operational volume
 against `√|det g| = cosh ρ sinh ρ ~ e^{2ρ}/2`. The distortion ratio
