@@ -1,0 +1,159 @@
+{
+  "answer": "no",
+  "ceiling_vs_depth": [
+    {
+      "ceiling": 1.6703200460356393,
+      "chi": 0.9017255830997998,
+      "p_bar": 0.8351600230178196,
+      "rho": 0.1,
+      "two_p_bar": 1.670320046035639
+    },
+    {
+      "ceiling": 1.1353352832366128,
+      "chi": 0.9486790362440268,
+      "p_bar": 0.5676676416183062,
+      "rho": 0.5,
+      "two_p_bar": 1.1353352832366124
+    },
+    {
+      "ceiling": 1.0183156388887342,
+      "chi": 0.9920524976341965,
+      "p_bar": 0.5091578194443669,
+      "rho": 1.0,
+      "two_p_bar": 1.0183156388887338
+    },
+    {
+      "ceiling": 1.0003354626279024,
+      "chi": 0.9998515464725735,
+      "p_bar": 0.5001677313139512,
+      "rho": 2.0,
+      "two_p_bar": 1.0003354626279024
+    },
+    {
+      "ceiling": 1.0000001125351747,
+      "chi": 0.9999999501812411,
+      "p_bar": 0.5000000562675873,
+      "rho": 4.0,
+      "two_p_bar": 1.0000001125351745
+    },
+    {
+      "ceiling": 1.0000000000000127,
+      "chi": 0.9999999999999944,
+      "p_bar": 0.5000000000000062,
+      "rho": 8.0,
+      "two_p_bar": 1.0000000000000124
+    }
+  ],
+  "checks": {
+    "ceiling_matches_two_p_bar": true,
+    "chi_at_or_below_ceiling": true,
+    "chi_is_flat_across_codebook_sizes": true,
+    "compact_baseline_below_two_bits": true,
+    "compact_baseline_exceeds_it": true,
+    "log2_n_actually_varied": true,
+    "non_compact_reaches_one_bit": true,
+    "packing_slope_is_not_the_source_exponent": true,
+    "source_exponent_is_two": true
+  },
+  "compact_contrast": "the matched SU(2) baseline reaches 1.994 bits at N=256 against a ceiling of log2 4 = 2, while the non-compact side sits at exactly 1. The unitary realization cost of hyperbolic depth is a factor of two in the Holevo ceiling, and the factor is pbar -> 1/2: the weight the erasure flag takes when the depth becomes large.",
+  "depth": 8.0,
+  "headline": "a codebook of 100 eps-separated states at depth 8 transmits exactly what a codebook of 8 does -- 1.000000 bit -- while log2 N climbs from 3 to 6.644. Geometric separation and information transmissibility come apart completely: the packing number measures the first and says nothing about the second.",
+  "holevo_ceiling": {
+    "chi_spread_over_sizes": 1.3322676295501878e-15,
+    "log2_n_spread": 3.6438561897747244,
+    "rho": 8.0,
+    "rows": [
+      {
+        "ceiling": 1.0000000000000127,
+        "chi_compact": 1.5427257171114792,
+        "chi_non_compact": 0.9999999999999938,
+        "log2_n": 3.0,
+        "n": 8,
+        "ratio": 1.5427257171114888
+      },
+      {
+        "ceiling": 1.0000000000000127,
+        "chi_compact": 1.9135018298599542,
+        "chi_non_compact": 0.9999999999999942,
+        "log2_n": 4.0,
+        "n": 16,
+        "ratio": 1.9135018298599653
+      },
+      {
+        "ceiling": 1.0000000000000127,
+        "chi_compact": 1.9445320587832442,
+        "chi_non_compact": 0.9999999999999942,
+        "log2_n": 5.0,
+        "n": 32,
+        "ratio": 1.9445320587832555
+      },
+      {
+        "ceiling": 1.0000000000000127,
+        "chi_compact": 1.978531381060287,
+        "chi_non_compact": 0.9999999999999944,
+        "log2_n": 6.0,
+        "n": 64,
+        "ratio": 1.9785313810602978
+      },
+      {
+        "ceiling": 1.0000000000000127,
+        "chi_compact": 1.9765065006167475,
+        "chi_non_compact": 0.9999999999999931,
+        "log2_n": 6.643856189774724,
+        "n": 100,
+        "ratio": 1.976506500616761
+      }
+    ]
+  },
+  "packing": [
+    {
+      "counts": [
+        683,
+        625,
+        590
+      ],
+      "eps": 0.05,
+      "log2_slope": -0.10558531202044286,
+      "radii": [
+        4.0,
+        5.0,
+        6.0
+      ],
+      "source_exponent": 2.0
+    },
+    {
+      "counts": [
+        312,
+        285,
+        260
+      ],
+      "eps": 0.1,
+      "log2_slope": -0.13151720291689717,
+      "radii": [
+        4.0,
+        5.0,
+        6.0
+      ],
+      "source_exponent": 2.0
+    },
+    {
+      "counts": [
+        90,
+        81,
+        83
+      ],
+      "eps": 0.2,
+      "log2_slope": -0.05840683249137513,
+      "radii": [
+        4.0,
+        5.0,
+        6.0
+      ],
+      "source_exponent": 2.0
+    }
+  ],
+  "question": "does hyperbolic representational capacity survive the measured unitary realization cost?",
+  "round": "QSigma-R6f",
+  "seed": 7,
+  "verdict": "CAPACITY DOES NOT SURVIVE"
+}

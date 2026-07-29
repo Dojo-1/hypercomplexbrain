@@ -59,3 +59,29 @@ artifacts/**/plots/*
 *.jpeg
 *.svg
 *.gif
+
+# --- privacy barrier -------------------------------------------------------
+# Added after a file listing surfaced personal material next to project source:
+# a dismissal claim, an NDA, ID documents, and a recovery-codes file. None of it
+# was ever tracked here (verified against the full history, not just the tree),
+# and this block exists so an accidental `git add -A` in a directory that also
+# holds those categories cannot stage them. It blocks FORMATS, not names --
+# names change and formats do not.
+*.apk
+*.exe
+*.pkg
+*.rpm
+*.7z
+*.tar
+*.tar.gz
+*.torrent
+*.docx
+*.pptx
+*.xls
+*.xlsx
+*.csv
+*.ogg
+*.mp4
+*.winmd
+*recovery_code*
+*recovery-code*
