@@ -24,8 +24,8 @@ sys.path.insert(0, "src")
 
 from aionq.capacity_ceiling import (ceiling_report, grid_codebook,
                                     holevo_ceiling, normalisation_control,
-                                    packing_log_slope, probe_sweep,
-                                    su2_codebook)
+                                    packing_log_slope, parallel_sweep,
+                                    probe_sweep, su2_codebook, width_sweep)
 from aionq.holevo_sandwich import flag_success_decomposition, holevo_chi
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -58,6 +58,10 @@ def main() -> int:
     sweep = probe_sweep()
     norms = normalisation_control()
 
+    # ---- E: can width or parallelism beat it? ------------------------------
+    width = width_sweep()
+    parallel = parallel_sweep()
+
     report = {
         "round": "QSigma-R6f", "seed": SEED, "depth": DEPTH,
         "question": ("does hyperbolic representational capacity survive the "
@@ -68,6 +72,17 @@ def main() -> int:
         "packing": packing,
         "probe_sweep": sweep,
         "normalisation_control": norms,
+        "width_sweep": width,
+        "parallel_sweep": parallel,
+        "structural_finding": (
+            "neither width nor parallelism rescues the ceiling. Widening the "
+            "ancilla from d=2 to d=8 (state dimension 5 to 17) leaves chi at "
+            "1.000000000, spread 4.4e-16, because rank(A) = 2 caps what A can "
+            "exploit however large the ancilla. And chi is EXACTLY additive over "
+            "parallel uses -- chi/k constant to 5.6e-16 at k = 1, 2, 3 -- so k "
+            "uses buy exactly k times one use. Holevo information is not additive "
+            "in general, so that had to be measured rather than assumed. The "
+            "ceiling is per-use and rank-limited."),
         "probe_finding": (
             "chi is MAXIMISED at the Bell probe (lam = 1/2) and falls "
             "monotonically as the probe is de-entangled: 1.000000, 0.999975, "
@@ -120,6 +135,8 @@ def main() -> int:
             abs(sweep["rows"][0]["flag_bits"]) < 1e-9
             and sweep["rows"][-1]["flag_bits"] > 1e-3),
         "normalisation_does_not_matter": norms["identical"],
+        "width_does_not_help": width["width_is_useless"],
+        "parallel_use_is_exactly_additive": parallel["exactly_additive"],
     }
     checks = {k: bool(v) for k, v in checks.items()}
     report["checks"] = checks

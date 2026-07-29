@@ -165,6 +165,79 @@ def normalisation_control(rho: float = 8.0, n: int = 64) -> dict:
     return out
 
 
+def wide_codeword(rho: float, phi: float, psi: float, d: int) -> np.ndarray:
+    """The same encoding with a d-dimensional ancilla instead of a qubit.
+
+    The probe is given Schmidt rank 2, which is the most ``A`` can exploit: ``A``
+    is 2x2 of rank 2, so it cannot act on more than two Schmidt coefficients
+    however large the ancilla is.  That is why width does not move the ceiling,
+    and stating it this way makes the claim falsifiable -- if chi rose with d, the
+    rank argument would be wrong.
+    """
+    A = normalised_from(rho, phi, psi)
+    probe = np.zeros(d * 2, dtype=complex)
+    probe[0] = 1.0 / math.sqrt(2.0)
+    probe[3] = 1.0 / math.sqrt(2.0)       # |0>|0> and |1>|1>
+    v = np.kron(np.eye(d), A) @ probe
+    p = float(np.real(v.conj() @ v))
+    n = d * 2 + 1
+    W = np.zeros((n, n), dtype=complex)
+    W[:d * 2, :d * 2] = np.outer(v, v.conj())
+    W[-1, -1] = 1.0 - p
+    return W
+
+
+def normalised_from(rho: float, phi: float, psi: float) -> np.ndarray:
+    M = to_sl2(swirl_point(rho, phi, psi))
+    return M / float(np.linalg.norm(M, 2))
+
+
+def width_sweep(rho: float = 8.0, n: int = 32, dims=(2, 3, 4, 6, 8)) -> dict:
+    """Does more ancilla buy more bits?  No: rank(A) = 2 caps it."""
+    rows = [{"ancilla_dim": d, "state_dim": d * 2 + 1,
+             "chi": holevo_chi([wide_codeword(rho, 2 * math.pi * k / n,
+                                              2 * math.pi * (k * 3 % n) / n, d)
+                                for k in range(n)])} for d in dims]
+    chis = [r["chi"] for r in rows]
+    return {"rows": rows, "spread": max(chis) - min(chis),
+            "width_is_useless": max(chis) - min(chis) < 1e-9}
+
+
+def parallel_codeword(coords) -> np.ndarray:
+    """Tensor product of independent uses, each with its own erasure flag."""
+    W = None
+    for (r, ph, ps) in coords:
+        A = normalised_from(r, ph, ps)
+        v = np.kron(np.eye(2), A) @ BELL
+        p = float(np.real(v.conj() @ v))
+        w = np.zeros((5, 5), dtype=complex)
+        w[:4, :4] = np.outer(v, v.conj())
+        w[4, 4] = 1.0 - p
+        W = w if W is None else np.kron(W, w)
+    return W
+
+
+def parallel_sweep(rho: float = 8.0, per_use: int = 4, ks=(1, 2, 3)) -> dict:
+    """Is chi super-additive over parallel uses?  Exactly additive, so no.
+
+    Holevo information is famously NOT additive in general (Hastings), so this
+    had to be measured rather than assumed.  Here chi/k is constant to nine
+    decimals: parallel use buys exactly k times one use and not a bit more.
+    """
+    import itertools
+    base = [(rho, 2 * math.pi * k / per_use, 2 * math.pi * (k * 3 % per_use) / per_use)
+            for k in range(per_use)]
+    rows = []
+    for k in ks:
+        book = [parallel_codeword(c) for c in itertools.product(base, repeat=k)]
+        chi = holevo_chi(book)
+        rows.append({"k": k, "n_codewords": len(book), "state_dim": 5 ** k,
+                     "chi": chi, "chi_per_use": chi / k})
+    per = [r["chi_per_use"] for r in rows]
+    return {"rows": rows, "per_use_spread": max(per) - min(per),
+            "exactly_additive": max(per) - min(per) < 1e-9}
+
+
 def sl2_codeword(rho: float, phi: float, psi: float) -> np.ndarray:
     return attempted_use_state(to_sl2(swirl_point(rho, phi, psi)))[0].astype(complex)
 

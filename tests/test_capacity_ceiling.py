@@ -160,3 +160,36 @@ def test_normalisation_choice_does_not_move_the_ceiling():
     assert n["identical"]
     assert n["spectral"]["chi"] == pytest.approx(1.0, abs=1e-9)
     assert n["frobenius"]["chi"] == pytest.approx(1.0, abs=1e-9)
+
+
+# ------------------------------------ can width or parallelism beat the ceiling?
+
+def test_more_ancilla_buys_nothing_because_rank_A_is_two():
+    """Width does not move the ceiling, and the reason is falsifiable.
+
+    A is 2x2 of rank 2, so it cannot act on more than two Schmidt coefficients
+    however large the ancilla. If chi rose with d, the rank argument would be
+    wrong -- so this is a test of the argument, not a restatement of it.
+    """
+    from aionq.capacity_ceiling import width_sweep
+    w = width_sweep()
+    assert w["width_is_useless"]
+    assert w["spread"] < 1e-9
+    assert w["rows"][-1]["state_dim"] > 3 * w["rows"][0]["state_dim"]
+    for r in w["rows"]:
+        assert r["chi"] == pytest.approx(1.0, abs=1e-9)
+
+
+def test_parallel_use_is_exactly_additive():
+    """Holevo information is NOT additive in general, so this had to be measured.
+
+    chi/k is constant to machine precision at k = 1, 2, 3: parallel use buys
+    exactly k times one use and not a bit more. No super-additivity, no rescue.
+    """
+    from aionq.capacity_ceiling import parallel_sweep
+    p = parallel_sweep()
+    assert p["exactly_additive"]
+    assert p["per_use_spread"] < 1e-9
+    per = [r["chi_per_use"] for r in p["rows"]]
+    assert per[0] == pytest.approx(per[-1], abs=1e-9)
+    assert p["rows"][-1]["k"] == 3

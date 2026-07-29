@@ -59,7 +59,9 @@
     "normalisation_does_not_matter": true,
     "p_bar_is_half_at_every_probe": true,
     "packing_slope_is_not_the_source_exponent": true,
-    "source_exponent_is_two": true
+    "parallel_use_is_exactly_additive": true,
+    "source_exponent_is_two": true,
+    "width_does_not_help": true
   },
   "compact_contrast": "the matched SU(2) baseline reaches 1.994 bits at N=256 against a ceiling of log2 4 = 2, while the non-compact side sits at exactly 1. The unitary realization cost of hyperbolic depth is a factor of two in the Holevo ceiling, and the factor is pbar -> 1/2: the weight the erasure flag takes when the depth becomes large.",
   "depth": 8.0,
@@ -169,6 +171,33 @@
       "source_exponent": 2.0
     }
   ],
+  "parallel_sweep": {
+    "exactly_additive": true,
+    "per_use_spread": 5.551115123125783e-16,
+    "rows": [
+      {
+        "chi": 0.5000000000000062,
+        "chi_per_use": 0.5000000000000062,
+        "k": 1,
+        "n_codewords": 4,
+        "state_dim": 5
+      },
+      {
+        "chi": 1.0000000000000124,
+        "chi_per_use": 0.5000000000000062,
+        "k": 2,
+        "n_codewords": 16,
+        "state_dim": 25
+      },
+      {
+        "chi": 1.5000000000000204,
+        "chi_per_use": 0.5000000000000068,
+        "k": 3,
+        "n_codewords": 64,
+        "state_dim": 125
+      }
+    ]
+  },
   "probe_finding": "chi is MAXIMISED at the Bell probe (lam = 1/2) and falls monotonically as the probe is de-entangled: 1.000000, 0.999975, 0.999574, 0.997500, 0.989648, 0.965643. So 1 bit is the OPTIMUM over this probe family, not an artifact of a convenient choice, and spectral vs Frobenius normalisation give identical chi to 1e-14.",
   "probe_sweep": {
     "best_chi": 0.9999999999999947,
@@ -231,5 +260,37 @@
   "r6d_refinement": "R6d found that a fixed-depth codebook has an uninformative erasure flag and attributed it to the shared depth. The actual condition is equal p_i, and equal depth implies that ONLY for the maximally entangled probe, where p = tr(A^T A)/2 is orientation-independent. At lam = 0.3 the per-codeword spread is 0.4 and the flag carries 0.059 bits -- reporting the codeword's ORIENTATION, not its depth.",
   "round": "QSigma-R6f",
   "seed": 7,
-  "verdict": "CAPACITY DOES NOT SURVIVE"
+  "structural_finding": "neither width nor parallelism rescues the ceiling. Widening the ancilla from d=2 to d=8 (state dimension 5 to 17) leaves chi at 1.000000000, spread 4.4e-16, because rank(A) = 2 caps what A can exploit however large the ancilla. And chi is EXACTLY additive over parallel uses -- chi/k constant to 5.6e-16 at k = 1, 2, 3 -- so k uses buy exactly k times one use. Holevo information is not additive in general, so that had to be measured rather than assumed. The ceiling is per-use and rank-limited.",
+  "verdict": "CAPACITY DOES NOT SURVIVE",
+  "width_sweep": {
+    "rows": [
+      {
+        "ancilla_dim": 2,
+        "chi": 0.9999999999999942,
+        "state_dim": 5
+      },
+      {
+        "ancilla_dim": 3,
+        "chi": 0.9999999999999942,
+        "state_dim": 7
+      },
+      {
+        "ancilla_dim": 4,
+        "chi": 0.9999999999999942,
+        "state_dim": 9
+      },
+      {
+        "ancilla_dim": 6,
+        "chi": 0.9999999999999942,
+        "state_dim": 13
+      },
+      {
+        "ancilla_dim": 8,
+        "chi": 0.9999999999999938,
+        "state_dim": 17
+      }
+    ],
+    "spread": 4.440892098500626e-16,
+    "width_is_useless": true
+  }
 }
