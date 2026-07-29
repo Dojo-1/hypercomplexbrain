@@ -1,0 +1,215 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSIGMA-R3B-0",
+  "title": "Four-cell delayed phase-memory instrument calibration",
+  "status": "FROZEN_BEFORE_EXECUTION_AND_RESULTS",
+  "date": "2026-07-29",
+  "scope": {
+    "kind": "synthetic instrument calibration",
+    "implementation_status_at_freeze": "Method scaffolding may be under construction. No result runner has been executed and no threshold was selected from an observed result.",
+    "positive_control": "A coherent identity-memory channel is compared with complete computational-basis dephasing under a matched one-copy protocol.",
+    "forbidden_inference": "A positive separation calibrates the instrument only. It is not quantum advantage, causal advantage, cognition, memory superiority on real data, hardware evidence, or independent verification."
+  },
+  "cells": [
+    {
+      "role": "SELF",
+      "operator": "prepare |psi_phi> = (|0> + exp(i*phi)|1>)/sqrt(2)",
+      "required": true
+    },
+    {
+      "role": "OTHER",
+      "operator": "supply relation r in {same, orthogonal}; orthogonal means phi -> phi + pi",
+      "required": true
+    },
+    {
+      "role": "MEMORY",
+      "operator": "target I(rho)=rho; matched control D_z(rho)=P0 rho P0 + P1 rho P1",
+      "required": true
+    },
+    {
+      "role": "AUDITOR",
+      "operator": "fixed reference-relative POVM {Pi_phi, I-Pi_phi}; click predicts same",
+      "required": true
+    }
+  ],
+  "analytic_contract": {
+    "same_target_click_probability": 1.0,
+    "orthogonal_target_click_probability": 0.0,
+    "same_dephased_click_probability": 0.5,
+    "orthogonal_dephased_click_probability": 0.5,
+    "density_requirements": [
+      "shape 2x2",
+      "Hermitian",
+      "positive semidefinite",
+      "trace one"
+    ],
+    "frame_rule": "Each common frame transports state, dephasing basis, reference, and POVM covariantly. Applying a frame to only one side is an adversarial basis attack, not a valid trial."
+  },
+  "protocol": {
+    "calibration_phases": [
+      0.0,
+      1.5707963267948966,
+      3.141592653589793,
+      4.71238898038469
+    ],
+    "heldout_phases": [
+      0.7853981633974483,
+      2.356194490192345,
+      3.9269908169872414,
+      5.497787143782138
+    ],
+    "relations": [
+      "same",
+      "orthogonal"
+    ],
+    "common_frames": [
+      "I",
+      "H",
+      "S",
+      "H@S"
+    ],
+    "repetitions_per_factor_cell": 8,
+    "trials_per_arm_per_seed": 512,
+    "seeds": [
+      73001,
+      73002,
+      73003,
+      73004,
+      73005,
+      73006,
+      73007,
+      73008,
+      73009,
+      73010,
+      73011,
+      73012,
+      73013,
+      73014,
+      73015,
+      73016,
+      73017,
+      73018,
+      73019,
+      73020,
+      73021,
+      73022,
+      73023,
+      73024,
+      73025,
+      73026,
+      73027,
+      73028,
+      73029,
+      73030,
+      73031,
+      73032
+    ],
+    "pairing": "Target and control use the same factor schedule and common uniform variates within each seed.",
+    "copies_per_trial": 1,
+    "memory_calls_per_trial": 1,
+    "povm_outcomes": 2,
+    "side_registers": 0
+  },
+  "outcome_contract": {
+    "coordinate_order": [
+      "accuracy",
+      "generalization",
+      "robustness",
+      "sample_efficiency",
+      "calibration",
+      "neg_energy",
+      "neg_latency",
+      "recovery"
+    ],
+    "observed": {
+      "accuracy": "balanced correct-decision rate on calibration phases in the identity frame (64 trials per seed)",
+      "generalization": "balanced correct-decision rate on disjoint held-out phases in the identity frame (64 trials per seed)",
+      "robustness": "balanced correct-decision rate over all phases under the three non-identity common frames H, S, and H@S (384 trials per seed)",
+      "calibration": "mean proper Brier utility 1-(p_correct-observed_correct)^2 over all 512 trials per seed"
+    },
+    "missing": {
+      "sample_efficiency": "No learning curve or sample-to-threshold experiment is run.",
+      "neg_energy": "Protocol operation counts are parity diagnostics, not an energy measurement.",
+      "neg_latency": "Protocol depth is a parity diagnostic, not a latency measurement.",
+      "recovery": "No interruption-and-recovery intervention is run."
+    },
+    "scalarization": "forbidden",
+    "missing_encoding": "NaN plus an explicit observed mask; a constrained missing axis blocks promotion."
+  },
+  "advantage_cone": {
+    "name": "K_R3B0_CALIBRATION",
+    "alpha": 0.01,
+    "audit_threshold": 1.0,
+    "audit_strength": 0.0,
+    "constraints": {
+      "accuracy": "improve",
+      "generalization": "improve",
+      "robustness": "improve",
+      "sample_efficiency": "no_worse",
+      "calibration": "improve",
+      "neg_energy": "no_worse",
+      "neg_latency": "no_worse",
+      "recovery": "no_worse"
+    },
+    "margins": {
+      "accuracy": 0.2,
+      "generalization": 0.2,
+      "robustness": 0.2,
+      "calibration": 0.1
+    },
+    "no_worse_tolerance": 0.02,
+    "registered_outcome": "HOLD",
+    "hold_reasons": [
+      "four cone-constrained coordinates are unmeasured",
+      "audit strength is zero",
+      "the round is calibration-only"
+    ]
+  },
+  "uncertainty": {
+    "unit": "seed cluster",
+    "paired_effect": "target outcome vector minus matched-control outcome vector within seed",
+    "bootstrap": "paired seed-cluster bootstrap preserving all coordinate dependence",
+    "draws": 20000,
+    "bootstrap_seed": 314159,
+    "promotion_sampling_seed": 271828,
+    "interval": "percentile 99% per observed coordinate",
+    "independence": "The 32 pseudorandom schedules are synthetic replication clusters, not independent laboratories or real-world experimental units."
+  },
+  "controls": [
+    "C0: every state, channel output, and POVM element satisfies the density/operator contract",
+    "C1: analytic click probabilities are exactly 1/0 for the coherent target and 1/2 for complete dephasing",
+    "C2: calibration and held-out phase sets are disjoint",
+    "C3: common-frame covariance preserves the analytic probabilities",
+    "C4: copies, channel calls, POVM outcomes, factor schedule, and uniforms match across arms",
+    "C5: rerunning any seed reproduces the same trial record",
+    "C6: removing SELF, OTHER, MEMORY, or AUDITOR is a typed refusal or HOLD",
+    "C7: an untransported-POVM basis attack is detected",
+    "C8: scalar conversion of the outcome vector is refused",
+    "C9: the empirical posterior resamples paired seed clusters jointly",
+    "C10: any constrained missing coordinate blocks promotion",
+    "C11: no result writes or promotes the legacy q_causal scalar",
+    "C12: the positive-control cone probability may be reported, but the registered final decision remains HOLD"
+  ],
+  "kill_conditions": [
+    "Any result is generated before this manifest is committed.",
+    "Any phase, seed, frame, margin, alpha, sample count, or control is changed after inspecting output.",
+    "Target and control differ in copy count, channel-call count, POVM, factor schedule, or random variates.",
+    "Any missing outcome coordinate is imputed, scalarized, or silently treated as passing.",
+    "Any cell can be removed without a typed refusal or HOLD.",
+    "Any common-frame covariance or basis-attack control fails.",
+    "Any code writes a measured value into q_causal.",
+    "Any text promotes the calibration to quantum, causal, cognitive, or hardware advantage."
+  ],
+  "artifacts": {
+    "source": "src/aionq/four_cell.py",
+    "advantage_extension": "src/aionq/advantage.py",
+    "runner": "experiments/run_four_cell_calibration.py",
+    "tests": "tests/test_four_cell.py",
+    "result": "artifacts/r3b_four_cell/four_cell_calibration.json",
+    "envelope": "artifacts/r3b_four_cell/four_cell_calibration.envelope.json",
+    "documentation": "docs/QSIGMA_R3B_FOUR_CELL.md"
+  },
+  "evidence_ceiling": "Repository-internal analytic identities and seeded synthetic measurements under a frozen protocol. No real dataset, hardware, causal intervention on an external system, cognitive claim, quantum advantage, or independent verification.",
+  "privacy_boundary": "Only explicitly named repository files may be hashed or staged. Local Downloads, Codex attachments, credentials, personal documents, and unrelated media are out of scope.",
+  "attribution": "(c) Jesús Vilela Jato, all rights reserved. 21/05/2026"
+}

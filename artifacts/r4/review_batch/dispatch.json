@@ -1,50 +1,53 @@
 {
+  "batch_id": "godelian-review-v1",
   "commit_sha": "c8fe77e4579e70f6e7c8a73f207e57364e07b499",
   "dispatched_at": "2026-07-27T11:04:12Z",
+  "repository": "jesusvilela/hypercomplexbrain",
+  "ref": "claude/aion-brain-architecture-27f8ji",
   "handles": [
     {
       "claim_id": "MATH-S7-EULER_H1_IDENTITY",
-      "conversation_url": "https://chatgpt.com/c/6a673b09-a76c-83eb-9209-4848a9fa2637",
+      "conversation_ref": "sha256:8e83b6b959be38fb50150234499d066e4c2a9f0d7a2edf8c1945bb4c1b0e12e2",
       "question": "Is dim H^1 = dim H^0 + (b1 - 1) d correct for a cellular sheaf on a connected graph over R, and does it really follow from rank-nullity on the two-term complex? If it holds, does the CONCLUSION follow -- that ||H^1|| cannot measure the obstruction to global sections because it increases with the section space? Name any hypothesis I have used without stating.",
       "status": "pending"
     },
     {
       "claim_id": "RET-S7-H1_AS_REMAINDER",
-      "conversation_url": "https://chatgpt.com/c/6a673b0f-07f4-83eb-b55b-625876425376",
+      "conversation_ref": "sha256:acab585b025c7cbed02dac6cdeea5812efdea3de5d714fb3c5fa0d2a04620b22",
       "question": "I retired [R] = ||H^1|| in BOTH regimes: wrong degree in the continuous Berry setting, wrong DIRECTION in the discrete graph setting. Is the second half too strong? Is there a reading of ||H^1|| -- a different norm, a different coefficient system, a relative or compactly-supported version -- on which the archive's usage survives? I would rather be corrected than have retired something salvageable.",
       "status": "pending"
     },
     {
       "claim_id": "MATH-R4-ATTESTATION_CYCLE",
-      "conversation_url": "https://chatgpt.com/c/6a673b14-c0c8-83eb-b17f-83e954915bf1",
+      "conversation_ref": "sha256:80c89aa36bb110339bd13bace2285fc148678918cf64a58b5ebf45b55ad1bf08",
       "question": "evidence_rank(G + C) = max(evidence_rank(G), ATTESTED) for an attestation cycle C. I first claimed the STRONGER result that such cycles are inert and my own test falsified it within a minute. Is the corrected version also wrong? Specifically: is a MAX over per-act ranks the right aggregation, or does it discard information that a lattice or partial order would keep? Does the analogy to Payor/Loeb overreach -- I claim only the finite shadow.",
       "status": "pending"
     },
     {
       "claim_id": "MATH-S7-FLAT_HOLONOMY_ON_A_NERVE",
-      "conversation_url": "https://chatgpt.com/c/6a673b19-ffc4-83eb-96e0-dff42058e0c0",
+      "conversation_ref": "sha256:a80777295d139190d2fab8a6ffec692cf6d2ebf6a96d11081c8c0e87908baac2",
       "question": "I claim a graph has no 2-cells, so curvature vanishes identically while holonomy is generic -- a counterexample to 'non-trivial holonomy <=> non-trivial curvature'. Is 'curvature vanishes' the right statement, or merely 'curvature is not defined'? Those are different, and I may have chosen the more convenient one.",
       "status": "pending"
     },
     {
       "claim_id": "MATH-R4-OPAQUE_MONOTONICITY",
-      "conversation_url": "https://chatgpt.com/c/6a673b1e-882c-83eb-820b-b0f380a025e3",
+      "conversation_ref": "sha256:baf444dc5959d819fb1b6a6c45eca17acf06581437b83c23d291f8931046c04e",
       "question": "Appending an instruction cannot decrease q_sim_upper. I established the defect by inspection and closed it by construction, but I never exhibited a circuit on which the OLD code actually lowered the bound. Is the monotonicity claim provable as stated, or does it need hypotheses about the compiler portfolio I have not written down?",
       "status": "pending"
     },
     {
       "claim_id": "METHOD-R4-EFFECTIVE_SAMPLE_SIZE",
-      "conversation_url": "https://chatgpt.com/c/6a673b23-6b8c-83eb-b051-b1b98637cfc4",
+      "conversation_ref": "sha256:7eb8336dba2a860aac61e57f3680c90825830514fb83827487c924886e27be5f",
       "question": "Sample size is certified against distinct INPUT hashes rather than seed count. Where does this rule misfire? Concretely: a Monte-Carlo integration with one input and many seeds genuinely has n > 1 in a sense my rule denies. Is the rule too strong, or is the right fix to separate 'distinct inputs' from 'independent draws' as two different quantities?",
       "status": "pending"
     },
     {
       "claim_id": "MATH-S6-BRIDGE_BLINDNESS",
-      "conversation_url": "https://chatgpt.com/c/6a673b29-10d0-83ed-946d-54fa4973d908",
+      "conversation_ref": "sha256:4a688db029ee8870b5ebbfd41cb5f9c8f0fbba9fe456e06dbbc7ab66a3a2845c",
       "question": "An overlap in no cycle carries zero holonomy information, so every cycle-based instrument is blind to it and the achievable AUROC is capped by the nerve before any method runs. Is the cap argument airtight, or does it assume the defect model I happened to use?",
       "status": "pending"
     }
   ],
-  "note": "PENDING handles. A `reviewed` verdict cannot promote any claim -- reviewed is excluded from INDEPENDENT_MODES. Collect the verdicts from the conversations and feed them through aionq.witness.parse_response / apply_witness.",
+  "note": "PENDING handle references only; raw conversation URLs were removed from the publishable artifact. A `reviewed` verdict cannot promote any claim -- reviewed is excluded from INDEPENDENT_MODES. Any terminal response must be supplied explicitly through the batch ingest path.",
   "schema": "hypercomplexbrain.review_batch.v1"
 }

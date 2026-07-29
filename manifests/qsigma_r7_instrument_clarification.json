@@ -1,0 +1,50 @@
+{
+  "schema": "hypercomplexbrain.preregistration.amendment.v1",
+  "round": "QSigma-R7",
+  "title": "Operational instrument clarification",
+  "status": "FROZEN_BEFORE_MAIN_EXECUTION_AFTER_READ_ONLY_METHOD_AUDIT",
+  "date": "2026-07-28",
+  "parent": "manifests/qsigma_r7_operational_rate_preregistration.json",
+  "parent_sha256": "sha256:839a2bf5208c73163c888ed6934db6f1de4b3bc7e42ffc615151ebe1f498f2ec",
+  "changes_forbidden": [
+    "rho grid",
+    "phi grid",
+    "psi grid",
+    "epsilon values",
+    "candidate-order count or seeds",
+    "H1 slope threshold",
+    "information tolerance",
+    "predictions",
+    "verdict rules"
+  ],
+  "clarifications": {
+    "logarithm": "H1 uses the natural logarithm.",
+    "deduplication_order": "Generate all candidates in canonical rho-index, phi-index, psi-index order; quotient by dense 5x5 trace distance before applying any packing order.",
+    "trace_distance": "Use eigvalsh of the explicitly Hermitian 5x5 density difference. Reject values outside [-1e-12,1+1e-12] and clip only boundary roundoff.",
+    "greedy_boundary": "Accept a candidate only when every dense trace distance is at least epsilon+1e-12.",
+    "hash_order": "SHA256 of ASCII 'seed:rho_index:phi_index:psi_index', with the canonical index triple as tie breaker.",
+    "small_exact_grid": "Use rho indices for values {0,1} and main 8-angle-grid phi/psi indices {0,1}, hence angles {0,pi/4}.",
+    "compact_control": "Use U=Rz(phi) Ry(2*atan(rho)) Rz(psi).",
+    "finite_difference": "Use a five-point central stencil with h=1e-5 and compare scale-normalised metric error.",
+    "projective_quotient": "Report both V(R)=2*pi^2*sinh(R)^2 and the M~-M quotient volume pi^2*sinh(R)^2; both have exponent 2.",
+    "pgm": {
+      "success_operator": "G=(1/N)*sum_i |v_i><v_i| on the four-dimensional success block.",
+      "effects": "E_j=G^(-1/2)*(1/N)|v_j><v_j|*G^(-1/2) on numerical support.",
+      "outcomes": "N message outcomes plus one explicit common erasure outcome with P(erasure|i)=1-p_i.",
+      "support_cutoff": "1e-12*max(1,lambda_max(G))",
+      "guards": [
+        "sum_j E_j agrees with the support projector within 1e-10",
+        "raw probabilities are at least -1e-12",
+        "raw row-sum error is at most 1e-10",
+        "clip only values in [-1e-12,0] before final row normalisation"
+      ]
+    }
+  },
+  "audit_disclosure": {
+    "method_auditor": "delegated Codex section",
+    "artifact_received": false,
+    "digest_received": false,
+    "independent_witness": false,
+    "note": "The section reported in-memory finite-grid diagnostics after the parent hash was frozen. Those diagnostics did not change any parent hypothesis or threshold and cannot be promoted to independent evidence."
+  }
+}

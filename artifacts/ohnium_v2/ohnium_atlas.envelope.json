@@ -1,0 +1,71 @@
+{
+  "claim_id": "ARCH-OHM-V2_OBSERVABLE_ASCENT",
+  "command": "PYTHONPATH=src python experiments/run_ohnium_observatory.py",
+  "commit_sha": "d7b147850a71368a61376f800d3a630e30ca2c78",
+  "environment": {
+    "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
+    "fields": {
+      "machine": "AMD64",
+      "numpy": "2.4.5",
+      "platform": "windows",
+      "python": "3.13.14"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "sha256:4b68d589980d6acaab4eb125ca08949f75495716d39e958150fd7f76835b897a",
+    "sha256:9d34e7ac161147cacf5506cb8152043684d534988e476cc7b4489018240bc9d1",
+    "sha256:169a9385c0c99d50d611bbc05a6a5302d62d44a7703e135a8f25056bb74063ed",
+    "sha256:f273e6ad4e3d6839781ce252b918300865e625cf6cf119bd1c3d75076c7ceb01",
+    "sha256:cde022976a600b48487b57db45c209dfa0336c5e053daf3e94173a454347753a"
+  ],
+  "observed_result": {
+    "bridge_ledgers": 480,
+    "carrier_observations": 600,
+    "endpoint_fibers": 3,
+    "faults_caught": {
+      "bridge_absorption": true,
+      "energy_leakage": true,
+      "false_ascent": true
+    },
+    "frames": 120,
+    "hamiltonian_energy": 0.0,
+    "verdict": "ALL REGISTERED OHNIUM GATES HOLD"
+  },
+  "platform": "",
+  "producer": "experiments/run_ohnium_observatory.py",
+  "raw_artifacts": {
+    "artifacts/ohnium_v2/ohnium_atlas.json": "sha256:c035b189f6c63eeebb0020ac6e0afa6d417f51b0dee8cd4d3edda2326c9c3186"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    20260728
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-29T04:12:33Z",
+  "typed_remainders": [
+    {
+      "carrier": "CD32 orthogonal complement of A_n",
+      "comparison": "the full discarded vector is stored in the JSON; its squared norm is secondary telemetry",
+      "kind": "empirical_residual"
+    },
+    {
+      "carrier": "A/U/M naming",
+      "comparison": "phonetic source acknowledged; no spiritual or physical quantum effect inferred",
+      "kind": "semantic_remainder"
+    },
+    {
+      "carrier": "evidence lattice",
+      "comparison": "same-repository deterministic evidence; not independent verification or quantum-hardware evidence",
+      "kind": "scope_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": "."
+}

@@ -1089,6 +1089,56 @@ CLAIMS = [
                        "same failure mode this repository has now recorded seven "
                        "times under a different name: the correct shape with the "
                        "old comparison still inside it")),
+    # ---- Round S9: finite-size fractional-Hall probe -------------------------
+    Claim("FQHE-S9-FINITE_SIZE", EvidenceTag.HYPOTHESIS,
+          "At the fixed 6x4, alpha=1/4, N_b=3 hard-core-boson Hofstadter "
+          "parameter point, the two lowest states form an isolated rank-two "
+          "bundle whose determinant-line Chern number has magnitude one and "
+          "the same orientation as the filled-band integer-Hall control.",
+          artifact="manifests/s9_fqhe_preregistration.json",
+          kill_condition="Void the instrument if any static, atomic, one-particle "
+                         "or integer-Hall control fails. Kill this parameter "
+                         "point if the rank-two bundle is not isolated, an "
+                         "overlap is singular, the FHS result is nonintegral or "
+                         "mesh-dependent, its magnitude/orientation disagrees "
+                         "with the preregistration, or a local U(2) frame "
+                         "scramble changes it.",
+          assumptions=("The manifest was committed before any S9 control or "
+                       "target diagonalization.",
+                       "A pass is only a finite-size numerical signature at one "
+                       "fixed parameter point; it is not a thermodynamic phase "
+                       "proof or a Hall-transport measurement.",
+                       "The determinant-link FHS instrument acts on a "
+                       "degenerate rank-two Berry bundle. Flat graph-sheaf "
+                       "monodromy and the rank-one identity helper are not "
+                       "substitutes for this calculation.")),
+    Claim("FQHE-S9-ISOLATION_KILL", EvidenceTag.MEASURED,
+          "At the frozen S9 point, every construction and reference control "
+          "passed and deterministic QR/Rayleigh--Ritz repaired the degenerate "
+          "coarse frame, but the strict isolation ratio remained "
+          "W/Delta = 1.01534677161674 >= 1. The fixed parameter point is "
+          "therefore killed. The raw coarse Chern value C = 1 is telemetry; "
+          "H2 was not run and no C/2 label is authorized.",
+          artifact="artifacts/s9_fqhe/fqhe_probe.corrected.json",
+          sample_size=1,
+          interval=(1.01534677161674, 1.01534677161674),
+          null="the preregistered finite-point requirement W/Delta < 1",
+          corrections=("the first ARPACK frame had Gram defect 0.832 inside "
+                       "an essentially exactly degenerate low-energy space; "
+                       "full-three-vector QR/Rayleigh--Ritz reduced it to "
+                       "2.22e-15 without changing the returned Ritz span",
+                       "the first aggregate ledger converted downstream "
+                       "NOT_RUN states into five false kill labels; the "
+                       "corrected ledger emits only "
+                       "KILLED_BUNDLE_ISOLATION"),
+          assumptions=("the interval is the deterministic value at one fixed "
+                       "finite parameter point, not a population confidence "
+                       "interval",
+                       "the corrected evidence envelope is local and unsigned "
+                       "by an independent reproducer",
+                       "the result does not identify a thermodynamic phase, "
+                       "transport coefficient, fractional charge, or anyon "
+                       "statistics")),
     # ---- Round R4: the witnessed reproducibility membrane -------------------
     Claim("MATH-R4-OPAQUE_MONOTONICITY", EvidenceTag.PROVED,
           "Appending an instruction to a circuit cannot DECREASE the reported "
@@ -1320,6 +1370,7 @@ def _link_supersessions(reg: Registry) -> None:
         ("EXP-S5-INVARIANT_LOCALISATION", "EXP-S6-ACAF_REPLICATION"),
         ("MATH-S5-LAPLACIAN_INVARIANT", "MATH-S6-LAPLACIAN_INVARIANT_SAFE"),
         ("RET-R4-REGISTRY_SELF_WITNESS", "METHOD-R4-EVIDENCE_ENVELOPE"),
+        ("FQHE-S9-FINITE_SIZE", "FQHE-S9-ISOLATION_KILL"),
     ):
         old, new = reg[old_id], reg[new_id]
         if old.superseded_by is None:

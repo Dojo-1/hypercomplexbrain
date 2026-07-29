@@ -1,0 +1,393 @@
+# S9 Fractional Quantum Hall Probe
+
+**Status:** `KILLED_PARAMETER_POINT`. The first run and its correction cycle
+are both preserved. The deterministic QR/Rayleigh--Ritz correction repaired the
+degenerate frame, but the unchanged parameter point still failed the
+preregistered strict bundle-isolation gate. No `C/2` response is authorized.
+
+S9 is a controls-first numerical probe of one fixed finite-size interacting
+Hofstadter system. It asks whether the two lowest many-body levels form an
+isolated rank-two bundle over boundary-twist space and, only if they do, whether
+the determinant line of that bundle has Chern number of magnitude one. The
+derived label `C/2` is a bundle-normalized finite-size response. It is not a
+direct Hall-transport measurement.
+
+The complete immutable specification is
+[`manifests/s9_fqhe_preregistration.json`](../manifests/s9_fqhe_preregistration.json).
+That manifest, rather than this explanatory note, is authoritative for parameter
+values, thresholds, seeds, execution order, and kill conditions.
+
+## 1. Fixed operational model
+
+The target is three hard-core bosons on a periodic `6 x 4` square lattice:
+
+```text
+sites                 24
+flux per plaquette    alpha = 1/4
+total flux quanta     N_phi = 6
+particle number       N_b = 3
+filling               nu = N_b / N_phi = 1/2
+Hilbert dimension     choose(24, 3) = 2024
+```
+
+The hard-core constraint is exact: basis states are three-site occupation
+bitstrings, so double occupation is absent by construction. With `t = 1`, the
+Hamiltonian at twists `(theta_x, theta_y)` is
+
+```text
+H = -t sum_(x,y) [
+      exp(-i 2 pi alpha y + i theta_x 1[x=Lx-1])
+        b†_(x+1 mod Lx,y) b_(x,y)
+    + exp(+i theta_y 1[y=Ly-1])
+        b†_(x,y+1 mod Ly) b_(x,y)
+    + h.c.
+]
+```
+
+This Landau-gauge convention has positive-oriented plaquette phase
+`+2 pi alpha`. Boundary twists occur only on bonds that cross the corresponding
+periodic boundary. The same convention is used by the integer-Hall control, so
+the control fixes the sign orientation for the target.
+
+At each point on the preregistered `7 x 7` and conditional `9 x 9` twist meshes,
+the solver requests the three lowest eigenpairs. The first two eigenvectors form
+the candidate frame
+
+```text
+Psi(i,j) = [psi_0(i,j), psi_1(i,j)].
+```
+
+The third level supplies the separation from the rest of the spectrum. The
+candidate bundle is admitted only when its eigensolver, orthonormality,
+spectral-isolation, and neighbor-overlap gates all pass.
+
+Interacting Harper-Hofstadter hard-core bosons are a literature-supported setting
+in which a bosonic `nu=1/2` fractional-Hall phase can occur, but that prior result
+does not determine the outcome at this exact finite parameter point
+([Gerster et al.](https://arxiv.org/abs/1705.06515)). Finite geometries require
+their own diagnostics and cautions
+([Rosson et al.](https://arxiv.org/abs/1901.03595));
+the broader fractional-Chern-insulator and finite Hofstadter contexts are given
+by [Regnault and Bernevig](https://arxiv.org/abs/1105.4867) and
+[Scaffidi and Simon](https://arxiv.org/abs/1407.1321).
+
+## 2. Rank-two determinant-link instrument
+
+S9 uses the gauge-invariant discretized Chern construction and its non-Abelian
+extension described by
+[Fukui, Hatsugai, and Suzuki](https://arxiv.org/abs/cond-mat/0503172).
+It does not assign separate Abelian Berry phases to the two low-energy
+eigenvectors. Such an assignment would be unstable under a local change of basis
+inside a nearly degenerate two-dimensional space.
+
+For each directed mesh edge, form the rank-two overlap
+
+```text
+M_mu(i,j) = Psi(i,j)† Psi(i+mu,j).
+```
+
+If `M = U Sigma V†` is its singular-value decomposition, the unitary polar factor
+is `Q = U V†`. The determinant link is
+
+```text
+link_mu(i,j) = det(Q) / |det(Q)|.
+```
+
+The oriented plaquette phase and total lattice Chern number are
+
+```text
+F(i,j) = Arg[
+    Ux(i,j)
+    Uy(i+1,j)
+    conj(Ux(i,j+1))
+    conj(Uy(i,j))
+]
+
+C = sum_(i,j) F(i,j) / (2 pi).
+```
+
+Taking the determinant projects the `U(2)` parallel transport of the rank-two
+bundle to the `U(1)` connection on its determinant line. A local frame
+transformation `Psi(i,j) -> Psi(i,j) V(i,j)` must therefore leave the final
+Chern number invariant. S9 tests this directly with 32 preregistered independent
+local `U(2)` frame fields on each completed target mesh.
+
+The instrument is accepted only when every neighbor overlap is invertible above
+the declared floor, every plaquette phase stays away from the principal-argument
+branch cut, and the raw Chern sum lies within the preregistered tolerance of an
+integer. An integer-looking output is not self-authenticating.
+
+## 3. Controls precede the target
+
+Execution is fail-closed and ordered:
+
+1. **Static construction integrity.** Check basis cardinality and occupation,
+   Hermiticity, `2 pi` twist periodicity, and every directed plaquette flux.
+2. **Atomic zero-Chern control.** At `t = 0`, distinct on-site energies give a
+   unique twist-independent product state. Its rank-one Chern number must be zero
+   on both meshes.
+3. **One-particle representation control.** At the three declared twists, the
+   complete `N_b = 1` hard-core many-body spectrum must equal the `24 x 24`
+   single-particle Hofstadter spectrum.
+4. **Integer-Hall orientation control.** The six states in the lowest
+   single-particle Hofstadter band form an occupied rank-six bundle. It must be
+   isolated and have `|C_IQH| = 1` on both meshes, with one common sign.
+5. **Target `7 x 7`.** Run only if all four control stages pass.
+6. **Target `9 x 9`.** Run without parameter changes only if the coarse target
+   passes all solver, isolation, overlap, branch, and integrality gates.
+7. **Local-frame attack.** Recompute the determinant-link instrument for all 32
+   local `U(2)` frame scrambles without re-diagonalizing.
+
+If a control fails, the S9 instrument is `VOID`; a target result must not be
+emitted. If the rank-two bundle is not isolated, no Chern value is divided by
+two. A timeout or memory-limit breach is `INCONCLUSIVE_RESOURCE_LIMIT`, not
+evidence for or against the physical hypothesis.
+
+The exact numerical gates are `S9-G1` through `S9-G11`, and the control gates are
+`S9-C1` through `S9-C3`, in the preregistration manifest. They cover:
+
+- `1e-12`-scale construction checks;
+- eigenpair residual and frame-orthonormality checks;
+- an isolated-bundle requirement `Delta > max(1e-6, 100 r_max)` and
+  `W/Delta < 1`;
+- minimum neighbor-overlap singular value `>= 1e-6`;
+- branch-cut margin `max |F(i,j)| < pi - 1e-3`;
+- Chern integrality and exact rounded agreement between meshes;
+- invariance under all 32 local-frame attacks.
+
+No lattice, filling, flux, mesh, seed, solver tolerance, gap definition, or gate
+threshold may be tuned after observing a failure in this round.
+
+## 4. Curvature degree and the graph-sheaf boundary
+
+The S9 Chern instrument concerns Berry curvature on the two-dimensional boundary-
+twist torus. The rank-two eigenspaces define a vector bundle over
+`T^2_(theta_x,theta_y)`, and its determinant line has a first Chern class
+
+```text
+c_1(det E) in H^2(T^2; Z).
+```
+
+The curvature representative is a degree-two differential form. The lattice
+plaquette phases approximate its integral over two-cells in twist space.
+
+This object is not the repository's flat graph-sheaf monodromy. A graph or
+one-dimensional nerve has path transport and cycle holonomy, but no two-cells on
+which this Berry-curvature integral could live. Nontrivial global monodromy can
+exist for a flat connection, and a nonzero sheaf `H^1` can reflect ordinary cycle
+space rather than curvature. Conversely, a nonzero curvature or Chern class is
+not interchangeable with a sheaf-cohomology `H^1` class.
+
+Accordingly, S9 makes no biconditional of the form
+
+```text
+nontrivial holonomy <-> nontrivial curvature <-> nontrivial sheaf H^1.
+```
+
+That statement is false in this generality. Differential-geometric results that
+relate curvature to the holonomy Lie algebra address the identity component under
+their own hypotheses; they do not identify global holonomy with arbitrary sheaf
+cohomology. S9 uses only the degree-two Berry/Chern construction defined above.
+
+## 5. Commands
+
+After the implementation files named by the preregistration are present, run the
+focused verification first:
+
+```powershell
+python -m pytest -q tests/test_fqhe.py --basetemp=.agent/pytest-s9-fqhe
+```
+
+The historical first run used:
+
+```powershell
+python experiments/run_fqhe_probe.py --manifest manifests/s9_fqhe_preregistration.json
+```
+
+At the correction implementation commit, the one authorized corrected rerun
+must name both frozen inputs:
+
+```powershell
+python experiments/run_fqhe_probe.py `
+  --manifest manifests/s9_fqhe_preregistration.json `
+  --correction manifests/s9_fqhe_instrument_correction.json
+```
+
+The original runner wrote:
+
+```text
+artifacts/s9_fqhe/fqhe_probe.json
+artifacts/s9_fqhe/fqhe_probe.envelope.json
+```
+
+The correction runner verifies those files without modifying them and writes:
+
+```text
+artifacts/s9_fqhe/fqhe_probe.corrected.json
+artifacts/s9_fqhe/fqhe_probe.corrected.envelope.json
+```
+
+It refuses to overwrite an existing corrected output.
+
+Validate the focused and repository-wide contracts after artifact generation:
+
+```powershell
+python -m pytest -q tests/test_fqhe.py --basetemp=.agent/pytest-s9-fqhe-postrun
+python -m pytest -q --basetemp=.agent/pytest-s9-full
+```
+
+These commands are the intended execution surface, not a report that they have
+already passed unless accompanied by a committed result artifact. The result
+document must preserve controls before target outcomes, the full gate ledger,
+raw and rounded Chern values, mesh-local numerical diagnostics, seeds,
+environment, and runtime provenance.
+
+## 6. Initial frozen-point result
+
+The first controls-first execution is preserved in
+[`artifacts/s9_fqhe/fqhe_probe.json`](../artifacts/s9_fqhe/fqhe_probe.json) with
+its evidence envelope. It returned `KILLED_PARAMETER_POINT`.
+
+All controls passed:
+
+```text
+S9-G1..G4  static construction                         PASS
+S9-C1      atomic zero-Chern control                   PASS
+S9-C2      one-particle representation control        PASS
+S9-C3      filled-band integer-Hall orientation       PASS
+```
+
+The coarse `7 x 7` target produced:
+
+```text
+maximum eigenpair residual       7.66767472123799e-11
+maximum frame Gram defect        0.8320612640498583
+maximum pair splitting           1.580957587066223e-13
+global rank-two width W          0.2797220978672943
+minimum external gap Delta       0.27549415203417027
+W / Delta                        1.0153467716171327
+minimum neighbor singular value  0.36232661193440646
+raw determinant-bundle C         1.0
+maximum plaquette phase          0.25217114588717854
+```
+
+Thus the mesh-local gate record is:
+
+```text
+S9-G5  FAIL  eigsh returned a badly non-orthogonal basis inside an
+             essentially exactly degenerate low-energy space
+S9-G6  FAIL  W / Delta >= 1
+S9-G7  PASS  neighbor overlaps remained invertible
+S9-G8  PASS  plaquette phases remained inside the branch margin
+S9-G9  PASS  the raw coarse Chern sum was integral
+S9-G10 NOT_RUN  the 9 x 9 mesh was not admitted
+S9-G11 NOT_RUN  local-frame attacks were not admitted
+```
+
+The raw coarse `C = 1` is telemetry, not an authorized topological-response
+result. G5 invalidated the supplied eigenvector frame, G6 independently
+invalidated strict rank-two isolation, the confirmation mesh did not run, and
+no value was divided by two.
+
+The initial runner's aggregate `gate_ledger` and
+`triggered_kill_conditions` contain a reporting defect: they collapse
+coarse-mesh PASS results and downstream `NOT_RUN` states into failures. In
+particular, `KILLED_OVERLAP`, `KILLED_BRANCH`, `KILLED_NONINTEGRAL_CHERN`,
+`KILLED_MESH_DISAGREEMENT`, and `KILLED_GAUGE_VARIANCE` are not observations
+from this run. The immutable mesh-local payload above remains the source for
+the initial result. A separately preregistered numerical-instrument correction
+may repair the degenerate eigenspace frame and tri-state ledger, but it may not
+change the model, mesh, seed, thresholds, width definition, or the fact that
+this original run was killed.
+
+The committed amendment is
+[`manifests/s9_fqhe_instrument_correction.json`](../manifests/s9_fqhe_instrument_correction.json).
+It authorizes exactly one rerun with deterministic full-three-vector reduced QR
+followed by Rayleigh--Ritz diagonalization of `Q†HQ`. This repairs only the
+returned basis inside the same Ritz span. The runner recomputes all three Ritz
+values, residuals, the Gram defect, and the span-preservation diagnostic; it
+does not retry ARPACK. Gate aggregation now preserves per-mesh `PASS`/`FAIL`
+states and uses `INCOMPLETE` or `NOT_RUN` for missing downstream evidence.
+Kill labels may arise only from an evaluated `FAIL`. Gauge attacks run on every
+completed mesh independently, while global H3 remains incomplete unless both
+required target meshes are admitted.
+
+### Corrected single-rerun result
+
+The versioned rerun is preserved in
+[`artifacts/s9_fqhe/fqhe_probe.corrected.json`](../artifacts/s9_fqhe/fqhe_probe.corrected.json).
+It reran every control and the identical coarse target. The original artifact
+digest remained `c570cb3b1ff41f977a3b6c9cfcc06bec022b47968018476b0f5cef291c396e56`.
+
+The correction repaired the numerical frame:
+
+```text
+maximum eigenpair residual       7.65682991538843e-11
+maximum frame Gram defect        2.22044604925031e-15
+maximum span-preservation sine   1.94460544817738e-15
+maximum pair splitting           2.13162820728030e-14
+global rank-two width W          0.279722097867230
+minimum external gap Delta       0.275494152034214
+W / Delta                        1.01534677161674
+minimum neighbor singular value  0.874741256981404
+raw determinant-bundle C         1.0000000000000002
+maximum plaquette phase          0.252171145887180
+```
+
+At the measured `7 x 7` mesh, G5 and G7--G9 passed. G6 failed because
+`W/Delta >= 1`. The `9 x 9` mesh was therefore correctly not admitted.
+All 32 local `U(2)` attacks on the completed coarse frame passed with maximum
+Chern change `0.0`.
+
+The global tri-state ledger is:
+
+```text
+S9-G5   INCOMPLETE  coarse PASS; confirmation NOT_RUN
+S9-G6   FAIL        coarse W/Delta = 1.01534677161674
+S9-G7   INCOMPLETE  coarse PASS; confirmation NOT_RUN
+S9-G8   INCOMPLETE  coarse PASS; confirmation NOT_RUN
+S9-G9   INCOMPLETE  coarse PASS; confirmation NOT_RUN
+S9-G10  NOT_RUN     two-mesh agreement not evaluated
+S9-G11  INCOMPLETE  32/32 coarse attacks PASS; confirmation NOT_RUN
+```
+
+Consequently:
+
+```text
+S9-FQH-H1  KILLED
+S9-FQH-H2  NOT_RUN
+S9-FQH-H3  INCOMPLETE
+triggered kill: KILLED_BUNDLE_ISOLATION
+```
+
+The corrected envelope binds the two distinct committed inputs, scopes the
+measurement to the `7 x 7` target actually executed, and verifies locally.
+It has no independent witness. The raw coarse `C = 1` remains useful topology
+telemetry, but it cannot be promoted to the preregistered fractional-Hall
+signature because the low-energy pair is not strictly isolated under the
+frozen `W/Delta < 1` definition.
+
+## 7. Interpretation ceiling
+
+If every control and target gate passes, S9 supports only this statement:
+
+> At the preregistered finite `6 x 4` hard-core-boson Hofstadter point, the two
+> lowest states form a numerically isolated rank-two bundle over the tested twist
+> meshes whose determinant line has total Chern magnitude one, invariant under the
+> preregistered local-frame attacks.
+
+Under those conditions, `C/2` is a finite-size bundle-normalized response label
+with magnitude `1/2`. Even a complete pass does **not** establish:
+
+- a thermodynamic or continuum fractional quantum Hall phase;
+- a measured Hall conductance or charge pump;
+- fractional quasiparticle charge, quasihole counting, or anyon statistics;
+- braiding, Fibonacci anyons, or topological quantum computation;
+- robustness under perturbations, finite-size scaling, or hardware behavior;
+- quantum speedup, quantum advantage, or cognitive performance;
+- an empirical bridge to the repository's architectural metaphors.
+
+Failure also has narrow meaning. It retires this preregistered parameter point or
+voids this instrument, according to the failed gate. It does not prove that the
+underlying phase is absent elsewhere. The remaining thermodynamic and transport
+questions stay typed as a separate finite-size topological remainder.

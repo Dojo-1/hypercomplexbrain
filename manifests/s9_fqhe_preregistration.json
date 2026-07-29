@@ -1,0 +1,315 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "S9 finite-size bosonic fractional quantum Hall probe",
+  "committed_before_any_fqhe_control_or_target_run": true,
+  "baseline": {
+    "commit_sha": "1d36d920c1b5d56036fb0a121bad080e1ac8b2a5",
+    "fqhe_implementation_present": false,
+    "fqhe_artifact_present": false,
+    "local_changes_to_preserve": [
+      "artifacts/s4_g100/summaries/acaf_frame_sweep.json",
+      "artifacts/s4_g100/summaries/moving_frame_audit.json",
+      "artifacts/s4_g100/summaries/s4_basis_attack.json",
+      "tests/test_docs.py"
+    ],
+    "privacy_boundary": "No file from personal directories, agent attachment stores, or any other personal-data location is an input to this round or an expected repository artifact."
+  },
+  "question": "At one fixed finite Hofstadter-torus parameter point, does the two-dimensional low-energy bundle of three hard-core bosons at filling nu=1/2 pass isolation and numerical-integrity gates and carry determinant-bundle Chern number with magnitude one, giving bundle-normalized response magnitude one half?",
+  "formal_model": {
+    "lattice": {
+      "geometry": "periodic rectangular torus",
+      "Lx": 6,
+      "Ly": 4,
+      "sites": 24,
+      "site_index": "r(x,y) = x + Lx*y for 0 <= x < Lx and 0 <= y < Ly",
+      "magnetic_flux_per_plaquette": "alpha = 1/4",
+      "total_flux_quanta": 6,
+      "consistency_checks": [
+        "alpha*Lx*Ly = 6 is an integer",
+        "alpha*Ly = 1 is an integer, so the selected Landau gauge is periodic in y"
+      ]
+    },
+    "particles": {
+      "statistics": "hard-core bosons",
+      "occupation": "n_r in {0,1}",
+      "particle_number": 3,
+      "filling": "nu = N_b/N_phi = 3/6 = 1/2",
+      "hilbert_dimension": 2024,
+      "interaction": "The hard-core constraint is imposed by the fixed-occupation bitstring basis; no additional finite-U term is used."
+    },
+    "hamiltonian": {
+      "scale": "t = 1",
+      "definition": "H(theta_x,theta_y) = -t * sum_(x,y) [ exp(-i*2*pi*alpha*y + i*theta_x*1[x=Lx-1]) b^dagger_(x+1 mod Lx,y) b_(x,y) + exp(i*theta_y*1[y=Ly-1]) b^dagger_(x,y+1 mod Ly) b_(x,y) + h.c. ]",
+      "gauge": "Landau gauge with positive-oriented plaquette product exp(+i*2*pi*alpha)",
+      "boundary_twists": "theta_x and theta_y are each in [0,2*pi), inserted only on the corresponding positive-direction boundary-crossing bonds",
+      "matrix_representation": "complex Hermitian sparse matrix in the exact order produced by itertools.combinations(range(24),3), with each increasing site tuple encoded as a 24-bit mask"
+    },
+    "twist_meshes": [
+      {
+        "name": "primary_coarse",
+        "Nx": 7,
+        "Ny": 7,
+        "points": "theta_x=2*pi*i/7, theta_y=2*pi*j/7"
+      },
+      {
+        "name": "primary_confirmation",
+        "Nx": 9,
+        "Ny": 9,
+        "points": "theta_x=2*pi*i/9, theta_y=2*pi*j/9"
+      }
+    ],
+    "eigensolver": {
+      "target_eigenpairs": 3,
+      "which": "SA",
+      "tolerance": 1e-11,
+      "max_iterations": 20000,
+      "krylov_dimension_ncv": 40,
+      "initial_vector": "deterministic normalized complex standard-normal vector derived from the declared eigensolver seed, mesh size, mesh coordinates, and sector code",
+      "ordering": "ascending eigenvalue; the first two eigenvectors form the candidate ground bundle and the third defines the excitation gap"
+    },
+    "ground_bundle": {
+      "rank": 2,
+      "frame": "Psi(i,j) is the 2024x2 orthonormal matrix of the two lowest eigenvectors",
+      "internal_splitting": "delta_pair(i,j) = E_1(i,j)-E_0(i,j)",
+      "global_bundle_width": "W = max_(i,j) E_1(i,j) - min_(i,j) E_0(i,j)",
+      "isolation_gap": "Delta = min_(i,j) [E_2(i,j)-E_1(i,j)]",
+      "isolation_ratio": "W/Delta"
+    },
+    "chern_instrument": {
+      "method": "non-Abelian determinant-link Fukui-Hatsugai-Suzuki discretization",
+      "overlap": "M_mu(i,j) = Psi(i,j)^dagger Psi(i+mu,j) with periodic mesh indices",
+      "polar_link": "If M=U*Sigma*Vh is its singular-value decomposition, Q=U*Vh and link_mu=det(Q)/abs(det(Q)).",
+      "plaquette_phase": "F(i,j) = Arg[Ux(i,j)*Uy(i+1,j)*conj(Ux(i,j+1))*conj(Uy(i,j))]",
+      "total_chern": "C = sum_(i,j) F(i,j)/(2*pi)",
+      "bundle_normalized_response": "C/2; this is a finite-size topological-response label inferred from the rank-two bundle, not a direct transport measurement"
+    }
+  },
+  "randomness": {
+    "eigensolver_seed": 2026072801,
+    "gauge_scramble_seed": 2026072802,
+    "eigensolver_seed_derivation": "numpy SeedSequence([base_seed, mesh_Nx, mesh_Ny, i, j, sector_code]); no process-global random state",
+    "gauge_scramble_seed_derivation": "numpy SeedSequence([base_seed, mesh_Nx, mesh_Ny, replicate, i, j, sector_code]); no process-global random state",
+    "gauge_scrambles": 32,
+    "gauge_scramble_definition": "For each replicate and each target mesh point, draw a complex 2x2 standard-normal matrix, obtain a Haar U(2) matrix by QR with diagonal-phase correction, and replace Psi(i,j) by Psi(i,j)U(i,j)."
+  },
+  "controls_first_execution_order": [
+    {
+      "order": 1,
+      "name": "static construction integrity",
+      "action": "Verify basis cardinality, hard-core occupation, Hermiticity, 2*pi twist periodicity, and every directed plaquette flux before diagonalization."
+    },
+    {
+      "order": 2,
+      "name": "atomic zero-Chern control",
+      "action": "Set t=0 and epsilon_r=r/24 with N_b=3. Use the unique product ground state, which is twist independent, and require rank-one C=0 on both meshes."
+    },
+    {
+      "order": 3,
+      "name": "one-particle representation control",
+      "action": "At twists (0,0), (2*pi/7,4*pi/7), and (8*pi/9,2*pi/9), require the complete N_b=1 hard-core many-body spectrum to equal the 24x24 single-particle Hofstadter spectrum."
+    },
+    {
+      "order": 4,
+      "name": "integer quantum Hall orientation control",
+      "action": "For the same hopping model, fill the six states of the lowest single-particle Hofstadter band, treat the occupied rank-six space as a bundle, and require determinant-bundle |C_IQH|=1 on both meshes."
+    },
+    {
+      "order": 5,
+      "name": "target coarse mesh",
+      "action": "Run the N_b=3 hard-core-boson target only if orders 1-4 pass without exception."
+    },
+    {
+      "order": 6,
+      "name": "target confirmation mesh",
+      "action": "Run the 9x9 target without changing any model or solver parameter only if the 7x7 instrument and isolation gates pass."
+    },
+    {
+      "order": 7,
+      "name": "local-frame gauge attack",
+      "action": "Apply all 32 preregistered independent local U(2) frame fields to each completed target mesh and recompute the Chern instrument without re-diagonalizing."
+    }
+  ],
+  "instrument_integrity_gates": [
+    {
+      "id": "S9-G1",
+      "metric": "maximum Hermiticity defect max(abs(H-H^dagger))",
+      "pass": "<= 1e-12"
+    },
+    {
+      "id": "S9-G2",
+      "metric": "maximum twist-periodicity defect between H(theta_mu) and H(theta_mu+2*pi)",
+      "pass": "<= 1e-12"
+    },
+    {
+      "id": "S9-G3",
+      "metric": "maximum principal-angle error of every positive-oriented plaquette product from +2*pi*alpha",
+      "pass": "<= 1e-12"
+    },
+    {
+      "id": "S9-G4",
+      "metric": "basis cardinality and occupation",
+      "pass": "exactly C(24,3)=2024 distinct states, each with popcount three and no double occupation"
+    },
+    {
+      "id": "S9-G5",
+      "metric": "eigenpair residual and frame orthonormality at every target twist",
+      "pass": "max ||H psi_n-E_n psi_n||_2 <= 1e-9 and max abs(Psi^dagger Psi-I_2) <= 1e-10"
+    },
+    {
+      "id": "S9-G6",
+      "metric": "rank-two spectral isolation",
+      "pass": "Delta > max(1e-6,100*r_max), where r_max is the maximum target eigenpair residual on that mesh, and W/Delta < 1"
+    },
+    {
+      "id": "S9-G7",
+      "metric": "neighbor-overlap invertibility",
+      "pass": "minimum singular value across every rank-two neighbor overlap >= 1e-6"
+    },
+    {
+      "id": "S9-G8",
+      "metric": "FHS branch-cut margin",
+      "pass": "maximum abs(plaquette phase) < pi-1e-3"
+    },
+    {
+      "id": "S9-G9",
+      "metric": "Chern integrality",
+      "pass": "abs(C-round(C)) <= 1e-8 for each target and control bundle"
+    },
+    {
+      "id": "S9-G10",
+      "metric": "mesh agreement",
+      "pass": "round(C_7x7)=round(C_9x9) and abs(C_7x7-C_9x9) <= 1e-8"
+    },
+    {
+      "id": "S9-G11",
+      "metric": "local U(2) gauge invariance",
+      "pass": "all 32 scrambled target Chern values differ from the corresponding unscrambled value by <= 1e-8 and all branch and overlap gates remain valid"
+    }
+  ],
+  "control_gates": [
+    {
+      "id": "S9-C1",
+      "control": "atomic t=0",
+      "pass": "abs(C_atomic) <= 1e-10 on 7x7 and 9x9 meshes"
+    },
+    {
+      "id": "S9-C2",
+      "control": "N_b=1 operator equivalence",
+      "pass": "maximum absolute difference between all 24 sorted eigenvalues is <= 1e-11 at each of the three declared twists"
+    },
+    {
+      "id": "S9-C3",
+      "control": "filled lowest Hofstadter band",
+      "pass": "The rank-six occupied band is isolated by min(E_6-E_5)>1e-8; |round(C_IQH)|=1 on both meshes; S9-G7 through S9-G10 pass for its occupied bundle; and both meshes have the same sign."
+    }
+  ],
+  "primary_hypotheses": [
+    {
+      "id": "S9-FQH-H1",
+      "statement": "The two lowest N_b=3 levels define an isolated rank-two bundle over both preregistered twist meshes.",
+      "pass": "S9-G5, S9-G6, and S9-G7 all pass on 7x7 and 9x9.",
+      "kill": "Any required eigensolve fails, Delta <= max(1e-6,100*r_max), W/Delta >= 1, or a neighbor overlap has minimum singular value below 1e-6."
+    },
+    {
+      "id": "S9-FQH-H2",
+      "statement": "The determinant line of the isolated rank-two target bundle has |C|=1 on both meshes and its sign equals the sign fixed by the integer-Hall control.",
+      "pass": "S9-G8, S9-G9, and S9-G10 pass; |round(C_target)|=1; sign(round(C_target))=sign(round(C_IQH)).",
+      "derived_label": "The bundle-normalized finite-size response is C/2 and therefore has magnitude 1/2.",
+      "kill": "The Chern number is nonintegral, changes between meshes, has magnitude other than one, disagrees in sign with the same-convention IQH control, or is computed after any isolation/instrument gate has failed."
+    },
+    {
+      "id": "S9-FQH-H3",
+      "statement": "The measured target Chern number is a property of the rank-two subspace rather than the arbitrary eigenvector frame.",
+      "pass": "S9-G11 passes for all 32 preregistered local U(2) gauge fields on each mesh.",
+      "kill": "Any scramble changes C by more than 1e-8 or invalidates a branch/overlap gate."
+    }
+  ],
+  "global_kill_conditions": [
+    "If any static construction, atomic, one-particle, or integer-Hall control fails, the target is not run and the entire S9 instrument is marked VOID.",
+    "If the 7x7 target fails an eigensolver, spectral-isolation, overlap, branch, or integrality gate, the 9x9 target is not run.",
+    "If the fixed parameter point fails H1, no Chern number is divided by two and no fractional-response label is emitted.",
+    "If H1 passes but H2 or H3 fails, this parameter point does not provide the preregistered finite-size bosonic fractional-Hall signature.",
+    "No lattice size, flux, particle number, mesh, solver tolerance, seed, gap definition, or gate threshold may be changed inside this round after a failure.",
+    "A timeout or memory-budget breach is an INCONCLUSIVE resource failure, not numerical evidence for or against the target.",
+    "Any inference of thermodynamic topological order, fractional quasiparticle charge, anyon statistics, quantum advantage, or cognitive performance from this finite-size probe kills the round's interpretive validity."
+  ],
+  "literature_basis": [
+    {
+      "role": "gauge-invariant discretized Chern instrument and non-Abelian extension",
+      "citation": "Fukui, Hatsugai, and Suzuki, Chern Numbers in Discretized Brillouin Zone: Efficient Method of Computing (Spin) Hall Conductances",
+      "url": "https://arxiv.org/abs/cond-mat/0503172"
+    },
+    {
+      "role": "prior evidence that interacting Harper-Hofstadter hard-core bosons can realize a nu=1/2 bosonic fractional-Hall phase",
+      "citation": "Gerster et al., Fractional quantum Hall effect in the interacting Hofstadter model via tensor networks",
+      "url": "https://arxiv.org/abs/1705.06515"
+    },
+    {
+      "role": "finite-geometry caution and finite-cylinder bosonic fractional-Hall diagnostics",
+      "citation": "Rosson et al., Bosonic Fractional Quantum Hall States on a Finite Cylinder",
+      "url": "https://arxiv.org/abs/1901.03595"
+    },
+    {
+      "role": "fractional Chern-insulator finite-size context",
+      "citation": "Regnault and Bernevig, Fractional Chern Insulator",
+      "url": "https://arxiv.org/abs/1105.4867"
+    },
+    {
+      "role": "finite-size Hofstadter-model context and exact finite-size constructions",
+      "citation": "Scaffidi and Simon, Exact solutions of fractional Chern insulators: interacting particles in the Hofstadter model at finite size",
+      "url": "https://arxiv.org/abs/1407.1321"
+    }
+  ],
+  "evidence_floor": {
+    "instrument": "The FHS determinant-link calculation is a numerical operator with explicit gauge and branch controls; a computed integer is not treated as self-authenticating.",
+    "target": "At most M: a reproducible finite-size numerical signature at one fixed lattice, filling, Hamiltonian, and two twist meshes.",
+    "architectural_interpretation": "At most S: any analogy to repository cognition, holonomy, sheaves, carriers, or holoportation remains speculative and is not promoted by this experiment.",
+    "independent": "Not reachable in this round; the local runner and local verifier share the same repository and machine."
+  },
+  "expected_files_after_preregistration": [
+    "src/aionq/fqhe.py",
+    "experiments/run_fqhe_probe.py",
+    "tests/test_fqhe.py",
+    "docs/S9_FQHE_PROBE.md",
+    "artifacts/s9_fqhe/fqhe_probe.json",
+    "artifacts/s9_fqhe/fqhe_probe.envelope.json",
+    "src/aionq/governance.py"
+  ],
+  "artifact_requirements": [
+    "Persist the exact commit, environment, model, meshes, seeds, solver settings, and gate thresholds.",
+    "Persist all control outcomes before target outcomes.",
+    "Persist eigenvalues, residual maxima, W, Delta, W/Delta, neighbor-overlap singular-value minima, every plaquette phase, raw and rounded Chern values, and all 32 gauge-scramble Chern values.",
+    "Persist a verdict for every control, instrument gate, hypothesis, and kill condition, including VOID or INCONCLUSIVE states.",
+    "Do not persist raw user text, chat identifiers, attachment paths, personal files, credentials, or personal attribution."
+  ],
+  "resource_budget": {
+    "hardware": "local CPU only; one process; no GPU and no quantum device",
+    "external_or_network_calls": 0,
+    "target_sparse_diagonalizations": 130,
+    "target_matrix_dimension": 2024,
+    "target_eigenpairs_per_twist": 3,
+    "control_diagonalizations": "24x24 dense linear algebra plus the three declared N_b=1 equivalence points",
+    "dependencies": "numpy>=1.24 and scipy>=1.10 already declared by the repository; no new dependency",
+    "expected_elapsed_time": "2 to 15 minutes on the current local machine",
+    "hard_elapsed_stop": "30 minutes for the complete controls-plus-target runner",
+    "hard_resident_memory_stop": "2 GiB",
+    "on_budget_breach": "terminate cleanly, write no success verdict, and record INCONCLUSIVE_RESOURCE_LIMIT without changing parameters or retrying"
+  },
+  "strict_scope_exclusions": [
+    "No claim of a thermodynamic or continuum fractional quantum Hall phase.",
+    "No finite-size scaling, entanglement spectrum, quasihole counting, spectral flow, charge-pumping measurement, or many-body localization result.",
+    "No claim of fractional quasiparticle charge, braiding, anyon statistics, topological quantum computation, or Fibonacci anyons.",
+    "No physical-device, noise-model, quantum-speedup, or quantum-advantage claim.",
+    "No assertion that the existing identity Berry-holonomy helper is valid for this degenerate rank-two bundle; S9 uses its own non-Abelian determinant-link instrument.",
+    "No use of Fibonacci F/R symbols or flat graph-sheaf monodromy as substitutes for many-body Berry curvature.",
+    "No claim about P versus NP, Millennium Prize problems, consciousness, sentience, AGI, general intelligence, or best cognitive performance.",
+    "No empirical connection from this condensed-matter probe to the repository's hypercomplex cognitive architecture.",
+    "No post-failure parameter search, lattice resizing, mesh refinement beyond 9x9, threshold relaxation, or selective reporting within S9."
+  ],
+  "stop_condition": "Stop after controls-first execution, the fixed 7x7 and conditional 9x9 target measurements, 32 local U(2) frame attacks per completed mesh, tests, deterministic artifact, evidence envelope, and an explicit pass/kill/void ledger. Do not tune the parameter point or begin a new physics claim inside S9.",
+  "typed_remainder": {
+    "kind": "finite_size_topological_remainder",
+    "carrier": "thermodynamic phase identification and physical Hall transport",
+    "statement": "An isolated rank-two finite-size bundle with total Chern magnitude one is compatible with the bosonic nu=1/2 Laughlin/FQH signature. It is not sufficient by itself to establish a thermodynamic phase, fractional charge, anyon statistics, robustness to perturbations, or hardware behavior. Those remain separate preregistered experiments."
+  }
+}

@@ -17,6 +17,7 @@ splitform     split/hyperbolic forms over R and F_2; computed code distance
 cayley_dickson  the associator failure ladder as an observability atlas
 residency     simulation-cost interval (one coordinate of the atlas)
 coherentize   Stinespring coherentization and what it actually buys
+four_cell    frozen four-role phase-memory calibration with typed missingness
 budget        the coherence budget: periodic model (A-tier heuristic)
 bordon        Bordon respiration: reservoir dynamics, drone ceiling, polyrhythm
 quantities    typed coordinates: units, uncertainty, base-relativity
@@ -42,6 +43,7 @@ __all__ = [
     "budget",
     "cayley_dickson",
     "coherentize",
+    "four_cell",
     "fusion",
     "governance",
     "hb0",

@@ -1,0 +1,61 @@
+{
+  "claim_id": "FQHE-S9-PROBE_RESULT",
+  "command": "python experiments/run_fqhe_probe.py --manifest manifests/s9_fqhe_preregistration.json",
+  "commit_sha": "abc56ba46b2bb66e17025cff171873e70c106041",
+  "environment": {
+    "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
+    "fields": {
+      "machine": "AMD64",
+      "numpy": "2.4.5",
+      "platform": "windows",
+      "python": "3.13.14"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "sha256:858d9e46c008d52c30fd1c2d8e9500f8ba5dc6dd0beeecd16a01c5830ad26fcb",
+    "sha256:858d9e46c008d52c30fd1c2d8e9500f8ba5dc6dd0beeecd16a01c5830ad26fcb"
+  ],
+  "observed_result": {
+    "bundle_normalized_response": {
+      "interpretation_authorized": false,
+      "magnitude": null,
+      "reason": "the preregistered topological signature did not pass",
+      "value": null
+    },
+    "controls_pass": true,
+    "sample_size": 1,
+    "status": "KILLED_PARAMETER_POINT",
+    "target_chern": 1.0
+  },
+  "platform": "windows",
+  "producer": "local-s9-runner",
+  "raw_artifacts": {
+    "artifacts/s9_fqhe/fqhe_probe.json": "sha256:c570cb3b1ff41f977a3b6c9cfcc06bec022b47968018476b0f5cef291c396e56"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    2026072801,
+    2026072802
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-28T12:18:08+02:00",
+  "typed_remainders": [
+    {
+      "kind": "empirical_residual",
+      "statement": "Thermodynamic scaling, continuum transport, fractional charge, and anyon statistics remain unmeasured."
+    }
+  ],
+  "uncertainty": {
+    "independence": "not independently witnessed",
+    "scope": "one finite 6x4 parameter point on two twist meshes",
+    "transport": "C/2 is a bundle-normalized label, not measured conductance"
+  },
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": "."
+}

@@ -30,9 +30,13 @@ class Geometry:
     HAMMING_F2 = "hamming_f2"                             # F_2^E with Hamming
     BOUNDED_BOX_L1 = "bounded_box_l1"                     # aperture box with L1
     DISCRETE_PARTIAL_ORDER = "discrete_partial_order"     # evidence lattice
+    SL2_ABSOLUTE_PSEUDO_VOLUME = "sl2_absolute_pseudo_volume"
+    DENSITY_OPERATOR_BURES = "density_operator_trace_bures"
+    CAYLEY_DICKSON_L2 = "cayley_dickson_coordinate_l2"
 
     ALL = (ORTHOGONAL_FROBENIUS, HAMMING_F2, BOUNDED_BOX_L1,
-           DISCRETE_PARTIAL_ORDER)
+           DISCRETE_PARTIAL_ORDER, SL2_ABSOLUTE_PSEUDO_VOLUME,
+           DENSITY_OPERATOR_BURES, CAYLEY_DICKSON_L2)
 
 
 class AlgebraRegime:
@@ -51,12 +55,13 @@ class AlgebraRegime:
     QUATERNION = "quaternion"
     OCTONION = "octonion"
     SEDENION = "sedenion"
+    CD32 = "cayley_dickson_32"
     SYMBOLIC = "symbolic"
 
     ALL = (REAL, REAL_MATRIX, GF2, COMPLEX, QUATERNION, OCTONION, SEDENION,
-           SYMBOLIC)
+           CD32, SYMBOLIC)
     #: regimes for which a vertex gauge is known NOT to induce a flat connection
-    NON_FLAT = (OCTONION, SEDENION)
+    NON_FLAT = (OCTONION, SEDENION, CD32)
 
 
 @dataclass

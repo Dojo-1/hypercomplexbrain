@@ -1,0 +1,3134 @@
+{
+  "architecture_binding": {
+    "canonical_object": "B=(R,P,W,F,I,M,C,H,E,[R])",
+    "rules": [
+      "W is a coupling fabric, not a residency metric.",
+      "Source pseudo-volume and operational information remain different local carriers.",
+      "Every change of decomposition, reference frame, code space, or process geometry exposes a cost and a test.",
+      "Evidence remains external; no telemetry facade promotes its own claim.",
+      "Worldlet, Tendril, weave, deweave, and OmniTool remain S-tier architecture unless their declared operators are explicitly exercised."
+    ],
+    "source": "docs/ARCHITECTURE.md"
+  },
+  "carrier_contract": {
+    "bridge": {
+      "attenuated_not_lost": "rho is not declared lost: det(A)=exp(-2*rho) recovers it in exact arithmetic, but fixed additive delta-rho sensitivity decays and tomography becomes shot-expensive.",
+      "lost": [
+        "global sign M versus -M"
+      ],
+      "map": "M -> A=M/||M||_2 -> omega_A=|v_A><v_A| direct-sum (1-p_A)|fail><fail|",
+      "nontransported_aggregate": "Cartan source-volume multiplicity is a measure over source descriptions, not a state field or an operational codeword count.",
+      "preserved": [
+        "projective class [M]={M,-M}",
+        "rho at finite depth under exact density tomography",
+        "compact SO(2) left/right frame covariance",
+        "success and erasure accounting"
+      ],
+      "side_channel": "No free classical ||M||_2 register is supplied. Any such register, extra width, repeated use, energy, or time must be declared and charged.",
+      "transformed": [
+        "rho -> q=exp(-2*rho)",
+        "source coordinates -> pullback quantum-information geometry",
+        "matrix action -> flagged density operator"
+      ]
+    },
+    "common_scalar_score": null,
+    "operational": {
+      "carrier": "five-dimensional complex density operators from the declared fixed Bell-probe erasure instrument",
+      "geometry": "trace distance, root fidelity, Bures distance, and SLD quantum Fisher information",
+      "information": "finite-ensemble PGM, Holevo, oracle-erasure, and log2-cardinality bracket in bits",
+      "regular_radial_coordinate": "q=exp(-2*rho) in [0,1]"
+    },
+    "source": {
+      "carrier": "SL(2,R) determinant-one real matrices in Cartan coordinates (rho,phi,psi)",
+      "forbidden_projection": "The split form and source volume are never used as an operational distance or as bits.",
+      "geometry": "indefinite induced metric diag(-1,cosh(rho)^2,-sinh(rho)^2)",
+      "measure": "absolute pseudo-volume density cosh(rho)*sinh(rho)",
+      "slab_volume": "2*pi^2*sinh(R)^2"
+    }
+  },
+  "control_failures": [],
+  "controls": {
+    "C1": {
+      "gate": "Source volume, Bell success, density validity, projective M~-M alias, split-form rejection, and the existing information sandwich remain green.",
+      "id": "C1",
+      "metrics": {
+        "information_sandwich": true,
+        "max_exact_error": 9.199752071253897e-12,
+        "minimum_density_eigenvalue": -2.0548769298503404e-16,
+        "projective_sign_alias_max_error": 0.0,
+        "rows": [
+          {
+            "bell_success_error": 1.1102230246251565e-16,
+            "density_min_eigenvalue": -2.0548769298503404e-16,
+            "density_trace_error": 0.0,
+            "determinant_error": 2.220446049250313e-16,
+            "q22_error": 0.0,
+            "rho": 0.25,
+            "singular_value_max_error": 2.220446049250313e-16,
+            "slab_volume_error": 0.0,
+            "volume_density_error": 0.0,
+            "worst_success_error": 0.0
+          },
+          {
+            "bell_success_error": 1.1102230246251565e-16,
+            "density_min_eigenvalue": -4.575894490235254e-17,
+            "density_trace_error": 1.1102230246251565e-16,
+            "determinant_error": 2.220446049250313e-16,
+            "q22_error": 2.220446049250313e-16,
+            "rho": 0.5,
+            "singular_value_max_error": 0.0,
+            "slab_volume_error": 0.0,
+            "volume_density_error": 0.0,
+            "worst_success_error": 0.0
+          },
+          {
+            "bell_success_error": 1.1102230246251565e-16,
+            "density_min_eigenvalue": -6.06656422454975e-17,
+            "density_trace_error": 0.0,
+            "determinant_error": 4.440892098500626e-16,
+            "q22_error": 6.661338147750939e-16,
+            "rho": 1.0,
+            "singular_value_max_error": 2.7755575615628914e-16,
+            "slab_volume_error": 0.0,
+            "volume_density_error": 0.0,
+            "worst_success_error": 3.469446951953614e-18
+          },
+          {
+            "bell_success_error": 0.0,
+            "density_min_eigenvalue": -6.921951223397879e-17,
+            "density_trace_error": 0.0,
+            "determinant_error": 1.1102230246251565e-15,
+            "q22_error": 0.0,
+            "rho": 2.0,
+            "singular_value_max_error": 8.881784197001252e-16,
+            "slab_volume_error": 0.0,
+            "volume_density_error": 0.0,
+            "worst_success_error": 5.421010862427522e-20
+          },
+          {
+            "bell_success_error": 2.220446049250313e-16,
+            "density_min_eigenvalue": -8.697027818208116e-18,
+            "density_trace_error": 0.0,
+            "determinant_error": 5.329070518200751e-15,
+            "q22_error": 1.4210854715202004e-14,
+            "rho": 3.0,
+            "singular_value_max_error": 3.552713678800501e-15,
+            "slab_volume_error": 0.0,
+            "volume_density_error": 0.0,
+            "worst_success_error": 0.0
+          },
+          {
+            "bell_success_error": 3.3306690738754696e-16,
+            "density_min_eigenvalue": -7.201259861063649e-17,
+            "density_trace_error": 0.0,
+            "determinant_error": 1.2079226507921703e-13,
+            "q22_error": 1.1368683772161603e-13,
+            "rho": 4.0,
+            "singular_value_max_error": 2.1316282072803006e-14,
+            "slab_volume_error": 0.0,
+            "volume_density_error": 0.0,
+            "worst_success_error": 1.3234889800848443e-23
+          },
+          {
+            "bell_success_error": 1.1102230246251565e-16,
+            "density_min_eigenvalue": -5.56092794893836e-17,
+            "density_trace_error": 0.0,
+            "determinant_error": 9.108269694024784e-12,
+            "q22_error": 3.637978807091713e-12,
+            "rho": 6.0,
+            "singular_value_max_error": 5.684341886080802e-14,
+            "slab_volume_error": 0.0,
+            "volume_density_error": 0.0,
+            "worst_success_error": 0.0
+          },
+          {
+            "bell_success_error": 0.0,
+            "density_min_eigenvalue": -1.3796771758859868e-17,
+            "density_trace_error": 0.0,
+            "determinant_error": 5.233147248873138e-12,
+            "q22_error": 3.637978807091713e-12,
+            "rho": 6.0,
+            "singular_value_max_error": 5.684341886080802e-14,
+            "slab_volume_error": 0.0,
+            "volume_density_error": 0.0,
+            "worst_success_error": 0.0
+          },
+          {
+            "bell_success_error": 1.1102230246251565e-16,
+            "density_min_eigenvalue": -1.5853298671774832e-17,
+            "density_trace_error": 1.1102230246251565e-16,
+            "determinant_error": 9.199752071253897e-12,
+            "q22_error": 7.275957614183426e-12,
+            "rho": 6.0,
+            "singular_value_max_error": 2.1455493631750144e-14,
+            "slab_volume_error": 0.0,
+            "volume_density_error": 0.0,
+            "worst_success_error": 0.0
+          }
+        ],
+        "split_form_rejected_as_distance": true
+      },
+      "name": "R7 and R6 binding",
+      "passed": true
+    },
+    "C10": {
+      "gate": "Two different Worldlet geometries are present; the Tendril lists preserved, transformed, lost, cost, typed remainder, and absent return reason; source Quantity and operational Bits refuse comparison.",
+      "id": "C10",
+      "metrics": {
+        "mismatched_local_sections_refused": true,
+        "source_quantity_vs_operational_bits_refused": true,
+        "tendril": {
+          "cost": 0.49999999998112443,
+          "id": "r8:source-to-operational-weave",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "return_absent_reason": "The density identifies M with -M, and exact tomography is not a parameter-independent CPTP inverse. A physical inverse word is separately costed by echo_transport.",
+          "return_transport": null,
+          "source": "r8:sl2-source-movement",
+          "target": "r8:bell-erasure-operational-movement",
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "M and -M share one density"
+            ],
+            "carrier": "SL2-to-density projective fibre",
+            "comparison": "projective alias multiplicity minus one",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 1.0
+          }
+        },
+        "worldlets": {
+          "r8:bell-erasure-operational-movement": {
+            "algebra_regime": "complex",
+            "carrier": "5x5 Bell-erasure density",
+            "clocks": [
+              "attempted-use-clock"
+            ],
+            "geometry": "density_operator_trace_bures"
+          },
+          "r8:sl2-source-movement": {
+            "algebra_regime": "real_matrix",
+            "carrier": "SL(2,R) Cartan movement",
+            "clocks": [
+              "source-cartan-clock"
+            ],
+            "geometry": "sl2_absolute_pseudo_volume"
+          }
+        }
+      },
+      "name": "typed AION seam",
+      "passed": true
+    },
+    "C11": {
+      "gate": "Empty deweave reasons are refused, routing events are append-only, and physical echo_transport is never implemented through Tendril.deweave.",
+      "id": "C11",
+      "metrics": {
+        "echo_transport_implemented_through_deweave": false,
+        "empty_deweave_reason_refused": true,
+        "events": 9,
+        "materialized_prefix_refused_until_compose_word_telemetry": true,
+        "observations": 9,
+        "physical_inverse_event_count": 0,
+        "second_append_refused": true
+      },
+      "name": "weave/deweave history",
+      "passed": true
+    },
+    "C12": {
+      "gate": "The finite ensemble obeys PGM<=Holevo<=oracle<=log2N; output binds the frozen manifest, source, tests, and runner in an EvidenceEnvelope without claiming independence.",
+      "id": "C12",
+      "metrics": {
+        "envelope_path": "artifacts/r8_quantum_movement/quantum_movement.envelope.json",
+        "independent_witness": false,
+        "information": {
+          "holevo": {
+            "base": "r8-frozen-uniform-path-ensemble",
+            "kind": "Bits",
+            "uncertainty": 0.0,
+            "unit": "bits",
+            "value": 0.24981236477597357
+          },
+          "log2_codewords": {
+            "base": "r8-frozen-uniform-path-ensemble",
+            "kind": "Bits",
+            "uncertainty": 0.0,
+            "unit": "bits",
+            "value": 3.169925001442312
+          },
+          "oracle_erasure": {
+            "base": "r8-frozen-uniform-path-ensemble",
+            "kind": "Bits",
+            "uncertainty": 0.0,
+            "unit": "bits",
+            "value": 1.6826610086681708
+          },
+          "ordered": true,
+          "pgm": {
+            "base": "r8-frozen-uniform-path-ensemble",
+            "kind": "Bits",
+            "uncertainty": 0.0,
+            "unit": "bits",
+            "value": 0.12885319627910502
+          }
+        },
+        "local_envelope_verification": "required after immutable result emission; failure raises",
+        "preregistration_sha256": "sha256:409344240b5042c72f7ca3b4102a50c991595784a88ca7c018cf7fac46490d62",
+        "result_path": "artifacts/r8_quantum_movement/quantum_movement.json",
+        "source_digests": {
+          "experiments/run_quantum_movement.py": "sha256:660b8db7adaa35f0e3d81259423aa02d178706ac9400d2098dc0d3ded825c861",
+          "manifests/qsigma_r8_quantum_movement_preregistration.json": "sha256:409344240b5042c72f7ca3b4102a50c991595784a88ca7c018cf7fac46490d62",
+          "src/aionq/hyperbolic_qubit.py": "sha256:f6424cd337fb7dcf987a68a7ed375ca3955be29223d529f33b1cce847376e484",
+          "src/aionq/qsigma_r7_information.py": "sha256:a20c71640360e9c95b4c702c815c0f6a9cd841ecbf53889251bc81ebb73cc7f8",
+          "src/aionq/quantities.py": "sha256:5ea4454b5e149d12c91db0c3f017b3c91391d6c09bf3f39f1978f30fb6d5affb",
+          "src/aionq/quantum_movement.py": "sha256:5bdc9c60b54e024664573684153f0808f9ba77459544a25b328b74cc6404d9c7",
+          "src/aionq/recognition/worldlet.py": "sha256:84b089cccdc37645b13ca084b3ac0d0e03dd04342d574b68db68712a77dc8091",
+          "tests/test_quantum_movement.py": "sha256:7155a9af5b35411d20be9d721ebb044aa802bd020ccb6599cbd25309c1cb7fdc"
+        }
+      },
+      "name": "information and evidence",
+      "passed": true
+    },
+    "C2": {
+      "gate": "Closed trace distance and fidelity agree with dense spectral calculations within 1e-10, and Fuchs-van de Graaf plus Helstrom bounds hold.",
+      "id": "C2",
+      "metrics": {
+        "pairs": [
+          {
+            "bures_squared": 0.03756452811641875,
+            "dense_root_fidelity": 0.9812177359417907,
+            "dense_trace_distance": 0.19087036102357902,
+            "fidelity_closed_dense_error": 1.1102230246251565e-16,
+            "from_index": 0,
+            "fuchs_lower": 0.018782264058209375,
+            "fuchs_pass": true,
+            "fuchs_upper": 0.19290348538392568,
+            "helstrom_equal_prior_error": 0.40456481948821077,
+            "helstrom_pass": true,
+            "root_fidelity": 0.9812177359417906,
+            "to_index": 1,
+            "trace_closed_dense_error": 5.828670879282072e-16,
+            "trace_distance": 0.19087036102357843
+          },
+          {
+            "bures_squared": 0.02889440362386897,
+            "dense_root_fidelity": 0.9855527981880658,
+            "dense_trace_distance": 0.1491508917123069,
+            "fidelity_closed_dense_error": 3.3306690738754696e-16,
+            "from_index": 1,
+            "fuchs_lower": 0.014447201811934485,
+            "fuchs_pass": true,
+            "fuchs_upper": 0.16936847990011059,
+            "helstrom_equal_prior_error": 0.4254245541438467,
+            "helstrom_pass": true,
+            "root_fidelity": 0.9855527981880655,
+            "to_index": 2,
+            "trace_closed_dense_error": 3.885780586188048e-16,
+            "trace_distance": 0.1491508917123065
+          },
+          {
+            "bures_squared": 0.006887590664585108,
+            "dense_root_fidelity": 0.9965562046677073,
+            "dense_trace_distance": 0.06317727912807988,
+            "fidelity_closed_dense_error": 1.1102230246251565e-16,
+            "from_index": 2,
+            "fuchs_lower": 0.003443795332292554,
+            "fuchs_pass": true,
+            "fuchs_upper": 0.08292002736549482,
+            "helstrom_equal_prior_error": 0.4684113604359609,
+            "helstrom_pass": true,
+            "root_fidelity": 0.9965562046677074,
+            "to_index": 3,
+            "trace_closed_dense_error": 1.6375789613221059e-15,
+            "trace_distance": 0.06317727912807825
+          },
+          {
+            "bures_squared": 0.00012541704900836947,
+            "dense_root_fidelity": 0.9999372914754954,
+            "dense_trace_distance": 0.008001200946849949,
+            "fidelity_closed_dense_error": 4.440892098500626e-16,
+            "from_index": 3,
+            "fuchs_lower": 6.270852450418474e-05,
+            "fuchs_pass": true,
+            "fuchs_upper": 0.011198799786109916,
+            "helstrom_equal_prior_error": 0.4959993995265822,
+            "helstrom_pass": true,
+            "root_fidelity": 0.9999372914754958,
+            "to_index": 4,
+            "trace_closed_dense_error": 1.434789786980417e-14,
+            "trace_distance": 0.008001200946835601
+          },
+          {
+            "bures_squared": 2.2968495922981447e-06,
+            "dense_root_fidelity": 0.9999988515752034,
+            "dense_trace_distance": 0.001073153754578296,
+            "fidelity_closed_dense_error": 4.440892098500626e-16,
+            "from_index": 4,
+            "fuchs_lower": 1.1484247961490723e-06,
+            "fuchs_pass": true,
+            "fuchs_upper": 0.0015155356391270427,
+            "helstrom_equal_prior_error": 0.4994634231227286,
+            "helstrom_pass": true,
+            "root_fidelity": 0.9999988515752039,
+            "to_index": 5,
+            "trace_closed_dense_error": 3.549504440369944e-14,
+            "trace_distance": 0.001073153754542801
+          },
+          {
+            "bures_squared": 5.4225310908151414e-08,
+            "dense_root_fidelity": 0.9999999728873443,
+            "dense_trace_distance": 0.00016468733453206563,
+            "fidelity_closed_dense_error": 2.220446049250313e-16,
+            "from_index": 5,
+            "fuchs_lower": 2.7112655454075707e-08,
+            "fuchs_pass": true,
+            "fuchs_upper": 0.0002328632863527338,
+            "helstrom_equal_prior_error": 0.4999176563327975,
+            "helstrom_pass": true,
+            "root_fidelity": 0.9999999728873445,
+            "to_index": 6,
+            "trace_closed_dense_error": 1.2709424441689765e-13,
+            "trace_distance": 0.00016468733440497138
+          },
+          {
+            "bures_squared": 0.061209471215859734,
+            "dense_root_fidelity": 0.96939526439207,
+            "dense_trace_distance": 0.17224426192896536,
+            "fidelity_closed_dense_error": 1.1102230246251565e-16,
+            "from_index": 6,
+            "fuchs_lower": 0.030604735607929867,
+            "fuchs_pass": true,
+            "fuchs_upper": 0.2455052369588649,
+            "helstrom_equal_prior_error": 0.4138778690355173,
+            "helstrom_pass": true,
+            "root_fidelity": 0.9693952643920701,
+            "to_index": 7,
+            "trace_closed_dense_error": 2.7755575615628914e-17,
+            "trace_distance": 0.17224426192896533
+          },
+          {
+            "bures_squared": 0.06120796689838848,
+            "dense_root_fidelity": 0.969396016550806,
+            "dense_trace_distance": 0.17224221215309335,
+            "fidelity_closed_dense_error": 2.220446049250313e-16,
+            "from_index": 7,
+            "fuchs_lower": 0.03060398344919424,
+            "fuchs_pass": true,
+            "fuchs_upper": 0.2455022669863354,
+            "helstrom_equal_prior_error": 0.41387889392345356,
+            "helstrom_pass": true,
+            "root_fidelity": 0.9693960165508058,
+            "to_index": 8,
+            "trace_closed_dense_error": 4.996003610813204e-16,
+            "trace_distance": 0.17224221215309285
+          }
+        ]
+      },
+      "name": "dense versus closed pair geometry",
+      "passed": true
+    },
+    "C3": {
+      "gate": "Numerical Bures reconstruction agrees with the analytic QFI on every frozen interior point within 0.5 percent relative error.",
+      "id": "C3",
+      "metrics": {
+        "finite_difference_step": 0.0001,
+        "relative_tolerance": 0.005,
+        "rows": [
+          {
+            "analytic": [
+              [
+                4.655813654954612,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                2.580940760596709,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.15481812174617549
+              ]
+            ],
+            "analytic_eigenvalues": [
+              0.15481812174617549,
+              2.580940760596709,
+              4.655813654954612
+            ],
+            "numerical": [
+              [
+                4.65581384556657,
+                1.1102230246251565e-08,
+                1.1102230246251565e-08
+              ],
+              [
+                1.1102230246251565e-08,
+                2.5809407500076986,
+                1.1102230246251565e-08
+              ],
+              [
+                1.1102230246251565e-08,
+                1.1102230246251565e-08,
+                0.15481809167994243
+              ]
+            ],
+            "numerical_eigenvalues": [
+              0.1548180916799422,
+              2.5809407500076986,
+              4.65581384556657
+            ],
+            "relative_frobenius_error": 3.6646315317184875e-08,
+            "rho": 0.25
+          },
+          {
+            "analytic": [
+              [
+                1.2521411419973254,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.8710941655794973,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.39957640089372803
+              ]
+            ],
+            "analytic_eigenvalues": [
+              0.39957640089372803,
+              1.2521411419973254,
+              1.8710941655794973
+            ],
+            "numerical": [
+              [
+                1.2521411463239929,
+                4.440892098500626e-08,
+                -1.1102230246251565e-08
+              ],
+              [
+                4.440892098500626e-08,
+                1.8710941240840384,
+                1.1102230246251565e-08
+              ],
+              [
+                -1.1102230246251565e-08,
+                1.1102230246251565e-08,
+                0.39957639419441193
+              ]
+            ],
+            "numerical_eigenvalues": [
+              0.3995763941944117,
+              1.2521411463239898,
+              1.871094124084042
+            ],
+            "relative_frobenius_error": 3.449883590104135e-08,
+            "rho": 0.5
+          },
+          {
+            "analytic": [
+              [
+                0.14925888291019238,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.2889862053619598,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.7476450724155088
+              ]
+            ],
+            "analytic_eigenvalues": [
+              0.14925888291019238,
+              0.7476450724155088,
+              1.2889862053619598
+            ],
+            "numerical": [
+              [
+                0.14925887192873688,
+                2.220446049250313e-08,
+                1.1102230246251565e-08
+              ],
+              [
+                2.220446049250313e-08,
+                1.288986162251149,
+                2.220446049250313e-08
+              ],
+              [
+                1.1102230246251565e-08,
+                2.220446049250313e-08,
+                0.7476450569754434
+              ]
+            ],
+            "numerical_eigenvalues": [
+              0.14925887192873624,
+              0.7476450569754425,
+              1.2889861622511505
+            ],
+            "relative_frobenius_error": 4.447505227065854e-08,
+            "rho": 1.0
+          },
+          {
+            "analytic": [
+              [
+                0.0026846016067299597,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0369667404053708,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.9637041848504341
+              ]
+            ],
+            "analytic_eigenvalues": [
+              0.0026846016067299597,
+              0.9637041848504341,
+              1.0369667404053708
+            ],
+            "numerical": [
+              [
+                0.0026845636824646135,
+                0.0,
+                2.220446049250313e-08
+              ],
+              [
+                0.0,
+                1.036966734702105,
+                2.220446049250313e-08
+              ],
+              [
+                2.220446049250313e-08,
+                2.220446049250313e-08,
+                0.9637041387122736
+              ]
+            ],
+            "numerical_eigenvalues": [
+              0.0026845636824641005,
+              0.9637041387122675,
+              1.0369667347021116
+            ],
+            "relative_frobenius_error": 5.272782314324436e-08,
+            "rho": 2.0
+          },
+          {
+            "analytic": [
+              [
+                4.915400083924485e-05,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0049636485656859,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.9950486398590206
+              ]
+            ],
+            "analytic_eigenvalues": [
+              4.915400083924485e-05,
+              0.9950486398590206,
+              1.0049636485656859
+            ],
+            "numerical": [
+              [
+                4.9116266609416925e-05,
+                2.220446049250313e-08,
+                2.220446049250313e-08
+              ],
+              [
+                2.220446049250313e-08,
+                1.0049636234299442,
+                0.0
+              ],
+              [
+                2.220446049250313e-08,
+                0.0,
+                0.9950486212773058
+              ]
+            ],
+            "numerical_eigenvalues": [
+              4.911626660843078e-05,
+              0.9950486212773063,
+              1.0049636234299444
+            ],
+            "relative_frobenius_error": 4.675975184832264e-08,
+            "rho": 3.0
+          }
+        ]
+      },
+      "name": "QFI reconstruction",
+      "passed": true
+    },
+    "C4": {
+      "gate": "rho=0 is handled by finite trace/fidelity probes and is never passed to the interior SLD-QFI API.",
+      "id": "C4",
+      "metrics": {
+        "finite_boundary_pair": {
+          "bures_squared": 0.001998000001198097,
+          "dense_root_fidelity": 0.9990009993336667,
+          "dense_trace_distance": 0.002410097437269953,
+          "fuchs_lower": 0.0009990000005990485,
+          "fuchs_upper": 0.04468782832267555,
+          "helstrom_equal_prior_error": 0.4987949512814835,
+          "root_fidelity": 0.999000999999401,
+          "trace_distance": 0.002410097437033033
+        },
+        "interior_qfi_rejected_at_rho_zero": true,
+        "rank_change_boundary": true
+      },
+      "name": "rank-changing boundary",
+      "passed": true
+    },
+    "C5": {
+      "gate": "q decreases monotonically to zero, J_rhorho has high-depth log slope -4 within 0.02, J_qq remains finite near q=0, and the analytic total QFI volume matches sqrt(2)*pi^3.",
+      "id": "C5",
+      "metrics": {
+        "J_q_near_zero": [
+          [
+            2.0000000000755027,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.000012288462458,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.9999877116130447
+          ]
+        ],
+        "J_rhorho_high_depth_log_slope": -4.000000056248714,
+        "expected_slope": -4.0,
+        "q": [
+          0.6065306597126334,
+          0.36787944117144233,
+          0.1353352832366127,
+          0.01831563888873418,
+          0.0024787521766663585,
+          0.00033546262790251185,
+          6.14421235332821e-06
+        ],
+        "q_near_zero": 6.14421235332821e-06,
+        "qfi_volume_absolute_error": 7.105427357601002e-15,
+        "qfi_volume_exact": 43.84949699997263,
+        "qfi_volume_numeric": 43.84949699997264,
+        "rho": [
+          0.25,
+          0.5,
+          1.0,
+          2.0,
+          3.0,
+          4.0,
+          6.0
+        ],
+        "source_slab_growth_exponent": 2.0
+      },
+      "name": "coordinate compactification",
+      "passed": true
+    },
+    "C6": {
+      "gate": "kappa is non-negative, the cocycle defect is below 1e-10, and normalized-product plus stream/direct identities hold.",
+      "id": "C6",
+      "metrics": {
+        "cocycle_identity_defect": 4.440892098500626e-16,
+        "direct_success": 0.5160606109058252,
+        "eta": 0.045918792448470636,
+        "normalized_product_defect": 8.913170603436999e-17,
+        "pair_kappa": [
+          0.6125167969440624,
+          1.178695142154167
+        ],
+        "stream_identity_error": 0.0,
+        "streamed_success": 0.02369688008301555,
+        "transmissivity_error": 0.0,
+        "word_kappa": 1.5404404120852284
+      },
+      "name": "normalization cocycle",
+      "passed": true
+    },
+    "C7": {
+      "gate": "Every frozen inverse pair has source defect below 1e-10, conditional fidelity one within 1e-10, and the two declared success laws.",
+      "id": "C7",
+      "metrics": {
+        "deweave_used_as_inverse": false,
+        "echoes": [
+          {
+            "conditional_return_fidelity": 1.0,
+            "direct_success_probability": 0.9999999999999998,
+            "expected_streamed_success_probability": 0.3678794411714421,
+            "kappa": 0.5000000000000002,
+            "rho": 0.25,
+            "source_return_defect": 3.943674057472463e-17,
+            "streamed_success_error": 0.0,
+            "streamed_success_probability": 0.3678794411714421
+          },
+          {
+            "conditional_return_fidelity": 1.0,
+            "direct_success_probability": 0.9999999999999991,
+            "expected_streamed_success_probability": 0.018315638888734196,
+            "kappa": 1.9999999999999991,
+            "rho": 1.0,
+            "source_return_defect": 5.931243180733979e-16,
+            "streamed_success_error": 0.0,
+            "streamed_success_probability": 0.018315638888734196
+          },
+          {
+            "conditional_return_fidelity": 0.9999999999999977,
+            "direct_success_probability": 0.9999999999999927,
+            "expected_streamed_success_probability": 6.144212353328089e-06,
+            "kappa": 6.000000000000006,
+            "rho": 3.0,
+            "source_return_defect": 1.2585519658195767e-14,
+            "streamed_success_error": 0.0,
+            "streamed_success_probability": 6.144212353328089e-06
+          },
+          {
+            "conditional_return_fidelity": 0.9999999999966607,
+            "direct_success_probability": 0.9999999999932435,
+            "expected_streamed_success_probability": 3.775134544339132e-11,
+            "kappa": 11.99999999998867,
+            "rho": 6.0,
+            "source_return_defect": 5.111013574996351e-12,
+            "streamed_success_error": 0.0,
+            "streamed_success_probability": 3.775134544339132e-11
+          }
+        ],
+        "generic_invertible_control": {
+          "echo": {
+            "direct_success_probability": 0.9999999999999998,
+            "expected_streamed_success_probability": 0.24999999999999994,
+            "identity_error": 0.0,
+            "kappa": 0.6931471805599453,
+            "rho": 0.6931471805599453,
+            "source_return_defect": 0.0,
+            "streamed_success_probability": 0.24999999999999994
+          },
+          "expected_law": "exp(-2*kappa)*p_direct",
+          "matrix": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      },
+      "name": "source echo versus attempted survival",
+      "passed": true
+    },
+    "C8": {
+      "gate": "The frozen depolarizing channel never increases dense trace distance, never decreases root fidelity, and its finite-difference QFI does not exceed the input beyond numerical tolerance.",
+      "id": "C8",
+      "metrics": {
+        "depolarizing_strength": 0.25,
+        "pairs": [
+          {
+            "fidelity_after": 0.9881782306594121,
+            "fidelity_before": 0.9812177359417907,
+            "fidelity_increase": 0.0069604947176213905,
+            "from_index": 0,
+            "to_index": 1,
+            "trace_after": 0.14315277076768423,
+            "trace_before": 0.19087036102357902,
+            "trace_contraction": 0.04771759025589478
+          },
+          {
+            "fidelity_after": 0.9912486728740653,
+            "fidelity_before": 0.9855527981880658,
+            "fidelity_increase": 0.005695874685999414,
+            "from_index": 1,
+            "to_index": 2,
+            "trace_after": 0.11186316878423018,
+            "trace_before": 0.1491508917123069,
+            "trace_contraction": 0.03728772292807671
+          },
+          {
+            "fidelity_after": 0.9979567520141585,
+            "fidelity_before": 0.9965562046677073,
+            "fidelity_increase": 0.0014005473464511198,
+            "from_index": 2,
+            "to_index": 3,
+            "trace_after": 0.047382959346059905,
+            "trace_before": 0.06317727912807988,
+            "trace_contraction": 0.015794319782019978
+          },
+          {
+            "fidelity_after": 0.9999628685503831,
+            "fidelity_before": 0.9999372914754954,
+            "fidelity_increase": 2.5577074887705997e-05,
+            "from_index": 3,
+            "to_index": 4,
+            "trace_after": 0.006000900710137492,
+            "trace_before": 0.008001200946849949,
+            "trace_contraction": 0.002000300236712457
+          },
+          {
+            "fidelity_after": 0.9999993200111639,
+            "fidelity_before": 0.9999988515752034,
+            "fidelity_increase": 4.6843596046564073e-07,
+            "from_index": 4,
+            "to_index": 5,
+            "trace_after": 0.0008048653159337152,
+            "trace_before": 0.001073153754578296,
+            "trace_contraction": 0.0002682884386445808
+          },
+          {
+            "fidelity_after": 0.9999999839464542,
+            "fidelity_before": 0.9999999728873443,
+            "fidelity_increase": 1.1059109850108939e-08,
+            "from_index": 5,
+            "to_index": 6,
+            "trace_after": 0.00012351550089906722,
+            "trace_before": 0.00016468733453206563,
+            "trace_contraction": 4.117183363299841e-05
+          },
+          {
+            "fidelity_after": 0.9820959437101955,
+            "fidelity_before": 0.96939526439207,
+            "fidelity_increase": 0.012700679318125463,
+            "from_index": 6,
+            "to_index": 7,
+            "trace_after": 0.12918319644672405,
+            "trace_before": 0.17224426192896536,
+            "trace_contraction": 0.04306106548224131
+          },
+          {
+            "fidelity_after": 0.9820963781839113,
+            "fidelity_before": 0.969396016550806,
+            "fidelity_increase": 0.012700361633105284,
+            "from_index": 7,
+            "to_index": 8,
+            "trace_after": 0.12918165911482,
+            "trace_before": 0.17224221215309335,
+            "trace_contraction": 0.04306055303827336
+          }
+        ],
+        "qfi": [
+          {
+            "input_qfi": [
+              [
+                4.65581384556657,
+                1.1102230246251565e-08,
+                1.1102230246251565e-08
+              ],
+              [
+                1.1102230246251565e-08,
+                2.5809407500076986,
+                1.1102230246251565e-08
+              ],
+              [
+                1.1102230246251565e-08,
+                1.1102230246251565e-08,
+                0.15481809167994243
+              ]
+            ],
+            "maximum_loewner_violation": -0.05764773103322752,
+            "numerical_allowance": 0.02327906922783285,
+            "output_qfi": [
+              [
+                2.952118860477526,
+                9.992007221626409e-08,
+                3.3306690738754696e-08
+              ],
+              [
+                9.992007221626409e-08,
+                1.6199064534205831,
+                2.220446049250313e-08
+              ],
+              [
+                3.3306690738754696e-08,
+                2.220446049250313e-08,
+                0.09717036064671447
+              ]
+            ],
+            "rho": 0.25
+          },
+          {
+            "input_qfi": [
+              [
+                1.2521411463239929,
+                4.440892098500626e-08,
+                -1.1102230246251565e-08
+              ],
+              [
+                4.440892098500626e-08,
+                1.8710941240840384,
+                1.1102230246251565e-08
+              ],
+              [
+                -1.1102230246251565e-08,
+                1.1102230246251565e-08,
+                0.39957639419441193
+              ]
+            ],
+            "maximum_loewner_violation": -0.15689485266534228,
+            "numerical_allowance": 0.00935547062042021,
+            "output_qfi": [
+              [
+                0.7759158870968008,
+                2.220446049250313e-08,
+                -3.3306690738754696e-08
+              ],
+              [
+                2.220446049250313e-08,
+                1.136403038337619,
+                -2.220446049250313e-08
+              ],
+              [
+                -3.3306690738754696e-08,
+                -2.220446049250313e-08,
+                0.24268154152906618
+              ]
+            ],
+            "rho": 0.5
+          },
+          {
+            "input_qfi": [
+              [
+                0.14925887192873688,
+                2.220446049250313e-08,
+                1.1102230246251565e-08
+              ],
+              [
+                2.220446049250313e-08,
+                1.288986162251149,
+                2.220446049250313e-08
+              ],
+              [
+                1.1102230246251565e-08,
+                2.220446049250313e-08,
+                0.7476450569754434
+              ]
+            ],
+            "maximum_loewner_violation": -0.060184301986498816,
+            "numerical_allowance": 0.006444930811255752,
+            "output_qfi": [
+              [
+                0.08907456994222684,
+                -3.3306690738754696e-08,
+                4.440892098500626e-08
+              ],
+              [
+                -3.3306690738754696e-08,
+                0.7661164591610259,
+                1.1102230246251565e-08
+              ],
+              [
+                4.440892098500626e-08,
+                1.1102230246251565e-08,
+                0.44436720969542876
+              ]
+            ],
+            "rho": 1.0
+          },
+          {
+            "input_qfi": [
+              [
+                0.0026845636824646135,
+                0.0,
+                2.220446049250313e-08
+              ],
+              [
+                0.0,
+                1.036966734702105,
+                2.220446049250313e-08
+              ],
+              [
+                2.220446049250313e-08,
+                2.220446049250313e-08,
+                0.9637041387122736
+              ]
+            ],
+            "maximum_loewner_violation": -0.0010947909245813837,
+            "numerical_allowance": 0.005184833673510556,
+            "output_qfi": [
+              [
+                0.0015897727578817467,
+                -2.220446049250313e-08,
+                1.1102230246251565e-08
+              ],
+              [
+                -2.220446049250313e-08,
+                0.6140368657980844,
+                -4.440892098500626e-08
+              ],
+              [
+                1.1102230246251565e-08,
+                -4.440892098500626e-08,
+                0.5706546346573305
+              ]
+            ],
+            "rho": 2.0
+          },
+          {
+            "input_qfi": [
+              [
+                4.9116266609416925e-05,
+                2.220446049250313e-08,
+                2.220446049250313e-08
+              ],
+              [
+                2.220446049250313e-08,
+                1.0049636234299442,
+                0.0
+              ],
+              [
+                2.220446049250313e-08,
+                0.0,
+                0.9950486212773058
+              ]
+            ],
+            "maximum_loewner_violation": -1.9984014412878375e-05,
+            "numerical_allowance": 0.005024818117149722,
+            "output_qfi": [
+              [
+                2.9132252166164108e-05,
+                -8.881784197001252e-08,
+                1.1102230246251565e-08
+              ],
+              [
+                -8.881784197001252e-08,
+                0.59504510208086,
+                0.0
+              ],
+              [
+                1.1102230246251565e-08,
+                0.0,
+                0.5891742871355632
+              ]
+            ],
+            "rho": 3.0
+          }
+        ]
+      },
+      "name": "CPTP data processing",
+      "passed": true
+    },
+    "C9": {
+      "gate": "Common SO(2) frame attacks preserve the declared invariants, while the existing matched SU(2) family keeps the same probe and density width.",
+      "id": "C9",
+      "metrics": {
+        "holevo_error_bits": 2.220446049250313e-16,
+        "left_SO2_angle": 0.37,
+        "matched_compact_SU2": [
+          {
+            "density_shape": [
+              5,
+              5
+            ],
+            "rho_parameter": 0.25,
+            "success_probability": 0.9999999999999998,
+            "unitarity_error": 9.633721186307798e-18
+          },
+          {
+            "density_shape": [
+              5,
+              5
+            ],
+            "rho_parameter": 0.5,
+            "success_probability": 0.9999999999999997,
+            "unitarity_error": 3.9842194627424375e-17
+          },
+          {
+            "density_shape": [
+              5,
+              5
+            ],
+            "rho_parameter": 1.0,
+            "success_probability": 0.9999999999999996,
+            "unitarity_error": 3.155443332161426e-16
+          },
+          {
+            "density_shape": [
+              5,
+              5
+            ],
+            "rho_parameter": 2.0,
+            "success_probability": 0.9999999999999998,
+            "unitarity_error": 2.481435678147187e-17
+          },
+          {
+            "density_shape": [
+              5,
+              5
+            ],
+            "rho_parameter": 3.0,
+            "success_probability": 1.0000000000000002,
+            "unitarity_error": 3.1471075964848023e-16
+          },
+          {
+            "density_shape": [
+              5,
+              5
+            ],
+            "rho_parameter": 4.0,
+            "success_probability": 0.9999999999999999,
+            "unitarity_error": 2.003647244220929e-17
+          },
+          {
+            "density_shape": [
+              5,
+              5
+            ],
+            "rho_parameter": 6.0,
+            "success_probability": 0.9999999999999998,
+            "unitarity_error": 9.866491231639537e-18
+          }
+        ],
+        "pair_errors": [
+          {
+            "fidelity_error": 2.220446049250313e-16,
+            "from_index": 0,
+            "to_index": 1,
+            "trace_error": 6.38378239159465e-16
+          },
+          {
+            "fidelity_error": 1.1102230246251565e-16,
+            "from_index": 1,
+            "to_index": 2,
+            "trace_error": 8.881784197001252e-16
+          },
+          {
+            "fidelity_error": 0.0,
+            "from_index": 2,
+            "to_index": 3,
+            "trace_error": 9.992007221626409e-16
+          },
+          {
+            "fidelity_error": 2.220446049250313e-16,
+            "from_index": 3,
+            "to_index": 4,
+            "trace_error": 6.898995263959762e-15
+          },
+          {
+            "fidelity_error": 2.220446049250313e-16,
+            "from_index": 4,
+            "to_index": 5,
+            "trace_error": 5.168890489237743e-14
+          },
+          {
+            "fidelity_error": 0.0,
+            "from_index": 5,
+            "to_index": 6,
+            "trace_error": 2.7755575615628914e-16
+          },
+          {
+            "fidelity_error": 0.0,
+            "from_index": 6,
+            "to_index": 7,
+            "trace_error": 1.942890293094024e-16
+          },
+          {
+            "fidelity_error": 1.1102230246251565e-16,
+            "from_index": 7,
+            "to_index": 8,
+            "trace_error": 5.828670879282072e-16
+          }
+        ],
+        "qfi_spectrum_max_error": 1.1102229716120071e-07,
+        "qfi_spectrum_numerical_allowance": 0.006444931033300353,
+        "right_SO2_angle": -1.11,
+        "success_max_error": 3.3306690738754696e-16
+      },
+      "name": "compact frame and matched compact family",
+      "passed": true
+    }
+  },
+  "excluded_claims": [
+    "Adding, averaging, ranking, or optimizing source pseudo-volume and operational bits as one scalar.",
+    "Calling the indefinite source Q=+1 geometry positive-definite H3.",
+    "Calling rho literally lost at finite depth when exact tomography can recover q=exp(-2rho).",
+    "Calling fixed-rho QFI decay deletion of a fixed-q distinction.",
+    "Treating source volume, constructed descriptions, N*p, QFI volume, or catalogue size as channel capacity.",
+    "Treating Tendril.deweave as M inverse or as a CPTP recovery map.",
+    "Keeping ||M||_2 as an uncharged infinite-precision classical side register.",
+    "Changing the path, threshold, finite-difference step, channel, controls, or tolerances after observing outputs.",
+    "Claiming quantum advantage, hardware performance, noise robustness, cognition, consciousness, AGI, or general memory benefit."
+  ],
+  "formulas": {
+    "bell_success": "p=(1+q^2)/2",
+    "normalization_cocycle": "kappa(X,Y)=log||X||2+log||Y||2-log||XY||2",
+    "operational_coordinate": "q=exp(-2*rho)",
+    "pair_root_fidelity": "abs(c)+sqrt((1-pA)*(1-pB))",
+    "pair_trace_distance": "0.5*(sqrt((pA+pB)^2-4*abs(c)^2)+abs(pA-pB))",
+    "qfi_q": "diag(2/(1-q^2),(1+q)^2,(1-q)^2)",
+    "qfi_rho": "diag(8/(exp(4rho)-1),(1+exp(-2rho))^2,(1-exp(-2rho))^2)",
+    "qfi_total_volume": "sqrt(2)*pi^3",
+    "source_absolute_pseudo_volume_density": "cosh(rho)*sinh(rho)",
+    "source_slab_volume": "2*pi^2*sinh(R)^2",
+    "streamed_success": "p_stream=exp(-2*kappa_word)*p_direct",
+    "volume_form_distortion": "8*sqrt(2)*exp(-4rho)/sqrt(1-exp(-4rho))",
+    "worst_success": "p_worst=q^2"
+  },
+  "hypotheses": {
+    "H1": {
+      "high_depth_fixed_angle_radial_deweave_indices": [
+        6
+      ],
+      "id": "H1",
+      "rho6_boundary_angular_weave_indices": [
+        7,
+        8
+      ],
+      "rule": "SURVIVES iff both a high-depth fixed-angle radial deweave and a rho=6 boundary angular weave occur on the frozen path",
+      "scope": "frozen routing-policy behavior only",
+      "verdict": "SURVIVES"
+    }
+  },
+  "interpretation": {
+    "bounded_result": "One exact Bell-erasure attempted-use instrument on one frozen finite path, with a typed AION weave/deweave telemetry trace.",
+    "coordinate_caveat": "Fixed delta-rho sensitivity decays at high depth while q is a regular compactified coordinate; this is not literal deletion of every finite-rho distinction.",
+    "evidence_ceiling": {
+      "M": "frozen finite-path numerical reconstruction and routing telemetry",
+      "P": "exact source, density, pair geometry, QFI, cocycle, echo, compact-frame, and data-processing identities with stated assumptions",
+      "S": "Worldlet/Tendril/OmniTool architectural interpretation",
+      "excluded": [
+        "optimized channel capacity",
+        "infinite-dimensional bosonic realization",
+        "energy-constrained approximation guarantee for this instrument",
+        "quantum advantage",
+        "cognitive performance"
+      ],
+      "independent": false
+    },
+    "operational_movement": "The five-dimensional density family is read through trace, fidelity, Bures, QFI, and finite-ensemble information.",
+    "source_growth": "The source slab has exponent two; it remains source measure."
+  },
+  "movement": {
+    "ambient_source_slab_extent": {
+      "base": "SL2-Cartan-source",
+      "kind": "Quantity",
+      "uncertainty": 0.0,
+      "unit": "absolute-pseudo-volume",
+      "value": 803152.8332696101
+    },
+    "events": [
+      {
+        "action": "weave",
+        "evidence_tag": "S",
+        "index": 0,
+        "physical_inverse": false,
+        "reason": "initial dual-carrier observation",
+        "trace_distance": null
+      },
+      {
+        "action": "weave",
+        "evidence_tag": "S",
+        "index": 1,
+        "physical_inverse": false,
+        "reason": "operational transition 0.190870361024 >= 0.05",
+        "trace_distance": 0.19087036102357843
+      },
+      {
+        "action": "weave",
+        "evidence_tag": "S",
+        "index": 2,
+        "physical_inverse": false,
+        "reason": "operational transition 0.149150891712 >= 0.05",
+        "trace_distance": 0.1491508917123065
+      },
+      {
+        "action": "weave",
+        "evidence_tag": "S",
+        "index": 3,
+        "physical_inverse": false,
+        "reason": "operational transition 0.0631772791281 >= 0.05",
+        "trace_distance": 0.06317727912807825
+      },
+      {
+        "action": "deweave",
+        "evidence_tag": "S",
+        "index": 4,
+        "physical_inverse": false,
+        "reason": "operational transition 0.00800120094684 < 0.05",
+        "trace_distance": 0.008001200946835601
+      },
+      {
+        "action": "deweave",
+        "evidence_tag": "S",
+        "index": 5,
+        "physical_inverse": false,
+        "reason": "operational transition 0.00107315375454 < 0.05",
+        "trace_distance": 0.001073153754542801
+      },
+      {
+        "action": "deweave",
+        "evidence_tag": "S",
+        "index": 6,
+        "physical_inverse": false,
+        "reason": "operational transition 0.000164687334405 < 0.05",
+        "trace_distance": 0.00016468733440497138
+      },
+      {
+        "action": "weave",
+        "evidence_tag": "S",
+        "index": 7,
+        "physical_inverse": false,
+        "reason": "operational transition 0.172244261929 >= 0.05",
+        "trace_distance": 0.17224426192896533
+      },
+      {
+        "action": "weave",
+        "evidence_tag": "S",
+        "index": 8,
+        "physical_inverse": false,
+        "reason": "operational transition 0.172242212153 >= 0.05",
+        "trace_distance": 0.17224221215309285
+      }
+    ],
+    "observations": [
+      {
+        "coordinates": {
+          "phi": 0.37,
+          "psi": 1.11,
+          "q": 0.6065306597126334,
+          "rho": 0.25
+        },
+        "frame_id": "source-cartan/attempted-use",
+        "index": 0,
+        "materialization_mode": "compiled_whole",
+        "operational_carrier": {
+          "bell_success_probability": 0.6839397205857211,
+          "density_digest": "sha256:93d28f616f80eeda08c0a7b33215bafaf359c38d04ef8282d9aca7b526a4a782",
+          "density_dimension": 5,
+          "density_eigenvalues": [
+            -2.0548769298503404e-16,
+            7.138913371132763e-18,
+            2.6341250219953935e-17,
+            0.31606027941427894,
+            0.683939720585721
+          ],
+          "erasure_probability": 0.31606027941427894,
+          "fixed_bell_bipartition": {
+            "conditional_concurrence": 0.8868188839700739,
+            "conditional_entanglement": {
+              "base": "fixed-Bell-bipartition",
+              "kind": "Bits",
+              "uncertainty": 0.0,
+              "unit": "bits",
+              "value": 0.8399415379831693
+            },
+            "identity_invariant": false
+          },
+          "qfi_q": [
+            [
+              3.163953413738653,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.580940760596709,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.15481812174617549
+            ]
+          ],
+          "qfi_rho": [
+            [
+              4.655813654954612,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.580940760596709,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.15481812174617549
+            ]
+          ],
+          "qfi_volume_density": {
+            "base": "Bell-erasure-attempted-use",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "qfi-parameter-volume-density",
+            "value": 1.3639476762246552
+          },
+          "rank_change_boundary": false,
+          "source_to_qfi_volume_form_distortion": {
+            "base": "SL2-to-Bell-erasure",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "pullback-volume-form-ratio",
+            "value": 5.234925979355312
+          },
+          "worst_success_probability": 0.36787944117144233
+        },
+        "routing": {
+          "action": "weave",
+          "evidence_tag": "S",
+          "physical_inverse": false,
+          "reason": "initial dual-carrier observation",
+          "trace_distance": null
+        },
+        "source_carrier": {
+          "absolute_pseudo_slab_volume": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume",
+            "value": 1.259617787894173
+          },
+          "absolute_pseudo_volume_density": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume-density",
+            "value": 0.2605476527468737
+          },
+          "matrix": [
+            [
+              1.0739416135735709,
+              0.5992394137989405
+            ],
+            [
+              -0.14671037349560415,
+              0.8492876616944576
+            ]
+          ],
+          "singular_values": [
+            1.2840254166877416,
+            0.778800783071405
+          ],
+          "used_as_bits": false,
+          "used_as_operational_distance": false
+        },
+        "transition": null,
+        "transport": {
+          "cost": 0.31606027941427894,
+          "edge": "r8:source-to-operational-weave",
+          "evidence": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "fixed Bell probe",
+              "no free classical norm side register"
+            ],
+            "carrier": "five-dimensional Bell-erasure density",
+            "comparison": "attempted-use erasure probability",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 0.31606027941427894
+          }
+        }
+      },
+      {
+        "coordinates": {
+          "phi": 0.37,
+          "psi": 1.11,
+          "q": 0.36787944117144233,
+          "rho": 0.5
+        },
+        "frame_id": "source-cartan/attempted-use",
+        "index": 1,
+        "materialization_mode": "compiled_whole",
+        "operational_carrier": {
+          "bell_success_probability": 0.5676676416183063,
+          "density_digest": "sha256:ab3cc6ddd71ebfcf9a59fa8a5b08352a42e8f3685125d950feeb2e14c80c6dae",
+          "density_dimension": 5,
+          "density_eigenvalues": [
+            -4.575894490235254e-17,
+            7.665021362759677e-18,
+            2.60138528464624e-16,
+            0.4323323583816937,
+            0.5676676416183063
+          ],
+          "erasure_probability": 0.4323323583816937,
+          "fixed_bell_bipartition": {
+            "conditional_concurrence": 0.6480542736638853,
+            "conditional_entanglement": {
+              "base": "fixed-Bell-bipartition",
+              "kind": "Bits",
+              "uncertainty": 0.0,
+              "unit": "bits",
+              "value": 0.5270653410031616
+            },
+            "identity_invariant": false
+          },
+          "qfi_q": [
+            [
+              2.3130352854993315,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.8710941655794973,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.39957640089372803
+            ]
+          ],
+          "qfi_rho": [
+            [
+              1.2521411419973254,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.8710941655794973,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.39957640089372803
+            ]
+          ],
+          "qfi_volume_density": {
+            "base": "Bell-erasure-attempted-use",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "qfi-parameter-volume-density",
+            "value": 0.9675521457694299
+          },
+          "rank_change_boundary": false,
+          "source_to_qfi_volume_form_distortion": {
+            "base": "SL2-to-Bell-erasure",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "pullback-volume-form-ratio",
+            "value": 1.6466153217041253
+          },
+          "worst_success_probability": 0.1353352832366127
+        },
+        "routing": {
+          "action": "weave",
+          "evidence_tag": "S",
+          "physical_inverse": false,
+          "reason": "operational transition 0.190870361024 >= 0.05",
+          "trace_distance": 0.19087036102357843
+        },
+        "source_carrier": {
+          "absolute_pseudo_slab_volume": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume",
+            "value": 5.3599910235189325
+          },
+          "absolute_pseudo_volume_density": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume-density",
+            "value": 0.5876005968219007
+          },
+          "matrix": [
+            [
+              1.2830275518851404,
+              0.874511330747805
+            ],
+            [
+              0.058977429741779885,
+              0.8196054940694748
+            ]
+          ],
+          "singular_values": [
+            1.6487212707001282,
+            0.6065306597126334
+          ],
+          "used_as_bits": false,
+          "used_as_operational_distance": false
+        },
+        "transition": {
+          "bures_squared": 0.03756452811641875,
+          "dense_root_fidelity": 0.9812177359417907,
+          "dense_trace_distance": 0.19087036102357902,
+          "fuchs_lower": 0.018782264058209375,
+          "fuchs_upper": 0.19290348538392568,
+          "helstrom_equal_prior_error": 0.40456481948821077,
+          "root_fidelity": 0.9812177359417906,
+          "trace_distance": 0.19087036102357843
+        },
+        "transport": {
+          "cost": 0.4323323583816937,
+          "edge": "r8:source-to-operational-weave",
+          "evidence": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "fixed Bell probe",
+              "no free classical norm side register"
+            ],
+            "carrier": "five-dimensional Bell-erasure density",
+            "comparison": "attempted-use erasure probability",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 0.4323323583816937
+          }
+        }
+      },
+      {
+        "coordinates": {
+          "phi": 0.37,
+          "psi": 1.11,
+          "q": 0.1353352832366127,
+          "rho": 1.0
+        },
+        "frame_id": "source-cartan/attempted-use",
+        "index": 2,
+        "materialization_mode": "compiled_whole",
+        "operational_carrier": {
+          "bell_success_probability": 0.509157819444367,
+          "density_digest": "sha256:d75379cc8b1b96b3cdd51d0ecde650d3be658d2b8c4e7d9232b46507373ade1f",
+          "density_dimension": 5,
+          "density_eigenvalues": [
+            -6.06656422454975e-17,
+            -6.034723689501371e-19,
+            3.0863117371855595e-17,
+            0.490842180555633,
+            0.5091578194443671
+          ],
+          "erasure_probability": 0.490842180555633,
+          "fixed_bell_bipartition": {
+            "conditional_concurrence": 0.2658022288340797,
+            "conditional_entanglement": {
+              "base": "fixed-Bell-bipartition",
+              "kind": "Bits",
+              "uncertainty": 0.0,
+              "unit": "bits",
+              "value": 0.1299792746663049
+            },
+            "identity_invariant": false
+          },
+          "qfi_q": [
+            [
+              2.037314720727548,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.2889862053619598,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.7476450724155088
+            ]
+          ],
+          "qfi_rho": [
+            [
+              0.14925888291019238,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.2889862053619598,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.7476450724155088
+            ]
+          ],
+          "qfi_volume_density": {
+            "base": "Bell-erasure-attempted-use",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "qfi-parameter-volume-density",
+            "value": 0.37926430109707576
+          },
+          "rank_change_boundary": false,
+          "source_to_qfi_volume_form_distortion": {
+            "base": "SL2-to-Bell-erasure",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "pullback-volume-form-ratio",
+            "value": 0.20914193459252273
+          },
+          "worst_success_probability": 0.018315638888734182
+        },
+        "routing": {
+          "action": "weave",
+          "evidence_tag": "S",
+          "physical_inverse": false,
+          "reason": "operational transition 0.149150891712 >= 0.05",
+          "trace_distance": 0.1491508917123065
+        },
+        "source_carrier": {
+          "absolute_pseudo_slab_volume": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume",
+            "value": 27.261778749389066
+          },
+          "absolute_pseudo_volume_density": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume-density",
+            "value": 1.8134302039235093
+          },
+          "matrix": [
+            [
+              1.961223017555688,
+              1.6106279348718582
+            ],
+            [
+              0.494624394240894,
+              0.916089527071054
+            ]
+          ],
+          "singular_values": [
+            2.718281828459045,
+            0.3678794411714426
+          ],
+          "used_as_bits": false,
+          "used_as_operational_distance": false
+        },
+        "transition": {
+          "bures_squared": 0.02889440362386897,
+          "dense_root_fidelity": 0.9855527981880658,
+          "dense_trace_distance": 0.1491508917123069,
+          "fuchs_lower": 0.014447201811934485,
+          "fuchs_upper": 0.16936847990011059,
+          "helstrom_equal_prior_error": 0.4254245541438467,
+          "root_fidelity": 0.9855527981880655,
+          "trace_distance": 0.1491508917123065
+        },
+        "transport": {
+          "cost": 0.490842180555633,
+          "edge": "r8:source-to-operational-weave",
+          "evidence": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "fixed Bell probe",
+              "no free classical norm side register"
+            ],
+            "carrier": "five-dimensional Bell-erasure density",
+            "comparison": "attempted-use erasure probability",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 0.490842180555633
+          }
+        }
+      },
+      {
+        "coordinates": {
+          "phi": 0.37,
+          "psi": 1.11,
+          "q": 0.01831563888873418,
+          "rho": 2.0
+        },
+        "frame_id": "source-cartan/attempted-use",
+        "index": 3,
+        "materialization_mode": "compiled_whole",
+        "operational_carrier": {
+          "bell_success_probability": 0.5001677313139512,
+          "density_digest": "sha256:a3273d4415b529ea3f5bcb314edb0eb97946b8ac0bd439cb9636fd547e1ebf50",
+          "density_dimension": 5,
+          "density_eigenvalues": [
+            -6.921951223397879e-17,
+            5.622647294292578e-18,
+            1.3834081634161104e-17,
+            0.4998322686860488,
+            0.5001677313139512
+          ],
+          "erasure_probability": 0.4998322686860488,
+          "fixed_bell_bipartition": {
+            "conditional_concurrence": 0.03661899347368653,
+            "conditional_entanglement": {
+              "base": "fixed-Bell-bipartition",
+              "kind": "Bits",
+              "uncertainty": 0.0,
+              "unit": "bits",
+              "value": 0.004354352872342926
+            },
+            "identity_invariant": false
+          },
+          "qfi_q": [
+            [
+              2.0006711504016823,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0369667404053708,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9637041848504341
+            ]
+          ],
+          "qfi_rho": [
+            [
+              0.0026846016067299597,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0369667404053708,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9637041848504341
+            ]
+          ],
+          "qfi_volume_density": {
+            "base": "Bell-erasure-attempted-use",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "qfi-parameter-volume-density",
+            "value": 0.05179575988266164
+          },
+          "rank_change_boundary": false,
+          "source_to_qfi_volume_form_distortion": {
+            "base": "SL2-to-Bell-erasure",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "pullback-volume-form-ratio",
+            "value": 0.003795963139683921
+          },
+          "worst_success_probability": 0.0003354626279025118
+        },
+        "routing": {
+          "action": "weave",
+          "evidence_tag": "S",
+          "physical_inverse": false,
+          "reason": "operational transition 0.0631772791281 >= 0.05",
+          "trace_distance": 0.06317727912807825
+        },
+        "source_carrier": {
+          "absolute_pseudo_slab_volume": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume",
+            "value": 259.65185058323186
+          },
+          "absolute_pseudo_volume_density": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume-density",
+            "value": 13.644958598563875
+          },
+          "matrix": [
+            [
+              5.120323172282163,
+              4.609042120421503
+            ],
+            [
+              1.8881060804856502,
+              1.894872672354762
+            ]
+          ],
+          "singular_values": [
+            7.3890560989306495,
+            0.13533528323661273
+          ],
+          "used_as_bits": false,
+          "used_as_operational_distance": false
+        },
+        "transition": {
+          "bures_squared": 0.006887590664585108,
+          "dense_root_fidelity": 0.9965562046677073,
+          "dense_trace_distance": 0.06317727912807988,
+          "fuchs_lower": 0.003443795332292554,
+          "fuchs_upper": 0.08292002736549482,
+          "helstrom_equal_prior_error": 0.4684113604359609,
+          "root_fidelity": 0.9965562046677074,
+          "trace_distance": 0.06317727912807825
+        },
+        "transport": {
+          "cost": 0.4998322686860488,
+          "edge": "r8:source-to-operational-weave",
+          "evidence": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "fixed Bell probe",
+              "no free classical norm side register"
+            ],
+            "carrier": "five-dimensional Bell-erasure density",
+            "comparison": "attempted-use erasure probability",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 0.4998322686860488
+          }
+        }
+      },
+      {
+        "coordinates": {
+          "phi": 0.37,
+          "psi": 1.11,
+          "q": 0.0024787521766663585,
+          "rho": 3.0
+        },
+        "frame_id": "source-cartan/attempted-use",
+        "index": 4,
+        "materialization_mode": "compiled_whole",
+        "operational_carrier": {
+          "bell_success_probability": 0.5000030721061764,
+          "density_digest": "sha256:6d3994ec1c812fef579792e825b94700d08efef290e8499461a4a7cbf32b552e",
+          "density_dimension": 5,
+          "density_eigenvalues": [
+            -8.697027818208116e-18,
+            4.062359180906532e-18,
+            3.0441966558169916e-17,
+            0.49999692789382355,
+            0.5000030721061764
+          ],
+          "erasure_probability": 0.49999692789382355,
+          "fixed_bell_bipartition": {
+            "conditional_concurrence": 0.004957473893560379,
+            "conditional_entanglement": {
+              "base": "fixed-Bell-bipartition",
+              "kind": "Bits",
+              "uncertainty": 0.0,
+              "unit": "bits",
+              "value": 0.00011523424020822981
+            },
+            "identity_invariant": false
+          },
+          "qfi_q": [
+            [
+              2.00001228850021,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0049636485656859,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9950486398590206
+            ]
+          ],
+          "qfi_rho": [
+            [
+              4.915400083924485e-05,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0049636485656859,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9950486398590206
+            ]
+          ],
+          "qfi_volume_density": {
+            "base": "Bell-erasure-attempted-use",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "qfi-parameter-volume-density",
+            "value": 0.007010948353529794
+          },
+          "rank_change_boundary": false,
+          "source_to_qfi_volume_form_distortion": {
+            "base": "SL2-to-Bell-erasure",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "pullback-volume-form-ratio",
+            "value": 6.951404107625951e-05
+          },
+          "worst_success_probability": 6.14421235332821e-06
+        },
+        "routing": {
+          "action": "deweave",
+          "evidence_tag": "S",
+          "physical_inverse": false,
+          "reason": "operational transition 0.00800120094684 < 0.05",
+          "trace_distance": 0.008001200946835601
+        },
+        "source_carrier": {
+          "absolute_pseudo_slab_volume": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume",
+            "value": 1980.983925641641
+          },
+          "absolute_pseudo_volume_density": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume-density",
+            "value": 100.85657868513961
+          },
+          "matrix": [
+            [
+              13.84092004473304,
+              12.61361934726856
+            ],
+            [
+              5.332375464307745,
+              4.931793125231433
+            ]
+          ],
+          "singular_values": [
+            20.08553692318767,
+            0.04978706836786458
+          ],
+          "used_as_bits": false,
+          "used_as_operational_distance": false
+        },
+        "transition": {
+          "bures_squared": 0.00012541704900836947,
+          "dense_root_fidelity": 0.9999372914754954,
+          "dense_trace_distance": 0.008001200946849949,
+          "fuchs_lower": 6.270852450418474e-05,
+          "fuchs_upper": 0.011198799786109916,
+          "helstrom_equal_prior_error": 0.4959993995265822,
+          "root_fidelity": 0.9999372914754958,
+          "trace_distance": 0.008001200946835601
+        },
+        "transport": {
+          "cost": 0.49999692789382355,
+          "edge": "r8:source-to-operational-weave",
+          "evidence": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "fixed Bell probe",
+              "no free classical norm side register"
+            ],
+            "carrier": "five-dimensional Bell-erasure density",
+            "comparison": "attempted-use erasure probability",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 0.49999692789382355
+          }
+        }
+      },
+      {
+        "coordinates": {
+          "phi": 0.37,
+          "psi": 1.11,
+          "q": 0.00033546262790251185,
+          "rho": 4.0
+        },
+        "frame_id": "source-cartan/attempted-use",
+        "index": 5,
+        "materialization_mode": "compiled_whole",
+        "operational_carrier": {
+          "bell_success_probability": 0.500000056267587,
+          "density_digest": "sha256:b2ef21507d3e1ee4068cea0eef9228d978a5b986647939eea2fc07885eeb1301",
+          "density_dimension": 5,
+          "density_eigenvalues": [
+            -7.201259861063649e-17,
+            5.488348308939693e-19,
+            2.918880561496159e-17,
+            0.49999994373241297,
+            0.500000056267587
+          ],
+          "erasure_probability": 0.49999994373241297,
+          "fixed_bell_bipartition": {
+            "conditional_concurrence": 0.0006709251803023413,
+            "conditional_entanglement": {
+              "base": "fixed-Bell-bipartition",
+              "kind": "Bits",
+              "uncertainty": 0.0,
+              "unit": "bits",
+              "value": 2.760016652950993e-06
+            },
+            "identity_invariant": false
+          },
+          "qfi_q": [
+            [
+              2.000000225070375,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0006710377909795,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9993291872793697
+            ]
+          ],
+          "qfi_rho": [
+            [
+              9.002814990674088e-07,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0006710377909795,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9993291872793697
+            ]
+          ],
+          "qfi_volume_density": {
+            "base": "Bell-erasure-attempted-use",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "qfi-parameter-volume-density",
+            "value": 0.0009488315427096364
+          },
+          "rank_change_boundary": false,
+          "source_to_qfi_volume_form_distortion": {
+            "base": "SL2-to-Bell-erasure",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "pullback-volume-form-ratio",
+            "value": 1.2731902342953615e-06
+          },
+          "worst_success_probability": 1.1253517471925913e-07
+        },
+        "routing": {
+          "action": "deweave",
+          "evidence_tag": "S",
+          "physical_inverse": false,
+          "reason": "operational transition 0.00107315375454 < 0.05",
+          "trace_distance": 0.001073153754542801
+        },
+        "source_carrier": {
+          "absolute_pseudo_slab_volume": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume",
+            "value": 14700.570085225383
+          },
+          "absolute_pseudo_volume_density": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume-density",
+            "value": 745.2394128947751
+          },
+          "matrix": [
+            [
+              37.59498820582522,
+              34.31862137898052
+            ],
+            [
+              14.568464552588798,
+              13.325436260564388
+            ]
+          ],
+          "singular_values": [
+            54.59815003314426,
+            0.01831563888873337
+          ],
+          "used_as_bits": false,
+          "used_as_operational_distance": false
+        },
+        "transition": {
+          "bures_squared": 2.2968495922981447e-06,
+          "dense_root_fidelity": 0.9999988515752034,
+          "dense_trace_distance": 0.001073153754578296,
+          "fuchs_lower": 1.1484247961490723e-06,
+          "fuchs_upper": 0.0015155356391270427,
+          "helstrom_equal_prior_error": 0.4994634231227286,
+          "root_fidelity": 0.9999988515752039,
+          "trace_distance": 0.001073153754542801
+        },
+        "transport": {
+          "cost": 0.49999994373241297,
+          "edge": "r8:source-to-operational-weave",
+          "evidence": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "fixed Bell probe",
+              "no free classical norm side register"
+            ],
+            "carrier": "five-dimensional Bell-erasure density",
+            "comparison": "attempted-use erasure probability",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 0.49999994373241297
+          }
+        }
+      },
+      {
+        "coordinates": {
+          "phi": 0.37,
+          "psi": 1.11,
+          "q": 6.14421235332821e-06,
+          "rho": 6.0
+        },
+        "frame_id": "source-cartan/attempted-use",
+        "index": 6,
+        "materialization_mode": "compiled_whole",
+        "operational_carrier": {
+          "bell_success_probability": 0.5000000000188758,
+          "density_digest": "sha256:51bde4b66f823b15fdb27beef383ae5db949e35c156648b9dd871b009a2cb683",
+          "density_dimension": 5,
+          "density_eigenvalues": [
+            -5.56092794893836e-17,
+            -2.4113454494291385e-18,
+            9.448367611462141e-18,
+            0.4999999999811242,
+            0.5000000000188758
+          ],
+          "erasure_probability": 0.4999999999811242,
+          "fixed_bell_bipartition": {
+            "conditional_concurrence": 1.2288424706192515e-05,
+            "conditional_entanglement": {
+              "base": "fixed-Bell-bipartition",
+              "kind": "Bits",
+              "uncertainty": 0.0,
+              "unit": "bits",
+              "value": 1.3615919889144092e-09
+            },
+            "identity_invariant": false
+          },
+          "qfi_q": [
+            [
+              2.0000000000755027,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.000012288462458,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9999877116130447
+            ]
+          ],
+          "qfi_rho": [
+            [
+              3.0201076355372916e-10,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.000012288462458,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9999877116130447
+            ]
+          ],
+          "qfi_volume_density": {
+            "base": "Bell-erasure-attempted-use",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "qfi-parameter-volume-density",
+            "value": 1.73784568800261e-05
+          },
+          "rank_change_boundary": false,
+          "source_to_qfi_volume_form_distortion": {
+            "base": "SL2-to-Bell-erasure",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "pullback-volume-form-ratio",
+            "value": 4.271077177922759e-10
+          },
+          "worst_success_probability": 3.775134544279098e-11
+        },
+        "routing": {
+          "action": "deweave",
+          "evidence_tag": "S",
+          "physical_inverse": false,
+          "reason": "operational transition 0.000164687334405 < 0.05",
+          "trace_distance": 0.00016468733440497138
+        },
+        "source_carrier": {
+          "absolute_pseudo_slab_volume": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume",
+            "value": 803152.8332696101
+          },
+          "absolute_pseudo_volume_density": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume-density",
+            "value": 40688.69785321492
+          },
+          "matrix": [
+            [
+              277.759082096309,
+              253.6176968314407
+            ],
+            [
+              107.73072305042274,
+              98.37092509025508
+            ]
+          ],
+          "singular_values": [
+            403.42879349273505,
+            0.0024787521766999163
+          ],
+          "used_as_bits": false,
+          "used_as_operational_distance": false
+        },
+        "transition": {
+          "bures_squared": 5.4225310908151414e-08,
+          "dense_root_fidelity": 0.9999999728873443,
+          "dense_trace_distance": 0.00016468733453206563,
+          "fuchs_lower": 2.7112655454075707e-08,
+          "fuchs_upper": 0.0002328632863527338,
+          "helstrom_equal_prior_error": 0.4999176563327975,
+          "root_fidelity": 0.9999999728873445,
+          "trace_distance": 0.00016468733440497138
+        },
+        "transport": {
+          "cost": 0.4999999999811242,
+          "edge": "r8:source-to-operational-weave",
+          "evidence": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "fixed Bell probe",
+              "no free classical norm side register"
+            ],
+            "carrier": "five-dimensional Bell-erasure density",
+            "comparison": "attempted-use erasure probability",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 0.4999999999811242
+          }
+        }
+      },
+      {
+        "coordinates": {
+          "phi": 0.87,
+          "psi": 1.11,
+          "q": 6.14421235332821e-06,
+          "rho": 6.0
+        },
+        "frame_id": "source-cartan/attempted-use",
+        "index": 7,
+        "materialization_mode": "compiled_whole",
+        "operational_carrier": {
+          "bell_success_probability": 0.5000000000188757,
+          "density_digest": "sha256:eb68711306565cc38ed9482c8d9e4f4396c02db0f284b797c5b3528a4e4374f8",
+          "density_dimension": 5,
+          "density_eigenvalues": [
+            -1.3796771758859868e-17,
+            8.1862212284641705e-19,
+            7.022402434324805e-17,
+            0.4999999999811243,
+            0.5000000000188758
+          ],
+          "erasure_probability": 0.4999999999811243,
+          "fixed_bell_bipartition": {
+            "conditional_concurrence": 1.2288424706192515e-05,
+            "conditional_entanglement": {
+              "base": "fixed-Bell-bipartition",
+              "kind": "Bits",
+              "uncertainty": 0.0,
+              "unit": "bits",
+              "value": 1.3615919889144092e-09
+            },
+            "identity_invariant": false
+          },
+          "qfi_q": [
+            [
+              2.0000000000755027,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.000012288462458,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9999877116130447
+            ]
+          ],
+          "qfi_rho": [
+            [
+              3.0201076355372916e-10,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.000012288462458,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9999877116130447
+            ]
+          ],
+          "qfi_volume_density": {
+            "base": "Bell-erasure-attempted-use",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "qfi-parameter-volume-density",
+            "value": 1.73784568800261e-05
+          },
+          "rank_change_boundary": false,
+          "source_to_qfi_volume_form_distortion": {
+            "base": "SL2-to-Bell-erasure",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "pullback-volume-form-ratio",
+            "value": 4.271077177922759e-10
+          },
+          "worst_success_probability": 3.775134544279098e-11
+        },
+        "routing": {
+          "action": "weave",
+          "evidence_tag": "S",
+          "physical_inverse": false,
+          "reason": "operational transition 0.172244261929 >= 0.05",
+          "trace_distance": 0.17224426192896533
+        },
+        "source_carrier": {
+          "absolute_pseudo_slab_volume": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume",
+            "value": 803152.8332696101
+          },
+          "absolute_pseudo_volume_density": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume-density",
+            "value": 40688.69785321492
+          },
+          "matrix": [
+            [
+              219.76567566819062,
+              334.851307679832
+            ],
+            [
+              26.497112202031417,
+              40.37751866213675
+            ]
+          ],
+          "singular_values": [
+            403.42879349273505,
+            0.00247875217668386
+          ],
+          "used_as_bits": false,
+          "used_as_operational_distance": false
+        },
+        "transition": {
+          "bures_squared": 0.061209471215859734,
+          "dense_root_fidelity": 0.96939526439207,
+          "dense_trace_distance": 0.17224426192896536,
+          "fuchs_lower": 0.030604735607929867,
+          "fuchs_upper": 0.2455052369588649,
+          "helstrom_equal_prior_error": 0.4138778690355173,
+          "root_fidelity": 0.9693952643920701,
+          "trace_distance": 0.17224426192896533
+        },
+        "transport": {
+          "cost": 0.4999999999811243,
+          "edge": "r8:source-to-operational-weave",
+          "evidence": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "fixed Bell probe",
+              "no free classical norm side register"
+            ],
+            "carrier": "five-dimensional Bell-erasure density",
+            "comparison": "attempted-use erasure probability",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 0.4999999999811243
+          }
+        }
+      },
+      {
+        "coordinates": {
+          "phi": 0.87,
+          "psi": 1.61,
+          "q": 6.14421235332821e-06,
+          "rho": 6.0
+        },
+        "frame_id": "source-cartan/attempted-use",
+        "index": 8,
+        "materialization_mode": "compiled_whole",
+        "operational_carrier": {
+          "bell_success_probability": 0.5000000000188756,
+          "density_digest": "sha256:6a7934900a00100d2fc9b56a9a20bbdaace95ae22e1631b727990223f37c06ed",
+          "density_dimension": 5,
+          "density_eigenvalues": [
+            -1.5853298671774832e-17,
+            8.446861368501501e-19,
+            5.664197595836794e-17,
+            0.49999999998112443,
+            0.5000000000188757
+          ],
+          "erasure_probability": 0.49999999998112443,
+          "fixed_bell_bipartition": {
+            "conditional_concurrence": 1.2288424706192515e-05,
+            "conditional_entanglement": {
+              "base": "fixed-Bell-bipartition",
+              "kind": "Bits",
+              "uncertainty": 0.0,
+              "unit": "bits",
+              "value": 1.3615919889144092e-09
+            },
+            "identity_invariant": false
+          },
+          "qfi_q": [
+            [
+              2.0000000000755027,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.000012288462458,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9999877116130447
+            ]
+          ],
+          "qfi_rho": [
+            [
+              3.0201076355372916e-10,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.000012288462458,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.9999877116130447
+            ]
+          ],
+          "qfi_volume_density": {
+            "base": "Bell-erasure-attempted-use",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "qfi-parameter-volume-density",
+            "value": 1.73784568800261e-05
+          },
+          "rank_change_boundary": false,
+          "source_to_qfi_volume_form_distortion": {
+            "base": "SL2-to-Bell-erasure",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "pullback-volume-form-ratio",
+            "value": 4.271077177922759e-10
+          },
+          "worst_success_probability": 3.775134544279098e-11
+        },
+        "routing": {
+          "action": "weave",
+          "evidence_tag": "S",
+          "physical_inverse": false,
+          "reason": "operational transition 0.172242212153 >= 0.05",
+          "trace_distance": 0.17224221215309285
+        },
+        "source_carrier": {
+          "absolute_pseudo_slab_volume": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume",
+            "value": 803152.8332696101
+          },
+          "absolute_pseudo_volume_density": {
+            "base": "SL2-Cartan-source",
+            "kind": "Quantity",
+            "uncertainty": 0.0,
+            "unit": "absolute-pseudo-volume-density",
+            "value": 40688.69785321492
+          },
+          "matrix": [
+            [
+              122.16572595142625,
+              355.73526566230356
+            ],
+            [
+              47.38107018450296,
+              137.97746837890114
+            ]
+          ],
+          "singular_values": [
+            403.4287934927351,
+            0.002478752176687814
+          ],
+          "used_as_bits": false,
+          "used_as_operational_distance": false
+        },
+        "transition": {
+          "bures_squared": 0.06120796689838848,
+          "dense_root_fidelity": 0.969396016550806,
+          "dense_trace_distance": 0.17224221215309335,
+          "fuchs_lower": 0.03060398344919424,
+          "fuchs_upper": 0.2455022669863354,
+          "helstrom_equal_prior_error": 0.41387889392345356,
+          "root_fidelity": 0.9693960165508058,
+          "trace_distance": 0.17224221215309285
+        },
+        "transport": {
+          "cost": 0.49999999998112443,
+          "edge": "r8:source-to-operational-weave",
+          "evidence": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+          "lost": [
+            "global sign"
+          ],
+          "preserved": [
+            "projective class [M]={M,-M}",
+            "finite-rho exact-tomography coordinate",
+            "compact SO(2) frame covariance",
+            "success-erasure accounting"
+          ],
+          "transformed": [
+            "M -> A=M/||M||2 -> flagged density",
+            "rho -> q=exp(-2rho)",
+            "source chart -> pullback QFI chart"
+          ],
+          "typed_remainder": {
+            "assumptions": [
+              "fixed Bell probe",
+              "no free classical norm side register"
+            ],
+            "carrier": "five-dimensional Bell-erasure density",
+            "comparison": "attempted-use erasure probability",
+            "kind": "scalar_constant",
+            "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+            "raw_value": 0.49999999998112443
+          }
+        }
+      }
+    ],
+    "operational_information": {
+      "codewords": 9,
+      "holevo": {
+        "base": "r8-frozen-uniform-path-ensemble",
+        "kind": "Bits",
+        "uncertainty": 0.0,
+        "unit": "bits",
+        "value": 0.24981236477597357
+      },
+      "log2_codewords": {
+        "base": "r8-frozen-uniform-path-ensemble",
+        "kind": "Bits",
+        "uncertainty": 0.0,
+        "unit": "bits",
+        "value": 3.169925001442312
+      },
+      "oracle_erasure": {
+        "base": "r8-frozen-uniform-path-ensemble",
+        "kind": "Bits",
+        "uncertainty": 0.0,
+        "unit": "bits",
+        "value": 1.6826610086681708
+      },
+      "pgm": {
+        "base": "r8-frozen-uniform-path-ensemble",
+        "kind": "Bits",
+        "uncertainty": 0.0,
+        "unit": "bits",
+        "value": 0.12885319627910502
+      },
+      "raw_metrics": {
+        "catalogue_proxy_not_bits": 4.50000000016988,
+        "confusion_digest": "sha256:86fc7f6f651645047bd4254249d9d7b2f9f91fa76f0bef6af18d07e5bdbc1988",
+        "holevo_information_bits": 0.24981236477597357,
+        "log2_codewords_bits": 3.169925001442312,
+        "minimum_success_probability": 0.5000000000188756,
+        "oracle_erasure_information_bits": 1.6826610086681708,
+        "pgm_maximum_row_defect": 5.551115123125783e-16,
+        "pgm_minimum_raw_probability": 0.020829328149098738,
+        "pgm_mutual_information_bits": 0.12885319627910502,
+        "pgm_support_projector_defect": 7.756892568560345e-15
+      }
+    },
+    "path": [
+      [
+        0.25,
+        0.37,
+        1.11
+      ],
+      [
+        0.5,
+        0.37,
+        1.11
+      ],
+      [
+        1.0,
+        0.37,
+        1.11
+      ],
+      [
+        2.0,
+        0.37,
+        1.11
+      ],
+      [
+        3.0,
+        0.37,
+        1.11
+      ],
+      [
+        4.0,
+        0.37,
+        1.11
+      ],
+      [
+        6.0,
+        0.37,
+        1.11
+      ],
+      [
+        6.0,
+        0.87,
+        1.11
+      ],
+      [
+        6.0,
+        0.87,
+        1.61
+      ]
+    ]
+  },
+  "preregistration": {
+    "path": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+    "sha256": "sha256:409344240b5042c72f7ca3b4102a50c991595784a88ca7c018cf7fac46490d62",
+    "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION"
+  },
+  "round": "QSigma-R8",
+  "schema": "hypercomplexbrain.qsigma_r8.quantum_movement.v1",
+  "source_digests": {
+    "experiments/run_quantum_movement.py": "sha256:660b8db7adaa35f0e3d81259423aa02d178706ac9400d2098dc0d3ded825c861",
+    "manifests/qsigma_r8_quantum_movement_preregistration.json": "sha256:409344240b5042c72f7ca3b4102a50c991595784a88ca7c018cf7fac46490d62",
+    "src/aionq/hyperbolic_qubit.py": "sha256:f6424cd337fb7dcf987a68a7ed375ca3955be29223d529f33b1cce847376e484",
+    "src/aionq/qsigma_r7_information.py": "sha256:a20c71640360e9c95b4c702c815c0f6a9cd841ecbf53889251bc81ebb73cc7f8",
+    "src/aionq/quantities.py": "sha256:5ea4454b5e149d12c91db0c3f017b3c91391d6c09bf3f39f1978f30fb6d5affb",
+    "src/aionq/quantum_movement.py": "sha256:5bdc9c60b54e024664573684153f0808f9ba77459544a25b328b74cc6404d9c7",
+    "src/aionq/recognition/worldlet.py": "sha256:84b089cccdc37645b13ca084b3ac0d0e03dd04342d574b68db68712a77dc8091",
+    "tests/test_quantum_movement.py": "sha256:7155a9af5b35411d20be9d721ebb044aa802bd020ccb6599cbd25309c1cb7fdc"
+  },
+  "status": "COMPLETED",
+  "typed_remainders": {
+    "attenuation_not_loss": {
+      "carrier": "operational radial coordinate",
+      "statement": "At every finite rho, exact tomography recovers q=exp(-2rho); fixed additive delta-rho sensitivity decays."
+    },
+    "independence": {
+      "independent": false,
+      "statement": "No independent witness."
+    },
+    "nontransported_aggregate": {
+      "carrier": "SL(2,R) source measure",
+      "statement": "Cartan source-volume multiplicity is not a density-state field, codeword count, information quantity, or capacity."
+    },
+    "projective_loss": {
+      "carrier": "SL2-to-density projective fibre",
+      "comparison": "projective alias multiplicity minus one",
+      "kind": "scalar_constant",
+      "raw_value": 1.0,
+      "statement": "M and -M share one density"
+    },
+    "routing": {
+      "evidence_tag": "S",
+      "statement": "weave/deweave is append-only governance state and never a physical inverse or recovery channel"
+    },
+    "transport": [
+      {
+        "assumptions": [
+          "fixed Bell probe",
+          "no free classical norm side register"
+        ],
+        "carrier": "five-dimensional Bell-erasure density",
+        "comparison": "attempted-use erasure probability",
+        "kind": "scalar_constant",
+        "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+        "raw_value": 0.31606027941427894
+      },
+      {
+        "assumptions": [
+          "fixed Bell probe",
+          "no free classical norm side register"
+        ],
+        "carrier": "five-dimensional Bell-erasure density",
+        "comparison": "attempted-use erasure probability",
+        "kind": "scalar_constant",
+        "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+        "raw_value": 0.4323323583816937
+      },
+      {
+        "assumptions": [
+          "fixed Bell probe",
+          "no free classical norm side register"
+        ],
+        "carrier": "five-dimensional Bell-erasure density",
+        "comparison": "attempted-use erasure probability",
+        "kind": "scalar_constant",
+        "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+        "raw_value": 0.490842180555633
+      },
+      {
+        "assumptions": [
+          "fixed Bell probe",
+          "no free classical norm side register"
+        ],
+        "carrier": "five-dimensional Bell-erasure density",
+        "comparison": "attempted-use erasure probability",
+        "kind": "scalar_constant",
+        "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+        "raw_value": 0.4998322686860488
+      },
+      {
+        "assumptions": [
+          "fixed Bell probe",
+          "no free classical norm side register"
+        ],
+        "carrier": "five-dimensional Bell-erasure density",
+        "comparison": "attempted-use erasure probability",
+        "kind": "scalar_constant",
+        "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+        "raw_value": 0.49999692789382355
+      },
+      {
+        "assumptions": [
+          "fixed Bell probe",
+          "no free classical norm side register"
+        ],
+        "carrier": "five-dimensional Bell-erasure density",
+        "comparison": "attempted-use erasure probability",
+        "kind": "scalar_constant",
+        "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+        "raw_value": 0.49999994373241297
+      },
+      {
+        "assumptions": [
+          "fixed Bell probe",
+          "no free classical norm side register"
+        ],
+        "carrier": "five-dimensional Bell-erasure density",
+        "comparison": "attempted-use erasure probability",
+        "kind": "scalar_constant",
+        "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+        "raw_value": 0.4999999999811242
+      },
+      {
+        "assumptions": [
+          "fixed Bell probe",
+          "no free classical norm side register"
+        ],
+        "carrier": "five-dimensional Bell-erasure density",
+        "comparison": "attempted-use erasure probability",
+        "kind": "scalar_constant",
+        "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+        "raw_value": 0.4999999999811243
+      },
+      {
+        "assumptions": [
+          "fixed Bell probe",
+          "no free classical norm side register"
+        ],
+        "carrier": "five-dimensional Bell-erasure density",
+        "comparison": "attempted-use erasure probability",
+        "kind": "scalar_constant",
+        "provenance": "manifests/qsigma_r8_quantum_movement_preregistration.json",
+        "raw_value": 0.49999999998112443
+      }
+    ]
+  },
+  "verdicts": {
+    "H1": "SURVIVES",
+    "P1": "SURVIVES",
+    "P10": "SURVIVES",
+    "P2": "SURVIVES",
+    "P3": "SURVIVES",
+    "P4": "SURVIVES",
+    "P5": "SURVIVES",
+    "P6": "SURVIVES",
+    "P7": "SURVIVES",
+    "P8": "SURVIVES",
+    "P9": "SURVIVES",
+    "overall": "COMPLETED"
+  }
+}

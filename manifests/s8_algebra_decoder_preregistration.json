@@ -1,0 +1,122 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "S8 algebra-valued Fano decoder",
+  "committed_before_primary_run": true,
+  "baseline": {
+    "commit_sha": "fe6dfdc326f8964658b072bcd0906fa32c0111e8",
+    "artifact": "artifacts/s8_multiplex/fano_multiplex.json",
+    "artifact_scope": "scalar commutator norms and Cayley-Dickson ladder only",
+    "known_gap": "The algebra-valued 7+21 split, random-control ranks, alternating-drive values, and decoder claims occur only in comments in experiments/run_fano_multiplex.py. They have no executable implementation or persisted result at this baseline and are treated as unverified.",
+    "local_changes_preserved": [
+      ".gitignore",
+      "artifacts/s4_g100/summaries/acaf_frame_sweep.json",
+      "artifacts/s4_g100/summaries/moving_frame_audit.json",
+      "artifacts/s4_g100/summaries/s4_basis_attack.json",
+      "tests/test_docs.py"
+    ]
+  },
+  "question": "Does the Fano channel construction provide a numerically identifiable algebra-valued coordinate system for seven signal modes and twenty-one pairwise crosstalk modes in so(8), under an explicit linear observation model?",
+  "formal_model": {
+    "carrier": "so(8) represented by the 28 strict-upper-triangle coordinates of an 8x8 real skew-symmetric matrix",
+    "coordinate_isometry": "vec_so8(A) = sqrt(2) * A[i,j] for i<j, so vec_so8(A) dot vec_so8(B) = <A,B>_F",
+    "signal_matrix": "S in R^(28x7), with normalized columns vec_so8(G_i)",
+    "crosstalk_matrix": "C in R^(28x21), with normalized columns vec_so8([G_i,G_j]) for i<j",
+    "joint_matrix": "B = [S C] in R^(28x28)",
+    "observation": "y = S a + C b + epsilon, where a in R^7, b in R^21, and epsilon is isotropic Gaussian noise in the declared so(8) coordinates",
+    "decoder": "joint least squares z_hat = pinv(B)y; split decoding with pinv(S) and pinv(C) is allowed only if the measured cross Gram S^T C passes the orthogonality gate",
+    "rank_tolerance": "numpy.linalg.matrix_rank default tolerance, recorded together with all singular values"
+  },
+  "primary_hypotheses": [
+    {
+      "id": "S8-DEC-H1",
+      "statement": "For the Fano lines computed from octonion associativity, rank(S)=7, rank(C)=21, rank([S C])=28, and max(abs(S^T C)) <= 1e-12.",
+      "kill": "Any rank is lower than 7/21/28 respectively, or cross-space overlap exceeds 1e-12."
+    },
+    {
+      "id": "S8-DEC-H2",
+      "statement": "Under the declared linear observation model with epsilon=0, the joint decoder recovers all 28 normalized-basis coefficients with maximum absolute error <= 1e-10 over 256 seeded samples.",
+      "kill": "The maximum absolute coefficient error exceeds 1e-10."
+    },
+    {
+      "id": "S8-DEC-H3",
+      "statement": "For isotropic Gaussian coordinate noise, decoder RMSE follows the least-squares covariance prediction sigma^2 (B^T B)^-1. At each nonzero preregistered sigma, empirical combined coefficient RMSE over 4096 samples must be within 15 percent of the analytic expected RMSE.",
+      "kill": "Any nonzero-noise level differs from the analytic prediction by more than 15 percent."
+    },
+    {
+      "id": "S8-DEC-H4",
+      "statement": "A deterministically selected rank-deficient random triple system has a nonzero crosstalk null vector: two coefficient vectors separated by unit norm encode observations that agree to <= 1e-10.",
+      "kill": "No rank-deficient matched control is found in the preregistered search budget, or the null-space alias fails the observation-equality gate."
+    }
+  ],
+  "secondary_control": {
+    "population": "1000 random systems, each seven distinct 3-subsets sampled without replacement from the 35 triples on seven points",
+    "seed": 20260727,
+    "metrics": [
+      "signal rank",
+      "crosstalk rank",
+      "joint rank",
+      "maximum normalized cross Gram",
+      "joint condition number"
+    ],
+    "status": "descriptive control only",
+    "legacy_claim_not_assumed": "The comment-only claim that exactly 497/1000 systems have crosstalk rank 21 is not a preregistered target and will be recomputed rather than repeated."
+  },
+  "noise_benchmark": {
+    "coefficient_distribution": "independent standard normal signal and crosstalk coefficients",
+    "noise_distribution": "independent N(0,sigma^2) in each of the 28 isometric so(8) coordinates",
+    "sample_seed": 20260728,
+    "samples": 4096,
+    "sigma": [
+      0.0,
+      0.0001,
+      0.001,
+      0.01,
+      0.1
+    ]
+  },
+  "controls_and_attacks": [
+    {
+      "name": "scalar-collapse attack",
+      "procedure": "Compare distinct algebra-valued observations with equal Frobenius norm. PASS iff the module preserves their 28 coordinates and does not treat equal norms as equal observations."
+    },
+    {
+      "name": "basis-order attack",
+      "procedure": "Permute signal and crosstalk columns and decode with the correspondingly permuted basis. PASS iff the reconstructed matrix observation is unchanged and coefficients transform only by that permutation."
+    },
+    {
+      "name": "rank-deficient control",
+      "procedure": "Find a matched random triple system with rank(C)<21 and exhibit a unit null vector producing the same observation from different crosstalk coefficients."
+    },
+    {
+      "name": "noise calibration",
+      "procedure": "Compare empirical coefficient RMSE to the covariance of the actual decoder matrix rather than to an assumed SNR law."
+    }
+  ],
+  "files_expected_to_change_after_preregistration": [
+    "src/aionq/fano_decoder.py",
+    "experiments/run_fano_decoder.py",
+    "tests/test_fano_decoder.py",
+    "artifacts/s8_decoder/fano_decoder.json",
+    "docs/S8_FANO_DECODER.md"
+  ],
+  "resource_budget": {
+    "runtime": "CPU only",
+    "external_calls": 0,
+    "random_control_trials": 1000,
+    "noise_samples_per_level": 4096,
+    "dependencies": "numpy and existing repository code only"
+  },
+  "scope_exclusions": [
+    "No physical radio, bandwidth, channel-capacity, or quantum-advantage claim.",
+    "The decoder validates only the stated linearized Lie-algebra observation model; it is not a receiver for finite group products.",
+    "No split-signature (2,2) claim. SU(1,1) requires a separately defined bounded observation and noise model.",
+    "No consciousness, sentience, AGI, or best-cognitive-performance claim.",
+    "No Walsh-Hadamard performance comparison until an equal-resource observation model is separately preregistered."
+  ],
+  "stop_condition": "Stop after an executable algebra-valued coordinate map, Fano rank/orthogonality report, exact linear decoder, calibrated synthetic-noise benchmark, matched random rank control, tests, and persisted artifact. Do not infer a finite-angle or physical decoder from this slice.",
+  "typed_remainder": {
+    "kind": "model_boundary",
+    "carrier": "finite group products, split signature, and physical noise",
+    "statement": "Full rank in the linearized so(8) carrier is necessary for local identifiability under the declared model. It does not establish global identifiability of finite noncommutative products, stability in SU(1,1), or performance on hardware."
+  }
+}

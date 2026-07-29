@@ -1,0 +1,82 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "OHNIUM-V2",
+  "title": "Observable ascent under R40 motion",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION",
+  "date": "2026-07-28",
+  "name_contract": {
+    "OHM": "Ohnium architecture",
+    "AUM": "three typed cadence labels A, U, M",
+    "boundary": "The labels acknowledge the three phonetic phases of Om/AUM; no chant, meditation practice, spiritual proposition, consciousness, or physical quantum effect is implemented or inferred."
+  },
+  "seed": 20260728,
+  "frames": 40,
+  "phase_order": ["A", "U", "M"],
+  "carrier_order": ["R", "H", "O", "CD32", "A_n"],
+  "endpoints": [
+    {
+      "id": "cosmos.north",
+      "rho": 0.5,
+      "phi": 0.2,
+      "psi": 0.7,
+      "active_dimension": 8,
+      "phase_offset": 0
+    },
+    {
+      "id": "cosmos.equator",
+      "rho": 1.25,
+      "phi": -0.4,
+      "psi": 1.1,
+      "active_dimension": 12,
+      "phase_offset": 1
+    },
+    {
+      "id": "cosmos.deep",
+      "rho": 2.0,
+      "phi": 0.8,
+      "psi": -1.0,
+      "active_dimension": 16,
+      "phase_offset": 2
+    }
+  ],
+  "operators": {
+    "A": "exp(-i*tau*sigma_x/2)",
+    "U": "exp(-i*tau*sigma_y/2)",
+    "M": "exp(-i*tau*sigma_z/2)",
+    "hopf": "h(z0,z1)=(2 Re(conj(z0)z1),2 Im(conj(z0)z1),|z0|^2-|z1|^2)",
+    "disk": "p(rho,theta)=tanh(rho/2)*(cos(theta),sin(theta))",
+    "projection_violence": "typed tuple (discarded_vector, rank_loss, energy_loss, volume_form_distortion); never promoted from its scalar norm",
+    "return": "retained coordinates plus the typed discarded-vector sidecar reconstruct the pre-projection carrier"
+  },
+  "gates": [
+    "Every A/U/M operator is 2x2 unitary with determinant one.",
+    "The Hopf image is phase-invariant and has unit norm for every normalized spinor.",
+    "Every endpoint emits exactly 40 append-only frames and the carrier order R->H->O->CD32->A_n.",
+    "Every bridge records source energy, target energy, transferred energy, a typed landing vector, and energy balance.",
+    "Every CD32->A_n bridge records the discarded coordinates rather than only their norm, and the return reconstruction defect is <=1e-12.",
+    "The baseline Fano signal/crosstalk union has rank 28 and normalized signal projection <=1e-12.",
+    "All baseline R40 frames preserve Fano braid, split light-cone, Hopf swirl, carrier-ring, and energy-balance gates.",
+    "A duplicated Fano channel is classified as false_ascent.",
+    "An unaccounted amplitude scaling is classified as energy_leakage.",
+    "Dropping a nonzero discarded-vector sidecar is classified as bridge_absorption.",
+    "The atlas contains all three endpoint fibers, each with carrier dominance, a typed active remainder, and an explicit return path.",
+    "The eight Hamiltonian governance qualities remain a vector; their scalar energy is scheduling telemetry and cannot promote an evidence claim.",
+    "The generated HTML embeds the complete atlas JSON and exposes frame, cosmos, carrier, and failure controls."
+  ],
+  "kill_conditions": [
+    "Any baseline failure flag is non-empty.",
+    "Any injected fault is not detected under its registered type.",
+    "Any energy comparison crosses incompatible declared bases.",
+    "Any remainder is stored only as a magnitude.",
+    "Any local endpoint lacks a return path or typed remainder.",
+    "Any text presents A/U/M spirituality as a quantum operator, or presents the observatory as consciousness, sentience, AGI, a quantum device, or an independent proof."
+  ],
+  "sources": [
+    "https://arxiv.org/abs/2212.01642",
+    "https://arxiv.org/abs/2209.07728",
+    "https://arxiv.org/abs/1612.02998",
+    "https://arxiv.org/abs/2509.05073"
+  ],
+  "evidence_ceiling": "Repository-internal exact identities and deterministic measurements under recorded assumptions. No hardware experiment, consciousness claim, AGI claim, complexity-class result, or independent verification.",
+  "attribution": "(c) Jesús Vilela Jato, all rights reserved. 21/05/2026"
+}

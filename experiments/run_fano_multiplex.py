@@ -38,11 +38,11 @@ That is a real prediction with a matched control, and the control can win.
 
 On (2,2)
 --------
-The split-signature companion is included as a second regime.  Replacing the
+The split-signature companion is deferred, not included.  Replacing the
 positive-definite form with signature (2,2) turns each channel's SU(2) into
-SU(1,1): the rotations become boosts, which are unbounded.  The interesting
-question is whether unbounded channels separate BETTER (more room) or WORSE
-(no compact orbit to be orthogonal in), and it is measured rather than guessed.
+SU(1,1): the rotations become boosts, which are unbounded.  The Frobenius metric
+used here does not transfer, so a bounded observation and noise model must be
+preregistered before that regime can be measured.
 
 Run with:  PYTHONPATH=src python3 experiments/run_fano_multiplex.py
 """
@@ -249,17 +249,18 @@ def main() -> int:
             "This measures GENERATOR COMMUTATOR NORMS, which is separability of "
             "multiplexed rotations. It is NOT a channel-capacity result, NOT a "
             "decoding-error-rate result, and NOT a quantum advantage claim. No "
-            "quantum hardware, no noise model, no receiver. What it establishes "
-            "is a property of the design; what it would take to matter is a "
-            "decoder and a matched classical multiplexing baseline at equal "
-            "resource, neither of which exists here."),
+            "quantum hardware, no noise model, no receiver. The separate "
+            "S8 algebra-valued experiment adds a local linear decoder, but this "
+            "legacy scalar artifact does not. A finite-angle receiver and a "
+            "matched classical baseline at equal resource still do not exist."),
         "not_done": [
             "signature (2,2): SU(1,1) channels where rotations become boosts. "
             "Named in the prompt, not implemented -- an unbounded generator has "
             "no finite Frobenius norm to compare, so the metric above does not "
             "transfer and a different separability measure is needed first.",
-            "a decoder: without one, 'separable' means 'generators commute', "
-            "which is necessary and not sufficient for recovering the symbols.",
+            "a finite-angle decoder: src/aionq/fano_decoder.py now implements "
+            "the separately preregistered LOCAL LINEARIZED so(8) model, but "
+            "recovering symbols from an ordered group product remains open.",
             "a classical control: Walsh-Hadamard multiplexing on 8 channels is "
             "the obvious matched baseline and is not run here."],
     }
@@ -278,13 +279,18 @@ if __name__ == "__main__":
 # Addendum: "orthogonality by tensor fields and diamond holonomy and return"
 # --------------------------------------------------------------------------
 #
+# HISTORICAL EVIDENCE NOTE.  This addendum was originally committed as comments
+# only.  It has no executable implementation or persisted artifact in this
+# script and must not be cited as a measured result.  It is retained as the
+# hypothesis trail for a future finite-group experiment.
+#
 # A proposal was made that channel orthogonality is "simply achieved by
 # converting to tensor fields and intramanifolding in diamond holonomy and
 # return".  Decoded: measure the GROUP commutator W = U_A U_B U_A^-1 U_B^-1 --
 # a closed 4-cycle, forward on each channel then back -- in the tensor (adjoint)
 # representation rather than the vector one, where a central factor dies.
 #
-# Measured, at theta = pi/4 over all 21 Fano channel pairs:
+# Historical unverified report, at theta = pi/4 over all 21 Fano channel pairs:
 #
 #     vector rep   ||W - I||        1.023492   (identical across all 21 pairs)
 #     tensor rep   ||W (x) W - I||  4.026401   (identical across all 21 pairs)
@@ -317,6 +323,11 @@ if __name__ == "__main__":
 # Addendum 2: the alternating drive -- crosstalk as the carrier, not the fault
 # --------------------------------------------------------------------------
 #
+# HISTORICAL EVIDENCE NOTE.  This addendum was originally committed as comments
+# only.  No alternating-drive implementation or artifact exists in this script.
+# Its numbers are unverified narrative until a separate preregistered experiment
+# computes them.
+#
 # Proposal: "infinitesimal in and infinitesimal out as frequency alternating
 # behaviour to give us a signal ... we kind of frustrate the fields."
 #
@@ -329,7 +340,7 @@ if __name__ == "__main__":
 # commutator -- and the whole of S8 up to this point treated that commutator as
 # the DEFECT to be minimised.  This inverts it: the crosstalk is the carrier.
 #
-# Measured, theta = 0.05, Fano channels 0 and 1:
+# Historical unverified report, theta = 0.05, Fano channels 0 and 1:
 #
 #       N        signal ||W-I||        signal / N
 #       1        4.443210e-03          4.443210e-03
@@ -408,36 +419,50 @@ if __name__ == "__main__":
 # Addendum 3: keeping the commutator ALGEBRA-VALUED instead of taking its norm
 # --------------------------------------------------------------------------
 #
+# This addendum now has an executable successor:
+#
+#     manifests/s8_algebra_decoder_preregistration.json
+#     src/aionq/fano_decoder.py
+#     experiments/run_fano_decoder.py
+#     artifacts/s8_decoder/fano_decoder.json
+#     tests/test_fano_decoder.py
+#
 # Everything above measured ||[G_A, G_B]|| -- a scalar.  That is a collapse: the
 # commutator is an ELEMENT of so(8), and its norm discards where it points.  The
 # question a decoder actually needs is not how much leaks but WHERE it lands.
 #
 # Projected onto the channel basis, the answer is striking:
 #
-#     max |<G_C, [G_A, G_B]>| over all 7 channels x 21 pairs  =  5.14e-17
+#     max |<G_C, [G_A,G_B]>| over all 7 channels x 21 pairs  =  4.23e-17
 #
-# The crosstalk is EXACTLY ORTHOGONAL to the signal space.  And the dimensions
-# close: dim so(8) = 28, channels span 7, the 21 pairwise commutators span 21,
-# 7 + 21 = 28, and rank(signal + crosstalk) = 28.  An exact orthogonal splitting
-# of the whole Lie algebra into a signal block and an interference block.
+# The executable successor measures numerical orthogonality to 4.23e-17.  And
+# the dimensions close numerically: dim so(8) = 28, channels span 7, the 21
+# pairwise commutators span 21, 7 + 21 = 28, and rank(signal + crosstalk) = 28.
+# This is a well-conditioned numerical splitting under the declared tolerance,
+# not a symbolic proof of exact orthogonality.
 #
-# THE CONTROL SAYS HALF OF THAT IS GENERIC.  Over 1000 random triple systems:
+# THE PREREGISTERED CONTROL says half of that is generic.  With seed 20260727:
 #
 #     signal PERP crosstalk                 1000/1000     <- NOT a Fano property
-#     crosstalk rank 21 (independent modes)  497/1000     <- discriminating
-#     full 7+21 split of so(8)               497/1000     median rank 15
+#     signal/crosstalk rank 7/21             489/1000
+#     full 7+21 split of so(8)               489/1000
+#     rank(C)=choose(rank(S),2) mismatches          0
 #
-# So the orthogonality is real and belongs to the construction, not the design;
-# claiming it as a Fano result would have been the prettiest error of this round.
-# What the design DOES buy is full rank: Fano reaches 21 independent crosstalk
-# modes where a random system does so about half the time and typically lands at
-# 15, leaving six directions of interference it cannot tell apart.
+# So numerical orthogonality belongs to the construction, not the design.  The
+# original comparative rank interpretation was also too strong: every sampled
+# full-signal-rank control had crosstalk rank 21, and every deficient crosstalk
+# rank was explained by deficient signal rank.  This relaxed control does not
+# show that Fano uniquely buys full rank.
 #
-# That is the decoder-relevant property, and it is what the scalar norm hid.
-# Twenty-one independent modes orthogonal to the signal means the interference is
-# fully invertible: 21 measurements, 21 unknowns, no contamination of the 7
-# channel coordinates.  A rank-15 system cannot do that whatever its magnitudes
-# look like -- and its magnitudes look fine, which is exactly why the norm was
-# the wrong instrument.
+# The primary Fano result remains decoder-relevant: twenty-one independent modes
+# numerically orthogonal to the signal mean the interference is invertible under
+# the declared LOCAL LINEAR observation y = S a + C b + eps:
+# 21 measurements, 21 unknowns, no contamination of the 7 channel coordinates.
+# A rank-15 system cannot do that under this model whatever its magnitudes look
+# like.  But this particular rank-deficient control also loses signal modes, so
+# it is not a crosstalk-only comparison.  A post-hoc descriptive check found the
+# Fano joint basis better conditioned than all 489 full-rank sampled controls;
+# that observation was not preregistered.  None of this establishes global
+# recovery from finite group products.
 #
 # The scalar was hiding a rank.

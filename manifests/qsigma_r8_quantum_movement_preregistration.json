@@ -1,0 +1,320 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R8",
+  "title": "Dual-Carrier Quantum Hyperbolic Movement and Weave Cocycle",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-07-28",
+  "question": "How does the existing fixed-width R6 Bell-erasure instrument transport SL(2,R) Cartan movement when source pseudo-volume and operational quantum information are kept as heterogeneous carriers rather than collapsed to one scalar?",
+  "scope": {
+    "inside": [
+      "the existing Q=+1 to SL(2,R) source map",
+      "the existing R6 normalization and five-dimensional Bell-erasure density",
+      "local trace, fidelity, Bures, Helstrom, QFI, and fixed-bipartition entanglement telemetry",
+      "normalization-cocycle accounting for compiled versus prefix-materialized words",
+      "two AION Worldlets joined by one explicitly lossy typed Tendril",
+      "an S-tier OmniTool facade for observe, weave, deweave, and append-only telemetry"
+    ],
+    "outside": [
+      "positive-definite H3 geometry",
+      "an infinite-dimensional bosonic implementation",
+      "an optimized Shannon or quantum channel capacity",
+      "a hardware, noise, speed, memory, cognition, AGI, or quantum-advantage claim",
+      "treating Tendril.deweave as a physical inverse quantum channel"
+    ]
+  },
+  "architecture_binding": {
+    "canonical_object": "B=(R,P,W,F,I,M,C,H,E,[R])",
+    "source": "docs/ARCHITECTURE.md",
+    "rules": [
+      "W is a coupling fabric, not a residency metric.",
+      "Source pseudo-volume and operational information remain different local carriers.",
+      "Every change of decomposition, reference frame, code space, or process geometry exposes a cost and a test.",
+      "Evidence remains external; no telemetry facade promotes its own claim.",
+      "Worldlet, Tendril, weave, deweave, and OmniTool remain S-tier architecture unless their declared operators are explicitly exercised."
+    ]
+  },
+  "carrier_contract": {
+    "source": {
+      "carrier": "SL(2,R) determinant-one real matrices in Cartan coordinates (rho,phi,psi)",
+      "geometry": "indefinite induced metric diag(-1,cosh(rho)^2,-sinh(rho)^2)",
+      "measure": "absolute pseudo-volume density cosh(rho)*sinh(rho)",
+      "slab_volume": "2*pi^2*sinh(R)^2",
+      "forbidden_projection": "The split form and source volume are never used as an operational distance or as bits."
+    },
+    "operational": {
+      "carrier": "five-dimensional complex density operators from the declared fixed Bell-probe erasure instrument",
+      "geometry": "trace distance, root fidelity, Bures distance, and SLD quantum Fisher information",
+      "regular_radial_coordinate": "q=exp(-2*rho) in [0,1]",
+      "information": "finite-ensemble PGM, Holevo, oracle-erasure, and log2-cardinality bracket in bits"
+    },
+    "bridge": {
+      "map": "M -> A=M/||M||_2 -> omega_A=|v_A><v_A| direct-sum (1-p_A)|fail><fail|",
+      "preserved": [
+        "projective class [M]={M,-M}",
+        "rho at finite depth under exact density tomography",
+        "compact SO(2) left/right frame covariance",
+        "success and erasure accounting"
+      ],
+      "transformed": [
+        "rho -> q=exp(-2*rho)",
+        "source coordinates -> pullback quantum-information geometry",
+        "matrix action -> flagged density operator"
+      ],
+      "lost": [
+        "global sign M versus -M"
+      ],
+      "attenuated_not_lost": "rho is not declared lost: det(A)=exp(-2*rho) recovers it in exact arithmetic, but fixed additive delta-rho sensitivity decays and tomography becomes shot-expensive.",
+      "side_channel": "No free classical ||M||_2 register is supplied. Any such register, extra width, repeated use, energy, or time must be declared and charged.",
+      "nontransported_aggregate": "Cartan source-volume multiplicity is a measure over source descriptions, not a state field or an operational codeword count."
+    }
+  },
+  "exact_predictions": [
+    {
+      "id": "P1",
+      "statement": "For q=exp(-2*rho), singular values of M are (exp(rho),exp(-rho)); singular values of A are (1,q); p_Bell=(1+q^2)/2 and p_worst=q^2."
+    },
+    {
+      "id": "P2",
+      "statement": "For two Bell-erasure codewords with c=Tr(A†B)/2, dense trace distance and root fidelity equal the closed forms frozen in algorithms.pairwise_geometry."
+    },
+    {
+      "id": "P3",
+      "statement": "For rho>0, J_(rho,phi,psi)=diag(8/(exp(4rho)-1),(1+exp(-2rho))^2,(1-exp(-2rho))^2)."
+    },
+    {
+      "id": "P4",
+      "statement": "In q coordinates, J_(q,phi,psi)=diag(2/(1-q^2),(1+q)^2,(1-q)^2). Fixed delta-rho sensitivity decays, but a fixed delta-q is not declared erased."
+    },
+    {
+      "id": "P5",
+      "statement": "The attempted-use QFI volume is finite: integral sqrt(det J) d rho d phi d psi = sqrt(2)*pi^3 before projective quotienting, while source slab volume has exponent two."
+    },
+    {
+      "id": "P6",
+      "statement": "The typed volume-form distortion is sqrt(det J)/sqrt(abs(det g_source))=8*sqrt(2)*exp(-4rho)/sqrt(1-exp(-4rho)); it is not a common metric or capacity ratio."
+    },
+    {
+      "id": "P7",
+      "statement": "kappa(X,Y)=log||X||_2+log||Y||_2-log||XY||_2 is non-negative, satisfies the two-cocycle identity, and A_X A_Y=exp(-kappa) A_XY."
+    },
+    {
+      "id": "P8",
+      "statement": "For a materialized word, eta=exp(-2*kappa_word) and p_stream=eta*p_direct. For M inverse-followed-by M, source return defect is zero, conditional return fidelity is one, p_stream=exp(-4rho), and direct compilation of I succeeds with one."
+    },
+    {
+      "id": "P9",
+      "statement": "Common compact SO(2) left/right frame changes preserve scale, success, pairwise trace/fidelity geometry, QFI spectrum, and ensemble Holevo information; noncompact changes are costed through kappa."
+    },
+    {
+      "id": "P10",
+      "statement": "Any subsequent parameter-independent CPTP postprocessing cannot increase trace distance, QFI, accessible information, or Holevo information, and cannot decrease fidelity."
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "The frozen OmniTool routing policy will deweave at least one high-depth fixed-angle radial transition below trace threshold while weaving at least one angular transition on the rho=6 boundary layer.",
+      "kill_condition": "Falsified if either event is absent on the frozen path. This tests only the declared routing policy, not cognition or utility."
+    }
+  ],
+  "frozen_grid": {
+    "interior_rho": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      6.0
+    ],
+    "base_phi": 0.37,
+    "base_psi": 1.11,
+    "path": [
+      [0.25, 0.37, 1.11],
+      [0.5, 0.37, 1.11],
+      [1.0, 0.37, 1.11],
+      [2.0, 0.37, 1.11],
+      [3.0, 0.37, 1.11],
+      [4.0, 0.37, 1.11],
+      [6.0, 0.37, 1.11],
+      [6.0, 0.87, 1.11],
+      [6.0, 0.87, 1.61]
+    ],
+    "qfi_finite_difference_rho": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      3.0
+    ],
+    "finite_difference_step": 0.0001,
+    "qfi_relative_tolerance": 0.005,
+    "algebra_tolerance": 1e-10,
+    "density_tolerance": 1e-10,
+    "weave_trace_threshold": 0.05,
+    "depolarizing_strength": 0.25,
+    "volume_integral_absolute_tolerance": 1e-8,
+    "composition_coordinates": [
+      [1.0, 0.37, 1.11],
+      [0.8, 1.23, 0.62],
+      [0.6, 2.1, 0.91]
+    ],
+    "echo_rho": [
+      0.25,
+      1.0,
+      3.0,
+      6.0
+    ]
+  },
+  "algorithms": {
+    "pairwise_geometry": {
+      "overlap": "c=Tr(A†B)/2",
+      "trace_distance": "0.5*(sqrt((pA+pB)^2-4*abs(c)^2)+abs(pA-pB))",
+      "root_fidelity": "abs(c)+sqrt((1-pA)*(1-pB))",
+      "bures_squared": "2*(1-root_fidelity)",
+      "helstrom_equal_prior_error": "(1-trace_distance)/2"
+    },
+    "qfi_numerical_control": "Use centered Bures distances between x-h*v and x+h*v. Diagonal and pair-direction probes reconstruct the symmetric QFI without differentiating the analytic formula.",
+    "conditional_entanglement": "For the fixed Bell bipartition only, concurrence=sech(2rho) and entropy=h2(q^2/(1+q^2)). It is diagnostic, not an identity invariant.",
+    "composition": "Compare direct whole-word compilation with multiplication of normalized prefixes. Persist kappa, eta, direct success, streamed success, and the cocycle defect.",
+    "postprocessing": "Apply the frozen five-dimensional depolarizing channel rho -> (1-lambda)rho+lambda*I/5 and test data-processing directions.",
+    "routing": "For adjacent observations, weave when dense trace distance is at least 0.05 and deweave otherwise. Every event is append-only and declares its reason. The routing action is governance state, not a physical inverse.",
+    "ensemble": "Treat the unique path codewords as one uniform finite ensemble and report PGM, Holevo, oracle-erasure, and log2-cardinality as typed Bits."
+  },
+  "controls": [
+    {
+      "id": "C1",
+      "name": "R7 and R6 binding",
+      "gate": "Source volume, Bell success, density validity, projective M~-M alias, split-form rejection, and the existing information sandwich remain green."
+    },
+    {
+      "id": "C2",
+      "name": "dense versus closed pair geometry",
+      "gate": "Closed trace distance and fidelity agree with dense spectral calculations within 1e-10, and Fuchs-van de Graaf plus Helstrom bounds hold."
+    },
+    {
+      "id": "C3",
+      "name": "QFI reconstruction",
+      "gate": "Numerical Bures reconstruction agrees with the analytic QFI on every frozen interior point within 0.5 percent relative error."
+    },
+    {
+      "id": "C4",
+      "name": "rank-changing boundary",
+      "gate": "rho=0 is handled by finite trace/fidelity probes and is never passed to the interior SLD-QFI API."
+    },
+    {
+      "id": "C5",
+      "name": "coordinate compactification",
+      "gate": "q decreases monotonically to zero, J_rhorho has high-depth log slope -4 within 0.02, J_qq remains finite near q=0, and the analytic total QFI volume matches sqrt(2)*pi^3."
+    },
+    {
+      "id": "C6",
+      "name": "normalization cocycle",
+      "gate": "kappa is non-negative, the cocycle defect is below 1e-10, and normalized-product plus stream/direct identities hold."
+    },
+    {
+      "id": "C7",
+      "name": "source echo versus attempted survival",
+      "gate": "Every frozen inverse pair has source defect below 1e-10, conditional fidelity one within 1e-10, and the two declared success laws."
+    },
+    {
+      "id": "C8",
+      "name": "CPTP data processing",
+      "gate": "The frozen depolarizing channel never increases dense trace distance, never decreases root fidelity, and its finite-difference QFI does not exceed the input beyond numerical tolerance."
+    },
+    {
+      "id": "C9",
+      "name": "compact frame and matched compact family",
+      "gate": "Common SO(2) frame attacks preserve the declared invariants, while the existing matched SU(2) family keeps the same probe and density width."
+    },
+    {
+      "id": "C10",
+      "name": "typed AION seam",
+      "gate": "Two different Worldlet geometries are present; the Tendril lists preserved, transformed, lost, cost, typed remainder, and absent return reason; source Quantity and operational Bits refuse comparison."
+    },
+    {
+      "id": "C11",
+      "name": "weave/deweave history",
+      "gate": "Empty deweave reasons are refused, routing events are append-only, and physical echo_transport is never implemented through Tendril.deweave."
+    },
+    {
+      "id": "C12",
+      "name": "information and evidence",
+      "gate": "The finite ensemble obeys PGM<=Holevo<=oracle<=log2N; output binds the frozen manifest, source, tests, and runner in an EvidenceEnvelope without claiming independence."
+    }
+  ],
+  "verdict_rules": {
+    "P": "Any failed exact identity or typed-carrier control voids the run rather than weakening a tolerance after observation.",
+    "H1": "SURVIVES only if both the high-depth radial deweave and boundary angular weave are present on the frozen path; otherwise FALSIFIED.",
+    "overall": "The strongest allowed result is an exact and finite-grid characterization of one fixed-width attempted-use instrument plus an S-tier routing trace. It is not a general channel-capacity or cognitive-performance result."
+  },
+  "primary_source_anchors": [
+    {
+      "url": "https://arxiv.org/abs/1912.12530",
+      "use": "SU(1,1) squeezing as quantum hyperbolic motion"
+    },
+    {
+      "url": "https://arxiv.org/abs/1201.1693",
+      "use": "QFI bounds under optical loss"
+    },
+    {
+      "url": "https://arxiv.org/abs/1403.8033",
+      "use": "classical branch Fisher term plus conditional-state QFI"
+    },
+    {
+      "url": "https://arxiv.org/abs/math-ph/0601063",
+      "use": "trace-norm contractivity under positive trace-preserving maps"
+    },
+    {
+      "url": "https://arxiv.org/abs/1612.04581",
+      "use": "QFI/Bures discontinuity caveat at rank changes"
+    },
+    {
+      "url": "https://arxiv.org/abs/quant-ph/9611023",
+      "use": "Holevo information and classical-quantum channel capacity"
+    },
+    {
+      "url": "https://arxiv.org/abs/1707.05641",
+      "use": "requirements for energy-constrained finite-dimensional approximation of infinite-dimensional channels"
+    }
+  ],
+  "source_boundary": "The frozen equations specific to this repository's Bell-erasure construction are local derivations checked by controls, not statements attributed verbatim to the cited papers.",
+  "kill_conditions": [
+    "Adding, averaging, ranking, or optimizing source pseudo-volume and operational bits as one scalar.",
+    "Calling the indefinite source Q=+1 geometry positive-definite H3.",
+    "Calling rho literally lost at finite depth when exact tomography can recover q=exp(-2rho).",
+    "Calling fixed-rho QFI decay deletion of a fixed-q distinction.",
+    "Treating source volume, constructed descriptions, N*p, QFI volume, or catalogue size as channel capacity.",
+    "Treating Tendril.deweave as M inverse or as a CPTP recovery map.",
+    "Keeping ||M||_2 as an uncharged infinite-precision classical side register.",
+    "Changing the path, threshold, finite-difference step, channel, controls, or tolerances after observing outputs.",
+    "Claiming quantum advantage, hardware performance, noise robustness, cognition, consciousness, AGI, or general memory benefit."
+  ],
+  "evidence_ceiling": {
+    "P": "exact source, density, pair geometry, QFI, cocycle, echo, compact-frame, and data-processing identities with stated assumptions",
+    "M": "frozen finite-path numerical reconstruction and routing telemetry",
+    "S": "Worldlet/Tendril/OmniTool architectural interpretation",
+    "independent": false,
+    "excluded": [
+      "optimized channel capacity",
+      "infinite-dimensional bosonic realization",
+      "energy-constrained approximation guarantee for this instrument",
+      "quantum advantage",
+      "cognitive performance"
+    ]
+  },
+  "resource_budget": {
+    "network_calls_during_execution": "none",
+    "density_dimension": 5,
+    "path_observations": 9,
+    "random_seeds": "none; deterministic controls only",
+    "expected_runtime": "under one minute on one CPU core",
+    "persistent_outputs": [
+      "one JSON result",
+      "one EvidenceEnvelope",
+      "one bounded Markdown report"
+    ]
+  },
+  "privacy_boundary": "Do not inspect, copy, stage, hash, or cite files from local Downloads or Codex attachment directories. Only repository files and the frozen public-source URLs are in scope.",
+  "stop_condition": "Stop after implementation, focused controls, one append-once frozen execution, envelope verification, bounded report, full-suite regression, privacy/status audit, and a safe Git publication attempt. Do not tune failed hypotheses or open an infinite-dimensional branch."
+}

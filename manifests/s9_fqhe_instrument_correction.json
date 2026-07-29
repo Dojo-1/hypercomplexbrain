@@ -1,0 +1,147 @@
+{
+  "schema": "hypercomplexbrain.instrument_correction.v1",
+  "object": "S9 FQHE degenerate-frame and result-ledger correction",
+  "status": "committed amendment required before one corrected rerun",
+  "scope": "numerical instrument and evidence reporting only",
+  "supersedes_no_evidence": true,
+  "prior_record": {
+    "preregistration": "manifests/s9_fqhe_preregistration.json",
+    "preregistration_commit": "91777d9",
+    "implementation_commit": "abc56ba",
+    "initial_result_commit": "36b5fbd",
+    "initial_artifact": "artifacts/s9_fqhe/fqhe_probe.json",
+    "initial_artifact_digest": "sha256:c570cb3b1ff41f977a3b6c9cfcc06bec022b47968018476b0f5cef291c396e56",
+    "initial_status": "KILLED_PARAMETER_POINT",
+    "preservation_rule": "The initial artifact and envelope remain byte-for-byte unchanged. The corrected rerun writes new files and cannot retroactively confirm the initial run."
+  },
+  "observed_instrument_defects": [
+    {
+      "id": "S9-CORR-1",
+      "kind": "degenerate_eigenspace_frame",
+      "observation": "The first two levels were degenerate to 1.58e-13, and ARPACK returned individually accurate vectors with maximum Gram defect 0.832.",
+      "impact": "S9-G5 failed even though the returned low-energy span had small residuals."
+    },
+    {
+      "id": "S9-CORR-2",
+      "kind": "aggregate_gate_state_collapse",
+      "observation": "The runner replaced coarse G5-G9 results with NOT_RUN when 9x9 was blocked, then treated pass=false for NOT_RUN as an observed failure.",
+      "impact": "The top-level ledger emitted five false kill labels and lost the true coarse gate states."
+    },
+    {
+      "id": "S9-CORR-3",
+      "kind": "incomplete_gauge_execution",
+      "observation": "The runner required both target meshes before any gauge attack.",
+      "impact": "It skipped the preregistered local U(2) attack on the completed 7x7 frame."
+    },
+    {
+      "id": "S9-CORR-4",
+      "kind": "provenance_scope",
+      "observation": "The first envelope described two target meshes even though only one target mesh was measured and duplicated the manifest digest in input_hashes.",
+      "impact": "The evidence scope was broader than the executed target."
+    }
+  ],
+  "authorized_numerical_correction": {
+    "name": "deterministic full-Ritz-span QR plus Rayleigh-Ritz",
+    "input": "Exactly the same k=3 vectors returned by the single declared ARPACK call.",
+    "steps": [
+      "Compute reduced QR X_raw = Q R on the complete three-vector returned Ritz span.",
+      "Require numerical rank three and record the largest principal-angle sine between the raw and Q spans.",
+      "Form the 3x3 Hermitian projected matrix H_RR = Q^dagger H Q.",
+      "Diagonalize H_RR with numpy.linalg.eigh.",
+      "Form X = Q Y, sort by the recomputed ascending Ritz values, and recompute all residual and Gram diagnostics."
+    ],
+    "invariants": [
+      "The corrected vectors span the same three-dimensional Ritz subspace as the raw return up to numerical roundoff.",
+      "No eigensolver retry or adaptive change is allowed.",
+      "All three eigenvalues, including E2 used by the isolation gap, come from the same corrected Rayleigh-Ritz frame.",
+      "The correction is applied identically at every target twist point."
+    ],
+    "failure": "Rank loss, non-finite output, excessive span defect, or failure of the recomputed G5 thresholds is an evaluated instrument failure."
+  },
+  "frozen_experiment_coordinates": {
+    "lattice": "6x4 periodic torus",
+    "flux": "alpha=1/4",
+    "particles": 3,
+    "filling": "nu=1/2",
+    "hilbert_dimension": 2024,
+    "twist_meshes": [
+      [
+        7,
+        7
+      ],
+      [
+        9,
+        9
+      ]
+    ],
+    "eigensolver_seed": 2026072801,
+    "gauge_scramble_seed": 2026072802,
+    "gauge_scrambles": 32,
+    "eigensolver": {
+      "k": 3,
+      "which": "SA",
+      "tolerance": 1e-11,
+      "max_iterations": 20000,
+      "ncv": 40
+    },
+    "unchanged_gates": [
+      "residual <= 1e-9",
+      "frame Gram defect <= 1e-10",
+      "Delta > max(1e-6,100*r_max)",
+      "W/Delta < 1",
+      "minimum neighbor-overlap singular value >= 1e-6",
+      "maximum absolute plaquette phase < pi-1e-3",
+      "Chern integer residual <= 1e-8",
+      "mesh Chern agreement <= 1e-8",
+      "gauge-scramble Chern variance <= 1e-8"
+    ],
+    "unchanged_width_definition": "W = max_(i,j) E1(i,j) - min_(i,j) E0(i,j)",
+    "forbidden": [
+      "parameter search",
+      "threshold relaxation",
+      "mesh replacement or refinement",
+      "seed change",
+      "solver retry",
+      "selective gate reporting",
+      "reinterpretation of W or Delta"
+    ]
+  },
+  "corrected_execution_and_ledger": {
+    "rerun_count": 1,
+    "controls": "Rerun all original controls before the target.",
+    "confirmation_rule": "Run 9x9 only if every coarse G5-G9 gate passes, exactly as in the original preregistration.",
+    "gauge_rule": "Run 32 local U(2) attacks on each completed target mesh independently. A coarse attack is telemetry when H1 is already killed; it cannot authorize H3 or C/2.",
+    "gate_states": [
+      "PASS",
+      "FAIL",
+      "NOT_RUN",
+      "INCOMPLETE"
+    ],
+    "per_mesh_rule": "Preserve the evaluated G5-G9 state for each measured mesh. Never replace an evaluated coarse state because a later mesh was not admitted.",
+    "aggregate_rule": "An aggregate gate is FAIL only when an executed required measurement failed. Missing downstream measurements are NOT_RUN or INCOMPLETE.",
+    "kill_rule": "Emit a kill label only for an actual FAIL state, never merely because pass is false or a gate was not run.",
+    "hypothesis_rule": {
+      "S9-FQH-H1": "KILLED on any evaluated G5-G7 failure; CONFIRMED only after both meshes pass; otherwise INCOMPLETE or INCONCLUSIVE.",
+      "S9-FQH-H2": "Evaluated only after H1 passes. Otherwise NOT_RUN; no C/2 label is emitted.",
+      "S9-FQH-H3": "KILLED only by an executed gauge-attack failure. Without both admitted meshes it remains INCOMPLETE even if the coarse attack passes."
+    },
+    "explicit_frame_kill": "KILLED_EIGENSYSTEM_FRAME",
+    "explicit_isolation_kill": "KILLED_BUNDLE_ISOLATION"
+  },
+  "versioned_outputs": {
+    "artifact": "artifacts/s9_fqhe/fqhe_probe.corrected.json",
+    "envelope": "artifacts/s9_fqhe/fqhe_probe.corrected.envelope.json",
+    "must_not_overwrite": [
+      "artifacts/s9_fqhe/fqhe_probe.json",
+      "artifacts/s9_fqhe/fqhe_probe.envelope.json"
+    ],
+    "envelope_requirements": [
+      "Bind both unique manifest digests exactly once.",
+      "Describe only the target meshes actually measured.",
+      "Record configured budgets separately from observed elapsed and peak resident memory.",
+      "Link the initial artifact digest and this correction amendment."
+    ]
+  },
+  "expected_decision": "The correction may repair G5 but is not allowed to rescue G6. If W/Delta remains at or above one, retain KILLED_PARAMETER_POINT, stop before 9x9, emit no C/2 label, and perform no tuning.",
+  "interpretation_ceiling": "A corrected numerical frame can validate an instrument. It cannot turn a failed isolation gate into a fractional quantum Hall result, establish a thermodynamic phase, or support an architectural or cognitive claim."
+}

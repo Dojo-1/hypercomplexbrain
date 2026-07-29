@@ -1,0 +1,77 @@
+{
+  "claim_id": "QSIGMA-R8-QUANTUM-MOVEMENT",
+  "command": "python experiments/run_quantum_movement.py",
+  "commit_sha": "d7b147850a71368a61376f800d3a630e30ca2c78",
+  "environment": {
+    "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
+    "fields": {
+      "machine": "AMD64",
+      "numpy": "2.4.5",
+      "platform": "windows",
+      "python": "3.13.14"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "sha256:51bde4b66f823b15fdb27beef383ae5db949e35c156648b9dd871b009a2cb683",
+    "sha256:6a7934900a00100d2fc9b56a9a20bbdaace95ae22e1631b727990223f37c06ed",
+    "sha256:6d3994ec1c812fef579792e825b94700d08efef290e8499461a4a7cbf32b552e",
+    "sha256:93d28f616f80eeda08c0a7b33215bafaf359c38d04ef8282d9aca7b526a4a782",
+    "sha256:a3273d4415b529ea3f5bcb314edb0eb97946b8ac0bd439cb9636fd547e1ebf50",
+    "sha256:ab3cc6ddd71ebfcf9a59fa8a5b08352a42e8f3685125d950feeb2e14c80c6dae",
+    "sha256:b2ef21507d3e1ee4068cea0eef9228d978a5b986647939eea2fc07885eeb1301",
+    "sha256:d75379cc8b1b96b3cdd51d0ecde650d3be658d2b8c4e7d9232b46507373ade1f",
+    "sha256:eb68711306565cc38ed9482c8d9e4f4396c02db0f284b797c5b3528a4e4374f8"
+  ],
+  "observed_result": {
+    "H1": "SURVIVES",
+    "controls_passed": 12,
+    "controls_total": 12,
+    "independent": false,
+    "interval": "deterministic frozen path; no sampling interval",
+    "path_observations": 9,
+    "sample_size": 9,
+    "status": "COMPLETED"
+  },
+  "platform": "windows",
+  "producer": "codex-gpt5.6",
+  "raw_artifacts": {
+    "artifacts/r8_quantum_movement/quantum_movement.json": "sha256:5c5c1f2a386909fdd0c47e96e01fc6132de10fa3ca6c1f9f5c2d9bc422c6dc57"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "",
+  "typed_remainders": [
+    {
+      "carrier": "SL2-to-density fibre",
+      "kind": "projective_loss",
+      "statement": "M and -M share one density"
+    },
+    {
+      "carrier": "q=exp(-2rho)",
+      "kind": "conditioning",
+      "statement": "finite-rho recoverability does not imply fixed-shot additive-rho resolution"
+    },
+    {
+      "carrier": "evidence boundary",
+      "kind": "scope",
+      "statement": "no channel-capacity, hardware, advantage, memory, cognition, consciousness, or AGI claim"
+    }
+  ],
+  "uncertainty": {
+    "capacity": "not optimized or claimed",
+    "independence": false,
+    "infinite_dimension": "not implemented",
+    "qfi": "interior finite-difference reconstruction; rho=0 excluded",
+    "routing": "S-tier frozen threshold policy",
+    "scope": "one fixed Bell-erasure attempted-use instrument"
+  },
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": "."
+}

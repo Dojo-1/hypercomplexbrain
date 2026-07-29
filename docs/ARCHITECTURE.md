@@ -303,14 +303,16 @@ all"*, contradicted by this repository's own measurement of **+0.019**; stale
 
 ### Still not done
 
-- `q_causal` remains unmeasured. The cone is the right *shape* to receive an
-  answer; no experiment has produced one.
+- `q_causal` remains retired and unmeasured. QΣ-R3B-0 calibrates four observable
+  coordinates of the cone, but four constrained coordinates remain explicitly
+  missing and the registered outcome is therefore `HOLD`.
 - The base metric is still a containment graph, not a measured free-conversion
   metric `d(F_i,F_j) = −log sup p_succ`. Until that is measured, no geometry —
   hyperbolic, Euclidean or otherwise — should be assigned to the base.
 - The base category is still one axis (resource theory). The full
   `Task × Interface × ResourceTheory × Compiler × Noise × Frame` is not built.
-- QΣ-R³B (the four-cell causal organ test) is specified and not run.
+- QΣ-R³B (the full four-cell causal organ test) remains specified and not run;
+  R3B-0 is only its synthetic identity-versus-dephasing instrument calibration.
 
 ---
 
@@ -818,6 +820,7 @@ capacity as a count of holonomies.
 | QΣ-R4 | Witnessed Reproducibility Membrane: fail-closed portfolio, evidence envelopes, portable RSS, cross-platform CI | ✅ 242 tests on **Linux only**; 20/20 attacks behave as specified; **48 of 81** prior claims carry no envelope |
 | S7 | adjudicating an external corrections audit of the source archive: its checkable claims re-run here, its central verdict sharpened | ✅ 222 tests; 3/3 replications exact, `[R] = ‖H¹‖` retired in **both** regimes |
 | QΣ-R3A | measured free-conversion metric; re-test base geometry against it | not started |
+| QΣ-R3B-0 | frozen four-cell identity/dephasing calibration; paired seed-cluster vector uncertainty | implemented with a mandatory `HOLD`: 4/8 axes unmeasured, audit strength zero, no advantage claim |
 | QΣ-R3B | four-cell causal organ (self/other/memory/auditor), ΔY with uncertainty | specified, not run |
 | QΣ-R1 | four-cell organ (self/other/memory/auditor) at measured `Q_cert` | `Q_cert > 0.5` on hardware-sized cores |
 | QΣ-R2 | per-edge process-tensor budgeting from measured `N` | beats matched Markovian control |

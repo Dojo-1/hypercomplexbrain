@@ -1,0 +1,208 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R7",
+  "title": "Source Volume versus Operational Reservoir Rate",
+  "status": "FROZEN_AFTER_INVALIDATED_PILOT_BEFORE_OPERATIONAL_MEASUREMENT",
+  "date": "2026-07-28",
+  "question": "Does the fixed-width R6 block encoding preserve the exponential source-volume growth of SL(2,R) as operationally distinguishable one-shot information at fixed resolution?",
+  "correction_ledger": {
+    "invalidated_pilot": "An uncommitted tree-indexed draft was executed in the shared worktree before this correction. It counted constructed leaves, multiplied those counts by closed-form R6 success factors, and queried records at their own coordinates. It did not construct the density matrices, trace-distance codebooks, PGM receiver, or information bounds defined here.",
+    "disposition": "The pilot code, report, PDF, and artifacts were deleted without being staged or committed. Its constructed-count result is not evidence and is not an input to any threshold below.",
+    "scientific_correction": [
+      "The split form Q_(2,2) is indefinite and is not a retrieval or packing metric.",
+      "Cartan/Haar slab volume is not an operational packing number.",
+      "N times postselection probability is a catalogue-count surrogate, not bits per attempted shot.",
+      "The source-volume exponent k cannot be varied independently on the fixed (2,2) substrate.",
+      "The R6 normalization removes the unbounded scale unless that classical side channel is explicitly retained and charged."
+    ]
+  },
+  "objects": {
+    "source": "Q(x)=x0^2+x1^2-x2^2-x3^2=1, identified with SL(2,R) by the existing R6 map",
+    "source_coordinates": "rho >= 0 and phi, psi in the two-torus",
+    "source_volume": "absolute induced pseudo-volume of the Cartan slab 0 <= rho <= R",
+    "quantum_instrument": "existing R6 fixed-width block encoding A=M/||M||_2",
+    "probe": "one fixed maximally entangled system-reference Bell state",
+    "failure_handling": "all ancilla failures are erased to one common orthogonal failure symbol",
+    "codeword": "rho_M = |v_A><v_A| direct-sum (1-p_M)|fail><fail|, where |v_A>=(I tensor A)|Phi+> is unnormalised and p_M=<v_A|v_A>",
+    "operational_distance": "D(M,N)=0.5*||rho_M-rho_N||_1",
+    "scale_policy": "The classical subnormalisation scale s=||M||_2 is excluded from the receiver. No arbitrary-precision radial side channel is free."
+  },
+  "frozen_grid": {
+    "rho": [
+      0.0,
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      6.0
+    ],
+    "phi": "2*pi*j/8 for j=0,...,7",
+    "psi": "2*pi*j/8 for j=0,...,7",
+    "prefix_radii": [
+      0.0,
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      6.0
+    ],
+    "epsilon": [
+      0.05,
+      0.1,
+      0.2
+    ],
+    "candidate_orders": [
+      "lexicographic_rho_phi_psi",
+      "reverse_rho_then_phi_psi",
+      "sha256_order_seed_20260728",
+      "sha256_order_seed_271828"
+    ],
+    "operational_equality_tolerance": 1e-10,
+    "algebra_tolerance": 1e-12,
+    "density_tolerance": 1e-10,
+    "information_tolerance_bits": 1e-9
+  },
+  "algorithms": {
+    "deduplication": "Candidates whose codeword trace distance is below 1e-10 are one operational state. In particular M and -M must be identified.",
+    "packing_lower_bound": "For each frozen order, greedily accept a candidate only when it is at least epsilon from every accepted codeword. Report every order and use their maximum only as a deterministic lower bound, never as the maximum packing number.",
+    "small_grid_exact_control": "On rho in {0,1} with two phi and two psi angles, enumerate every subset after operational deduplication and compute the exact epsilon-packing maximum.",
+    "receiver": "Pretty-good measurement for the uniform prior on each selected finite codebook.",
+    "information": [
+      "I_PGM from the measured PGM confusion matrix",
+      "Holevo chi of the finite ensemble",
+      "oracle-erasure information log2(N)-P_fail*H(X|fail)",
+      "catalogue proxy N*p_min, separately labelled A-tier and never called bits"
+    ],
+    "compact_control": "Matched SU(2) Euler-family codewords with theta(rho)=2*atan(rho), the same rho/phi/psi descriptions, the same Bell probe, state dimension, attempted uses, epsilon values, and order policies."
+  },
+  "predictions": [
+    {
+      "id": "P1",
+      "tier": "P",
+      "statement": "The induced metric is diag(-1,cosh(rho)^2,-sinh(rho)^2), the absolute volume density is cosh(rho)*sinh(rho), and V([0,R])=2*pi^2*sinh(R)^2 with source exponent 2."
+    },
+    {
+      "id": "P2",
+      "tier": "P",
+      "statement": "Q_(2,2) is rejected as an operational metric: distinct Q=1 points can be null-separated."
+    },
+    {
+      "id": "P3",
+      "tier": "P/M",
+      "statement": "Every finite codeword density matrix is Hermitian, positive semidefinite, trace one, reproduces the R6 Bell-probe success probability tr(A^dagger A)/2, and is invariant under M -> -M."
+    },
+    {
+      "id": "H1",
+      "tier": "M",
+      "statement": "For every frozen epsilon, the high-depth slope [log N_epsilon(6)-log N_epsilon(4)]/2 of the best preregistered greedy lower bound is at most 0.25, far below the exact source-volume exponent 2."
+    },
+    {
+      "id": "H2",
+      "tier": "M",
+      "statement": "For every selected codebook, 0 <= I_PGM <= chi <= I_oracle <= log2(N) within 1e-9 bits."
+    },
+    {
+      "id": "H3",
+      "tier": "A/M",
+      "statement": "The catalogue proxy N*p_min and operational information are reported as distinct observables; no sign of the former is promoted to a capacity threshold."
+    }
+  ],
+  "controls": [
+    {
+      "id": "C1",
+      "name": "source Jacobian",
+      "gate": "Exact and finite-difference source-volume identities agree within 1e-10 away from rho=0."
+    },
+    {
+      "id": "C2",
+      "name": "indefinite metric rejection",
+      "gate": "The explicit distinct null-separated pair is detected and any Q-based packing API raises an error."
+    },
+    {
+      "id": "C3",
+      "name": "R6 binding",
+      "gate": "The existing R6 average success rows are reproduced within 1e-12 and the committed R6 verdict remains SURVIVES."
+    },
+    {
+      "id": "C4",
+      "name": "density and trace-distance laws",
+      "gate": "Hermiticity, positivity, unit trace, symmetry, identity, and all tested triangle inequalities pass their frozen tolerances."
+    },
+    {
+      "id": "C5",
+      "name": "global phase quotient",
+      "gate": "D(M,-M) <= 1e-10 for every tested source point."
+    },
+    {
+      "id": "C6",
+      "name": "exact small packing",
+      "gate": "Every production greedy count on the small grid is no larger than the exact enumerated maximum."
+    },
+    {
+      "id": "C7",
+      "name": "ordering disclosure",
+      "gate": "All four frozen orders and their count spread are persisted; only their maximum is called a lower bound."
+    },
+    {
+      "id": "C8",
+      "name": "information inequalities",
+      "gate": "PGM rows normalise and H2 holds at every evaluated point."
+    },
+    {
+      "id": "C9",
+      "name": "matched compact baseline",
+      "gate": "The SU(2) candidates use the same grid, description count, Bell probe, matrix width, and decoder."
+    },
+    {
+      "id": "C10",
+      "name": "radial rescaling",
+      "gate": "Under rho'=a*rho, the source and R6 worst-cost exponents both rescale by 1/a; their comparison is not allowed to change."
+    }
+  ],
+  "verdict_rules": {
+    "P": "A failed exact/algebraic control voids the operational run.",
+    "H1": "SURVIVES only if its stated slope gate holds for all epsilon values; otherwise FALSIFIED on the frozen grid without changing the compact-closure theorem.",
+    "H2": "SURVIVES only if every inequality holds; any violation voids the information instrument.",
+    "overall": "The strongest allowed result is a finite fixed-grid operational-rate statement plus exact compactification geometry. No finite grid establishes an asymptotic Shannon capacity."
+  },
+  "kill_conditions": [
+    "Using Q_(2,2), sqrt(abs(Q)), or any signed split form as a packing or retrieval metric.",
+    "Calling Cartan/Haar volume an operational packing count.",
+    "Calling N*p, b^L, constructed addresses, or stored records bits per attempted shot.",
+    "Calling a greedy codebook the exact maximum packing number.",
+    "Varying k without a fully specified geometric and representation family with width and precision parity.",
+    "Changing epsilon, grids, candidate orders, probe, receiver, or failure handling after observing outcomes.",
+    "Retaining the unbounded classical scale s at no description or precision cost.",
+    "Mixing a fixed Bell-probe average regime with a codeword-adaptive contracting-vector regime.",
+    "Claiming quantum advantage, hardware performance, noise robustness, cognition, AGI, or a general hyperbolic-memory benefit."
+  ],
+  "evidence_ceiling": {
+    "P": "source geometry, fixed-width compactification, and exact finite-dimensional identities",
+    "M": "finite codebook lower bounds, finite PGM confusion matrices, and information brackets",
+    "A": "catalogue proxy and any hybrid interpretation joining source volume to R6 cost",
+    "S": "reservoir usefulness or architectural benefit",
+    "independent": false,
+    "excluded": [
+      "exact asymptotic packing number",
+      "Shannon capacity of an optimized channel",
+      "physical device behavior",
+      "quantum advantage",
+      "cognitive performance"
+    ]
+  },
+  "resource_budget": {
+    "network_calls": "none",
+    "candidate_matrices_per_family": 448,
+    "matrix_dimension": 5,
+    "maximum_candidate_orders": 4,
+    "expected_runtime": "under three minutes on one CPU core",
+    "persistent_outputs": [
+      "one JSON result",
+      "one EvidenceEnvelope",
+      "one concise Markdown report"
+    ]
+  },
+  "stop_condition": "Stop after focused tests, one frozen-grid execution, evidence-envelope verification, concise report, full-suite regression, privacy scan, and an attempted exact-history Git publication. Do not tune or open a new family."
+}
