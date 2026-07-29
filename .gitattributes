@@ -1,0 +1,22 @@
+# Evidence envelopes hash committed bytes. Text normalization must therefore be
+# explicit rather than inherited from each runner's core.autocrlf setting.
+* text=auto
+
+*.py   text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.lean text eol=lf
+*.txt  text eol=lf
+*.csv  text eol=lf
+
+# Binary research artifacts must never be normalized.
+*.npz  binary
+*.npy  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.pdf  binary
+*.zip  binary

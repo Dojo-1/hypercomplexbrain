@@ -60,7 +60,7 @@ def _sections(text: str):
 
 
 def _offending_lines(path: pathlib.Path):
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     bad = []
     for heading, body in _sections(text):
         if any(h.lower() in heading.lower() for h in HISTORICAL_SECTIONS):
@@ -88,7 +88,7 @@ def test_every_registered_retired_claim_is_in_the_ledger():
     import sys
     sys.path.insert(0, str(ROOT / "src"))
     from aionq.governance import registry, EvidenceTag
-    text = (DOCS / "ARCHITECTURE.md").read_text()
+    text = (DOCS / "ARCHITECTURE.md").read_text(encoding="utf-8")
     missing = [c.id for c in registry.by_tag(EvidenceTag.RETIRED)
                if not any(w in text for w in c.statement.split()[:3])]
     assert not missing, f"retired claims absent from the ledger: {missing}"
