@@ -190,3 +190,51 @@ where to look for it.
 
 Also unpushed and unverifiable here: **HB0-T1** (`codex/hb0-active-tendril`,
 `dcd756a`/`2ec7fd8`/`9a8ed65`) — 13 controls, 43 tests, 27/27 envelopes reported.
+
+---
+
+## Addendum 2 — which "dimension" the ceiling counts (R6j)
+
+Three senses of the word get used interchangeably around this programme, and the
+whole arc turns on keeping them apart:
+
+| sense | what it is | where it appears here |
+|---|---|---|
+| **Hilbert** | degrees of freedom in the carrier state | `n² + 1 = 5`; sets the ceiling `p̄ log₂ D` |
+| **Source** | real dimension of the geometric manifold | SL(2,ℝ) is 3, SL(2,ℂ) is 6; where `e^{2ρ}` growth lives |
+| **Engineered** | physically restrained systems — 2D sheets, 1D wires | not touched here; named for completeness |
+
+**The R6 result, restated: the exponential growth is a *source* fact and the
+ceiling is a *Hilbert* fact.** That non-transfer is now measured rather than
+asserted.
+
+Hold the carrier fixed at five dimensions and **double the source** — encode
+SL(2,ℂ) through the identical recipe that encodes SL(2,ℝ):
+
+| ρ | χ, source dim 3 | χ, source dim 6 | gap |
+|---|---|---|---|
+| 0.5 | 0.948679 | **1.042007** | 9.3e-02 |
+| 1.0 | 0.992052 | 1.005184 | 1.3e-02 |
+| 2.0 | 0.999852 | 1.000094 | 2.4e-04 |
+| 8.0 | 1.000000000 | 1.000000000 | **9.6e-15** |
+
+**I first wrote that the extra dimensions buy "zero", contradicting my own table
+one line above.** They buy 9.3e-02 at ρ = 0.5. What is true is that the gain is
+*transient*, and the rate is the result:
+
+```
+d(ln gap)/dρ  →  3.9222, 3.9894, 3.9986, 3.9999, 4.0000
+```
+
+**The advantage decays as `e^{−4ρ}`** — the same exponent as R6b's radial Fisher
+information `8e^{−4ρ}` and as R6's worst-case post-selection cost.
+
+> The ceiling does not merely *bound* extra source dimensions. It **consumes**
+> them, at the characteristic rate of the compactification. Adding dimensions to
+> the source buys a head start the geometry then eats; only adding dimensions to
+> the **carrier** moves the asymptote.
+
+*Scope: one recipe, one probe, one codebook family. An SL(3,ℝ) run gives χ = 2/3,
+but its codebook explores only a two-angle subgroup, so that number is
+codebook-limited rather than ceiling-limited and is deliberately kept out of the
+headline — it would read as a dimension effect and is not one.*
