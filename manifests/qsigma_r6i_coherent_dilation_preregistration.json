@@ -1,0 +1,112 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "QSigma-R6i - Blind coherent-dilation test of the fixed-width one-bit ceiling",
+  "committed_before_primary_implementation_or_run": true,
+  "baseline": {
+    "commit_sha": "2d5a4ff0691b67ec438e73093048a263ab3ac99a",
+    "focused_r6_tests": "892 passed",
+    "envelopes": "25/25 artifact digests verified; commit and independence warnings remain"
+  },
+  "question": "Can a structurally different fixed-width map retain the contraction defect coherently and exceed the one-bit Holevo ceiling of the existing normalize-and-post-select R6 map?",
+  "candidate_map": {
+    "input": "A = M / ||M||_2 for M in SL(2,R)",
+    "defect_operators": [
+      "D_A = positive_sqrt(I - A^dagger A)",
+      "D_Astar = positive_sqrt(I - A A^dagger)"
+    ],
+    "unitary_dilation": "U_A = [[A, D_Astar], [D_A, -A^dagger]]",
+    "state": "rho_A^H = |vec(U_A)/2><vec(U_A)/2| in C^16",
+    "reference": "the existing 5-dimensional R6 Bell-plus-erasure state on exactly the same source points"
+  },
+  "frozen_grid": {
+    "depths": [0.1, 0.5, 1.0, 2.0, 4.0, 8.0],
+    "codebook_sizes": [8, 16, 32, 64, 100, 256],
+    "coordinates": "phi_k = 2*pi*k/N; psi_k = 2*pi*((3*k) mod N)/N",
+    "priors": "uniform",
+    "numerical_tolerance": 1e-10,
+    "decision_margin_bits": 0.001
+  },
+  "primary_metrics": [
+    "Holevo chi for the coherent-dilation ensemble",
+    "Holevo chi for the matched R6 ensemble",
+    "achievable PGM mutual information for both ensembles"
+  ],
+  "secondary_diagnostics": [
+    "unitarity residual ||U_A^dagger U_A - I||_F",
+    "density trace, Hermiticity, positivity, and purity",
+    "common-unitary gauge invariance of chi and PGM",
+    "source-enumeration permutation invariance",
+    "passive zero-padding invariance",
+    "composition defect ||U_normalize(M1 M2) - U_A1 U_A2||_F"
+  ],
+  "decision_rule": {
+    "RESCUE_FOR_THIS_MAP": "At each of three consecutive preregistered sizes N >= 64, both chi_H - chi_R6 > 0.001 bits and I_PGM_H - I_PGM_R6 > 0.001 bits at at least one preregistered depth.",
+    "NO_RESCUE_FOR_THIS_MAP": "At every preregistered depth and size, both improvements are <= 0.001 bits.",
+    "HOLD": "Any other result, including a metric split, numerical-control failure, or insufficient consecutive-size support."
+  },
+  "predictions": [
+    {
+      "id": "H1",
+      "statement": "Outcome deliberately withheld: the coherent dilation may or may not beat the R6 map. No direction is preregistered as expected."
+    },
+    {
+      "id": "H2",
+      "statement": "The Julia/Halmos block is unitary to numerical tolerance for every preregistered source point."
+    },
+    {
+      "id": "H3",
+      "statement": "The pointwise dilation is not assumed to be a homomorphism. Any nonzero composition defect confines a positive result to state encoding and forbids calling it a finite-dimensional unitary representation of SL(2,R)."
+    }
+  ],
+  "controls": [
+    "Use byte-identical source coordinate lists and uniform priors for the R6 and dilation ensembles.",
+    "Verify U_A unitarity before constructing each Choi-vector state.",
+    "Verify every emitted state is Hermitian, positive semidefinite, trace one, and pure within tolerance.",
+    "Repeat one frozen ensemble after source-order permutation; chi and PGM must be invariant.",
+    "Conjugate every codeword by one common frozen unitary; chi and PGM must be invariant.",
+    "Embed every codeword into a larger zero-padded carrier; chi and PGM must be invariant.",
+    "Recompute the existing R6 analytic ceiling chi <= 1 + exp(-4 rho) on the matched ensemble.",
+    "Measure, rather than assume away, the composition defect of the dilation."
+  ],
+  "kill_conditions": [
+    "Any change to depths, codebook sizes, priors, tolerance, decision margin, or decision rule after the first primary result is visible.",
+    "R6 and dilation ensembles do not use exactly the same source points.",
+    "Any unitarity, density-state, permutation, gauge, or passive-padding control fails.",
+    "A positive result is generalized beyond this one dilation.",
+    "A pointwise dilation is called a group representation without a vanishing composition defect.",
+    "The result is described as quantum advantage, asymptotic capacity, hardware evidence, cognition, consciousness, or AGI."
+  ],
+  "evidence_floor": {
+    "P": "the Julia/Halmos dilation identity and finite-dimensional density-state checks",
+    "M": "the frozen finite-grid chi and PGM measurements",
+    "H": "whether this map is useful beyond the measured grids",
+    "S": "any general fixed-width impossibility or rescue theorem",
+    "R": "the infinite-dimensional unitary-representation and energy-constrained truncation branch"
+  },
+  "scope_remainders": [
+    {
+      "kind": "representation_remainder",
+      "carrier": "composition law",
+      "statement": "A unitary dilation of each contraction is a point encoding unless composition is preserved. It does not evade the theorem excluding faithful finite-dimensional unitary representations of a non-compact semisimple group."
+    },
+    {
+      "kind": "capacity_remainder",
+      "carrier": "finite ensembles",
+      "statement": "Holevo chi is an upper bound and PGM information is one achievable lower bound. This round is not a coding theorem or a regularized-capacity calculation."
+    },
+    {
+      "kind": "instrument_remainder",
+      "carrier": "R6h translation epsilon",
+      "statement": "The preregistered seven-term R6h law failed and the four-term split was post hoc. It is not used as a primary gate here; it remains an exploratory calibration until rebuilt with dimensionless, independently evaluated components."
+    }
+  ],
+  "files_expected_after_this_commit": [
+    "src/aionq/coherent_dilation.py",
+    "tests/test_coherent_dilation.py",
+    "experiments/run_coherent_dilation.py",
+    "docs/QSIGMA_R6I_COHERENT_DILATION.md",
+    "artifacts/r6i_coherent_dilation/coherent_dilation.json",
+    "artifacts/r6i_coherent_dilation/coherent_dilation.envelope.json"
+  ],
+  "stop_condition": "Stop after one frozen execution, matched controls, an evidence envelope, focused and full regression, and a bounded result note. Do not tune a failed gate and do not open the infinite-dimensional truncation branch in this round."
+}
