@@ -13,6 +13,7 @@ import numpy as np
 import pytest
 
 from aionq.fano_algebra import (SO8_DIM, alternating_drive, channel_generator,
+                                crosstalk_rank_is_determined_by_signal_rank,
                                 commutator, diamond_holonomy, fano_lines,
                                 frobenius_inner, random_rank_census,
                                 rank_decomposition, signal_crosstalk_projection,
@@ -161,3 +162,48 @@ def test_frobenius_inner_is_symmetric_and_positive_definite():
     assert frobenius_inner(GENS[0], GENS[1]) == pytest.approx(
         frobenius_inner(GENS[1], GENS[0]))
     assert frobenius_inner(GENS[0], GENS[0]) > 0
+
+
+# ------------------------------------------- what the design actually buys
+
+@pytest.mark.parametrize("seed", [1, 2, 3, 4, 5])
+def test_crosstalk_rank_is_determined_by_signal_rank(seed):
+    """crosstalk_rank = C(signal_rank, 2), exactly, on random systems.
+
+    Cross-checking against an external S8 decoder artifact that recorded
+    signal_rank 5 exposed this: my census tracked only CROSSTALK rank, and
+    crosstalk rank is not independent -- it is a function of how many distinct
+    channel generators exist.
+    """
+    import itertools as it
+    import math as m
+    rng = np.random.default_rng(seed)
+    all_t = list(it.combinations(range(1, 8), 3))
+    for _ in range(40):
+        idx = rng.choice(len(all_t), size=7, replace=False)
+        r = crosstalk_rank_is_determined_by_signal_rank([all_t[i] for i in idx])
+        assert r["relation_holds"]
+        assert r["crosstalk_rank"] == m.comb(r["signal_rank"], 2)
+
+
+def test_full_signal_rank_and_full_crosstalk_rank_are_equivalent():
+    """Zero cases of one without the other over 1000 systems."""
+    census = random_rank_census(1000, seed=20260728)
+    assert census["signal_and_crosstalk_agree"] == 1
+    assert census["full_signal_rank_count"] == census["full_rank_count"]
+
+
+def test_the_median_15_was_reporting_median_signal_rank_6():
+    """C(6,2) = 15. The number was right; its subject was not."""
+    import math as m
+    census = random_rank_census(400, seed=11)
+    assert census["median_signal_rank"] == pytest.approx(6.0)
+    assert census["median_rank"] == pytest.approx(float(m.comb(6, 2)))
+
+
+def test_fano_buys_seven_independent_channels():
+    """The corrected statement of what the design provides."""
+    r = crosstalk_rank_is_determined_by_signal_rank(FANO)
+    assert r["signal_rank"] == 7
+    assert r["crosstalk_rank"] == 21
+    assert r["relation_holds"]

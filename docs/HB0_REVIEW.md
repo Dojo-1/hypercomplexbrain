@@ -134,6 +134,35 @@ re-binding: `effective_sample_size` is byte-identical between the two commits, s
 the claim survives and only the hash moved. Rebound at `ad9a43f` with the
 supersession recorded in the artifact.
 
+## 6. What their artifact gave back — a correction to my own S8 result
+
+Their `fano_decoder.json` records `signal_rank: 5` in its first rank-deficient
+case. My census had only ever tracked **crosstalk** rank, so I had never looked
+at the signal side. Checking it:
+
+```
+signal 5  ->  crosstalk 10 = C(5,2)     32 systems
+signal 6  ->  crosstalk 15 = C(6,2)    470 systems
+signal 7  ->  crosstalk 21 = C(7,2)    498 systems
+
+cases where signal_rank == 7 XOR crosstalk_rank == 21 :  0 / 1000
+```
+
+**`crosstalk_rank = C(signal_rank, 2)` exactly.** Only three cells occur and the
+two full-rank conditions are equivalent.
+
+So S8's headline needs its subject changed. *"What the Fano design buys is full
+crosstalk rank, 21 against a random median of 15"* attributed the finding to a
+**derived** quantity. Crosstalk rank is not an independent property a design can
+win or lose — it is a function of how many genuinely distinct channel generators
+exist. What the design buys is **seven independent channels**; full crosstalk
+rank follows automatically. And "median 15" was really reporting median *signal*
+rank 6, since C(6,2) = 15.
+
+The rank finding survives. Its subject does not. This is the same pattern one
+more time — measuring a derived quantity and attributing the result to it — and
+it took their artifact recording a field mine did not to expose it.
+
 **Scope of this review:** I read the source, ran their smoke, recomputed their
 quantum results, and adversarially tested their validator. I did not review
 `core.py`'s governance dynamics or `kernel.py`'s event loop line by line, and I

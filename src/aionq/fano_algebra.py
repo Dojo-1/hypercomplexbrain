@@ -56,7 +56,7 @@ import numpy as np
 
 from aionq.cayley_dickson import fast_associator, fast_multiply
 
-__all__ = ["EYE", "fano_lines", "left_mult", "channel_generator",
+__all__ = ["crosstalk_rank_is_determined_by_signal_rank", "EYE", "fano_lines", "left_mult", "channel_generator",
            "commutator", "frobenius_inner", "signal_crosstalk_projection",
            "rank_decomposition", "random_rank_census", "diamond_holonomy",
            "alternating_drive", "wilson_interval"]
@@ -160,6 +160,41 @@ def wilson_interval(successes: int, trials: int, z: float = 1.96) -> tuple:
     return (max(0.0, centre - half), min(1.0, centre + half))
 
 
+def crosstalk_rank_is_determined_by_signal_rank(triples) -> dict:
+    """crosstalk_rank = C(signal_rank, 2), exactly.  This reframes S8.
+
+    Found by cross-checking against an external S8 decoder artifact that recorded
+    ``signal_rank: 5`` in its first rank-deficient case.  My census had only ever
+    tracked CROSSTALK rank, so I never looked at the signal side.
+
+    Over 1000 random triple systems the joint distribution has exactly three
+    cells, and every one of them is ``(s, C(s,2))``:
+
+        signal 5 -> crosstalk 10 = C(5,2)      32 systems
+        signal 6 -> crosstalk 15 = C(6,2)     470 systems
+        signal 7 -> crosstalk 21 = C(7,2)     498 systems
+
+    Zero cases where ``signal_rank == 7`` and ``crosstalk_rank != 21``, or the
+    converse.  The two full-rank conditions are EQUIVALENT.
+
+    So S8's headline needs restating.  "What the Fano design buys is full
+    crosstalk rank, 21 against a random median of 15" attributed the finding to a
+    DERIVED quantity.  Crosstalk rank is not an independent property that a
+    design can win or lose -- it is a function of how many genuinely distinct
+    channel generators the system has.  What the design buys is SEVEN INDEPENDENT
+    CHANNELS; full crosstalk rank follows automatically.  And the "median 15" was
+    really reporting median signal rank 6, since C(6,2) = 15.
+
+    The rank finding survives.  Its subject changes.
+    """
+    r = rank_decomposition(triples)
+    s = r["signal_rank"]
+    predicted = math.comb(s, 2)
+    return {"signal_rank": s, "crosstalk_rank": r["crosstalk_rank"],
+            "predicted_from_signal": predicted,
+            "relation_holds": r["crosstalk_rank"] == predicted}
+
+
 def random_rank_census(trials: int = 1000, seed: int = 20260728) -> dict:
     """Matched control: how often do random triple systems reach full rank?
 
@@ -168,19 +203,28 @@ def random_rank_census(trials: int = 1000, seed: int = 20260728) -> dict:
     """
     rng = np.random.default_rng(seed)
     all_triples = list(itertools.combinations(range(1, 8), 3))
-    ranks = []
+    ranks, signal_ranks = [], []
     for _ in range(trials):
         idx = rng.choice(len(all_triples), size=7, replace=False)
         cand = [all_triples[i] for i in idx]
-        ranks.append(rank_decomposition(cand)["crosstalk_rank"])
+        rd = rank_decomposition(cand)
+        ranks.append(rd["crosstalk_rank"])
+        # Tracked from R6h onward. The first version recorded only crosstalk
+        # rank, which is a DERIVED quantity -- see
+        # crosstalk_rank_is_determined_by_signal_rank.
+        signal_ranks.append(rd["signal_rank"])
     ranks = np.array(ranks)
     full = int((ranks == 21).sum())
+    signal = np.array(signal_ranks)
     lo, hi = wilson_interval(full, trials)
     return {"trials": trials, "seed": seed,
             "full_rank_count": full,
             "full_rank_fraction": full / trials,
             "wilson_95": [lo, hi],
             "median_rank": float(np.median(ranks)),
+            "median_signal_rank": float(np.median(signal)),
+            "full_signal_rank_count": int((signal == 7).sum()),
+            "signal_and_crosstalk_agree": int(((signal == 7) == (ranks == 21)).all()),
             "min_rank": int(ranks.min()), "max_rank": int(ranks.max())}
 
 
