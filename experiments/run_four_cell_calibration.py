@@ -87,6 +87,14 @@ def _canonical_digest(payload: object) -> str:
     return "sha256:" + sha256(encoded).hexdigest()
 
 
+def _native_bools(flags: dict[str, object]) -> dict[str, bool]:
+    """Normalize NumPy predicate results for strict portable JSON."""
+    return {
+        name: bool(passed)
+        for name, passed in flags.items()
+    }
+
+
 def _seed_input_hash(calibration) -> str:
     """Hash the actual factor schedule and variates, not the seed label."""
     schedule_and_stream = [
@@ -383,6 +391,7 @@ def main() -> int:
         float(target[0])
     except TypeError:
         controls["C8_outcome_scalarization_refused"] = True
+    controls = _native_bools(controls)
 
     instrument_controls = {
         name: passed

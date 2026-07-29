@@ -369,3 +369,13 @@ def test_result_producer_refuses_dirty_head_provenance(monkeypatch):
     )
     with pytest.raises(RuntimeError, match="clean worktree"):
         runner._assert_clean_producer_state()
+
+
+def test_strict_result_json_accepts_numpy_derived_control_flags():
+    controls = {
+        "joint_bootstrap": np.all(np.array([True, True])),
+        "frame_covariance": np.allclose([0.0], [0.0]),
+    }
+    normalized = runner._native_bools(controls)
+    encoded = json.dumps(normalized, allow_nan=False, sort_keys=True)
+    assert encoded == '{"frame_covariance": true, "joint_bootstrap": true}'
