@@ -1,0 +1,4288 @@
+{
+  "advantage_cone": {
+    "alpha": 0.01,
+    "blockers": [
+      "cone-constrained outcome(s) unmeasured: sample_efficiency, neg_energy, neg_latency, recovery",
+      "audit strength 0.00 below 1.00"
+    ],
+    "constraints": {
+      "accuracy": "improve",
+      "calibration": "improve",
+      "generalization": "improve",
+      "neg_energy": "no_worse",
+      "neg_latency": "no_worse",
+      "recovery": "no_worse",
+      "robustness": "improve",
+      "sample_efficiency": "no_worse"
+    },
+    "interval_clears_margin": {
+      "accuracy": true,
+      "calibration": true,
+      "generalization": true,
+      "robustness": true
+    },
+    "margins": {
+      "accuracy": 0.2,
+      "calibration": 0.1,
+      "generalization": 0.2,
+      "robustness": 0.2
+    },
+    "name": "K_R3B0_CALIBRATION",
+    "no_worse_tolerance": 0.02,
+    "probability": null,
+    "promoted": false
+  },
+  "analytic_contract": {
+    "click_probabilities": {
+      "coherent_orthogonal": 0.0,
+      "coherent_same": 1.0,
+      "dephased_orthogonal": 0.5,
+      "dephased_same": 0.5
+    },
+    "control_expected_outcome": {
+      "accuracy": 0.5,
+      "calibration": 0.75,
+      "generalization": 0.5,
+      "neg_energy": null,
+      "neg_latency": null,
+      "recovery": null,
+      "robustness": 0.5,
+      "sample_efficiency": null
+    },
+    "expected_effect": {
+      "accuracy": 0.5,
+      "calibration": 0.25,
+      "generalization": 0.5,
+      "neg_energy": null,
+      "neg_latency": null,
+      "recovery": null,
+      "robustness": 0.5,
+      "sample_efficiency": null
+    },
+    "target_outcome": {
+      "accuracy": 1.0,
+      "calibration": 1.0,
+      "generalization": 1.0,
+      "neg_energy": null,
+      "neg_latency": null,
+      "recovery": null,
+      "robustness": 1.0,
+      "sample_efficiency": null
+    }
+  },
+  "control_failures": [],
+  "controls": {
+    "C0_density_and_operator_contract": true,
+    "C10_constrained_missing_axes_block": true,
+    "C11_legacy_scalar_untouched": true,
+    "C12_registered_outcome_is_hold": true,
+    "C1_analytic_click_probabilities": true,
+    "C2_phase_sets_disjoint": true,
+    "C3_common_frame_covariance": true,
+    "C4_matched_resource_and_stream_parity": true,
+    "C5_seed_replay_exact": true,
+    "C6_required_role_ablations_hold": true,
+    "C7_untransported_povm_attack_detected": true,
+    "C8_outcome_scalarization_refused": true,
+    "C9_joint_seed_cluster_bootstrap": true,
+    "distinct_seed_streams": true,
+    "manifest_binding": true
+  },
+  "evidence_ceiling": "Repository-internal analytic identities and seeded synthetic measurements under a frozen protocol. No real dataset, hardware, causal intervention on an external system, cognitive claim, quantum advantage, or independent verification.",
+  "implementation_commit": "41e6fdf45730016c040b577a1786b32a6cac30ff",
+  "outcome_contract": {
+    "coordinate_order": [
+      "accuracy",
+      "generalization",
+      "robustness",
+      "sample_efficiency",
+      "calibration",
+      "neg_energy",
+      "neg_latency",
+      "recovery"
+    ],
+    "missing_dimensions": [
+      "sample_efficiency",
+      "neg_energy",
+      "neg_latency",
+      "recovery"
+    ],
+    "observed_dimensions": [
+      "accuracy",
+      "generalization",
+      "robustness",
+      "calibration"
+    ],
+    "scalarization": "forbidden"
+  },
+  "paired_seed_cluster_posterior": {
+    "bootstrap_draws": 20000,
+    "bootstrap_seed": 314159,
+    "draw_digest": "sha256:816f7b3899e409fe6d9e2948bec2a2f6be1965d858f28bff953aafa538103557",
+    "interval_level": 0.99,
+    "intervals": {
+      "accuracy": [
+        0.47265625,
+        0.5180688476562505
+      ],
+      "calibration": [
+        0.25,
+        0.25
+      ],
+      "generalization": [
+        0.4951171875,
+        0.54638671875
+      ],
+      "neg_energy": null,
+      "neg_latency": null,
+      "recovery": null,
+      "robustness": [
+        0.4919429524739583,
+        0.5188802083333333
+      ],
+      "sample_efficiency": null
+    },
+    "mean_effect": {
+      "accuracy": 0.49560546875,
+      "calibration": 0.25,
+      "generalization": 0.521484375,
+      "neg_energy": null,
+      "neg_latency": null,
+      "recovery": null,
+      "robustness": 0.5052897135416666,
+      "sample_efficiency": null
+    },
+    "unit": "paired seed cluster"
+  },
+  "preregistration": {
+    "digest": "sha256:87219371751bc15e4ef17e7547d95bb0bcb971db5a144243b9ec45537822d527",
+    "frozen_commit": "aa2bf291d8733161b66fe317b4dd812db7800020",
+    "path": "manifests/qsigma_r3b_four_cell_calibration_preregistration.json"
+  },
+  "protocol": {
+    "calibration_phases": [
+      0.0,
+      1.5707963267948966,
+      3.141592653589793,
+      4.71238898038469
+    ],
+    "common_frames": [
+      "I",
+      "H",
+      "S",
+      "H@S"
+    ],
+    "copies_per_trial": 1,
+    "effective_seed_clusters": 32,
+    "heldout_phases": [
+      0.7853981633974483,
+      2.356194490192345,
+      3.9269908169872414,
+      5.497787143782138
+    ],
+    "memory_calls_per_trial": 1,
+    "povm_outcomes": 2,
+    "seeds": [
+      73001,
+      73002,
+      73003,
+      73004,
+      73005,
+      73006,
+      73007,
+      73008,
+      73009,
+      73010,
+      73011,
+      73012,
+      73013,
+      73014,
+      73015,
+      73016,
+      73017,
+      73018,
+      73019,
+      73020,
+      73021,
+      73022,
+      73023,
+      73024,
+      73025,
+      73026,
+      73027,
+      73028,
+      73029,
+      73030,
+      73031,
+      73032
+    ],
+    "side_registers": 0,
+    "total_trial_rows": 32768,
+    "trials_per_arm_per_seed": 512
+  },
+  "registered_final_decision": "HOLD",
+  "round": "QSIGMA-R3B-0",
+  "schema": "hypercomplexbrain.qsigma_r3b.four_cell_calibration.v1",
+  "seed_clusters": [
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.4375,
+          "calibration": 0.75,
+          "generalization": 0.453125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4661458333333333,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:fd511d2cdd7c5cbee1aba414e5cd49275c6acf9ca2ce997e9664ce425d95bc8a",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5625,
+          "calibration": 0.25,
+          "generalization": 0.546875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5338541666666667,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73001,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.453125,
+          "calibration": 0.75,
+          "generalization": 0.515625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5234375,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:3fd2b378bc59deb6b60c6bbc32159fbf9e0a02962404246bf3b92254371d795c",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.546875,
+          "calibration": 0.25,
+          "generalization": 0.484375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4765625,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73002,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.484375,
+          "calibration": 0.75,
+          "generalization": 0.625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4869791666666667,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:960fcbb33e3c9a8828710e08432801ae6bf7de0f01bba735d0c9bf6ff12ed15c",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.515625,
+          "calibration": 0.25,
+          "generalization": 0.375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5130208333333333,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73003,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.4375,
+          "calibration": 0.75,
+          "generalization": 0.375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5182291666666666,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:29ce8b95d967cb8f876120c1f4ec623c6528bd39729336fd1c155c06c7620209",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5625,
+          "calibration": 0.25,
+          "generalization": 0.625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.48177083333333337,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73004,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.515625,
+          "calibration": 0.75,
+          "generalization": 0.421875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5364583333333334,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:02937938b3e72c9cf3dc88f2b6df64d1f75e69f086249e1ad501686cf4ccb26c",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.484375,
+          "calibration": 0.25,
+          "generalization": 0.578125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.46354166666666663,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73005,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.421875,
+          "calibration": 0.75,
+          "generalization": 0.484375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4661458333333333,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:83e853e3001470d2401448f62b0bdce6501ddfed13c314395482b6b45ced6f2e",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.578125,
+          "calibration": 0.25,
+          "generalization": 0.515625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5338541666666667,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73006,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.484375,
+          "calibration": 0.75,
+          "generalization": 0.4375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4661458333333333,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:e922a5070f127ffb1126b58d38ba2871508e6d2f9585e629b306c421fe0c851a",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.515625,
+          "calibration": 0.25,
+          "generalization": 0.5625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5338541666666667,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73007,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5,
+          "calibration": 0.75,
+          "generalization": 0.484375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4713541666666667,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:f0774387afe7e4f5cf06b4d8bb03aafa5cd232352f80b4a9e60d31a1aff0fa0a",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5,
+          "calibration": 0.25,
+          "generalization": 0.515625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5286458333333333,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73008,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.484375,
+          "calibration": 0.75,
+          "generalization": 0.546875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4609375,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:dc1c69bf993f40bff276b769cb72558c5f1fa2c707077bfb517f44c0310f5979",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.515625,
+          "calibration": 0.25,
+          "generalization": 0.453125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5390625,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73009,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.53125,
+          "calibration": 0.75,
+          "generalization": 0.453125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5104166666666666,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:5a7bd1dc1f740330545bc3956305e426a666974f282bc086f66d03f3921f2959",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.46875,
+          "calibration": 0.25,
+          "generalization": 0.546875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.48958333333333337,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73010,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.46875,
+          "calibration": 0.75,
+          "generalization": 0.421875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4713541666666667,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:43ebf3fd721a3b4b6f952331a28820569ebe967de9dc3dbdfa36b0cf9d7b09a4",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.53125,
+          "calibration": 0.25,
+          "generalization": 0.578125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5286458333333333,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73011,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5,
+          "calibration": 0.75,
+          "generalization": 0.421875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4973958333333333,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:19690777b8572b66e1e92e2f13c479385b1f1969bdae1a4be973a5d9fb9bb8b4",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5,
+          "calibration": 0.25,
+          "generalization": 0.578125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5026041666666667,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73012,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5625,
+          "calibration": 0.75,
+          "generalization": 0.4375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4375,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:8770fa8836c6d7f97b7857ab5c449dbaeaf30542db61e09f2a639d4c6a20e740",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.4375,
+          "calibration": 0.25,
+          "generalization": 0.5625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5625,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73013,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.53125,
+          "calibration": 0.75,
+          "generalization": 0.53125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4947916666666667,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:20e3845c340ad3e6f1defc0439ba0a12bbfbdc5c51653899f33a145fc94c219d",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.46875,
+          "calibration": 0.25,
+          "generalization": 0.46875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5052083333333333,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73014,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.53125,
+          "calibration": 0.75,
+          "generalization": 0.53125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5520833333333334,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:f81d86298f7259af52e42fd8f2501e3eb1367875b38ff60e478789d8065f8c2e",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.46875,
+          "calibration": 0.25,
+          "generalization": 0.46875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.44791666666666663,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73015,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.578125,
+          "calibration": 0.75,
+          "generalization": 0.484375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5182291666666666,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:4377e6d1978e746e5de91fa8792a9d5892e7484409c8a80fcf90ad676d7cf8ab",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.421875,
+          "calibration": 0.25,
+          "generalization": 0.515625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.48177083333333337,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73016,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5,
+          "calibration": 0.75,
+          "generalization": 0.40625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5130208333333334,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:07d7f462e1c30106af042da804d579438d1ff92531a7a8f2f86361835aa5a72a",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5,
+          "calibration": 0.25,
+          "generalization": 0.59375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.48697916666666663,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73017,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.578125,
+          "calibration": 0.75,
+          "generalization": 0.515625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5104166666666666,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:e84e3d5ef3d09f7085391df221e43e1d1abbab11d88e8dfe6ecd3b843a964510",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.421875,
+          "calibration": 0.25,
+          "generalization": 0.484375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.48958333333333337,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73018,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.515625,
+          "calibration": 0.75,
+          "generalization": 0.484375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5286458333333334,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:56a58f3bb712ae0ef7b4a83fdaedfea7264610453f0a61be7700896b213c0496",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.484375,
+          "calibration": 0.25,
+          "generalization": 0.515625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.47135416666666663,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73019,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.453125,
+          "calibration": 0.75,
+          "generalization": 0.40625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4609375,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:f1d91253840f3ce79b3e7fc6eff525c9641b18945383df60fa9ce579d709ca47",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.546875,
+          "calibration": 0.25,
+          "generalization": 0.59375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5390625,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73020,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.546875,
+          "calibration": 0.75,
+          "generalization": 0.453125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.453125,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:119792cf83a7838798c00fb932441f7ed9abcc2ad360225a2d97e0c86394f5ed",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.453125,
+          "calibration": 0.25,
+          "generalization": 0.546875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.546875,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73021,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.578125,
+          "calibration": 0.75,
+          "generalization": 0.5625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5234375,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:10c50e2ca9fa620cb465a92012486752f4a5475010aa26d4ae5da4f9b2a495ba",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.421875,
+          "calibration": 0.25,
+          "generalization": 0.4375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4765625,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73022,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5,
+          "calibration": 0.75,
+          "generalization": 0.515625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4947916666666667,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:b05fe2ecee377374ba22168b8db70c5508a845abbd4e16f5c5dd16f00c956270",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5,
+          "calibration": 0.25,
+          "generalization": 0.484375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5052083333333333,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73023,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.515625,
+          "calibration": 0.75,
+          "generalization": 0.5625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4453125,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:6715f2efbeff252209b80ba80696e451b8940f044d3064bcb35ef6c5cd791631",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.484375,
+          "calibration": 0.25,
+          "generalization": 0.4375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5546875,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73024,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.609375,
+          "calibration": 0.75,
+          "generalization": 0.40625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.46875,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:9ca7164be2848ac932307c8d7dab222c1eb39c1a41fff19939dab43bd333dfa5",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.390625,
+          "calibration": 0.25,
+          "generalization": 0.59375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.53125,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73025,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.453125,
+          "calibration": 0.75,
+          "generalization": 0.5,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.484375,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:734583295dddad6c17df87cfb31acf99153aaadb5d57bbbf27b0749ae39c96a5",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.546875,
+          "calibration": 0.25,
+          "generalization": 0.5,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.515625,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73026,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.546875,
+          "calibration": 0.75,
+          "generalization": 0.5625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5442708333333334,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:5f6f9f490d3dc4a073cd1291f4fee58c21d1898fecf32e5631bc9457ce29bb6d",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.453125,
+          "calibration": 0.25,
+          "generalization": 0.4375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.45572916666666663,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73027,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.4375,
+          "calibration": 0.75,
+          "generalization": 0.5,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5052083333333334,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:60c91e467f5b6bc43f22afadab4e4903e3bc4df0c90ec7d1be7ea2659dcb4f3b",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.5625,
+          "calibration": 0.25,
+          "generalization": 0.5,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.49479166666666663,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73028,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.421875,
+          "calibration": 0.75,
+          "generalization": 0.4375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4947916666666667,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:27efff0aaeeb46d675aa71747b0b980c3fd4572cdd4b25d2d869b1549182d6b5",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.578125,
+          "calibration": 0.25,
+          "generalization": 0.5625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5052083333333333,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73029,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.515625,
+          "calibration": 0.75,
+          "generalization": 0.484375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.4947916666666667,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:82aa3c5e4c00ec36780e79aaa4f29bb129f1df35dc818abaecff36b0f723489d",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.484375,
+          "calibration": 0.25,
+          "generalization": 0.515625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5052083333333333,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73030,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.578125,
+          "calibration": 0.75,
+          "generalization": 0.453125,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5208333333333334,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:046699b85cec430dca04a5c6374841729c471102baf6ff6fd6bfe72ae57729db",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.421875,
+          "calibration": 0.25,
+          "generalization": 0.546875,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.47916666666666663,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73031,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    },
+    {
+      "control": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.46875,
+          "calibration": 0.75,
+          "generalization": 0.4375,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.5104166666666666,
+          "sample_efficiency": null
+        }
+      },
+      "controls": {
+        "analytic_auditor": true,
+        "basis_attack_detected": true,
+        "common_frame_covariance": true,
+        "registered_decision": "HOLD",
+        "resource_parity": true,
+        "role_ablation_holds": true
+      },
+      "input_hash": "sha256:3c83ce88e9483899fa919db07f191be2a7e6fea1b366d1ecde017e5c897d3d4f",
+      "paired_effect": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 0.53125,
+          "calibration": 0.25,
+          "generalization": 0.5625,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 0.48958333333333337,
+          "sample_efficiency": null
+        }
+      },
+      "seed": 73032,
+      "target": {
+        "coordinate_order": [
+          "accuracy",
+          "generalization",
+          "robustness",
+          "sample_efficiency",
+          "calibration",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "missing_dimensions": [
+          "sample_efficiency",
+          "neg_energy",
+          "neg_latency",
+          "recovery"
+        ],
+        "observed": {
+          "accuracy": true,
+          "calibration": true,
+          "generalization": true,
+          "neg_energy": false,
+          "neg_latency": false,
+          "recovery": false,
+          "robustness": true,
+          "sample_efficiency": false
+        },
+        "values": {
+          "accuracy": 1.0,
+          "calibration": 1.0,
+          "generalization": 1.0,
+          "neg_energy": null,
+          "neg_latency": null,
+          "recovery": null,
+          "robustness": 1.0,
+          "sample_efficiency": null
+        }
+      }
+    }
+  ],
+  "source_digests": {
+    "docs/ARCHITECTURE.md": "sha256:f5b62557b1c06b0db977f8fb16c9f3ae4088839ae1e9ce176473098270c563f6",
+    "docs/QSIGMA_R3B_FOUR_CELL.md": "sha256:1a6d18012dcc4a70656a3752fa8ae6d43b25a5bdf87913119db8dd8ead502fa5",
+    "experiments/run_four_cell_calibration.py": "sha256:d799ac207aa93f9781c8190af4df3071a7b62df4caa31398d479bd3dd670526e",
+    "manifests/qsigma_r3b_four_cell_calibration_preregistration.json": "sha256:87219371751bc15e4ef17e7547d95bb0bcb971db5a144243b9ec45537822d527",
+    "src/aionq/__init__.py": "sha256:2064699eb04590768472e13850defd746c29e1d386184a94384389e681d1eca4",
+    "src/aionq/advantage.py": "sha256:df73bd003de423f0e89c152bdb079977b41127ceafbeb565a513ebe05972ee70",
+    "src/aionq/four_cell.py": "sha256:452a6c04fbfdcafca12ef1387650da9d0ea4b56173cce9ab08573b839e29c88c",
+    "tests/test_four_cell.py": "sha256:f1f5f18a79e2f6630909be39e6b4bd65f32bd1380e1660b8859b5ee6d018bc17"
+  },
+  "status": "CALIBRATED_HOLD",
+  "typed_remainders": [
+    "sample_efficiency is unmeasured; no learning curve was run.",
+    "neg_energy is unmeasured; operation-count parity is not joules.",
+    "neg_latency is unmeasured; logical depth is not device latency.",
+    "recovery is unmeasured; no interruption-and-recovery protocol was run.",
+    "The coherent-versus-dephased split is a simulator positive control, not a quantum or causal advantage result.",
+    "No hardware, real dataset, cognitive system, or external intervention was measured.",
+    "The run is first-party and has no independent recomputation.",
+    "A future full R3B organ experiment must preregister and measure all constrained axes."
+  ],
+  "verdict_ledger": {
+    "audit": "NOT_INDEPENDENTLY_WITNESSED",
+    "final": "CALIBRATED_HOLD",
+    "instrument": "VALID",
+    "positive_calibration": "SURVIVES",
+    "promotion": "HOLD"
+  }
+}
