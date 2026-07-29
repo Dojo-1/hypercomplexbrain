@@ -605,8 +605,12 @@ def run() -> dict:
 
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
-    report = run()
-    _canonical_json(RESULT, report)
+    envelope_only = "--envelope-only" in sys.argv[1:]
+    if envelope_only:
+        report = json.loads(RESULT.read_text(encoding="utf-8"))
+    else:
+        report = run()
+        _canonical_json(RESULT, report)
     envelope = EvidenceEnvelope(
         claim_id="EXP-R6I-COHERENT-DILATION",
         evidence_tag="M",
@@ -621,15 +625,11 @@ def main() -> int:
         commit_sha=current_commit(),
         environment=environment_digest(),
         seeds=[],
+        # One digest per frozen ensemble: the concrete matrices are the actual
+        # encoder inputs and already subsume the separately reported coordinates.
+        # Counting both hashes would falsely double n_eff from 36 to 72.
         input_hashes=sorted(
-            {
-                digest
-                for row in report["rows"]
-                for digest in (
-                    row["source_coordinate_digest"],
-                    row["source_matrix_digest"],
-                )
-            }
+            {row["source_matrix_digest"] for row in report["rows"]}
         ),
         raw_artifacts={
             "artifacts/r6i_coherent_dilation/coherent_dilation.json": file_digest(RESULT),
@@ -715,6 +715,7 @@ def main() -> int:
                 "controls": report["controls"],
                 "rescue_depths": report["decision"].get("rescue_depths", []),
                 "rows": len(report["rows"]),
+                "mode": "envelope_only" if envelope_only else "primary_execution",
             },
             indent=2,
             sort_keys=True,
