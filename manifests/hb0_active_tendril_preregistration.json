@@ -1,0 +1,103 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "HB0-T1 - Atomic active-tendril transaction",
+  "committed_before_primary_implementation_or_run": true,
+  "baseline": {
+    "commit_sha": "95f5ec76d34df22a679bab4418bad62850736064",
+    "focused_hb0_tests": "34 passed",
+    "envelopes": "26/26 artifact digests verified; provenance and environment warnings remain"
+  },
+  "question": "Can one declared HB-0 profunctor tendril causally update exactly one target worldlet under explicit caller authorization, while preserving endpoint routing, matched disabled and shuffled controls, and exact rollback on failure?",
+  "scope": {
+    "carrier": "real finite-dimensional worldlet coordinates only",
+    "transaction_count": "one tendril per transaction",
+    "identity_consolidation": "out of scope; identity sections remain on their existing slow-clock path",
+    "competence_claim": false,
+    "cognitive_advantage_claim": false,
+    "quantum_advantage_claim": false,
+    "consciousness_or_agi_claim": false
+  },
+  "frozen_transaction": {
+    "source": "x = immutable pre-transaction source coordinates",
+    "transport": "u = F_t(x)",
+    "target": "y = immutable pre-transaction selected-target coordinates",
+    "proposal": "y_star = Retract_Y(y + alpha * permeability_Y * (u - y))",
+    "coupling_interval": "0 <= alpha <= 1",
+    "commit_rule": "commit y_star to exactly one selected target only when governance accepts active or shuffled mode",
+    "observation": "preserve u, y, y_star, the full proposed and committed delta vectors, their norms, alignment residuals before/after, and cost",
+    "authorization": "authorized_sources is caller-supplied; the transaction may not synthesize authorization from its own measured cost"
+  },
+  "frozen_probe": {
+    "seeds": [0, 1, 2, 3, 4, 5, 6, 7],
+    "tendril_id": "T_00",
+    "declared_target": "W_somatic_01",
+    "shuffled_control_target": "W_somatic_02",
+    "coupling": 0.5,
+    "authorization": {
+      "compute": 0.1
+    },
+    "modes": [
+      "active",
+      "disabled_control",
+      "shuffled_target_control"
+    ]
+  },
+  "primary_gates": [
+    {
+      "id": "T1",
+      "statement": "An accepted active transaction changes only the declared target, emits a non-zero committed delta vector, and decreases target-alignment residual."
+    },
+    {
+      "id": "T2",
+      "statement": "The disabled control computes the same transport observation and cost but commits a zero delta to every worldlet."
+    },
+    {
+      "id": "T3",
+      "statement": "The shuffled-target control leaves the declared target bit-identical and moves only the preregistered matched control target."
+    },
+    {
+      "id": "T4",
+      "statement": "Missing compute authorization rejects the transaction and leaves all worldlet and identity state bit-identical."
+    },
+    {
+      "id": "T5",
+      "statement": "A complex-valued chart output is rejected without casting away phase and leaves worldlets, tick, budget, and transaction ledger bit-identical."
+    },
+    {
+      "id": "T6",
+      "statement": "Two kernels built with the same seed emit numerically identical transaction reports and post-transaction coordinates."
+    }
+  ],
+  "matched_control_requirements": [
+    "All three routing modes use the same source snapshot, chart computation, coupling, target-carrier dimension, permeability, and tendril cost.",
+    "The shuffled target must differ from the declared endpoint while matching its carrier, local geometry, dimension, and permeability.",
+    "Disabled and shuffled modes may not bypass chart evaluation.",
+    "The declared target and all non-selected worldlets must be compared byte-for-byte before and after each transaction.",
+    "Identity sections are snapshotted and checked for non-mutation; their later consolidation is a separate preregistered slice."
+  ],
+  "kill_conditions": [
+    "Any target coordinate is mutated before all endpoint, carrier, shape, finiteness, real-valuedness, coupling, control-match, and governance checks finish.",
+    "The implementation derives its own compute authorization from observed cost.",
+    "A complex output is silently projected to its real part.",
+    "Disabled mode avoids the chart computation or uses a different reported cost.",
+    "Shuffled mode mutates the declared target or uses an unmatched control target.",
+    "An exception leaves any worldlet, tick, budget field, or transaction-ledger entry changed.",
+    "The result is generalized to identity consolidation, task competence, cognition, quantum advantage, consciousness, or AGI."
+  ],
+  "evidence_floor": {
+    "P": "typed endpoint, staging, and rollback invariants enforced by code and tests",
+    "M": "the eight-seed deterministic simulated target-delta measurements",
+    "H": "whether active tendrils improve any held-out task or identity integration",
+    "S": "any broad claim about general intelligence or polycosmic cognition",
+    "R": "complex/hypercomplex carrier transport and phase-preserving identity consolidation"
+  },
+  "files_expected_after_this_commit": [
+    "src/aionq/hb0/kernel.py",
+    "tests/test_hb0_tendril_transaction.py",
+    "experiments/run_hb0_tendril_transaction.py",
+    "docs/HB0_ACTIVE_TENDRIL_TRANSACTION.md",
+    "artifacts/hb0_active_tendril/active_tendril.json",
+    "artifacts/hb0_active_tendril/active_tendril.envelope.json"
+  ],
+  "stop_condition": "Stop after one real-carrier transaction primitive, the three matched routing modes, rejection and exception rollback controls, eight frozen seeds, an EvidenceEnvelope, focused and full regression, and a bounded result note. Do not add identity consolidation, global distance repair, or tunnelling reinterpretation in this slice."
+}
