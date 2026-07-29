@@ -85,24 +85,35 @@ The architecture is a set of coupled measurement surfaces, not a linear
 “input → intelligence” pipeline.
 
 ```mermaid
-flowchart TD
-    X["Typed state + task"] -->|"encode coordinates"| A["Quantum Necessity Atlas"]
-    F["Frame + free theory"] -->|"transport_to()"| A
-    M["Process memory"] -->|"measure temporal dependence"| A
+graph TD
+    X["Typed state + task"] --> XE["Encode coordinates"]
+    XE --> A["Quantum Necessity Atlas"]
 
-    A -->|"intervals + observation mask"| Y["Outcome vector ΔY"]
-    Y -->|"test preregistered cone"| G{"Promotion gate"}
+    F["Frame + free theory"] --> FT["Transport into declared frame: transport_to()"]
+    FT --> A
 
-    E["Evidence strength + envelope"] -->|"witness"| G
-    C["Matched control + attacks"] -->|"constrain"| G
+    M["Process memory"] --> MT["Measure temporal dependence"]
+    MT --> A
 
-    G -->|"every declared gate passes"| P["PROMOTE"]
-    G -->|"missing or failed evidence"| H["HOLD + typed remainder [R]"]
+    A --> Y["Outcome vector ΔY (Delta Y): intervals + observation mask"]
+    Y --> CT["Test preregistered cone"]
+    CT --> G{"Promotion gate"}
+
+    E["Evidence strength + envelope"] --> EB["Bind provenance"]
+    EB --> G
+    C["Matched controls + adversarial attacks"] --> CB["Constrain claim"]
+    CB --> G
+
+    G --> P["PROMOTE: every declared gate passes"]
+    G --> H["HOLD: evidence incomplete + typed remainder R"]
+    G --> K["FALSIFIED or RETIRED: control or kill condition breaks claim"]
 ```
 
 In plain language: state, frame, free theory, and memory remain distinct inputs;
 the Atlas emits a vector with uncertainty and missingness; promotion occurs only
 when the preregistered region, matched controls, and evidence gates all pass.
+Incomplete evidence returns `HOLD` plus typed remainder `[R]`; a failed control
+or kill condition falsifies or retires the claim.
 
 Four invariants keep the map scientific:
 
@@ -167,16 +178,16 @@ architecture. Coverage is not retroactive: the architecture ledger currently
 records **48 of 81** earlier claims without an evidence envelope.
 
 ```mermaid
-flowchart TD
-    Q["Question"] -->|"freeze null, variables, and kill condition"| PR["Preregister"]
-    PR -->|"implement instrument + matched control"| I["Code"]
-    I -->|"run tests + adversarial attacks"| V["Verify"]
-    V -->|"hash command, inputs, environment, result"| E["Evidence envelope"]
+graph TD
+    Q["Question · freeze null, variables, and kill condition"] --> PR["Preregister"]
+    PR --> I["Implement instrument + matched control"]
+    I --> V["Verify with tests + adversarial attacks"]
+    V --> E["Bind command + inputs + environment + result"]
     E --> G{"Verdict gate"}
 
-    G -->|"scope and controls pass"| S["SURVIVES"]
-    G -->|"evidence incomplete"| H["HOLD + remainder"]
-    G -->|"control breaks claim"| R["FALSIFIED / RETIRED"]
+    G --> S["SURVIVES · scope and controls pass"]
+    G --> H["HOLD · evidence incomplete · typed remainder"]
+    G --> R["FALSIFIED or RETIRED · control breaks claim"]
 ```
 
 Text equivalent: freeze the question before the result, implement both target
@@ -345,18 +356,25 @@ still reports `independent=false`.
 ### Repository topology
 
 ```mermaid
-flowchart TD
-    R["README"] -->|"design contract"| D["docs/"]
-    R -->|"implementation"| S["src/aionq/"]
-    R -->|"execution"| E["experiments/"]
-    R -->|"verification"| T["tests/"]
+graph TD
+    R["README · design contract"] --> D["docs/ · specifications"]
+    R --> S["src/aionq/ · implementation"]
+    R --> E["experiments/ · frozen execution"]
+    R --> T["tests/ · verification"]
 
-    D -->|"specifies"| S
-    E -->|"imports"| S
-    T -->|"checks"| S
-    E -->|"emits append-only results"| A["artifacts/ + envelopes"]
-    A -->|"updates evidence status"| L["claim ledger"]
-    T -->|"enforces publication rules"| L
+    D --> DS["Bind specification"]
+    DS --> S
+    E --> ES["Import runtime"]
+    ES --> S
+    T --> TS["Check implementation"]
+    TS --> S
+
+    E --> EA["Emit append-only result"]
+    EA --> A["artifacts + envelopes"]
+    A --> AL["Update evidence status"]
+    AL --> L["claim ledger"]
+    T --> TL["Enforce publication rules"]
+    TL --> L
 ```
 
 Text equivalent: documents specify the operators; `src/aionq` implements them;
