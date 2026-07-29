@@ -223,3 +223,73 @@ def test_group_norm_diverges_for_boosts_and_is_constant_for_rotations():
     boosts = [r["group_frobenius_boost_K02"] for r in rows]
     assert max(rotations) - min(rotations) < 1e-12
     assert boosts == sorted(boosts) and boosts[-1] > 10 * boosts[0]
+
+
+# ---------------------------------- the word that stood wrong for three commits
+
+def _linear_map(action) -> np.ndarray:
+    """The 4x4 matrix of a linear map on R^{2,2}, read off the standard basis."""
+    cols = []
+    for i in range(4):
+        e = np.zeros(4)
+        e[i] = 1.0
+        cols.append(from_sl2(action(to_sl2(e))))
+    return np.column_stack(cols)
+
+
+def test_so22_is_semisimple_and_not_simple():
+    """The correction, made executable through this repository's own map.
+
+    Three commits of R6 called SO_0(2,2) 'simple'. It is SEMISIMPLE: the algebra
+    splits, ``so(2,2) = sl(2,R) + sl(2,R)``, so it has two proper nonzero ideals
+    and the word was wrong. An external reader caught it; nothing here would have.
+
+    The split is not quoted, it is built -- and out of ``to_sl2``, the map the
+    whole R6 arc runs on. Because ``det(AM) = det(MA) = det M`` for ``A`` of unit
+    determinant, LEFT and RIGHT multiplication by ``sl(2,R)`` each act on
+    ``R^{2,2}`` preserving ``q22``, and they commute because matrix
+    multiplication is associative. Two commuting 3-dimensional ideals spanning
+    all six directions is exactly the statement.
+
+    Semisimplicity gets Cartan's criterion: the Killing form is nondegenerate.
+    Both halves are asserted, because 'not simple' alone is also true of an
+    abelian algebra and would say nothing.
+    """
+    eta = np.diag([1.0, 1.0, -1.0, -1.0])
+    sl2 = [np.array([[1.0, 0.0], [0.0, -1.0]]),
+           np.array([[0.0, 1.0], [0.0, 0.0]]),
+           np.array([[0.0, 0.0], [1.0, 0.0]])]
+
+    left = [_linear_map(lambda M, A=A: A @ M) for A in sl2]
+    right = [_linear_map(lambda M, A=A: M @ A) for A in sl2]
+
+    # Both families really are so(2,2): X^T eta + eta X = 0.
+    for X in left + right:
+        assert np.max(np.abs(X.T @ eta + eta @ X)) < 1e-12
+
+    # ... and they span the same six directions as the module's own generators.
+    G = np.column_stack([v.reshape(-1) for v in so22_generators().values()])
+    S = np.column_stack([X.reshape(-1) for X in left + right])
+    assert np.linalg.matrix_rank(S, tol=1e-10) == 6
+    assert np.linalg.matrix_rank(np.column_stack([G, S]), tol=1e-10) == 6
+
+    # NOT SIMPLE: the two halves commute, so each is a proper nonzero ideal.
+    for L in left:
+        for R in right:
+            assert np.max(np.abs(L @ R - R @ L)) < 1e-12
+    assert np.linalg.matrix_rank(
+        np.column_stack([X.reshape(-1) for X in left]), tol=1e-10) == 3
+
+    # SEMISIMPLE: Killing form nondegenerate on the six-dimensional algebra.
+    basis = left + right
+    coords = np.column_stack([X.reshape(-1) for X in basis])
+    inv = np.linalg.pinv(coords)
+
+    def ad(X):
+        return np.column_stack([inv @ (X @ Y - Y @ X).reshape(-1) for Y in basis])
+
+    ads = [ad(X) for X in basis]
+    killing = np.array([[float(np.trace(a @ b)) for b in ads] for a in ads])
+    assert abs(np.linalg.det(killing)) > 1e-6
+    # An abelian algebra would also fail to be simple; its Killing form is zero.
+    assert np.min(np.abs(np.linalg.eigvalsh(killing))) > 1e-6

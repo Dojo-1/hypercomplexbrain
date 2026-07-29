@@ -1,0 +1,295 @@
+{
+  "checks": {
+    "all_checkable_preregistrations_precede_implementation": true,
+    "attestation_cycle_does_not_reach_independent": true,
+    "attestation_cycle_stops_at_attested": true,
+    "census_counts_every_envelope_found": true,
+    "every_correction_binds_to_a_live_test": true,
+    "gap_is_not_closable_from_inside": true,
+    "independence_uses_the_repository_definition": true,
+    "ledger_records_externally_caught_errors": true,
+    "no_unreadable_artifacts": true
+  },
+  "corrections": {
+    "all_bound": true,
+    "bound_to_an_existing_test": 14,
+    "corrections": 14,
+    "externally_caught": 3,
+    "rows": [
+      {
+        "caught_by": "tests/test_hyperbolic_qubit.py::test_zero_depth_encoding_has_no_leakage",
+        "round": "R6",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_hyperbolic_qubit.py::test_so22_is_semisimple_and_not_simple",
+        "round": "R6",
+        "self_caught": false,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_quantum_channel_geometry.py::test_the_source_is_lorentzian_not_hyperbolic_three_space",
+        "round": "R6b",
+        "self_caught": false,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_carrier_telemetry.py::test_kappa_telescopes_over_prefixes_exactly",
+        "round": "R6e",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_carrier_telemetry.py::test_compounding_steps_do_not_leak",
+        "round": "R6e",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_capacity_ceiling.py::test_su2_matrix_is_actually_unitary_and_three_parameter",
+        "round": "R6f",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_capacity_ceiling.py::test_bell_probe_is_the_optimum_not_a_convenience",
+        "round": "R6f",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_capacity_ceiling.py::test_flag_informativeness_needs_equal_p_not_equal_depth",
+        "round": "R6d",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_fano_algebra.py::test_crosstalk_rank_is_determined_by_signal_rank",
+        "round": "S8",
+        "self_caught": false,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_fano_algebra.py::test_alternating_drive_is_linear_to_leading_order_and_bends_down",
+        "round": "S8",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_hb0.py::test_hb0_manifest_validator_catches_flat_collapse_and_quantum_overclaim",
+        "round": "HB-0",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_source_dimension.py::test_richer_source_does_help_at_finite_depth",
+        "round": "R6j",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_self_audit.py::test_only_manifests_that_bind_files_are_counted_as_checked",
+        "round": "SELF",
+        "self_caught": true,
+        "test_exists": true
+      },
+      {
+        "caught_by": "tests/test_self_audit.py::test_ordering_uses_commit_topology_not_the_clock",
+        "round": "SELF",
+        "self_caught": true,
+        "test_exists": true
+      }
+    ],
+    "self_caught": 11
+  },
+  "envelopes": {
+    "distinct_producers": 18,
+    "envelopes": 26,
+    "envelopes_with_no_verifier_at_all": 25,
+    "evidence_tags": {
+      "M": 17,
+      "P": 8,
+      "R": 1
+    },
+    "unreadable_json": 0,
+    "verification_modes": {
+      "declined": 1,
+      "not_requested": 17,
+      "pending": 7,
+      "recomputed": 1
+    }
+  },
+  "godelian_gap": {
+    "claims": 26,
+    "closable_from_inside": false,
+    "cycle_probe": {
+      "claim_id": "ARCH-OHM-V2_OBSERVABLE_ASCENT",
+      "cycles_found": 1,
+      "parties_in_cycle": 18,
+      "rank_after_full_attestation_cycle": 1,
+      "rank_before": 0,
+      "reached_independent": false
+    },
+    "deficit": 25,
+    "independent": 1,
+    "independent_requires": 3,
+    "reachable_from_inside": 1,
+    "statement": "every predicate this repository can express about its own artifacts is decidable here; the predicate that decides whether those artifacts are evidence is not, and no internal act raises it above ATTESTED",
+    "unwitnessed": 25
+  },
+  "headline": "26 claims carry envelopes; 1 is independently witnessed. Every binding this repository can check, it checks -- commands to commits, artifacts to digests, claims to sample sizes, corrections to tests. The one predicate it cannot decide is whether a party who is not this one ran the command, and no internal act raises that above ATTESTED.",
+  "independence": {
+    "by_rank": {
+      "ATTESTED": 0,
+      "INDEPENDENT": 1,
+      "NONE": 25,
+      "REVIEWED": 0
+    },
+    "claims": 26,
+    "independent_claims": [
+      {
+        "claim_id": "EXP-HB0-SMOKE_REPRODUCES",
+        "mode": "recomputed",
+        "producer": "gpt/polycosmic-hb0-kernel",
+        "verifier": "claude-code"
+      }
+    ],
+    "independent_fraction": 0.038461538461538464
+  },
+  "prereg_finding": "5 of 12 preregistrations declare files_expected_to_change and therefore admit an ordering check against git; all 5 hold. The remaining 7 carry committed_before_any_implementation as a flag with no file list, which no artifact can contradict, and 1 are preregistrations by filename with no schema at all, invisible to every schema-driven check including this one.",
+  "preregistration": {
+    "all_checkable_hold": true,
+    "checkable": 5,
+    "ordering_holds": 5,
+    "preregistrations": 12,
+    "rows": [
+      {
+        "declared_files": 10,
+        "files_created_after_manifest": 4,
+        "files_in_the_manifest_commit": 0,
+        "files_predating_manifest": 6,
+        "manifest": "qsigma_r4_preregistration.json",
+        "manifest_added_in": "b466cb75b5064a5c9d2fa8a6105fc7fe08dbfcf0",
+        "ordering_holds": true,
+        "self_reported_flag": true
+      },
+      {
+        "declared_files": 7,
+        "files_created_after_manifest": 5,
+        "files_in_the_manifest_commit": 0,
+        "files_predating_manifest": 2,
+        "manifest": "qsigma_r5_witness_weave_preregistration.json",
+        "manifest_added_in": "aacd15b3024daf3fdd4ffee76bdf1b2d9d46f6e8",
+        "ordering_holds": true,
+        "self_reported_flag": true
+      },
+      {
+        "declared_files": 5,
+        "files_created_after_manifest": 5,
+        "files_in_the_manifest_commit": 0,
+        "files_predating_manifest": 0,
+        "manifest": "qsigma_r6_unitary_price_preregistration.json",
+        "manifest_added_in": "47def35ae42a84143cdac8ac5d7af424a6c0b531",
+        "ordering_holds": true,
+        "self_reported_flag": true
+      },
+      {
+        "declared_files": 5,
+        "files_created_after_manifest": 4,
+        "files_in_the_manifest_commit": 0,
+        "files_predating_manifest": 0,
+        "manifest": "qsigma_r6e_carrier_telemetry_preregistration.json",
+        "manifest_added_in": "35b2277a24be618124b3ed0540dd43ea2b948602",
+        "ordering_holds": true,
+        "self_reported_flag": true
+      },
+      {
+        "declared_files": 3,
+        "files_created_after_manifest": 3,
+        "files_in_the_manifest_commit": 0,
+        "files_predating_manifest": 0,
+        "manifest": "qsigma_r6h_translation_epsilon_preregistration.json",
+        "manifest_added_in": "f9f2f0fcfa01f1770e408a386fe2bf61e6f0a7e9",
+        "ordering_holds": true,
+        "self_reported_flag": true
+      }
+    ],
+    "schemaless": [
+      "s4_g100_preregistration.json"
+    ],
+    "schemaless_by_filename_only": 1,
+    "unbound": [
+      {
+        "manifest": "ohnium_v2_observability_preregistration.json",
+        "self_reported_flag": false
+      },
+      {
+        "manifest": "qsigma_r3b_four_cell_calibration_preregistration.json",
+        "self_reported_flag": false
+      },
+      {
+        "manifest": "qsigma_r7_instrument_clarification.json",
+        "self_reported_flag": false
+      },
+      {
+        "manifest": "qsigma_r7_operational_rate_preregistration.json",
+        "self_reported_flag": false
+      },
+      {
+        "manifest": "qsigma_r8_quantum_movement_preregistration.json",
+        "self_reported_flag": false
+      },
+      {
+        "manifest": "s8_algebra_decoder_preregistration.json",
+        "self_reported_flag": false
+      },
+      {
+        "manifest": "s9_fqhe_preregistration.json",
+        "self_reported_flag": false
+      }
+    ],
+    "unbound_flag_only": 7
+  },
+  "question": "what can this repository establish about itself, and what is structurally out of its reach?",
+  "recognition": {
+    "inward": [],
+    "mutual": false,
+    "outward": [
+      {
+        "claim_id": "EXP-HB0-SMOKE_REPRODUCES",
+        "producer": "gpt/polycosmic-hb0-kernel",
+        "verifier": "claude-code"
+      }
+    ],
+    "recomputations_performed_on_others": 1,
+    "recomputations_received_from_others": 0
+  },
+  "recognition_finding": "witnessing is directed and this corpus is asymmetric: 1 recomputation(s) performed on another party's claims, 0 received. The apparatus works and has never been pointed back. 'Mutual recognition' is, at this commit, a word about a one-way relation.",
+  "remainder_finding": "63 remainders are recorded, of which 16 are bare strings carrying no kind, no carrier and no comparison. The vocabulary is 'typed remainder'; it is 0.746 enforced.",
+  "remainders": {
+    "distinct_kinds": 15,
+    "kinds": {
+      "conditioning": 1,
+      "empirical_residual": 5,
+      "instrument_remainder": 2,
+      "method_remainder": 2,
+      "naming_remainder": 2,
+      "process_remainder": 1,
+      "projective_loss": 1,
+      "representation_remainder": 1,
+      "scalar_constant": 1,
+      "scope": 1,
+      "scope_remainder": 15,
+      "self_reference_remainder": 1,
+      "semantic_remainder": 8,
+      "supersession_remainder": 1,
+      "witness_remainder": 5
+    },
+    "typed_fraction": 0.746031746031746,
+    "typed_remainders": 63,
+    "untyped_strings": 16
+  },
+  "round": "SELF",
+  "verdict": "APPARATUS SOUND, DEFICIT OPEN"
+}

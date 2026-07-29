@@ -1,0 +1,96 @@
+{
+  "claim_id": "AUDIT-SELF-WITNESS_DEFICIT",
+  "command": "PYTHONPATH=src python3 experiments/run_self_audit.py",
+  "commit_sha": "97f820cc4fe9dada5fb4ffdbae7d62c531606a30",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [
+    "git history, which the ordering check reads"
+  ],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "sha256:000e7d5ab7165962ea711d8efbbcafdcf3ba4ee96b6bc1fbfd17a38b43ab14fc",
+    "sha256:033eb4d1fa23bc4230cb24c19e703c557add11b8702cb4f2a0353f56e6851409",
+    "sha256:11666109044813fb7bddffcdc4710836c0fda3762eee3452a30fc3ee56312563",
+    "sha256:1179cc2b1a553283b25a07b309f47ac59964f9d352e88303c991df5dc57e551c",
+    "sha256:28f34fb3cc514645337abdb58ecbc75fb5dfc052f1400b25af1789556fbe3b4f",
+    "sha256:3074206f32eebec6053959a364b47dd57f1d75f207f404d3f0546a04c2b4bc86",
+    "sha256:41348d1f737f47609d676eb3ca1d8bd51b3acd7b25198c374ac65b6fe75c5dff",
+    "sha256:5867ad49f2f38fbbf6b749410ec0252ec4032bb769804ee9035010db539a327c",
+    "sha256:619585dea6afe61f7b0fcfb86efbd539b5c773fae620670a81d387eda2e5e333",
+    "sha256:64ff0f48c442814b4b26f19855a7c8e09d6cef7d8894e45c580944d0ef622adc",
+    "sha256:72acad841e568c1786aebe059af1fab7bdbf618f9e471db818b1fe263b7a9738",
+    "sha256:773d63f1f5b56553a5535b94db1fd8778dec0f93ba891e984ff015f367da854d",
+    "sha256:8653f5ec31bf350e92f5d585c2161d3148871a77640ad8d5fd5a031fea88fa66",
+    "sha256:8c2a107118de1d1edbaa9d34c7db0f2c2db0891f43cbeed6edad2de651e0a75f",
+    "sha256:8da0d420855211d78b577473491ec83e61603e96ee3e1c32a00f8f211eb3230b",
+    "sha256:91a67618e4408a484256b089a6a0b4badeb14c784af12557553805015a944475",
+    "sha256:98fbfb12252ca4e103893899c70fb8df9ea1498da38ce4ebd25be96c8b793a91",
+    "sha256:b4c8c191ff88cc25ece9d1f88dbed953e17a04800b1b33ec4e5c04b0562cac68",
+    "sha256:c309b1ae2d73de71172da824d021de77047f20cd575bf572cd3087120797ec47",
+    "sha256:cac5ae9374313c1614ee915432cf2b4dbca6ec65893acb09bfd7e9aea6bf5c40",
+    "sha256:d37f50dc32630262dcf1ad235a24de1a124da31065f6702baaff315e33c8b9da",
+    "sha256:d931351d7bc933c1fbaaaf59e4c112aa0c9ec6df9eecbecfadc054f184889aac",
+    "sha256:dcff7d439547e9eccc355b8597288a169631569c7c8e4fe90c1564317485138b",
+    "sha256:dfc82a0afc0fb0666b6dce81b8211d9098bb789ebcf596a8b15e141d33b4d913",
+    "sha256:f0a9e9cf95d7790dc22c7674bb7e38a9bda1a4572ce4634048e84328160dfca5",
+    "sha256:f68b92010713b5669accbbb5319ef044a2ee96845b0553733b9d935402db5eca"
+  ],
+  "observed_result": {
+    "attestation_cycle_rank": 1,
+    "corrections_bound": 14,
+    "envelopes_at_measurement_time": 26,
+    "independent_claims": 1,
+    "preregistrations_checkable": 5,
+    "recomputations_performed": 1,
+    "recomputations_received": 0,
+    "sample_size": 26,
+    "unwitnessed_claims": 25,
+    "verdict": "APPARATUS SOUND, DEFICIT OPEN"
+  },
+  "platform": "",
+  "producer": "experiments/run_self_audit.py",
+  "raw_artifacts": {
+    "artifacts/self_audit/self_audit.json": "sha256:5b14319edf8a660242cf6d799c450b997a9425258f3398bbebac5196116d55c0"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-29T14:16:52Z",
+  "typed_remainders": [
+    {
+      "carrier": "this envelope",
+      "comparison": "the artifact joins the corpus it measures, so the audit is a self-referential map. No single run can record a corpus containing its own output, because that would require hashing a file that does not yet exist. Measured behaviour: the first run records 25, the second records 26, and it does not move again -- a fixed point reached in one iteration. Reported rather than reconciled",
+      "kind": "self_reference_remainder"
+    },
+    {
+      "carrier": "the deficit itself",
+      "comparison": "this envelope is produced here and verified by nobody, so it is an instance of the thing it measures and increments its own numerator by zero and its own denominator by one",
+      "kind": "witness_remainder"
+    },
+    {
+      "carrier": "declared parties",
+      "comparison": "producer strings are taken at face value. Nothing here establishes that a party named 'gpt/polycosmic-hb0-kernel' is a different party rather than a different label; only the recorded witness_environment supports that, and it is prose",
+      "kind": "scope_remainder"
+    },
+    {
+      "carrier": "correction binding",
+      "comparison": "corrections_are_bound checks that each named test EXISTS in source, not that it passes. The suite establishes passing; this establishes that the ledger points at live checks rather than memories",
+      "kind": "method_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}
