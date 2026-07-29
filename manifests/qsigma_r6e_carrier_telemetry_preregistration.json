@@ -1,0 +1,154 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "QSigma-R6e - Carrier telemetry, and cross-verification of the Ohnium atlas",
+  "committed_before_any_implementation": true,
+  "baseline": {
+    "commit_sha": "7d7c736",
+    "tests": 1352,
+    "envelopes": "16/16 verified"
+  },
+  "prompt": "Three directions were named: cognition telemetry (a dominance trace with energy transfer and projection violence per bridge event), motion as proof-pressure (loss of coherence marks a failure mode: false ascent, energy leakage, bridge absorption), and cosmos-level multiplicity (each bridge endpoint its own fibre with carrier dominance, remainder, return path).",
+  "position": "Every quantity named already has an exact operator in this repository, verified in R6/R6b/R6c/R6d. This round wires them into a trace and builds DETECTORS for the three named failure modes. It invents no new quantity. Where a named term has no operator, it is left unimplemented and said so rather than approximated.",
+  "operator_bindings": {
+    "energy_transfer_per_bridge_event": {
+      "operator": "kappa(X,Y) = log||X||_2 + log||Y||_2 - log||XY||_2 >= 0",
+      "status": "verified R6b: exact 2-cocycle, composition to 4.4e-16, associativity to 1.3e-15",
+      "note": "additive over a word; eta = exp(-2 kappa) is the survival factor"
+    },
+    "projection_violence": {
+      "operator": "sqrt(det J) / sqrt|det g_src| -> 8 sqrt2 e^{-4 rho}",
+      "status": "verified R6b as volume_form_distortion",
+      "note": "this is a MEASURED volume-form ratio, not a metaphor"
+    },
+    "carrier_dominance": {
+      "operator": "the Cayley-Dickson rung, with the Hopf ladder as its boundary",
+      "status": "verified R6c: fibrations exist at dims 1,2,4,8 and stop where zero divisors start"
+    },
+    "return_path": {
+      "operator": "kappa(M^-1, M) = 2 rho exactly",
+      "status": "verified R6b: source defect 0, streamed survival e^{-4 rho}"
+    },
+    "remainder_survives_the_projection": {
+      "operator": "operational trace distance and chi on the retained state",
+      "status": "verified R6d"
+    },
+    "NOT_implemented": [
+      "cognition, meaning, awareness, or any claim that a trace is a mind",
+      "'energy' in any physical sense -- kappa is a log-norm defect, measured in nats, not joules",
+      "the Om/AUM cadence as an operator; it is a naming convention with no computational content",
+      "Ohnium schema compatibility was originally deferred as unseen. The atlas was then supplied mid-round, so the schema IS seen and this surface emits ohnium.observable-ascent.v2 records. The deferral is resolved, not silently dropped."
+    ]
+  },
+  "failure_detectors": [
+    {
+      "id": "FALSE_ASCENT",
+      "definition": "the trace asserts a carrier rung whose algebra has zero divisors, so no Hopf fibration and no norm multiplicativity exist there",
+      "detector": "find_zero_divisor(dim) is not None",
+      "fires_on": "dim >= 16 (sedenions and above)",
+      "control": "dims 1, 2, 4, 8 must NOT fire",
+      "threshold_is_tunable": false
+    },
+    {
+      "id": "ENERGY_LEAKAGE",
+      "definition": "a word streams through deeper prefixes than its net element requires",
+      "detector": "kappa_W = sum_i rho_i - rho(M_W) > tau_leak",
+      "tau_leak": 1e-09,
+      "control": "a single-step word, and any word already in Cartan-reduced form, must give kappa_W = 0 to 1e-12",
+      "threshold_is_tunable": true
+    },
+    {
+      "id": "BRIDGE_ABSORPTION",
+      "definition": "the source moves appreciably while the operational state does not -- the compactification consuming the step",
+      "detector": "source_step = ||M_next - M_prev||_F > tau_src AND operational trace distance < tau_op",
+      "tau_src": 0.1,
+      "tau_op": 0.01,
+      "control": "the SAME source step applied at rho ~ 0 must NOT fire; if it fires at both depths the detector is measuring the step size and not the depth",
+      "threshold_is_tunable": true
+    }
+  ],
+  "predictions": [
+    {
+      "id": "T1",
+      "statement": "On a clean trace (single-rung, Cartan-reduced steps, shallow depth) no detector fires. False-positive rate exactly 0 over the swept trace."
+    },
+    {
+      "id": "T2",
+      "statement": "Each of the three injected faults fires its own detector and only its own detector. The 3x3 confusion matrix is diagonal."
+    },
+    {
+      "id": "T3",
+      "statement": "BRIDGE_ABSORPTION fires at large rho and not at small rho for the SAME source step, because the operational response is suppressed by e^{-4 rho}. This is the compactification made visible per event, not a new effect."
+    },
+    {
+      "id": "T4",
+      "statement": "Cumulative kappa over a word equals the sum of per-event kappa to 1e-12 -- the trace is exactly additive, so a dominance history can be audited from its events without re-running it."
+    },
+    {
+      "id": "T5",
+      "statement": "The full discarded remainder is retained per event and the source return path closes exactly (defect 0) while the operational return does not (survival e^{-4 rho}). Retention is asserted by reconstructing the pre-projection vector from the event record."
+    },
+    {
+      "id": "T6",
+      "statement": "The atlas's operational_success_probability equals p_bell(rho) to 1e-12 at every frame, and its Fano ranks equal (7,21,28). These were derived independently on two machines."
+    }
+  ],
+  "controls": [
+    "clean-trace null: no detector fires on a healthy trace",
+    "single-fault isolation: each injected fault fires exactly one detector",
+    "depth control for absorption: same step at shallow and deep rho",
+    "reduced-word control for leakage: kappa = 0 on a one-step word",
+    "ladder control for false ascent: dims 1,2,4,8 do not fire",
+    "scalar-collapse control: the remainder is stored as a vector and its norm alone must NOT suffice to reconstruct it -- if it does, the record has been flattened"
+  ],
+  "kill_conditions": [
+    "any detector fires on the clean trace",
+    "the confusion matrix is not diagonal",
+    "BRIDGE_ABSORPTION fires at shallow depth for the control step",
+    "cumulative kappa disagrees with the per-event sum beyond 1e-12",
+    "the retained remainder cannot reconstruct the pre-projection state",
+    "any claim that the trace constitutes cognition, awareness, or advantage"
+  ],
+  "evidence_floor": {
+    "P": "the operator identities, all previously verified",
+    "M": "detector behaviour on the swept traces and the confusion matrix",
+    "S": "that this telemetry is useful for anything. It is an instrument, and no round here shows it finds a fault nobody knew about",
+    "independent": "not reachable in this round"
+  },
+  "files_expected_to_change": [
+    "src/aionq/carrier_telemetry.py",
+    "experiments/run_carrier_telemetry.py",
+    "tests/test_carrier_telemetry.py",
+    "docs/CARRIER_TELEMETRY.md",
+    "artifacts/r6e_carrier_telemetry/"
+  ],
+  "stop_condition": "Stop after the trace, the three detectors, the controls, and the confusion matrix. Do not build a visualisation, do not claim the instrument has found anything, and do not merge into any Ohnium schema unseen.",
+  "typed_remainder": {
+    "kind": "integration_remainder",
+    "carrier": "the other agent's ohnium_observability.py",
+    "statement": "A 1018-line observability module exists on another machine and has not been pushed. This surface is deliberately named differently and kept joinable rather than guessed at, because inventing a compatible schema without seeing theirs would produce a conflict that looks like agreement."
+  },
+  "schema_now_seen": {
+    "source": "ohnium_atlas.html supplied by the user, 522953 bytes, NOT committed (uploaded documents are gitignored)",
+    "schema": "ohnium.observable-ascent.v2",
+    "carrier_order": [
+      "R",
+      "H",
+      "O",
+      "CD32",
+      "A_n"
+    ],
+    "note": "the round's stop condition originally forbade merging into an unseen schema. Having seen it, this round EMITS to it and CROSS-VERIFIES it; it still does not modify their module, which remains unpushed."
+  },
+  "cross_verification": {
+    "purpose": "their atlas contains quantities this repository derived independently. Checking them is a real recomputation in the direction that matters: their artifact against my operators.",
+    "checks": [
+      "operational_success_probability against p_bell(rho) = (1+q^2)/2 over every frame",
+      "fano_signal_rank / fano_crosstalk_rank / fano_joint_rank against rank_decomposition",
+      "fano_cross_gram against signal_crosstalk_projection",
+      "energy_balance_defect and remainder_record_defect against their own declared tolerances",
+      "carrier dimension labels against the Cayley-Dickson ladder",
+      "vector length against declared dimension, per carrier record"
+    ],
+    "kill_condition": "if their numbers disagree with the verified operators beyond 1e-12, report the disagreement and do NOT adopt either side without resolving it"
+  }
+}

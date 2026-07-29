@@ -26,10 +26,11 @@ fusion        Fibonacci fusion grammar with pentagon/hexagon verification
 identity      polyholonomic identity, Gram PSD theorem, frame invariance
 selfknowledge bounds on self-knowledge, and the syndrome counterexample to them
 qrf           quantum reference frames: entanglement is frame-relative
+hb0           typed polycosmic kernel; local charts, profunctors, gerbes, controls
 """
 
 from . import (advantage, atlas, bordon, budget, cayley_dickson, coherentize,
-               four_cell, fusion, governance, identity, process, qrf, quantities,
+               fusion, governance, hb0, identity, process, qrf, quantities,
                residency, selfknowledge, sentinel, splitform, stack, stokes,
                visibility)
 
@@ -45,6 +46,7 @@ __all__ = [
     "four_cell",
     "fusion",
     "governance",
+    "hb0",
     "identity",
     "process",
     "quantities",

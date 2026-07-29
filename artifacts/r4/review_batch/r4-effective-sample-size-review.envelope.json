@@ -29,7 +29,7 @@
   "platform": "",
   "producer": "claude-code",
   "raw_artifacts": {
-    "src/aionq/evidence.py": "sha256:1a8c7ce9e6e18aa5c370361d81b4f50b3073333b26f5c03ff8deccfafaebd219",
+    "src/aionq/evidence.py": "sha256:c076491b94ce7187fe762169c9df186866a2a6231f58b3c4f2b36d2edd137cb2",
     "tests/test_evidence.py": "sha256:64bdbb203a6396f00adb3b84fa3e8e2582066262cc46ab1097574a9ccd9500c4"
   },
   "schema_version": "hypercomplexbrain.evidence.v1",
@@ -41,6 +41,11 @@
       "carrier": "METHOD-R4-EFFECTIVE_SAMPLE_SIZE",
       "comparison": "a review binds a reading of an argument to a commit; it does not bind a number to a measurement, and it cannot promote this claim",
       "kind": "semantic_remainder"
+    },
+    {
+      "carrier": "src/aionq/evidence.py digest",
+      "comparison": "REBOUND, not silently re-run. Merge 726c91b changed evidence.py and this envelope's digest check correctly went red -- that is the membrane doing its job, and a digest mismatch is informative rather than automatically a refutation. Inspected before re-binding: the entire diff is four lines adding encoding='utf-8' to write_text and read_text, and effective_sample_size -- the function this claim is ABOUT -- is byte-identical between the two commits. The claim survives; only the file's hash moved, for a reason unrelated to it. superseded digest: sha256:1a8c7ce9e6e18aa5c370361d81b4f50b3073333b26f5c03ff8deccfafaebd219; current: sha256:c076491b94ce7187fe762169c9df186866a2a6231f58b3c4f2b36d2edd137cb2",
+      "kind": "supersession_remainder"
     }
   ],
   "uncertainty": {},

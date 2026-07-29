@@ -1,0 +1,247 @@
+{
+  "absorption_depth_control": {
+    "deep": {
+      "fires": true,
+      "operational_step": 0.007098041547127353,
+      "rho": 3.2,
+      "source_step": 4.458114575549279
+    },
+    "finding": "the detector fires deep and stays silent shallow for a comparable source step, so it reads DEPTH and not step size. This is R6b's e^{-4 rho} suppression made visible per event, not a new effect and not a defect in the trace",
+    "shallow": {
+      "fires": false,
+      "operational_step": 0.30029711008420756,
+      "rho": 0.25,
+      "source_step": 0.29108820755650044
+    },
+    "tau_op": 0.01,
+    "tau_src": 0.1
+  },
+  "atlas_cross_check": {
+    "bridges_total": 480,
+    "carrier_dimension_labels": {
+      "A_n": {
+        "cd_ladder_dimension": 32,
+        "consistent": false,
+        "declared": 8,
+        "vector_length": 32
+      },
+      "CD32": {
+        "cd_ladder_dimension": 32,
+        "consistent": true,
+        "declared": 32,
+        "vector_length": 32
+      },
+      "H": {
+        "cd_ladder_dimension": 4,
+        "consistent": true,
+        "declared": 3,
+        "vector_length": 3
+      },
+      "O": {
+        "cd_ladder_dimension": 8,
+        "consistent": true,
+        "declared": 8,
+        "vector_length": 8
+      },
+      "R": {
+        "cd_ladder_dimension": 1,
+        "consistent": true,
+        "declared": 4,
+        "vector_length": 4
+      }
+    },
+    "fano_agrees": true,
+    "fano_mine": [
+      7,
+      21,
+      28
+    ],
+    "fano_theirs": [
+      7,
+      21,
+      28
+    ],
+    "finding": "their operational_success_probability reproduces p_bell(rho) = (1+q^2)/2 and their Fano ranks reproduce (7,21,28); both were derived independently on two machines. The null volume_form_distortion field is computable from their own source_coordinates by the R6b operator",
+    "frames_checked": 120,
+    "sample_filled_values": [
+      1.646615321704125,
+      1.646615321704125,
+      1.646615321704125,
+      1.560265871569133,
+      1.560265871569133
+    ],
+    "schema": "ohnium.observable-ascent.v2",
+    "source": "ohnium.json",
+    "volume_form_distortion_null": 360,
+    "worst_success_probability_error": 5.551115123125783e-16
+  },
+  "carrier_ladder": {
+    "A_n": {
+      "dimension": 32,
+      "has_zero_divisor": true,
+      "hopf_fibration_exists": false,
+      "is_sound": false
+    },
+    "CD32": {
+      "dimension": 32,
+      "has_zero_divisor": true,
+      "hopf_fibration_exists": false,
+      "is_sound": false
+    },
+    "H": {
+      "dimension": 4,
+      "has_zero_divisor": false,
+      "hopf_fibration_exists": true,
+      "is_sound": true
+    },
+    "O": {
+      "dimension": 8,
+      "has_zero_divisor": false,
+      "hopf_fibration_exists": true,
+      "is_sound": true
+    },
+    "R": {
+      "dimension": 1,
+      "has_zero_divisor": false,
+      "hopf_fibration_exists": true,
+      "is_sound": true
+    }
+  },
+  "checks": {
+    "absorption_fires_deep": true,
+    "absorption_silent_shallow": true,
+    "atlas_fano_agrees": true,
+    "atlas_success_probability_agrees": true,
+    "clean_trace_is_silent": true,
+    "confusion_matrix_is_diagonal": true,
+    "ladder_sound_through_octonions": true,
+    "ladder_unsound_above": true,
+    "remainder_not_flattened": true,
+    "return_path_is_two_rho": true,
+    "source_return_defect_zero": true,
+    "telescoping_exact": true
+  },
+  "clean_trace": {
+    "any_fired": false,
+    "failures_per_event": [
+      [],
+      [],
+      []
+    ],
+    "kappa_word": 0.24368363626964717,
+    "n_events": 3
+  },
+  "fault_isolation": {
+    "cases": {
+      "bridge_absorption": [
+        "bridge_absorption"
+      ],
+      "energy_leakage": [
+        "energy_leakage"
+      ],
+      "false_ascent": [
+        "false_ascent"
+      ]
+    },
+    "confusion_matrix": {
+      "is_diagonal": true,
+      "labels": [
+        "false_ascent",
+        "energy_leakage",
+        "bridge_absorption"
+      ],
+      "matrix": {
+        "bridge_absorption": {
+          "bridge_absorption": 1,
+          "energy_leakage": 0,
+          "false_ascent": 0
+        },
+        "energy_leakage": {
+          "bridge_absorption": 0,
+          "energy_leakage": 1,
+          "false_ascent": 0
+        },
+        "false_ascent": {
+          "bridge_absorption": 0,
+          "energy_leakage": 0,
+          "false_ascent": 1
+        }
+      }
+    },
+    "leak_kappa_word": 4.000000000000001
+  },
+  "return_and_remainder": {
+    "any_flattened": false,
+    "rows": [
+      {
+        "expected_two_rho": 0.5,
+        "flattened": false,
+        "kappa_inverse_pair": 0.5,
+        "remainder_len": 2,
+        "rho": 0.25,
+        "source_defect": 2.220446049250313e-16,
+        "streamed_survival": 0.36787944117144233
+      },
+      {
+        "expected_two_rho": 0.6,
+        "flattened": false,
+        "kappa_inverse_pair": 0.5999999999999999,
+        "remainder_len": 2,
+        "rho": 0.3,
+        "source_defect": 5.540712749075483e-17,
+        "streamed_survival": 0.30119421191220214
+      },
+      {
+        "expected_two_rho": 0.7,
+        "flattened": false,
+        "kappa_inverse_pair": 0.7000000000000004,
+        "remainder_len": 2,
+        "rho": 0.35,
+        "source_defect": 1.277479355694058e-16,
+        "streamed_survival": 0.2465969639416065
+      }
+    ],
+    "worst_return_error": 4.440892098500626e-16,
+    "worst_source_defect": 2.220446049250313e-16
+  },
+  "round": "QSigma-R6e",
+  "schema_emitted": "ohnium.observable-ascent.v2",
+  "seed": 20260728,
+  "telescoping": {
+    "note": "kappa is a 2-cocycle and telescopes over PREFIXES, not adjacent pairs. The first implementation summed pairwise and disagreed with the word total at 1.2e-2; T4 existed to catch exactly that and did.",
+    "rows": [
+      {
+        "abs_diff": 0.0,
+        "kappa_word": 0.0,
+        "n_events": 1,
+        "per_event_sum": 0.0
+      },
+      {
+        "abs_diff": 0.0,
+        "kappa_word": 0.12656260641891004,
+        "n_events": 2,
+        "per_event_sum": 0.12656260641891004
+      },
+      {
+        "abs_diff": 0.0,
+        "kappa_word": 0.17593523303420144,
+        "n_events": 3,
+        "per_event_sum": 0.17593523303420144
+      },
+      {
+        "abs_diff": 0.0,
+        "kappa_word": 1.4309604807294902,
+        "n_events": 5,
+        "per_event_sum": 1.4309604807294902
+      },
+      {
+        "abs_diff": 0.0,
+        "kappa_word": 3.367170541998422,
+        "n_events": 8,
+        "per_event_sum": 3.367170541998422
+      }
+    ],
+    "worst_diff": 0.0
+  },
+  "verdict": "ALL GATES PASS"
+}

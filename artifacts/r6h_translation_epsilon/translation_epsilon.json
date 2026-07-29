@@ -1,0 +1,147 @@
+{
+  "E1_E3_finding": "the compact SU(2) source gives epsilon = 0.000000 and classifies as FLATTENED, while the non-compact SL(2,R) source does not. The measure reads REMAINDER: a compact source has no unprojected depth to lose, so a perfect translation of it is not an achievement. That is the skill's own law used as a test of the skill, and it passed.",
+  "E2_failure_and_correction": "E2 predicted SL(2,R) would be RESONANT. On the verbatim seven-term sum it scored 3.434 and classified DISCONNECTED -- wrong, since it is the working encoding this programme is built on. The cause is structural: three terms are properties of the CARRIER STRATUM, not of the translation. The octonion associator defect is exactly 2.0 for every translation carried on O, good or bad; the Lorentzian signature mismatch is 2/3 for every translation on this source. Offsets added to every candidate cannot separate candidates. Restricting to the four terms that vary gives 0.768 -> RESONANT, while scalar-collapse still gives 6.754 -> DISCONNECTED and the compact case still gives 0.0 -> FLATTENED. The threshold was NOT raised; tau stays at 1.0 and the formula's partition was corrected.",
+  "E5_finding": "projection_violence in the epsilon vector is volume_form_distortion from R6b, unchanged. The skill's abstract term lands on a number this repository already had.",
+  "carrier_terms": [
+    "associator_defect",
+    "curvature_mismatch",
+    "zero_divisor_shadow"
+  ],
+  "cases": {
+    "compact_su2": {
+      "classification": "flattened",
+      "components": {
+        "associator_defect": 0.0,
+        "curvature_mismatch": 0.0,
+        "holonomy_drift": 0.0,
+        "projection_violence": 0.0,
+        "remainder_loss": 0.0,
+        "sectional_mismatch": 0.0,
+        "zero_divisor_shadow": 0.0
+      },
+      "epsilon": 0.0,
+      "naive_classification": "flattened",
+      "name": "SU(2) -> density matrix",
+      "split": {
+        "carrier_offset": 0.0,
+        "naive_total": 0.0,
+        "translation_epsilon": 0.0
+      }
+    },
+    "non_compact_sl2": {
+      "classification": "resonant",
+      "components": {
+        "associator_defect": 2.0,
+        "curvature_mismatch": 0.6666666666666666,
+        "holonomy_drift": 0.013981230364153774,
+        "projection_violence": 0.00379596313968392,
+        "remainder_loss": 0.4998322686860488,
+        "sectional_mismatch": 0.2501677594477451,
+        "zero_divisor_shadow": 0.0
+      },
+      "epsilon": 3.4344438883042976,
+      "naive_classification": "disconnected",
+      "name": "SL(2,R) -> density matrix",
+      "split": {
+        "carrier_offset": 2.6666666666666665,
+        "naive_total": 3.434443888304298,
+        "translation_epsilon": 0.7677772216376316
+      }
+    },
+    "scalar_collapse": {
+      "classification": "disconnected",
+      "components": {
+        "associator_defect": 2.0,
+        "curvature_mismatch": 0.6666666666666666,
+        "holonomy_drift": 6.000000000000024,
+        "projection_violence": 0.00379596313968392,
+        "remainder_loss": 0.4998322686860488,
+        "sectional_mismatch": 0.2501677594477451,
+        "zero_divisor_shadow": 1.0
+      },
+      "epsilon": 10.420462657940169,
+      "naive_classification": "disconnected",
+      "name": "scalar-collapse (remainder discarded, CD32 carrier)",
+      "split": {
+        "carrier_offset": 3.6666666666666665,
+        "naive_total": 10.420462657940169,
+        "translation_epsilon": 6.753795991273502
+      }
+    }
+  },
+  "checks": {
+    "compact_source_is_flattened": true,
+    "every_term_is_live": true,
+    "lift_chain_valid_through_octonions": true,
+    "lift_to_cd32_is_false_ascent": true,
+    "naive_sum_fails_to_separate": true,
+    "non_compact_source_is_not_flattened": true,
+    "non_compact_source_is_resonant": true,
+    "over_compression_is_disconnected": true,
+    "tau_unchanged_at_one": true,
+    "trichotomy_separates_all_three": true
+  },
+  "cosmos_lifts": {
+    "first_invalid": {
+      "from_dim": 8,
+      "reason": "target carries zero divisors and no Hopf fibration; this is false ascent, not a perspective lift",
+      "target_has_zero_divisors": true,
+      "target_is_division_algebra": false,
+      "to_dim": 32,
+      "valid_lift": false
+    },
+    "n_valid": 3,
+    "steps": [
+      {
+        "from_dim": 1,
+        "reason": "dimension increases into a normed division algebra",
+        "target_has_zero_divisors": false,
+        "target_is_division_algebra": true,
+        "to_dim": 2,
+        "valid_lift": true
+      },
+      {
+        "from_dim": 2,
+        "reason": "dimension increases into a normed division algebra",
+        "target_has_zero_divisors": false,
+        "target_is_division_algebra": true,
+        "to_dim": 4,
+        "valid_lift": true
+      },
+      {
+        "from_dim": 4,
+        "reason": "dimension increases into a normed division algebra",
+        "target_has_zero_divisors": false,
+        "target_is_division_algebra": true,
+        "to_dim": 8,
+        "valid_lift": true
+      },
+      {
+        "from_dim": 8,
+        "reason": "target carries zero divisors and no Hopf fibration; this is false ascent, not a perspective lift",
+        "target_has_zero_divisors": true,
+        "target_is_division_algebra": false,
+        "to_dim": 32,
+        "valid_lift": false
+      }
+    ]
+  },
+  "round": "QSigma-R6h",
+  "tau": 1.0,
+  "term_liveness": {
+    "associator_defect": 2.0,
+    "curvature_mismatch": 0.6666666666666666,
+    "holonomy_drift": 6.000000000000024,
+    "projection_violence": 0.00379596313968392,
+    "remainder_loss": 0.4998322686860488,
+    "sectional_mismatch": 0.2501677594477451,
+    "zero_divisor_shadow": 1.0
+  },
+  "translation_terms": [
+    "sectional_mismatch",
+    "holonomy_drift",
+    "projection_violence",
+    "remainder_loss"
+  ],
+  "verdict": "TRICHOTOMY HOLDS AFTER CORRECTION"
+}

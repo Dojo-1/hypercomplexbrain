@@ -60,32 +60,28 @@ artifacts/**/plots/*
 *.svg
 *.gif
 
-# ---------------------------------------------------------------------------
-# Local agent state and privacy boundary: never publish.
-# ---------------------------------------------------------------------------
-.agent/
-.pytest_tmp/
-artifacts/witness_batches/**/*.lock
-.env
-.env.*
-!.env.example
-*.pem
-*.key
-*.p12
-*.pfx
-*recovery_codes*
-*recovery-code*
-*.log
-
-# Local installers, mobile builds, media, and download-manager payloads.
+# --- privacy barrier -------------------------------------------------------
+# Added after a file listing surfaced personal material next to project source:
+# a dismissal claim, an NDA, ID documents, and a recovery-codes file. None of it
+# was ever tracked here (verified against the full history, not just the tree),
+# and this block exists so an accidental `git add -A` in a directory that also
+# holds those categories cannot stage them. It blocks FORMATS, not names --
+# names change and formats do not.
 *.apk
-*.aab
 *.exe
-*.msi
 *.pkg
 *.rpm
+*.7z
+*.tar
+*.tar.gz
 *.torrent
+*.docx
+*.pptx
+*.xls
+*.xlsx
+*.csv
 *.ogg
 *.mp4
 *.winmd
-*.nfo
+*recovery_code*
+*recovery-code*

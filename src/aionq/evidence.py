@@ -361,12 +361,12 @@ def save_envelope(envelope, path) -> Path:
     payload.setdefault("timestamp", "")
     if not payload.get("timestamp"):
         payload["timestamp"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True))
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
     return path
 
 
 def load_envelope(path):
-    data = json.loads(Path(path).read_text())
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
     if "theorem_name" in data:
         known = {f for f in ProofEnvelope.__dataclass_fields__}
         return ProofEnvelope(**{k: v for k, v in data.items() if k in known})

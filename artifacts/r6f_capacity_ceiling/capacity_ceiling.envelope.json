@@ -1,0 +1,79 @@
+{
+  "claim_id": "EXP-R6F-CAPACITY_CEILING",
+  "command": "PYTHONPATH=src python3 experiments/run_capacity_ceiling.py",
+  "commit_sha": "37da6d74e61e4f97f3241de9ae05d47d000e89cf",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "codebook:rho=8.0,n=8",
+    "codebook:rho=8.0,n=16",
+    "codebook:rho=8.0,n=32",
+    "codebook:rho=8.0,n=64",
+    "codebook:rho=8.0,n=100",
+    "packing:eps=0.05",
+    "packing:eps=0.1",
+    "packing:eps=0.2"
+  ],
+  "observed_result": {
+    "chi_spread_over_sizes": 1.3322676295501878e-15,
+    "compact_chi": 1.978531381060287,
+    "non_compact_chi": 0.9999999999999944,
+    "packing_slopes": [
+      -0.10558531202044286,
+      -0.13151720291689717,
+      -0.05840683249137513
+    ],
+    "sample_size": 8,
+    "verdict": "CAPACITY DOES NOT SURVIVE"
+  },
+  "platform": "",
+  "producer": "experiments/run_capacity_ceiling.py",
+  "raw_artifacts": {
+    "artifacts/r6f_capacity_ceiling/capacity_ceiling.json": "sha256:89476bad8e26423f4bbc75f441d1f4ec73b2a43ae363f4baa80cca4e31c32eef"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    7,
+    5
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-29T05:04:58Z",
+  "typed_remainders": [
+    {
+      "carrier": "this realization only",
+      "comparison": "the ceiling is a property of the R6 fixed-width Bell encoding, not of hyperbolic geometry as such. Another encoding of the same source could have a different ceiling, and nothing here rules that out",
+      "kind": "scope_remainder"
+    },
+    {
+      "carrier": "one-shot",
+      "comparison": "single use, one probe, one bipartition. No coding theorem, no regularisation, no asymptotic capacity",
+      "kind": "scope_remainder"
+    },
+    {
+      "carrier": "greedy packing",
+      "comparison": "packing_number is greedy and therefore a LOWER bound on the true packing number. That is the safe direction for a claim that the count fails to grow: an under-count cannot manufacture a failure to grow",
+      "kind": "method_remainder"
+    },
+    {
+      "carrier": "the external R7 packing result",
+      "comparison": "an external run reported log-slope 0 at eps = 0.05, 0.10, 0.20 with counts 100/68/52. This run reproduces the SLOPE independently; the counts differ because the sampling differs, and the slope is the claim",
+      "kind": "witness_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}

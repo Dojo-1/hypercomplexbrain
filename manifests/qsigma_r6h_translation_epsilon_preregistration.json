@@ -1,0 +1,59 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "QSigma-R6h - Translation epsilon as an operator, and the flattening test",
+  "committed_before_any_implementation": true,
+  "baseline": {"commit_sha": "8d1a4dd", "tests": 1405, "envelopes": "18/18"},
+  "prompt": "The hypercomplex-learning-towers skill supplies a translation-quality measure and a trichotomy: epsilon_A = 0 means the other has been flattened; 0 < epsilon_A < tau_A is resonance; epsilon_A >= tau_A is no stable resonance.",
+  "position": "That formula is testable rather than decorative, because every one of its seven terms already has a verified operator here. This round binds them, computes epsilon on three concrete translations, and checks the trichotomy. It adds no new measure and makes no claim about cognition.",
+  "term_bindings": {
+    "projection_violence": "volume_form_distortion (R6b, verified)",
+    "algebraic_associator_defect": "fast_associator (cayley_dickson, verified S8)",
+    "zero_divisor_shadow": "find_zero_divisor (R6c ladder, verified)",
+    "holonomy_drift": "kappa 2-cocycle (R6b, verified to 1.3e-15)",
+    "curvature_mismatch": "induced_metric_signature (R6b, signature (1,2))",
+    "sectional_mismatch": "cocycle defect over a cover (aionq.sheaf)",
+    "loss_of_active_remainder": "flag_success_decomposition remainder terms (R6d)"
+  },
+  "central_prediction": {
+    "id": "E1",
+    "statement": "epsilon_A = 0 identifies a source with NO active remainder, not a good translation. The compact SU(2) encoding should give epsilon ~ 0 because a compact source has no unprojected depth to lose; the non-compact SL(2,R) encoding should give epsilon > 0 because it does. If both give epsilon > 0, or both give 0, the measure is not reading what the skill claims it reads.",
+    "why_it_matters": "this is the skill's own law used as a test OF the skill. A measure that cannot distinguish a compact source from a non-compact one would be metaphor inflation by its own failure-mode list."
+  },
+  "predictions": [
+    {"id": "E2", "statement": "the SL(2,R) -> density-matrix translation is RESONANT: 0 < epsilon < tau."},
+    {"id": "E3", "statement": "the SU(2) -> density-matrix translation is FLATTENED: epsilon ~ 0, because p = 1 identically, no erasure branch exists, and the source is exhausted by the target."},
+    {"id": "E4", "statement": "a deliberately over-compressed translation (scalar norm only, remainder discarded) is DISCONNECTED: epsilon >= tau."},
+    {"id": "E5", "statement": "epsilon evaluated on the R6 encoding equals the projection violence R6b already measured, 8 sqrt2 e^{-4 rho} in its dominant term. The skill's abstract formula lands on a number this repository already has, or the binding is wrong."},
+    {"id": "E6", "statement": "LiftCosmos from R to C to H to O strictly increases carrier soundness and is a valid lift; the lift from O to CD32 does NOT, because zero divisors appear and no Hopf fibration exists. That is the skill's 'recursive flattening' / 'false ascent' made computable, and it reuses R6e's detector rather than inventing one."}
+  ],
+  "controls": [
+    "flattening control: a compact source must give epsilon ~ 0, or the measure is not reading remainder",
+    "disconnection control: an over-compressed translation must exceed tau, or tau is meaningless",
+    "term isolation: each of the seven terms must be independently non-trivial on at least one translation, or it is dead weight in the sum",
+    "no-new-measure control: every term must resolve to a function already committed and tested before this round"
+  ],
+  "kill_conditions": [
+    "epsilon > 0 for the compact source (the measure does not read remainder)",
+    "epsilon = 0 for the non-compact source (the measure does not read the R6 cost)",
+    "the trichotomy does not separate the three test translations",
+    "any term requires a function invented in this round",
+    "any claim that epsilon measures understanding, meaning, or cognition"
+  ],
+  "evidence_floor": {
+    "P": "the component identities, all previously verified",
+    "M": "epsilon values on the three translations and the trichotomy",
+    "S": "that epsilon is a useful translation-quality measure for anything beyond these three cases. It is an instrument and this round does not show it generalises",
+    "independent": "not reachable in this round"
+  },
+  "files_expected_to_change": [
+    "src/aionq/translation_epsilon.py",
+    "experiments/run_translation_epsilon.py",
+    "tests/test_translation_epsilon.py"
+  ],
+  "stop_condition": "Stop after the seven bindings, the three translations, the trichotomy and the lift validity check. Do not build a visualisation, do not claim the measure generalises, and do not attach it to any notion of meaning or understanding.",
+  "typed_remainder": {
+    "kind": "instrument_remainder",
+    "carrier": "epsilon itself",
+    "statement": "epsilon is a weighted sum of seven quantities in different units. The sum is a convention, not a derived invariant, and the weights are set to 1 because there is no principled reason for anything else. Any conclusion that depends on the relative weighting is not supported by this round; only the trichotomy's sign structure is."
+  }
+}

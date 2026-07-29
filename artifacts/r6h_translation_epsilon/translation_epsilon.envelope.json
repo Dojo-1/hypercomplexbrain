@@ -1,0 +1,63 @@
+{
+  "claim_id": "EXP-R6H-TRANSLATION_EPS",
+  "command": "PYTHONPATH=src python3 experiments/run_translation_epsilon.py",
+  "commit_sha": "867b55f81cef4bf1d7940bfaceb406f7f321e1e9",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "translation:compact_su2",
+    "translation:non_compact_sl2",
+    "translation:scalar_collapse"
+  ],
+  "observed_result": {
+    "epsilon_collapse": 6.753795991273502,
+    "epsilon_compact": 0.0,
+    "epsilon_non_compact": 0.7677772216376316,
+    "sample_size": 3,
+    "verdict": "TRICHOTOMY HOLDS AFTER CORRECTION"
+  },
+  "platform": "",
+  "producer": "experiments/run_translation_epsilon.py",
+  "raw_artifacts": {
+    "artifacts/r6h_translation_epsilon/translation_epsilon.json": "sha256:354875116d3670c566810d80d91b78642efe7cf9b8849e1f7d28f3dc3f9d53bf"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    5
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-29T05:26:57Z",
+  "typed_remainders": [
+    {
+      "carrier": "epsilon itself",
+      "comparison": "a sum of quantities in different units with weights of 1 because nothing justifies anything else. Only the trichotomy's SIGN structure is supported; any conclusion turning on relative weighting is not",
+      "kind": "instrument_remainder"
+    },
+    {
+      "carrier": "three translations",
+      "comparison": "the measure was exercised on three cases chosen to span the trichotomy. Nothing here shows it generalises, and it is tier S until it classifies a translation whose answer was not known in advance",
+      "kind": "scope_remainder"
+    },
+    {
+      "carrier": "'translation'",
+      "comparison": "epsilon measures geometric and information-theoretic defect between an encoding and its source. It does not measure meaning, understanding, or cognition, and no result here licenses that reading",
+      "kind": "naming_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}
