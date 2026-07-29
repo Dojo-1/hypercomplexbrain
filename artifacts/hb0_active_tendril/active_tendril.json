@@ -1,0 +1,3481 @@
+{
+  "controls": {
+    "active_accepted": true,
+    "active_alignment_decreases": true,
+    "active_nonzero_vector_delta": true,
+    "active_only_declared_target": true,
+    "complex_phase_rejected_without_state_change": true,
+    "disabled_matched_observation_and_cost": true,
+    "disabled_zero_committed_delta": true,
+    "identity_not_consolidated_in_this_slice": true,
+    "missing_authorization_rejects_exactly": true,
+    "round_trip_guard_holds": true,
+    "seed_deterministic": true,
+    "shuffled_matched_observation_and_cost": true,
+    "shuffled_only_control_target": true
+  },
+  "evidence_status": "bounded_simulator_measurement",
+  "probe": {
+    "authorization": {
+      "compute": 0.1
+    },
+    "coupling": 0.5,
+    "declared_target": "W_somatic_01",
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "shuffled_target": "W_somatic_02",
+    "tendril_id": "T_00"
+  },
+  "rows": [
+    {
+      "active": {
+        "accepted": true,
+        "alignment_after": 0.1252198536717461,
+        "alignment_before": 0.15178164081423773,
+        "alignment_if_committed": 0.1252198536717461,
+        "committed": true,
+        "committed_delta": [
+          0.00672921316643299,
+          -0.0014278841335916455,
+          -0.024586824461843904,
+          -0.0073277169805641695
+        ],
+        "committed_delta_norm": 0.026561787142491602,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.00672921316643299,
+          -0.0014278841335916455,
+          -0.024586824461843904,
+          -0.0073277169805641695
+        ],
+        "proposed_delta_norm": 0.026561787142491602,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          0.010058417687471465,
+          -0.010568389063304155,
+          0.05123381203546258,
+          0.008392009372243178
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.010058417687471463,
+          -0.010568389063304151,
+          0.05123381203546257,
+          0.008392009372243176
+        ],
+        "staged_target": [
+          -0.036124336686455885,
+          0.027499720259167134,
+          0.07973317914856708,
+          0.0684387600697752
+        ],
+        "target_after": [
+          -0.036124336686455885,
+          0.027499720259167134,
+          0.07973317914856708,
+          0.0684387600697752
+        ],
+        "target_before": [
+          -0.042853549852888875,
+          0.02892760439275878,
+          0.10432000361041098,
+          0.07576647705033937
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.4513737894400392e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.004400903187557493,
+          0.02076826648652081,
+          -0.036176136171554164,
+          0.033893808589972686
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.12521985367174612,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5708654310658008
+          }
+        }
+      },
+      "active_changed_worldlets": [
+        "W_somatic_01"
+      ],
+      "active_identity_exact": true,
+      "complex_exception": {
+        "budget_exact": true,
+        "error": "T_00.output is complex-valued; HB0-T1 supports real carriers only",
+        "identity_exact": true,
+        "ledger_exact": true,
+        "phase_rejected": true,
+        "tick_exact": true,
+        "worldlets_exact": true
+      },
+      "deterministic_report": true,
+      "deterministic_worldlets": true,
+      "disabled": {
+        "accepted": true,
+        "alignment_after": 0.15178164081423773,
+        "alignment_before": 0.15178164081423773,
+        "alignment_if_committed": 0.1252198536717461,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "disabled_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.00672921316643299,
+          -0.0014278841335916455,
+          -0.024586824461843904,
+          -0.0073277169805641695
+        ],
+        "proposed_delta_norm": 0.026561787142491602,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          0.010058417687471465,
+          -0.010568389063304155,
+          0.05123381203546258,
+          0.008392009372243178
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.010058417687471463,
+          -0.010568389063304151,
+          0.05123381203546257,
+          0.008392009372243176
+        ],
+        "staged_target": [
+          -0.036124336686455885,
+          0.027499720259167134,
+          0.07973317914856708,
+          0.0684387600697752
+        ],
+        "target_after": [
+          -0.042853549852888875,
+          0.02892760439275878,
+          0.10432000361041098,
+          0.07576647705033937
+        ],
+        "target_before": [
+          -0.042853549852888875,
+          0.02892760439275878,
+          0.10432000361041098,
+          0.07576647705033937
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.4513737894400392e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.004400903187557493,
+          0.02076826648652081,
+          -0.036176136171554164,
+          0.033893808589972686
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.15178164081423776,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5708654310658008
+          }
+        }
+      },
+      "disabled_changed_worldlets": [],
+      "input_digest": "sha256:60fb35114173fa82bf484f173b289fec0d0ce81cebaca38dd2f2d4278078638d",
+      "rejected": {
+        "accepted": false,
+        "alignment_after": 0.15178164081423773,
+        "alignment_before": 0.15178164081423773,
+        "alignment_if_committed": 0.1252198536717461,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [
+          "compute"
+        ],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.00672921316643299,
+          -0.0014278841335916455,
+          -0.024586824461843904,
+          -0.0073277169805641695
+        ],
+        "proposed_delta_norm": 0.026561787142491602,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          0.010058417687471465,
+          -0.010568389063304155,
+          0.05123381203546258,
+          0.008392009372243178
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.010058417687471463,
+          -0.010568389063304151,
+          0.05123381203546257,
+          0.008392009372243176
+        ],
+        "staged_target": [
+          -0.036124336686455885,
+          0.027499720259167134,
+          0.07973317914856708,
+          0.0684387600697752
+        ],
+        "target_after": [
+          -0.042853549852888875,
+          0.02892760439275878,
+          0.10432000361041098,
+          0.07576647705033937
+        ],
+        "target_before": [
+          -0.042853549852888875,
+          0.02892760439275878,
+          0.10432000361041098,
+          0.07576647705033937
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.4513737894400392e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.004400903187557493,
+          0.02076826648652081,
+          -0.036176136171554164,
+          0.033893808589972686
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.12521985367174612,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5708654310658008
+          }
+        }
+      },
+      "rejected_identity_exact": true,
+      "rejected_worldlets_exact": true,
+      "seed": 0,
+      "shuffled": {
+        "accepted": true,
+        "alignment_after": 0.11281943239897405,
+        "alignment_before": 0.13675082715027156,
+        "alignment_if_committed": 0.11281943239897405,
+        "committed": true,
+        "committed_delta": [
+          0.009082135243475335,
+          0.021350347229785877,
+          0.00239501864550095,
+          0.005352852792383808
+        ],
+        "committed_delta_norm": 0.023931394751297522,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "shuffled_target_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.009082135243475335,
+          0.021350347229785877,
+          0.00239501864550095,
+          0.005352852792383808
+        ],
+        "proposed_delta_norm": 0.023931394751297522,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          0.010058417687471465,
+          -0.010568389063304155,
+          0.05123381203546258,
+          0.008392009372243178
+        ],
+        "selected_target": "W_somatic_02",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.010058417687471463,
+          -0.010568389063304151,
+          0.05123381203546257,
+          0.008392009372243176
+        ],
+        "staged_target": [
+          -0.047216683621084075,
+          -0.07988337045389833,
+          -0.04746693835748723,
+          0.008658931140163296
+        ],
+        "target_after": [
+          -0.047216683621084075,
+          -0.07988337045389833,
+          -0.04746693835748723,
+          0.008658931140163296
+        ],
+        "target_before": [
+          -0.05629881886455941,
+          -0.10123371768368421,
+          -0.04986195700298818,
+          0.003306078347779488
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.4513737894400392e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.004400903187557493,
+          0.02076826648652081,
+          -0.036176136171554164,
+          0.033893808589972686
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.11281943239897406,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5708654310658008
+          }
+        }
+      },
+      "shuffled_changed_worldlets": [
+        "W_somatic_02"
+      ],
+      "shuffled_declared_target_exact": true
+    },
+    {
+      "active": {
+        "accepted": true,
+        "alignment_after": 0.09952852315517345,
+        "alignment_before": 0.12064063412748298,
+        "alignment_if_committed": 0.09952852315517345,
+        "committed": true,
+        "committed_delta": [
+          -0.000851021379311756,
+          -0.007483382352761133,
+          0.018069673345742797,
+          0.007904611695687645
+        ],
+        "committed_delta_norm": 0.02111211097230952,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.000851021379311756,
+          -0.007483382352761133,
+          0.018069673345742797,
+          0.007904611695687645
+        ],
+        "proposed_delta_norm": 0.02111211097230952,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          0.02764673536518291,
+          0.06572945148009267,
+          0.02643496609467097,
+          -0.10425257852834888
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.027646735365182883,
+          0.06572945148009267,
+          0.02643496609467097,
+          -0.10425257852834888
+        ],
+        "staged_target": [
+          0.07157744795453766,
+          0.02822658343635977,
+          -0.024886585483080016,
+          0.054394060031395894
+        ],
+        "target_after": [
+          0.07157744795453766,
+          0.02822658343635977,
+          -0.024886585483080016,
+          0.054394060031395894
+        ],
+        "target_before": [
+          0.07242846933384942,
+          0.035709965789120904,
+          -0.04295625882882281,
+          0.04648944833570825
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 2.7755575615628914e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.06756549002349653,
+          -0.007052219083799854,
+          0.060299017432564606,
+          0.09165865802535195
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.09952852315517348,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.31089889438058343
+          }
+        }
+      },
+      "active_changed_worldlets": [
+        "W_somatic_01"
+      ],
+      "active_identity_exact": true,
+      "complex_exception": {
+        "budget_exact": true,
+        "error": "T_00.output is complex-valued; HB0-T1 supports real carriers only",
+        "identity_exact": true,
+        "ledger_exact": true,
+        "phase_rejected": true,
+        "tick_exact": true,
+        "worldlets_exact": true
+      },
+      "deterministic_report": true,
+      "deterministic_worldlets": true,
+      "disabled": {
+        "accepted": true,
+        "alignment_after": 0.12064063412748298,
+        "alignment_before": 0.12064063412748298,
+        "alignment_if_committed": 0.09952852315517345,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "disabled_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.000851021379311756,
+          -0.007483382352761133,
+          0.018069673345742797,
+          0.007904611695687645
+        ],
+        "proposed_delta_norm": 0.02111211097230952,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          0.02764673536518291,
+          0.06572945148009267,
+          0.02643496609467097,
+          -0.10425257852834888
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.027646735365182883,
+          0.06572945148009267,
+          0.02643496609467097,
+          -0.10425257852834888
+        ],
+        "staged_target": [
+          0.07157744795453766,
+          0.02822658343635977,
+          -0.024886585483080016,
+          0.054394060031395894
+        ],
+        "target_after": [
+          0.07242846933384942,
+          0.035709965789120904,
+          -0.04295625882882281,
+          0.04648944833570825
+        ],
+        "target_before": [
+          0.07242846933384942,
+          0.035709965789120904,
+          -0.04295625882882281,
+          0.04648944833570825
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 2.7755575615628914e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.06756549002349653,
+          -0.007052219083799854,
+          0.060299017432564606,
+          0.09165865802535195
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.120640634127483,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.31089889438058343
+          }
+        }
+      },
+      "disabled_changed_worldlets": [],
+      "input_digest": "sha256:4a9eca1a6f129dc05352923025d655c2a3964c801f220cd4be78abf4e769fe71",
+      "rejected": {
+        "accepted": false,
+        "alignment_after": 0.12064063412748298,
+        "alignment_before": 0.12064063412748298,
+        "alignment_if_committed": 0.09952852315517345,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [
+          "compute"
+        ],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.000851021379311756,
+          -0.007483382352761133,
+          0.018069673345742797,
+          0.007904611695687645
+        ],
+        "proposed_delta_norm": 0.02111211097230952,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          0.02764673536518291,
+          0.06572945148009267,
+          0.02643496609467097,
+          -0.10425257852834888
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.027646735365182883,
+          0.06572945148009267,
+          0.02643496609467097,
+          -0.10425257852834888
+        ],
+        "staged_target": [
+          0.07157744795453766,
+          0.02822658343635977,
+          -0.024886585483080016,
+          0.054394060031395894
+        ],
+        "target_after": [
+          0.07242846933384942,
+          0.035709965789120904,
+          -0.04295625882882281,
+          0.04648944833570825
+        ],
+        "target_before": [
+          0.07242846933384942,
+          0.035709965789120904,
+          -0.04295625882882281,
+          0.04648944833570825
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 2.7755575615628914e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.06756549002349653,
+          -0.007052219083799854,
+          0.060299017432564606,
+          0.09165865802535195
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.09952852315517348,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.31089889438058343
+          }
+        }
+      },
+      "rejected_identity_exact": true,
+      "rejected_worldlets_exact": true,
+      "seed": 1,
+      "shuffled": {
+        "accepted": true,
+        "alignment_after": 0.07412731957710714,
+        "alignment_before": 0.08985129645709956,
+        "alignment_if_committed": 0.07412731957710714,
+        "committed": true,
+        "committed_delta": [
+          0.006719947207506832,
+          -0.00535199329284234,
+          0.010154416672277651,
+          0.008386283341862331
+        ],
+        "committed_delta_norm": 0.01572397687999242,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "shuffled_target_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.006719947207506832,
+          -0.00535199329284234,
+          0.010154416672277651,
+          0.008386283341862331
+        ],
+        "proposed_delta_norm": 0.01572397687999242,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          0.02764673536518291,
+          0.06572945148009267,
+          0.02643496609467097,
+          -0.10425257852834888
+        ],
+        "selected_target": "W_somatic_02",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.027646735365182883,
+          0.06572945148009267,
+          0.02643496609467097,
+          -0.10425257852834888
+        ],
+        "staged_target": [
+          0.03588573890239289,
+          0.01817860643959974,
+          0.012428195977541395,
+          0.052123322270858086
+        ],
+        "target_after": [
+          0.03588573890239289,
+          0.01817860643959974,
+          0.012428195977541395,
+          0.052123322270858086
+        ],
+        "target_before": [
+          0.02916579169488606,
+          0.02353059973244208,
+          0.002273779305263743,
+          0.043737038928995754
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 2.7755575615628914e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.06756549002349653,
+          -0.007052219083799854,
+          0.060299017432564606,
+          0.09165865802535195
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.07412731957710716,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.31089889438058343
+          }
+        }
+      },
+      "shuffled_changed_worldlets": [
+        "W_somatic_02"
+      ],
+      "shuffled_declared_target_exact": true
+    },
+    {
+      "active": {
+        "accepted": true,
+        "alignment_after": 0.15397634070321822,
+        "alignment_before": 0.18663798873117365,
+        "alignment_if_committed": 0.15397634070321822,
+        "committed": true,
+        "committed_delta": [
+          0.007569811141160537,
+          -0.02946122807481752,
+          0.0018767612711392753,
+          -0.011747128101963447
+        ],
+        "committed_delta_norm": 0.03266164802795538,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.007569811141160537,
+          -0.02946122807481752,
+          0.0018767612711392753,
+          -0.011747128101963447
+        ],
+        "proposed_delta_norm": 0.03266164802795538,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.015124270543482601,
+          -0.041819875318459765,
+          -0.03304508347135148,
+          -0.19531739061118836
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.015124270543482645,
+          -0.04181987531845979,
+          -0.033045083471351475,
+          -0.19531739061118847
+        ],
+        "staged_target": [
+          0.15154640175883272,
+          0.06207204168816079,
+          -0.024157065678286675,
+          0.05015739883624947
+        ],
+        "target_after": [
+          0.15154640175883272,
+          0.06207204168816079,
+          -0.024157065678286675,
+          0.05015739883624947
+        ],
+        "target_before": [
+          0.14397659061767218,
+          0.0915332697629783,
+          -0.02603382694942595,
+          0.06190452693821292
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.2257757882972949e-16,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.1872326542814467,
+          -0.07681660495026466,
+          -0.015309476828630098,
+          -0.005221919358721058
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.15397634070321833,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.474022254228253
+          }
+        }
+      },
+      "active_changed_worldlets": [
+        "W_somatic_01"
+      ],
+      "active_identity_exact": true,
+      "complex_exception": {
+        "budget_exact": true,
+        "error": "T_00.output is complex-valued; HB0-T1 supports real carriers only",
+        "identity_exact": true,
+        "ledger_exact": true,
+        "phase_rejected": true,
+        "tick_exact": true,
+        "worldlets_exact": true
+      },
+      "deterministic_report": true,
+      "deterministic_worldlets": true,
+      "disabled": {
+        "accepted": true,
+        "alignment_after": 0.18663798873117365,
+        "alignment_before": 0.18663798873117365,
+        "alignment_if_committed": 0.15397634070321822,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "disabled_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.007569811141160537,
+          -0.02946122807481752,
+          0.0018767612711392753,
+          -0.011747128101963447
+        ],
+        "proposed_delta_norm": 0.03266164802795538,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.015124270543482601,
+          -0.041819875318459765,
+          -0.03304508347135148,
+          -0.19531739061118836
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.015124270543482645,
+          -0.04181987531845979,
+          -0.033045083471351475,
+          -0.19531739061118847
+        ],
+        "staged_target": [
+          0.15154640175883272,
+          0.06207204168816079,
+          -0.024157065678286675,
+          0.05015739883624947
+        ],
+        "target_after": [
+          0.14397659061767218,
+          0.0915332697629783,
+          -0.02603382694942595,
+          0.06190452693821292
+        ],
+        "target_before": [
+          0.14397659061767218,
+          0.0915332697629783,
+          -0.02603382694942595,
+          0.06190452693821292
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.2257757882972949e-16,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.1872326542814467,
+          -0.07681660495026466,
+          -0.015309476828630098,
+          -0.005221919358721058
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.18663798873117377,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.474022254228253
+          }
+        }
+      },
+      "disabled_changed_worldlets": [],
+      "input_digest": "sha256:c9500ea1b7569c4d4592a7e865a02ff26d4194f34be3c9da047079e0d47041f7",
+      "rejected": {
+        "accepted": false,
+        "alignment_after": 0.18663798873117365,
+        "alignment_before": 0.18663798873117365,
+        "alignment_if_committed": 0.15397634070321822,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [
+          "compute"
+        ],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.007569811141160537,
+          -0.02946122807481752,
+          0.0018767612711392753,
+          -0.011747128101963447
+        ],
+        "proposed_delta_norm": 0.03266164802795538,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.015124270543482601,
+          -0.041819875318459765,
+          -0.03304508347135148,
+          -0.19531739061118836
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.015124270543482645,
+          -0.04181987531845979,
+          -0.033045083471351475,
+          -0.19531739061118847
+        ],
+        "staged_target": [
+          0.15154640175883272,
+          0.06207204168816079,
+          -0.024157065678286675,
+          0.05015739883624947
+        ],
+        "target_after": [
+          0.14397659061767218,
+          0.0915332697629783,
+          -0.02603382694942595,
+          0.06190452693821292
+        ],
+        "target_before": [
+          0.14397659061767218,
+          0.0915332697629783,
+          -0.02603382694942595,
+          0.06190452693821292
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.2257757882972949e-16,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.1872326542814467,
+          -0.07681660495026466,
+          -0.015309476828630098,
+          -0.005221919358721058
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.15397634070321833,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.474022254228253
+          }
+        }
+      },
+      "rejected_identity_exact": true,
+      "rejected_worldlets_exact": true,
+      "seed": 2,
+      "shuffled": {
+        "accepted": true,
+        "alignment_after": 0.15938716623526203,
+        "alignment_before": 0.19319656513365097,
+        "alignment_if_committed": 0.15938716623526203,
+        "committed": true,
+        "committed_delta": [
+          0.028828765122086084,
+          -0.005689386156359583,
+          -0.01636510276077477,
+          0.0034339557654519508
+        ],
+        "committed_delta_norm": 0.033809398898388916,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "shuffled_target_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.028828765122086084,
+          -0.005689386156359583,
+          -0.01636510276077477,
+          0.0034339557654519508
+        ],
+        "proposed_delta_norm": 0.033809398898388916,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.015124270543482601,
+          -0.041819875318459765,
+          -0.03304508347135148,
+          -0.19531739061118836
+        ],
+        "selected_target": "W_somatic_02",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.015124270543482645,
+          -0.04181987531845979,
+          -0.033045083471351475,
+          -0.19531739061118847
+        ],
+        "staged_target": [
+          0.051325618705898024,
+          -0.049995213070283775,
+          0.061840293329308085,
+          -0.021410567967280254
+        ],
+        "target_after": [
+          0.051325618705898024,
+          -0.049995213070283775,
+          0.061840293329308085,
+          -0.021410567967280254
+        ],
+        "target_before": [
+          0.02249685358381194,
+          -0.04430582691392419,
+          0.07820539609008285,
+          -0.024844523732732205
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.2257757882972949e-16,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.1872326542814467,
+          -0.07681660495026466,
+          -0.015309476828630098,
+          -0.005221919358721058
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.15938716623526214,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.474022254228253
+          }
+        }
+      },
+      "shuffled_changed_worldlets": [
+        "W_somatic_02"
+      ],
+      "shuffled_declared_target_exact": true
+    },
+    {
+      "active": {
+        "accepted": true,
+        "alignment_after": 0.20899340270796243,
+        "alignment_before": 0.25332533661571205,
+        "alignment_if_committed": 0.20899340270796243,
+        "committed": true,
+        "committed_delta": [
+          -0.03946485815421484,
+          0.0039206478709062215,
+          0.018895640322210777,
+          0.005952195557504968
+        ],
+        "committed_delta_norm": 0.0443319339077496,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.03946485815421484,
+          0.0039206478709062215,
+          0.018895640322210777,
+          0.005952195557504968
+        ],
+        "proposed_delta_norm": 0.0443319339077496,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.16327352971081455,
+          -0.20445320250513466,
+          0.03344790773806232,
+          -0.04542156849023436
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.1632735297108146,
+          -0.20445320250513455,
+          0.03344790773806231,
+          -0.04542156849023438
+        ],
+        "staged_target": [
+          -0.07567680152305051,
+          -0.013327125176275052,
+          -0.1427032500095693,
+          -0.012602394654030189
+        ],
+        "target_after": [
+          -0.07567680152305051,
+          -0.013327125176275052,
+          -0.1427032500095693,
+          -0.012602394654030189
+        ],
+        "target_before": [
+          -0.03621194336883567,
+          -0.017247773047181274,
+          -0.16159889033178007,
+          -0.018554590211535157
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.2605126751125787e-16,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.26172541853577763,
+          0.00515592907228285,
+          -0.053623802776289906,
+          0.015457955831350376
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.20899340270796257,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.44367851996816715
+          }
+        }
+      },
+      "active_changed_worldlets": [
+        "W_somatic_01"
+      ],
+      "active_identity_exact": true,
+      "complex_exception": {
+        "budget_exact": true,
+        "error": "T_00.output is complex-valued; HB0-T1 supports real carriers only",
+        "identity_exact": true,
+        "ledger_exact": true,
+        "phase_rejected": true,
+        "tick_exact": true,
+        "worldlets_exact": true
+      },
+      "deterministic_report": true,
+      "deterministic_worldlets": true,
+      "disabled": {
+        "accepted": true,
+        "alignment_after": 0.25332533661571205,
+        "alignment_before": 0.25332533661571205,
+        "alignment_if_committed": 0.20899340270796243,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "disabled_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.03946485815421484,
+          0.0039206478709062215,
+          0.018895640322210777,
+          0.005952195557504968
+        ],
+        "proposed_delta_norm": 0.0443319339077496,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.16327352971081455,
+          -0.20445320250513466,
+          0.03344790773806232,
+          -0.04542156849023436
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.1632735297108146,
+          -0.20445320250513455,
+          0.03344790773806231,
+          -0.04542156849023438
+        ],
+        "staged_target": [
+          -0.07567680152305051,
+          -0.013327125176275052,
+          -0.1427032500095693,
+          -0.012602394654030189
+        ],
+        "target_after": [
+          -0.03621194336883567,
+          -0.017247773047181274,
+          -0.16159889033178007,
+          -0.018554590211535157
+        ],
+        "target_before": [
+          -0.03621194336883567,
+          -0.017247773047181274,
+          -0.16159889033178007,
+          -0.018554590211535157
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.2605126751125787e-16,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.26172541853577763,
+          0.00515592907228285,
+          -0.053623802776289906,
+          0.015457955831350376
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.25332533661571216,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.44367851996816715
+          }
+        }
+      },
+      "disabled_changed_worldlets": [],
+      "input_digest": "sha256:85cfc75d23dca03ee5619506198c352fce45f00fe12b58a0ee98a7b5aa3e8122",
+      "rejected": {
+        "accepted": false,
+        "alignment_after": 0.25332533661571205,
+        "alignment_before": 0.25332533661571205,
+        "alignment_if_committed": 0.20899340270796243,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [
+          "compute"
+        ],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.03946485815421484,
+          0.0039206478709062215,
+          0.018895640322210777,
+          0.005952195557504968
+        ],
+        "proposed_delta_norm": 0.0443319339077496,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.16327352971081455,
+          -0.20445320250513466,
+          0.03344790773806232,
+          -0.04542156849023436
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.1632735297108146,
+          -0.20445320250513455,
+          0.03344790773806231,
+          -0.04542156849023438
+        ],
+        "staged_target": [
+          -0.07567680152305051,
+          -0.013327125176275052,
+          -0.1427032500095693,
+          -0.012602394654030189
+        ],
+        "target_after": [
+          -0.03621194336883567,
+          -0.017247773047181274,
+          -0.16159889033178007,
+          -0.018554590211535157
+        ],
+        "target_before": [
+          -0.03621194336883567,
+          -0.017247773047181274,
+          -0.16159889033178007,
+          -0.018554590211535157
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.2605126751125787e-16,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.26172541853577763,
+          0.00515592907228285,
+          -0.053623802776289906,
+          0.015457955831350376
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.20899340270796257,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.44367851996816715
+          }
+        }
+      },
+      "rejected_identity_exact": true,
+      "rejected_worldlets_exact": true,
+      "seed": 3,
+      "shuffled": {
+        "accepted": true,
+        "alignment_after": 0.2761736716193029,
+        "alignment_before": 0.334755965599155,
+        "alignment_if_committed": 0.2761736716193029,
+        "committed": true,
+        "committed_delta": [
+          -0.0336889651759119,
+          -0.045619705645378844,
+          -0.012545178071041638,
+          0.007641973391268649
+        ],
+        "committed_delta_norm": 0.05858229397985211,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "shuffled_target_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.0336889651759119,
+          -0.045619705645378844,
+          -0.012545178071041638,
+          0.007641973391268649
+        ],
+        "proposed_delta_norm": 0.05858229397985211,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.16327352971081455,
+          -0.20445320250513466,
+          0.03344790773806232,
+          -0.04542156849023436
+        ],
+        "selected_target": "W_somatic_02",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.1632735297108146,
+          -0.20445320250513455,
+          0.03344790773806231,
+          -0.04542156849023438
+        ],
+        "staged_target": [
+          -0.10290601127790723,
+          0.22022025568621176,
+          0.005517750987192104,
+          -0.020568490156058983
+        ],
+        "target_after": [
+          -0.10290601127790723,
+          0.22022025568621176,
+          0.005517750987192104,
+          -0.020568490156058983
+        ],
+        "target_before": [
+          -0.06921704610199533,
+          0.2658399613315906,
+          0.018062929058233743,
+          -0.028210463547327633
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.2605126751125787e-16,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.26172541853577763,
+          0.00515592907228285,
+          -0.053623802776289906,
+          0.015457955831350376
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.276173671619303,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.44367851996816715
+          }
+        }
+      },
+      "shuffled_changed_worldlets": [
+        "W_somatic_02"
+      ],
+      "shuffled_declared_target_exact": true
+    },
+    {
+      "active": {
+        "accepted": true,
+        "alignment_after": 0.0889162040789245,
+        "alignment_before": 0.10777721706536302,
+        "alignment_if_committed": 0.0889162040789245,
+        "committed": true,
+        "committed_delta": [
+          0.0077210982687429125,
+          -0.014979965012373121,
+          -0.004290303441953615,
+          0.007301807790065151
+        ],
+        "committed_delta_norm": 0.018861012986438528,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.0077210982687429125,
+          -0.014979965012373121,
+          -0.004290303441953615,
+          0.007301807790065151
+        ],
+        "proposed_delta_norm": 0.018861012986438528,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          -0.05214329220893517,
+          -0.01397738338606215,
+          0.13309791931129578,
+          0.05273181998658043
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          -0.05214329220893517,
+          -0.013977383386062173,
+          0.13309791931129575,
+          0.0527318199865804
+        ],
+        "staged_target": [
+          -0.12359068529802882,
+          -0.01539622614612768,
+          -0.05416740272102509,
+          0.01919232965022726
+        ],
+        "target_after": [
+          -0.12359068529802882,
+          -0.01539622614612768,
+          -0.05416740272102509,
+          0.01919232965022726
+        ],
+        "target_before": [
+          -0.13131178356677173,
+          -0.0004162611337545582,
+          -0.049877099279071475,
+          0.011890521860162108
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 4.5269303412461995e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.08719122203109796,
+          -0.08601606120445812,
+          -0.07439311894737786,
+          0.05361513780339155
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.08891620407892455,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.4341931207061827
+          }
+        }
+      },
+      "active_changed_worldlets": [
+        "W_somatic_01"
+      ],
+      "active_identity_exact": true,
+      "complex_exception": {
+        "budget_exact": true,
+        "error": "T_00.output is complex-valued; HB0-T1 supports real carriers only",
+        "identity_exact": true,
+        "ledger_exact": true,
+        "phase_rejected": true,
+        "tick_exact": true,
+        "worldlets_exact": true
+      },
+      "deterministic_report": true,
+      "deterministic_worldlets": true,
+      "disabled": {
+        "accepted": true,
+        "alignment_after": 0.10777721706536302,
+        "alignment_before": 0.10777721706536302,
+        "alignment_if_committed": 0.0889162040789245,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "disabled_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.0077210982687429125,
+          -0.014979965012373121,
+          -0.004290303441953615,
+          0.007301807790065151
+        ],
+        "proposed_delta_norm": 0.018861012986438528,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          -0.05214329220893517,
+          -0.01397738338606215,
+          0.13309791931129578,
+          0.05273181998658043
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          -0.05214329220893517,
+          -0.013977383386062173,
+          0.13309791931129575,
+          0.0527318199865804
+        ],
+        "staged_target": [
+          -0.12359068529802882,
+          -0.01539622614612768,
+          -0.05416740272102509,
+          0.01919232965022726
+        ],
+        "target_after": [
+          -0.13131178356677173,
+          -0.0004162611337545582,
+          -0.049877099279071475,
+          0.011890521860162108
+        ],
+        "target_before": [
+          -0.13131178356677173,
+          -0.0004162611337545582,
+          -0.049877099279071475,
+          0.011890521860162108
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 4.5269303412461995e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.08719122203109796,
+          -0.08601606120445812,
+          -0.07439311894737786,
+          0.05361513780339155
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.10777721706536306,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.4341931207061827
+          }
+        }
+      },
+      "disabled_changed_worldlets": [],
+      "input_digest": "sha256:f6647438a3e244c6f3da0c3cd476fc7ab55a68862d079631ae97d56c209a3a2f",
+      "rejected": {
+        "accepted": false,
+        "alignment_after": 0.10777721706536302,
+        "alignment_before": 0.10777721706536302,
+        "alignment_if_committed": 0.0889162040789245,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [
+          "compute"
+        ],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.0077210982687429125,
+          -0.014979965012373121,
+          -0.004290303441953615,
+          0.007301807790065151
+        ],
+        "proposed_delta_norm": 0.018861012986438528,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          -0.05214329220893517,
+          -0.01397738338606215,
+          0.13309791931129578,
+          0.05273181998658043
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          -0.05214329220893517,
+          -0.013977383386062173,
+          0.13309791931129575,
+          0.0527318199865804
+        ],
+        "staged_target": [
+          -0.12359068529802882,
+          -0.01539622614612768,
+          -0.05416740272102509,
+          0.01919232965022726
+        ],
+        "target_after": [
+          -0.13131178356677173,
+          -0.0004162611337545582,
+          -0.049877099279071475,
+          0.011890521860162108
+        ],
+        "target_before": [
+          -0.13131178356677173,
+          -0.0004162611337545582,
+          -0.049877099279071475,
+          0.011890521860162108
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 4.5269303412461995e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.08719122203109796,
+          -0.08601606120445812,
+          -0.07439311894737786,
+          0.05361513780339155
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.08891620407892455,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.4341931207061827
+          }
+        }
+      },
+      "rejected_identity_exact": true,
+      "rejected_worldlets_exact": true,
+      "seed": 4,
+      "shuffled": {
+        "accepted": true,
+        "alignment_after": 0.1349498641262681,
+        "alignment_before": 0.16357559288032497,
+        "alignment_if_committed": 0.1349498641262681,
+        "committed": true,
+        "committed_delta": [
+          0.007256165123167305,
+          -0.01843761698705609,
+          -0.01631412867811549,
+          -0.012676115324446957
+        ],
+        "committed_delta_norm": 0.02862572875405687,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "shuffled_target_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.007256165123167305,
+          -0.01843761698705609,
+          -0.01631412867811549,
+          -0.012676115324446957
+        ],
+        "proposed_delta_norm": 0.02862572875405687,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          -0.05214329220893517,
+          -0.01397738338606215,
+          0.13309791931129578,
+          0.05273181998658043
+        ],
+        "selected_target": "W_somatic_02",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          -0.05214329220893517,
+          -0.013977383386062173,
+          0.13309791931129575,
+          0.0527318199865804
+        ],
+        "staged_target": [
+          -0.12139885761174381,
+          0.0009041331630920135,
+          0.0025163448208808913,
+          0.11337396719007006
+        ],
+        "target_after": [
+          -0.12139885761174381,
+          0.0009041331630920135,
+          0.0025163448208808913,
+          0.11337396719007006
+        ],
+        "target_before": [
+          -0.1286550227349111,
+          0.019341750150148104,
+          0.018830473498996383,
+          0.12605008251451702
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 4.5269303412461995e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.08719122203109796,
+          -0.08601606120445812,
+          -0.07439311894737786,
+          0.05361513780339155
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.13494986412626817,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.4341931207061827
+          }
+        }
+      },
+      "shuffled_changed_worldlets": [
+        "W_somatic_02"
+      ],
+      "shuffled_declared_target_exact": true
+    },
+    {
+      "active": {
+        "accepted": true,
+        "alignment_after": 0.14060238258906363,
+        "alignment_before": 0.17042713041098623,
+        "alignment_if_committed": 0.14060238258906363,
+        "committed": true,
+        "committed_delta": [
+          -0.009735484881062587,
+          0.013339787506506532,
+          0.023500328946213,
+          0.008032466960586487
+        ],
+        "committed_delta_norm": 0.029824747821922588,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.009735484881062587,
+          0.013339787506506532,
+          0.023500328946213,
+          0.008032466960586487
+        ],
+        "proposed_delta_norm": 0.029824747821922588,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          -0.06415451402027575,
+          -0.10594871965025159,
+          -0.01986892976761989,
+          0.033635619045241705
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          -0.06415451402027579,
+          -0.1059487196502516,
+          -0.019868929767619885,
+          0.03363561904524172
+        ],
+        "staged_target": [
+          0.08114823771810883,
+          0.022116299452251187,
+          -0.020711456696685598,
+          -0.05474996146695578
+        ],
+        "target_after": [
+          0.08114823771810883,
+          0.022116299452251187,
+          -0.020711456696685598,
+          -0.05474996146695578
+        ],
+        "target_before": [
+          0.09088372259917142,
+          0.008776511945744655,
+          -0.0442117856428986,
+          -0.06278242842754227
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 4.654751537338637e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.035252380421670955,
+          0.08500386912578196,
+          0.09007580833546142,
+          -0.016882617224190932
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.14060238258906368,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5888780077134754
+          }
+        }
+      },
+      "active_changed_worldlets": [
+        "W_somatic_01"
+      ],
+      "active_identity_exact": true,
+      "complex_exception": {
+        "budget_exact": true,
+        "error": "T_00.output is complex-valued; HB0-T1 supports real carriers only",
+        "identity_exact": true,
+        "ledger_exact": true,
+        "phase_rejected": true,
+        "tick_exact": true,
+        "worldlets_exact": true
+      },
+      "deterministic_report": true,
+      "deterministic_worldlets": true,
+      "disabled": {
+        "accepted": true,
+        "alignment_after": 0.17042713041098623,
+        "alignment_before": 0.17042713041098623,
+        "alignment_if_committed": 0.14060238258906363,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "disabled_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.009735484881062587,
+          0.013339787506506532,
+          0.023500328946213,
+          0.008032466960586487
+        ],
+        "proposed_delta_norm": 0.029824747821922588,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          -0.06415451402027575,
+          -0.10594871965025159,
+          -0.01986892976761989,
+          0.033635619045241705
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          -0.06415451402027579,
+          -0.1059487196502516,
+          -0.019868929767619885,
+          0.03363561904524172
+        ],
+        "staged_target": [
+          0.08114823771810883,
+          0.022116299452251187,
+          -0.020711456696685598,
+          -0.05474996146695578
+        ],
+        "target_after": [
+          0.09088372259917142,
+          0.008776511945744655,
+          -0.0442117856428986,
+          -0.06278242842754227
+        ],
+        "target_before": [
+          0.09088372259917142,
+          0.008776511945744655,
+          -0.0442117856428986,
+          -0.06278242842754227
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 4.654751537338637e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.035252380421670955,
+          0.08500386912578196,
+          0.09007580833546142,
+          -0.016882617224190932
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.17042713041098628,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5888780077134754
+          }
+        }
+      },
+      "disabled_changed_worldlets": [],
+      "input_digest": "sha256:f5d205a28e85cc973cd0f90c17dee34160012211a45819fcfbeb667628e931a4",
+      "rejected": {
+        "accepted": false,
+        "alignment_after": 0.17042713041098623,
+        "alignment_before": 0.17042713041098623,
+        "alignment_if_committed": 0.14060238258906363,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [
+          "compute"
+        ],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.009735484881062587,
+          0.013339787506506532,
+          0.023500328946213,
+          0.008032466960586487
+        ],
+        "proposed_delta_norm": 0.029824747821922588,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          -0.06415451402027575,
+          -0.10594871965025159,
+          -0.01986892976761989,
+          0.033635619045241705
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          -0.06415451402027579,
+          -0.1059487196502516,
+          -0.019868929767619885,
+          0.03363561904524172
+        ],
+        "staged_target": [
+          0.08114823771810883,
+          0.022116299452251187,
+          -0.020711456696685598,
+          -0.05474996146695578
+        ],
+        "target_after": [
+          0.09088372259917142,
+          0.008776511945744655,
+          -0.0442117856428986,
+          -0.06278242842754227
+        ],
+        "target_before": [
+          0.09088372259917142,
+          0.008776511945744655,
+          -0.0442117856428986,
+          -0.06278242842754227
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 4.654751537338637e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.035252380421670955,
+          0.08500386912578196,
+          0.09007580833546142,
+          -0.016882617224190932
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.14060238258906368,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5888780077134754
+          }
+        }
+      },
+      "rejected_identity_exact": true,
+      "rejected_worldlets_exact": true,
+      "seed": 5,
+      "shuffled": {
+        "accepted": true,
+        "alignment_after": 0.09779088220622649,
+        "alignment_before": 0.11853440267421392,
+        "alignment_if_committed": 0.09779088220622649,
+        "committed": true,
+        "committed_delta": [
+          -0.004313274216491858,
+          -0.008011285504408244,
+          0.011944503596879638,
+          0.01431214328219739
+        ],
+        "committed_delta_norm": 0.020743520467987435,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "shuffled_target_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.004313274216491858,
+          -0.008011285504408244,
+          0.011944503596879638,
+          0.01431214328219739
+        ],
+        "proposed_delta_norm": 0.020743520467987435,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          -0.06415451402027575,
+          -0.10594871965025159,
+          -0.01986892976761989,
+          0.033635619045241705
+        ],
+        "selected_target": "W_somatic_02",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          -0.06415451402027579,
+          -0.1059487196502516,
+          -0.019868929767619885,
+          0.03363561904524172
+        ],
+        "staged_target": [
+          0.05558638744227543,
+          0.12277135793227795,
+          0.03376600566445738,
+          -0.08435414984026435
+        ],
+        "target_after": [
+          0.05558638744227543,
+          0.12277135793227795,
+          0.03376600566445738,
+          -0.08435414984026435
+        ],
+        "target_before": [
+          0.05989966165876729,
+          0.1307826434366862,
+          0.02182150206757774,
+          -0.09866629312246174
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 4.654751537338637e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          0.035252380421670955,
+          0.08500386912578196,
+          0.09007580833546142,
+          -0.016882617224190932
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.09779088220622653,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5888780077134754
+          }
+        }
+      },
+      "shuffled_changed_worldlets": [
+        "W_somatic_02"
+      ],
+      "shuffled_declared_target_exact": true
+    },
+    {
+      "active": {
+        "accepted": true,
+        "alignment_after": 0.35137818170011287,
+        "alignment_before": 0.42591294751528835,
+        "alignment_if_committed": 0.35137818170011287,
+        "committed": true,
+        "committed_delta": [
+          -0.04207471059737069,
+          -0.019465913845045632,
+          -0.03565585712560409,
+          -0.04620484924860507
+        ],
+        "committed_delta_norm": 0.07453476581517547,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.04207471059737069,
+          -0.019465913845045632,
+          -0.03565585712560409,
+          -0.04620484924860507
+        ],
+        "proposed_delta_norm": 0.07453476581517547,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.08424926035894068,
+          0.1421193043053595,
+          -0.20426334707656107,
+          -0.011037204910272685
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.08424926035894066,
+          0.14211930430535943,
+          -0.20426334707656107,
+          -0.011037204910272647
+        ],
+        "staged_target": [
+          0.03902284212689144,
+          0.08870543218551367,
+          0.016647213627692357,
+          0.07356457895842194
+        ],
+        "target_after": [
+          0.03902284212689144,
+          0.08870543218551367,
+          0.016647213627692357,
+          0.07356457895842194
+        ],
+        "target_before": [
+          0.08109755272426213,
+          0.1081713460305593,
+          0.052303070753296446,
+          0.11976942820702702
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 6.877910602720239e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.15932936497499897,
+          -0.003062447369701432,
+          -0.1514446842501555,
+          -0.1442582817850019
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.3513781817001129,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5995864849752123
+          }
+        }
+      },
+      "active_changed_worldlets": [
+        "W_somatic_01"
+      ],
+      "active_identity_exact": true,
+      "complex_exception": {
+        "budget_exact": true,
+        "error": "T_00.output is complex-valued; HB0-T1 supports real carriers only",
+        "identity_exact": true,
+        "ledger_exact": true,
+        "phase_rejected": true,
+        "tick_exact": true,
+        "worldlets_exact": true
+      },
+      "deterministic_report": true,
+      "deterministic_worldlets": true,
+      "disabled": {
+        "accepted": true,
+        "alignment_after": 0.42591294751528835,
+        "alignment_before": 0.42591294751528835,
+        "alignment_if_committed": 0.35137818170011287,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "disabled_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.04207471059737069,
+          -0.019465913845045632,
+          -0.03565585712560409,
+          -0.04620484924860507
+        ],
+        "proposed_delta_norm": 0.07453476581517547,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.08424926035894068,
+          0.1421193043053595,
+          -0.20426334707656107,
+          -0.011037204910272685
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.08424926035894066,
+          0.14211930430535943,
+          -0.20426334707656107,
+          -0.011037204910272647
+        ],
+        "staged_target": [
+          0.03902284212689144,
+          0.08870543218551367,
+          0.016647213627692357,
+          0.07356457895842194
+        ],
+        "target_after": [
+          0.08109755272426213,
+          0.1081713460305593,
+          0.052303070753296446,
+          0.11976942820702702
+        ],
+        "target_before": [
+          0.08109755272426213,
+          0.1081713460305593,
+          0.052303070753296446,
+          0.11976942820702702
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 6.877910602720239e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.15932936497499897,
+          -0.003062447369701432,
+          -0.1514446842501555,
+          -0.1442582817850019
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.4259129475152884,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5995864849752123
+          }
+        }
+      },
+      "disabled_changed_worldlets": [],
+      "input_digest": "sha256:30e862867a720d1c4bcbde3a02e35e90d0b643cb024581df59fd7b16ac22509b",
+      "rejected": {
+        "accepted": false,
+        "alignment_after": 0.42591294751528835,
+        "alignment_before": 0.42591294751528835,
+        "alignment_if_committed": 0.35137818170011287,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [
+          "compute"
+        ],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.04207471059737069,
+          -0.019465913845045632,
+          -0.03565585712560409,
+          -0.04620484924860507
+        ],
+        "proposed_delta_norm": 0.07453476581517547,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.08424926035894068,
+          0.1421193043053595,
+          -0.20426334707656107,
+          -0.011037204910272685
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.08424926035894066,
+          0.14211930430535943,
+          -0.20426334707656107,
+          -0.011037204910272647
+        ],
+        "staged_target": [
+          0.03902284212689144,
+          0.08870543218551367,
+          0.016647213627692357,
+          0.07356457895842194
+        ],
+        "target_after": [
+          0.08109755272426213,
+          0.1081713460305593,
+          0.052303070753296446,
+          0.11976942820702702
+        ],
+        "target_before": [
+          0.08109755272426213,
+          0.1081713460305593,
+          0.052303070753296446,
+          0.11976942820702702
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 6.877910602720239e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.15932936497499897,
+          -0.003062447369701432,
+          -0.1514446842501555,
+          -0.1442582817850019
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.3513781817001129,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5995864849752123
+          }
+        }
+      },
+      "rejected_identity_exact": true,
+      "rejected_worldlets_exact": true,
+      "seed": 6,
+      "shuffled": {
+        "accepted": true,
+        "alignment_after": 0.2126129271244983,
+        "alignment_before": 0.2577126389387858,
+        "alignment_if_committed": 0.2126129271244983,
+        "committed": true,
+        "committed_delta": [
+          -0.03194204514975369,
+          -0.008253668134455515,
+          -0.029005147369764266,
+          -0.010211177491720166
+        ],
+        "committed_delta_norm": 0.04509971181428752,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "shuffled_target_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          -0.03194204514975369,
+          -0.008253668134455515,
+          -0.029005147369764266,
+          -0.010211177491720166
+        ],
+        "proposed_delta_norm": 0.04509971181428752,
+        "return_fidelity": 0.9999999999999999,
+        "round_trip": [
+          0.08424926035894068,
+          0.1421193043053595,
+          -0.20426334707656107,
+          -0.011037204910272685
+        ],
+        "selected_target": "W_somatic_02",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          0.08424926035894066,
+          0.14211930430535943,
+          -0.20426334707656107,
+          -0.011037204910272647
+        ],
+        "staged_target": [
+          -0.00874543784044585,
+          0.035847702407017436,
+          -0.014706132364123943,
+          -0.09611987360974969
+        ],
+        "target_after": [
+          -0.00874543784044585,
+          0.035847702407017436,
+          -0.014706132364123943,
+          -0.09611987360974969
+        ],
+        "target_before": [
+          0.02319660730930784,
+          0.04410137054147295,
+          0.014299015005640323,
+          -0.08590869611802952
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 6.877910602720239e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.15932936497499897,
+          -0.003062447369701432,
+          -0.1514446842501555,
+          -0.1442582817850019
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.21261292712449836,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.5995864849752123
+          }
+        }
+      },
+      "shuffled_changed_worldlets": [
+        "W_somatic_02"
+      ],
+      "shuffled_declared_target_exact": true
+    },
+    {
+      "active": {
+        "accepted": true,
+        "alignment_after": 0.0558808034498246,
+        "alignment_before": 0.06773430721190861,
+        "alignment_if_committed": 0.0558808034498246,
+        "committed": true,
+        "committed_delta": [
+          0.002797670887765738,
+          0.004323532990911302,
+          0.002690897004087204,
+          -0.010331733873430143
+        ],
+        "committed_delta_norm": 0.011853503762084007,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.002797670887765738,
+          0.004323532990911302,
+          0.002690897004087204,
+          -0.010331733873430143
+        ],
+        "proposed_delta_norm": 0.011853503762084007,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          9.841226859860774e-05,
+          0.02389964300067759,
+          -0.021931028428977404,
+          -0.07124734710058195
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          9.841226859860594e-05,
+          0.02389964300067759,
+          -0.021931028428977407,
+          -0.07124734710058193
+        ],
+        "staged_target": [
+          -0.03357599192597207,
+          -0.07500819140880569,
+          0.007502385211882283,
+          0.09688548577093255
+        ],
+        "target_after": [
+          -0.03357599192597207,
+          -0.07500819140880569,
+          0.007502385211882283,
+          0.09688548577093255
+        ],
+        "target_before": [
+          -0.03637366281373781,
+          -0.07933172439971699,
+          0.004811488207795079,
+          0.10721721964436269
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.4418010014361246e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.02038697202650501,
+          -0.054625821594509516,
+          0.020188042516864818,
+          0.04817874036761903
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.055880803449824615,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.2971716340613308
+          }
+        }
+      },
+      "active_changed_worldlets": [
+        "W_somatic_01"
+      ],
+      "active_identity_exact": true,
+      "complex_exception": {
+        "budget_exact": true,
+        "error": "T_00.output is complex-valued; HB0-T1 supports real carriers only",
+        "identity_exact": true,
+        "ledger_exact": true,
+        "phase_rejected": true,
+        "tick_exact": true,
+        "worldlets_exact": true
+      },
+      "deterministic_report": true,
+      "deterministic_worldlets": true,
+      "disabled": {
+        "accepted": true,
+        "alignment_after": 0.06773430721190861,
+        "alignment_before": 0.06773430721190861,
+        "alignment_if_committed": 0.0558808034498246,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "disabled_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.002797670887765738,
+          0.004323532990911302,
+          0.002690897004087204,
+          -0.010331733873430143
+        ],
+        "proposed_delta_norm": 0.011853503762084007,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          9.841226859860774e-05,
+          0.02389964300067759,
+          -0.021931028428977404,
+          -0.07124734710058195
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          9.841226859860594e-05,
+          0.02389964300067759,
+          -0.021931028428977407,
+          -0.07124734710058193
+        ],
+        "staged_target": [
+          -0.03357599192597207,
+          -0.07500819140880569,
+          0.007502385211882283,
+          0.09688548577093255
+        ],
+        "target_after": [
+          -0.03637366281373781,
+          -0.07933172439971699,
+          0.004811488207795079,
+          0.10721721964436269
+        ],
+        "target_before": [
+          -0.03637366281373781,
+          -0.07933172439971699,
+          0.004811488207795079,
+          0.10721721964436269
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.4418010014361246e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.02038697202650501,
+          -0.054625821594509516,
+          0.020188042516864818,
+          0.04817874036761903
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.06773430721190862,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.2971716340613308
+          }
+        }
+      },
+      "disabled_changed_worldlets": [],
+      "input_digest": "sha256:83bf88dbd384ebc782b0d531dad38bda9f50db38e474206bbe9d68265026d52f",
+      "rejected": {
+        "accepted": false,
+        "alignment_after": 0.06773430721190861,
+        "alignment_before": 0.06773430721190861,
+        "alignment_if_committed": 0.0558808034498246,
+        "committed": false,
+        "committed_delta": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "committed_delta_norm": 0.0,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [
+          "compute"
+        ],
+        "mode": "active",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.002797670887765738,
+          0.004323532990911302,
+          0.002690897004087204,
+          -0.010331733873430143
+        ],
+        "proposed_delta_norm": 0.011853503762084007,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          9.841226859860774e-05,
+          0.02389964300067759,
+          -0.021931028428977404,
+          -0.07124734710058195
+        ],
+        "selected_target": "W_somatic_01",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          9.841226859860594e-05,
+          0.02389964300067759,
+          -0.021931028428977407,
+          -0.07124734710058193
+        ],
+        "staged_target": [
+          -0.03357599192597207,
+          -0.07500819140880569,
+          0.007502385211882283,
+          0.09688548577093255
+        ],
+        "target_after": [
+          -0.03637366281373781,
+          -0.07933172439971699,
+          0.004811488207795079,
+          0.10721721964436269
+        ],
+        "target_before": [
+          -0.03637366281373781,
+          -0.07933172439971699,
+          0.004811488207795079,
+          0.10721721964436269
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.4418010014361246e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.02038697202650501,
+          -0.054625821594509516,
+          0.020188042516864818,
+          0.04817874036761903
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.055880803449824615,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.2971716340613308
+          }
+        }
+      },
+      "rejected_identity_exact": true,
+      "rejected_worldlets_exact": true,
+      "seed": 7,
+      "shuffled": {
+        "accepted": true,
+        "alignment_after": 0.02775368405888488,
+        "alignment_before": 0.03364082916228471,
+        "alignment_if_committed": 0.02775368405888488,
+        "committed": true,
+        "committed_delta": [
+          0.00332317115508024,
+          -0.000872870181560001,
+          -0.0033248812621414353,
+          0.0034348614500924815
+        ],
+        "committed_delta_norm": 0.005887145103399828,
+        "cost": 0.1,
+        "coupling": 0.5,
+        "declared_target": "W_somatic_01",
+        "evidence_tag": "M",
+        "governance_reasons": [],
+        "mode": "shuffled_target_control",
+        "permeability": 0.35,
+        "proposed_delta": [
+          0.00332317115508024,
+          -0.000872870181560001,
+          -0.0033248812621414353,
+          0.0034348614500924815
+        ],
+        "proposed_delta_norm": 0.005887145103399828,
+        "return_fidelity": 1.0,
+        "round_trip": [
+          9.841226859860774e-05,
+          0.02389964300067759,
+          -0.021931028428977404,
+          -0.07124734710058195
+        ],
+        "selected_target": "W_somatic_02",
+        "source": "W_somatic_00",
+        "source_coordinates": [
+          9.841226859860594e-05,
+          0.02389964300067759,
+          -0.021931028428977407,
+          -0.07124734710058193
+        ],
+        "staged_target": [
+          -0.03605335032902613,
+          -0.05051086216715524,
+          0.035862482752674424,
+          0.03198582210289734
+        ],
+        "target_after": [
+          -0.03605335032902613,
+          -0.05051086216715524,
+          0.035862482752674424,
+          0.03198582210289734
+        ],
+        "target_before": [
+          -0.03937652148410637,
+          -0.04963799198559524,
+          0.03918736401481586,
+          0.02855096065280486
+        ],
+        "tendril_id": "T_00",
+        "tick": 1,
+        "transport_remainder": {
+          "assumptions": [],
+          "carrier": "section_R4",
+          "channel": "transport",
+          "evidence_tag": "M",
+          "instrument": "l2_norm(backward(forward(x)) - x)",
+          "magnitude": 1.4418010014361246e-17,
+          "name": "[R]_transport",
+          "provenance": "T_00",
+          "statement": "round-trip defect of the staged active-tendril correspondence"
+        },
+        "transported_output": [
+          -0.02038697202650501,
+          -0.054625821594509516,
+          0.020188042516864818,
+          0.04817874036761903
+        ],
+        "viability": {
+          "gates": {
+            "anti_lob": true,
+            "compute": true,
+            "fragmentation": true,
+            "gluing": true,
+            "identity": true,
+            "non_absorption": true,
+            "plurality": true
+          },
+          "observed": {
+            "absorption": 0.0,
+            "compute": 0.1,
+            "fragmentation": 0.22222222222222224,
+            "gluing_defect": 0.027753684058884894,
+            "identity_defect": 0.0,
+            "lob_trap": 0.0,
+            "plurality": 0.2971716340613308
+          }
+        }
+      },
+      "shuffled_changed_worldlets": [
+        "W_somatic_02"
+      ],
+      "shuffled_declared_target_exact": true
+    }
+  ],
+  "schema": "hypercomplexbrain.hb0.active_tendril.v1",
+  "scope": {
+    "cognitive_advantage_claim": false,
+    "consciousness_or_agi_claim": false,
+    "identity_consolidation_tested": false,
+    "quantum_advantage_claim": false,
+    "real_carrier_only": true,
+    "single_tendril_only": true,
+    "task_competence_claim": false
+  },
+  "summary": {
+    "all_controls_hold": true,
+    "maximum_committed_delta_norm": 0.07453476581517547,
+    "minimum_alignment_reduction": 0.011853503762084008,
+    "minimum_committed_delta_norm": 0.011853503762084007,
+    "sample_size": 8
+  },
+  "transaction_law": "u=F_t(x); y*=Retract_Y(y + alpha*permeability_Y*(u-y))"
+}

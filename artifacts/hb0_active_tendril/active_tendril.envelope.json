@@ -1,0 +1,86 @@
+{
+  "claim_id": "EXP-HB0-ACTIVE-TENDRIL",
+  "command": "python experiments/run_hb0_tendril_transaction.py",
+  "commit_sha": "2ec7fd8d521f534de21776257b90471e46f0d945",
+  "environment": {
+    "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
+    "fields": {
+      "machine": "AMD64",
+      "numpy": "2.4.5",
+      "platform": "windows",
+      "python": "3.13.14"
+    }
+  },
+  "environment_dependent": [
+    "NumPy QR in the seeded HB-0 factory"
+  ],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "sha256:30e862867a720d1c4bcbde3a02e35e90d0b643cb024581df59fd7b16ac22509b",
+    "sha256:4a9eca1a6f129dc05352923025d655c2a3964c801f220cd4be78abf4e769fe71",
+    "sha256:60fb35114173fa82bf484f173b289fec0d0ce81cebaca38dd2f2d4278078638d",
+    "sha256:83bf88dbd384ebc782b0d531dad38bda9f50db38e474206bbe9d68265026d52f",
+    "sha256:85cfc75d23dca03ee5619506198c352fce45f00fe12b58a0ee98a7b5aa3e8122",
+    "sha256:c9500ea1b7569c4d4592a7e865a02ff26d4194f34be3c9da047079e0d47041f7",
+    "sha256:f5d205a28e85cc973cd0f90c17dee34160012211a45819fcfbeb667628e931a4",
+    "sha256:f6647438a3e244c6f3da0c3cd476fc7ab55a68862d079631ae97d56c209a3a2f"
+  ],
+  "observed_result": {
+    "all_controls_hold": true,
+    "minimum_alignment_reduction": 0.011853503762084008,
+    "minimum_committed_delta_norm": 0.011853503762084007,
+    "sample_size": 8,
+    "single_tendril_only": true
+  },
+  "platform": "",
+  "producer": "experiments/run_hb0_tendril_transaction.py",
+  "raw_artifacts": {
+    "artifacts/hb0_active_tendril/active_tendril.json": "sha256:b9e9aa87d5f0e84f3a36ee33c94abb3cd667f29b68be25d9ec8324d9fe60b804",
+    "experiments/run_hb0_tendril_transaction.py": "sha256:4fc460cc71fcb5985a599dcedc99e584ea9e45da484969f4e5f2a1211a9db102",
+    "manifests/hb0_active_tendril_preregistration.json": "sha256:f65c7fcd4b77dc57d4d930f7556ac5338d4f86e08a1cd25f581492eb217d662a",
+    "src/aionq/hb0/kernel.py": "sha256:a79862181369d91ea965a6a1ba9dd21bc2ed828a8a5417b30eedf178f414b92b",
+    "tests/test_hb0_tendril_transaction.py": "sha256:99ffa81c33d370f8b269e68cf79e9060de29ddc909208bf387b5e0e74136c6c1"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-29T09:27:09Z",
+  "typed_remainders": [
+    {
+      "carrier": "slow-clock identity sections",
+      "comparison": "the transaction moves one worldlet but deliberately does not consolidate identity sections; that is the next independent slice",
+      "kind": "identity_remainder"
+    },
+    {
+      "carrier": "complex and hypercomplex coordinates",
+      "comparison": "HB0-T1 rejects non-real outputs instead of discarding phase; phase-preserving transport remains unimplemented",
+      "kind": "carrier_remainder"
+    },
+    {
+      "carrier": "one deterministic simulator transaction",
+      "comparison": "target landing is not evidence of held-out competence, cognitive advantage, quantum advantage, consciousness, or AGI",
+      "kind": "scope_remainder"
+    },
+    {
+      "carrier": "local producer run",
+      "comparison": "the envelope binds code, controls, inputs, and output but has not been independently recomputed",
+      "kind": "evidence_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}
