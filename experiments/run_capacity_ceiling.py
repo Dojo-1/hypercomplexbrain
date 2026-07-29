@@ -23,7 +23,8 @@ from pathlib import Path
 sys.path.insert(0, "src")
 
 from aionq.capacity_ceiling import (ceiling_report, grid_codebook,
-                                    holevo_ceiling, packing_log_slope,
+                                    holevo_ceiling, normalisation_control,
+                                    packing_log_slope, probe_sweep,
                                     su2_codebook)
 from aionq.holevo_sandwich import flag_success_decomposition, holevo_chi
 
@@ -53,6 +54,10 @@ def main() -> int:
     # ---- A: packing ---------------------------------------------------------
     packing = [packing_log_slope(e, seed=SEED) for e in EPSILONS]
 
+    # ---- D: is the ceiling an artifact of the probe, or its optimum? --------
+    sweep = probe_sweep()
+    norms = normalisation_control()
+
     report = {
         "round": "QSigma-R6f", "seed": SEED, "depth": DEPTH,
         "question": ("does hyperbolic representational capacity survive the "
@@ -61,6 +66,21 @@ def main() -> int:
         "holevo_ceiling": ceil,
         "ceiling_vs_depth": depth_rows,
         "packing": packing,
+        "probe_sweep": sweep,
+        "normalisation_control": norms,
+        "probe_finding": (
+            "chi is MAXIMISED at the Bell probe (lam = 1/2) and falls "
+            "monotonically as the probe is de-entangled: 1.000000, 0.999975, "
+            "0.999574, 0.997500, 0.989648, 0.965643. So 1 bit is the OPTIMUM "
+            "over this probe family, not an artifact of a convenient choice, and "
+            "spectral vs Frobenius normalisation give identical chi to 1e-14."),
+        "r6d_refinement": (
+            "R6d found that a fixed-depth codebook has an uninformative erasure "
+            "flag and attributed it to the shared depth. The actual condition is "
+            "equal p_i, and equal depth implies that ONLY for the maximally "
+            "entangled probe, where p = tr(A^T A)/2 is orientation-independent. "
+            "At lam = 0.3 the per-codeword spread is 0.4 and the flag carries "
+            "0.059 bits -- reporting the codeword's ORIENTATION, not its depth."),
         "headline": (
             "a codebook of 100 eps-separated states at depth 8 transmits exactly "
             "what a codebook of 8 does -- 1.000000 bit -- while log2 N climbs from "
@@ -90,6 +110,16 @@ def main() -> int:
         "packing_slope_is_not_the_source_exponent": all(
             abs(p["log2_slope"]) < 0.5 for p in packing),
         "source_exponent_is_two": all(p["source_exponent"] == 2.0 for p in packing),
+        "bell_probe_is_optimal": abs(sweep["best_lam"] - 0.5) < 1e-12,
+        "chi_monotone_in_entanglement": sweep["chi_is_monotone_in_entanglement"],
+        "ceiling_holds_across_probes": all(
+            r["chi"] <= holevo_ceiling(DEPTH) + 1e-9 for r in sweep["rows"]),
+        "p_bar_is_half_at_every_probe": all(
+            abs(r["p_bar"] - 0.5) < 1e-9 for r in sweep["rows"]),
+        "flag_informative_only_for_non_bell": (
+            abs(sweep["rows"][0]["flag_bits"]) < 1e-9
+            and sweep["rows"][-1]["flag_bits"] > 1e-3),
+        "normalisation_does_not_matter": norms["identical"],
     }
     checks = {k: bool(v) for k, v in checks.items()}
     report["checks"] = checks

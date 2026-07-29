@@ -111,3 +111,52 @@ def test_packing_slope_is_not_the_source_exponent(eps):
     assert r["source_exponent"] == 2.0
     assert abs(r["log2_slope"]) < 0.5
     assert r["log2_slope"] < 1.0
+
+
+# --------------------------------------------- is the ceiling probe-dependent?
+
+def test_bell_probe_is_the_optimum_not_a_convenience():
+    """1 bit is the best this probe family achieves, not an artifact.
+
+    chi is maximised at lam = 1/2 and falls monotonically as the probe is
+    de-entangled. If a less entangled probe had beaten it, the R6f conclusion
+    would have been an artifact of a convenient choice; it is not.
+    """
+    from aionq.capacity_ceiling import probe_sweep
+    s = probe_sweep()
+    assert s["best_lam"] == pytest.approx(0.5)
+    assert s["best_chi"] == pytest.approx(1.0, abs=1e-9)
+    assert s["chi_is_monotone_in_entanglement"]
+
+
+def test_ceiling_holds_at_every_probe():
+    from aionq.capacity_ceiling import probe_sweep
+    for r in probe_sweep()["rows"]:
+        assert r["chi"] <= holevo_ceiling(8.0) + 1e-9
+        assert r["p_bar"] == pytest.approx(0.5, abs=1e-9)
+
+
+def test_flag_informativeness_needs_equal_p_not_equal_depth():
+    """Narrows an R6d statement that was true only for the Bell probe.
+
+    R6d found a fixed-depth codebook has an uninformative flag and attributed it
+    to the shared depth. The real condition is equal p_i. Equal depth gives that
+    ONLY when the probe is maximally entangled, because p = tr(A^T A)/2 is then
+    orientation-independent. Off Bell, same depth, the flag reports ORIENTATION.
+    """
+    from aionq.capacity_ceiling import probe_sweep
+    rows = {r["lam"]: r for r in probe_sweep()["rows"]}
+    assert abs(rows[0.5]["flag_bits"]) < 1e-9
+    assert rows[0.5]["per_codeword_p_spread"] < 1e-12
+    assert rows[0.1]["flag_bits"] > 1e-3
+    assert rows[0.1]["per_codeword_p_spread"] > 0.5
+
+
+def test_normalisation_choice_does_not_move_the_ceiling():
+    """Spectral against Frobenius: another place the result could have been an
+    artifact, and is not."""
+    from aionq.capacity_ceiling import normalisation_control
+    n = normalisation_control()
+    assert n["identical"]
+    assert n["spectral"]["chi"] == pytest.approx(1.0, abs=1e-9)
+    assert n["frobenius"]["chi"] == pytest.approx(1.0, abs=1e-9)

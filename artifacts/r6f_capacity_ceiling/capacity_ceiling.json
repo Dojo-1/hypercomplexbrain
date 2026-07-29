@@ -45,13 +45,19 @@
     }
   ],
   "checks": {
+    "bell_probe_is_optimal": true,
+    "ceiling_holds_across_probes": true,
     "ceiling_matches_two_p_bar": true,
     "chi_at_or_below_ceiling": true,
     "chi_is_flat_across_codebook_sizes": true,
+    "chi_monotone_in_entanglement": true,
     "compact_baseline_below_two_bits": true,
     "compact_baseline_exceeds_it": true,
+    "flag_informative_only_for_non_bell": true,
     "log2_n_actually_varied": true,
     "non_compact_reaches_one_bit": true,
+    "normalisation_does_not_matter": true,
+    "p_bar_is_half_at_every_probe": true,
     "packing_slope_is_not_the_source_exponent": true,
     "source_exponent_is_two": true
   },
@@ -105,6 +111,17 @@
       }
     ]
   },
+  "normalisation_control": {
+    "frobenius": {
+      "chi": 0.9999999999999816,
+      "p_bar": 0.5
+    },
+    "identical": true,
+    "spectral": {
+      "chi": 0.9999999999999947,
+      "p_bar": 0.5000000000000063
+    }
+  },
   "packing": [
     {
       "counts": [
@@ -152,7 +169,66 @@
       "source_exponent": 2.0
     }
   ],
+  "probe_finding": "chi is MAXIMISED at the Bell probe (lam = 1/2) and falls monotonically as the probe is de-entangled: 1.000000, 0.999975, 0.999574, 0.997500, 0.989648, 0.965643. So 1 bit is the OPTIMUM over this probe family, not an artifact of a convenient choice, and spectral vs Frobenius normalisation give identical chi to 1e-14.",
+  "probe_sweep": {
+    "best_chi": 0.9999999999999947,
+    "best_lam": 0.5,
+    "chi_is_monotone_in_entanglement": true,
+    "n": 64,
+    "rho": 8.0,
+    "rows": [
+      {
+        "chi": 0.9999999999999947,
+        "flag_bits": 0.0,
+        "lam": 0.5,
+        "p_bar": 0.5000000000000063,
+        "per_codeword_p_spread": 6.661338147750939e-16,
+        "success_branch_bits": 0.9999999999999944
+      },
+      {
+        "chi": 0.9999753626329783,
+        "flag_bits": 0.014500065405649076,
+        "lam": 0.4,
+        "p_bar": 0.5000000000000063,
+        "per_codeword_p_spread": 0.19999999999999746,
+        "success_branch_bits": 0.9854752972273289
+      },
+      {
+        "chi": 0.9995740389435779,
+        "flag_bits": 0.058928589328235303,
+        "lam": 0.3,
+        "p_bar": 0.5000000000000062,
+        "per_codeword_p_spread": 0.399999999999995,
+        "success_branch_bits": 0.9406454496153417
+      },
+      {
+        "chi": 0.9974999624031342,
+        "flag_bits": 0.1365359149594556,
+        "lam": 0.2,
+        "p_bar": 0.5000000000000062,
+        "per_codeword_p_spread": 0.5999999999999923,
+        "success_branch_bits": 0.8609640474436783
+      },
+      {
+        "chi": 0.9896478326485952,
+        "flag_bits": 0.255150035853954,
+        "lam": 0.1,
+        "p_bar": 0.5000000000000062,
+        "per_codeword_p_spread": 0.7999999999999898,
+        "success_branch_bits": 0.7344977967946404
+      },
+      {
+        "chi": 0.9656434418220513,
+        "flag_bits": 0.39492317055113646,
+        "lam": 0.02,
+        "p_bar": 0.5000000000000064,
+        "per_codeword_p_spread": 0.9599999999999879,
+        "success_branch_bits": 0.5707202712709146
+      }
+    ]
+  },
   "question": "does hyperbolic representational capacity survive the measured unitary realization cost?",
+  "r6d_refinement": "R6d found that a fixed-depth codebook has an uninformative erasure flag and attributed it to the shared depth. The actual condition is equal p_i, and equal depth implies that ONLY for the maximally entangled probe, where p = tr(A^T A)/2 is orientation-independent. At lam = 0.3 the per-codeword spread is 0.4 and the flag carries 0.059 bits -- reporting the codeword's ORIENTATION, not its depth.",
   "round": "QSigma-R6f",
   "seed": 7,
   "verdict": "CAPACITY DOES NOT SURVIVE"

@@ -1,7 +1,7 @@
 {
   "claim_id": "EXP-R6F-CAPACITY_CEILING",
   "command": "PYTHONPATH=src python3 experiments/run_capacity_ceiling.py",
-  "commit_sha": "12a188cb7e5fe26a2539db279d249d1e9ef2c20f",
+  "commit_sha": "2083c85c620a12a183cda083408a3263b900663a",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -38,7 +38,7 @@
   "platform": "",
   "producer": "experiments/run_capacity_ceiling.py",
   "raw_artifacts": {
-    "artifacts/r6f_capacity_ceiling/capacity_ceiling.json": "sha256:f3f3c14baafc195e324ff3e90f9147640b2f80d87b302c91d1a631416fc2d7a9"
+    "artifacts/r6f_capacity_ceiling/capacity_ceiling.json": "sha256:7e08f9049ca1b8169be0deae61b351e1136a8d779a3d6d3577dfeb779fe0ab95"
   },
   "schema_version": "hypercomplexbrain.evidence.v1",
   "seeds": [
@@ -46,7 +46,7 @@
     5
   ],
   "signature_status": "unsigned",
-  "timestamp": "2026-07-29T03:01:07Z",
+  "timestamp": "2026-07-29T03:31:04Z",
   "typed_remainders": [
     {
       "carrier": "this realization only",
