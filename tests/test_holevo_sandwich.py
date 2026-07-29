@@ -9,8 +9,9 @@ import pytest
 
 from aionq.holevo_sandwich import (apply_channel, binary_entropy,
                                    flag_success_decomposition, holevo_chi,
-                                   information_sandwich, pgm_mutual_information,
-                                   pgm_povm, random_cptp, von_neumann_entropy)
+                                   information_sandwich, pgm_analysis,
+                                   pgm_mutual_information, pgm_povm,
+                                   random_cptp, von_neumann_entropy)
 from aionq.hyperbolic_qubit import swirl_point, to_sl2
 from aionq.quantum_channel_geometry import attempted_use_state
 
@@ -75,6 +76,24 @@ def test_identical_codewords_carry_no_information():
     s = _omega(0.9, 0.3, 1.2)
     assert holevo_chi([s, s, s]) == pytest.approx(0.0, abs=1e-12)
     assert pgm_mutual_information([s, s, s]) == pytest.approx(0.0, abs=1e-9)
+
+
+def test_pgm_analysis_keeps_raw_guards_before_row_repair():
+    states = [
+        np.diag([1.0, 0.0, 0.0, 0.0]).astype(complex),
+        np.diag([0.0, 1.0, 0.0, 0.0]).astype(complex),
+        np.diag([0.0, 0.0, 1.0, 0.0]).astype(complex),
+    ]
+    priors = np.array([0.5, 0.3, 0.2])
+    analysis = pgm_analysis(states, priors)
+    entropy = -float(np.sum(priors * np.log2(priors)))
+    assert analysis["I_PGM"] == pytest.approx(entropy, abs=1e-12)
+    assert analysis["mean_state_rank"] == 3
+    assert analysis["support_projector_defect"] <= 1e-12
+    assert analysis["minimum_raw_probability"] >= -1e-12
+    assert analysis["maximum_row_sum_defect"] <= 1e-12
+    assert analysis["maximum_imaginary_probability"] <= 1e-12
+    assert analysis["numerical_guards_hold"]
 
 
 # ----------------------------------------------------- the flag decomposition

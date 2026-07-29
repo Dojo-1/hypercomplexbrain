@@ -1,0 +1,52 @@
+{
+  "schema": "hypercomplexbrain.method-correction.v1",
+  "round": "QSigma-R6i",
+  "status": "outcome-visible correction ledger; not a preregistration amendment",
+  "first_attempt": {
+    "artifact": "artifacts/r6i_coherent_dilation/coherent_dilation.attempt1_eigh.json",
+    "sha256": "sha256:f183b18e09e79f3db36c348e6f37e86dd0d418b0bd38a2cf62a3742ad0624d7e",
+    "observed_verdict": "RESCUE_FOR_THIS_MAP",
+    "method_status": "invalidated before scientific lock",
+    "reason": "The defect roots were formed by diagonalising I-A^dagger A and I-AA^dagger with the experiment tolerance as a repair threshold. This can amplify a roundoff-scale zero to sqrt(machine epsilon) and can erase a genuine small defect."
+  },
+  "frozen_items_unchanged": [
+    "candidate map",
+    "source coordinates",
+    "depths",
+    "codebook sizes",
+    "uniform priors",
+    "primary metrics",
+    "decision margin",
+    "decision quantifier",
+    "scope and kill conditions"
+  ],
+  "required_corrections_before_attempt_2": [
+    "Construct both defect roots from one SVD and use a scale-aware machine-roundoff guard rather than the experiment tolerance.",
+    "Run two-sided unitarity, defect-intertwining, density, and exact-source controls before any primary information metric.",
+    "Return HOLD for an empty, incomplete, duplicate, extra, non-integral, or nonfinite result grid.",
+    "Record raw PGM probability, row-normalisation, support-projector, imaginary-part, and information-ordering guards before any clipping or row repair.",
+    "Bind byte-identical source-matrix digests as well as coordinate digests.",
+    "Verify passive R6 embedding from dimension 5 to dimension 16, in addition to candidate padding.",
+    "Measure the exact central-sign pairs and the identity composition-defect known answer."
+  ],
+  "outcome_visible_diagnostics": [
+    {
+      "name": "central-sign pair",
+      "derivation": "For every even frozen N, k and k+N/2 give M and -M. R6 density states alias this pair. For singular values (1,q), q=exp(-2 rho), the canonical positive-root dilation has Choi overlap -q^2 and density fidelity q^4=exp(-8 rho).",
+      "decision_impact": false,
+      "interpretation": "Any confirmed gain must be described partly as lifting R6's projective sign alias, not as generic fixed-width capacity."
+    },
+    {
+      "name": "sign-quotiented half grid",
+      "status": "post-hoc secondary diagnostic",
+      "decision_impact": false,
+      "interpretation": "This diagnostic may estimate how much information remains after removing the exact M versus -M duplicate pairs, but it cannot change the preregistered verdict."
+    }
+  ],
+  "scope_remainders": [
+    "The candidate has active density dimension 16 while R6 has active density dimension 5; zero-padding R6 to 16 controls passive width only.",
+    "The positive-root Halmos completion is canonical but dilation completions have gauge freedom. A source-dependent completion gauge can inject labels.",
+    "The exact identity composition defect isolates nonmultiplicativity of the dilation; generic source-pair defects also include spectral-normalisation nonmultiplicativity.",
+    "A result is about this point encoding on the frozen finite ensembles, not a representation, channel capacity, or quantum advantage."
+  ]
+}

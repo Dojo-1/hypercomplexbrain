@@ -50,8 +50,9 @@ import math
 import numpy as np
 
 __all__ = ["von_neumann_entropy", "binary_entropy", "holevo_chi",
-           "flag_success_decomposition", "pgm_povm", "pgm_mutual_information",
-           "random_cptp", "apply_channel", "information_sandwich"]
+           "flag_success_decomposition", "pgm_povm", "pgm_analysis",
+           "pgm_diagnostics", "pgm_mutual_information", "random_cptp",
+           "apply_channel", "information_sandwich"]
 
 _TOL = 1e-12
 
@@ -115,20 +116,137 @@ def flag_success_decomposition(states, flag_index: int = 4) -> dict:
             "flag_is_informative": jensen_gap > 1e-9}
 
 
-def _inv_sqrt(rho) -> np.ndarray:
-    w, V = np.linalg.eigh((np.asarray(rho) + np.asarray(rho).conj().T) / 2.0)
-    inv = np.array([1.0 / math.sqrt(x) if x > _TOL else 0.0 for x in np.real(w)])
-    return V @ np.diag(inv) @ V.conj().T
+def _validated_pgm_inputs(states, priors=None) -> tuple[list[np.ndarray], np.ndarray]:
+    states = [np.asarray(state, dtype=complex) for state in states]
+    if not states:
+        raise ValueError("at least one state is required")
+    shape = states[0].shape
+    if len(shape) != 2 or shape[0] != shape[1]:
+        raise ValueError("states must be square matrices")
+    for state in states:
+        if state.shape != shape or not np.all(np.isfinite(state)):
+            raise ValueError("states must be finite and have one common shape")
+        hermitian = (state + state.conj().T) / 2.0
+        if np.linalg.norm(state - state.conj().T, "fro") > 1e-10:
+            raise ValueError("states must be Hermitian")
+        if float(np.min(np.linalg.eigvalsh(hermitian))) < -1e-10:
+            raise ValueError("states must be positive semidefinite")
+        if abs(complex(np.trace(state)) - 1.0) > 1e-10:
+            raise ValueError("states must have unit trace")
+
+    count = len(states)
+    q = (
+        np.full(count, 1.0 / count)
+        if priors is None
+        else np.asarray(priors, dtype=float)
+    )
+    if (
+        q.shape != (count,)
+        or not np.all(np.isfinite(q))
+        or np.any(q <= 0.0)
+    ):
+        raise ValueError("priors must be finite strictly positive weights")
+    if abs(float(np.sum(q)) - 1.0) > _TOL:
+        raise ValueError("priors must sum to one")
+    return states, q
+
+
+def _pgm_components(states, priors=None):
+    states, q = _validated_pgm_inputs(states, priors)
+    mean = sum(qi * state for qi, state in zip(q, states))
+    hermitian_mean = (mean + mean.conj().T) / 2.0
+    values, vectors = np.linalg.eigh(hermitian_mean)
+    maximum = max(0.0, float(np.max(np.real(values))))
+    cutoff = (
+        64.0
+        * np.finfo(float).eps
+        * mean.shape[0]
+        * maximum
+    )
+    mask = np.real(values) > cutoff
+    support = vectors[:, mask]
+    projector = support @ support.conj().T
+    inverse_sqrt = (
+        support
+        @ np.diag(1.0 / np.sqrt(np.real(values[mask])))
+        @ support.conj().T
+    )
+    effects = [
+        inverse_sqrt @ (qi * state) @ inverse_sqrt
+        for qi, state in zip(q, states)
+    ]
+    return states, q, effects, projector, cutoff
 
 
 def pgm_povm(states, priors=None) -> list:
     """Pretty-good measurement: ``E_i = rhobar^{-1/2} q_i rho_i rhobar^{-1/2}``."""
-    states = [np.asarray(s) for s in states]
-    n = len(states)
-    q = np.full(n, 1.0 / n) if priors is None else np.asarray(priors, dtype=float)
-    mean = sum(qi * s for qi, s in zip(q, states))
-    root = _inv_sqrt(mean)
-    return [root @ (qi * s) @ root for qi, s in zip(q, states)]
+    return _pgm_components(states, priors)[2]
+
+
+def pgm_analysis(states, priors=None, *, guard_tolerance: float = 1e-10) -> dict:
+    """PGM information plus the numerical guards applied before repair.
+
+    The PGM effects sum to the projector onto the support of the mean state,
+    rather than necessarily to the ambient identity.  Every ensemble state is
+    supported there, so the raw conditional-probability rows must still sum to
+    one.  Tiny negative values are clipped and rows are normalized only after
+    these raw quantities have been recorded.
+    """
+    states, q, effects, projector, cutoff = _pgm_components(states, priors)
+    completeness = sum(effects, np.zeros_like(states[0]))
+    support_defect = float(np.linalg.norm(completeness - projector, 2))
+    complex_raw = np.array(
+        [
+            [np.trace(effect @ state) for effect in effects]
+            for state in states
+        ],
+        dtype=complex,
+    )
+    raw = np.real(complex_raw)
+    minimum_raw = float(np.min(raw))
+    maximum_row_defect = float(
+        np.max(np.abs(np.sum(raw, axis=1) - 1.0))
+    )
+    maximum_imaginary = float(np.max(np.abs(np.imag(complex_raw))))
+    guards_hold = bool(
+        minimum_raw >= -guard_tolerance
+        and maximum_row_defect <= guard_tolerance
+        and support_defect <= guard_tolerance
+        and maximum_imaginary <= guard_tolerance
+    )
+
+    conditional = np.clip(raw, 0.0, None)
+    row_sums = np.sum(conditional, axis=1, keepdims=True)
+    if np.any(row_sums <= _TOL):
+        mutual_information = 0.0
+        guards_hold = False
+    else:
+        conditional = conditional / row_sums
+        joint = q[:, None] * conditional
+        px = np.sum(joint, axis=1)
+        py = np.sum(joint, axis=0)
+        mutual_information = 0.0
+        for i in range(len(states)):
+            for j in range(len(effects)):
+                if joint[i, j] > _TOL and px[i] > _TOL and py[j] > _TOL:
+                    mutual_information += joint[i, j] * math.log2(
+                        joint[i, j] / (px[i] * py[j])
+                    )
+    return {
+        "I_PGM": float(mutual_information),
+        "support_projector_defect": support_defect,
+        "support_cutoff": float(cutoff),
+        "minimum_raw_probability": minimum_raw,
+        "maximum_row_sum_defect": maximum_row_defect,
+        "maximum_imaginary_probability": maximum_imaginary,
+        "mean_state_rank": int(round(float(np.real(np.trace(projector))))),
+        "numerical_guards_hold": guards_hold,
+    }
+
+
+def pgm_diagnostics(states, priors=None) -> dict:
+    """Compatibility projection of :func:`pgm_analysis` diagnostics."""
+    return pgm_analysis(states, priors)
 
 
 def pgm_mutual_information(states, priors=None) -> float:
@@ -137,25 +255,7 @@ def pgm_mutual_information(states, priors=None) -> float:
     A concrete measurement really performed, so this is achievable, unlike
     ``I_acc`` which is a supremum nobody in this round computes.
     """
-    states = [np.asarray(s) for s in states]
-    n = len(states)
-    q = np.full(n, 1.0 / n) if priors is None else np.asarray(priors, dtype=float)
-    povm = pgm_povm(states, q)
-    joint = np.array([[float(np.real(np.trace(povm[j] @ states[i]))) * q[i]
-                       for j in range(n)] for i in range(n)])
-    joint = np.clip(joint, 0.0, None)
-    total = joint.sum()
-    if total <= _TOL:
-        return 0.0
-    joint /= total
-    px = joint.sum(axis=1)
-    py = joint.sum(axis=0)
-    out = 0.0
-    for i in range(n):
-        for j in range(n):
-            if joint[i, j] > _TOL and px[i] > _TOL and py[j] > _TOL:
-                out += joint[i, j] * math.log2(joint[i, j] / (px[i] * py[j]))
-    return float(out)
+    return float(pgm_analysis(states, priors)["I_PGM"])
 
 
 def random_cptp(dim: int, n_kraus: int, rng) -> list:
@@ -181,6 +281,8 @@ def information_sandwich(states, priors=None) -> dict:
     oracle = math.log2(n) if n > 1 else 0.0
     return {"n_codewords": n, "I_PGM": ipgm, "chi": chi, "log2_N": oracle,
             "I_acc_bracket": [ipgm, chi],
-            "ordering_holds": bool(ipgm <= chi + 1e-9 <= oracle + 1e-9),
+            "ordering_holds": bool(
+                ipgm <= chi + 1e-9 and chi <= oracle + 1e-9
+            ),
             "note": "I_acc is a supremum over all POVMs and is deliberately not "
                     "estimated; it is reported as the bracket [I_PGM, chi]"}
