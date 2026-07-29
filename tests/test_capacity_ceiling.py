@@ -193,3 +193,35 @@ def test_parallel_use_is_exactly_additive():
     per = [r["chi_per_use"] for r in p["rows"]]
     assert per[0] == pytest.approx(per[-1], abs=1e-9)
     assert p["rows"][-1]["k"] == 3
+
+
+# ------------------------------- comparing encodings of different width fairly
+
+def test_general_ceiling_reduces_to_the_r6_ceiling():
+    from aionq.capacity_ceiling import holevo_ceiling_general
+    for rho in (0.5, 1.0, 2.0, 8.0):
+        p_bar = (1.0 + math.exp(-4.0 * rho)) / 2.0
+        assert holevo_ceiling_general(4, p_bar) == pytest.approx(
+            holevo_ceiling(rho), abs=1e-12)
+
+
+def test_the_r6_encoding_has_the_same_efficiency_at_one_and_two_uses():
+    """Width-fair efficiency is invariant under parallel use, exactly.
+
+    chi is exactly additive and log-dimension is exactly additive, so bits per
+    log2-dimension cannot change. That is what makes it the right yardstick for
+    comparing encodings of different carrier size.
+    """
+    from aionq.capacity_ceiling import bits_per_log_dimension, parallel_sweep
+    one = bits_per_log_dimension(1.0, 5)
+    par = parallel_sweep(rho=8.0, per_use=8, ks=(1, 2))
+    two = bits_per_log_dimension(par["rows"][-1]["chi"], 25)
+    assert two == pytest.approx(one, abs=1e-9)
+
+
+def test_p_bar_is_the_diagnostic_that_settles_a_wider_encoding():
+    """3 bits from 16 dimensions is consistent iff p_bar >= 0.75."""
+    from aionq.capacity_ceiling import holevo_ceiling_general
+    assert holevo_ceiling_general(16, 1.00) >= 3.0
+    assert holevo_ceiling_general(16, 0.75) == pytest.approx(3.0)
+    assert holevo_ceiling_general(16, 0.50) < 3.0

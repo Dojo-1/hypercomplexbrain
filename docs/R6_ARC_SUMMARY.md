@@ -130,3 +130,63 @@ No quantum advantage — the R6 preregistration made asserting one a kill
 condition. No coding theorem, no regularisation, no asymptotic capacity. No
 hardware: exact linear algebra and statevector simulation throughout, no device
 and no noise model. No cognition.
+
+---
+
+## Addendum — R6i is aimed at exactly the right door, and I cannot check it yet
+
+An external round (**R6i**, `codex/r6h-heldout-translation`, commit `95f5ec7`)
+reports **χ rising 1.000 → 3.000 bits** at ρ=8, N=256, with 17/17 controls
+passing and the verdict `RESCUE_FOR_THIS_MAP`. It uses a **16-dimensional point
+encoding** against R6's 5-dimensional carrier.
+
+That is precisely the open door this summary named: *"a structurally different
+map from `SL(2,ℝ)` into a fixed-width state — one that is not 'normalise by the
+operator norm and post-select'."* Attacking it is the right move and the claim is
+credited to them.
+
+**I cannot verify it.** The branch is not on the remote — checked with
+`git ls-remote`, and their own report says *"Nothing was pushed."* So the number
+below is theirs, unverified here, and is marked as such.
+
+### The comparison it needs, set up in advance
+
+Three bits from sixteen dimensions against one bit from five is not a comparison
+until width is divided out:
+
+| encoding | carrier | χ | log₂ dim | **bits per log₂-dim** |
+|---|---|---|---|---|
+| R6, one use | 5 | 1.000 | 2.322 | **0.4307** |
+| R6, two uses | 25 | 2.000 | 4.644 | **0.4307** |
+| R6i *(reported, unverified)* | 16 | 3.000 | 4.000 | **0.7500** |
+
+The R6 encoding sits at 0.4307 at both widths **exactly** — because χ is exactly
+additive over parallel uses and so is log-dimension, which is what makes this the
+right yardstick. On it, R6i is **1.741× more efficient**. That is a real gain and
+not width alone.
+
+### The single number that settles it
+
+`holevo_ceiling_general(D, p̄) = p̄ · log₂ D`:
+
+```
+p_bar = 1.00  ->  ceiling 4.000  ->  3.000 consistent
+p_bar = 0.75  ->  ceiling 3.000  ->  3.000 consistent, exactly saturating
+p_bar = 0.50  ->  ceiling 2.000  ->  3.000 EXCEEDS its own ceiling
+```
+
+So **report `p̄`**. A value near 1 means the encoding has no erasure branch —
+which is exactly the structural change R6f named as the way out, and the rescue
+is real, bought by removing post-selection rather than by adding width. A value
+near ½ would mean a post-selected encoding reporting more bits than its own
+success weight permits, and that would need explaining before it counts.
+
+Their own caveats are the right ones and I would not soften them: this is *"not a
+representation, capacity theorem, or quantum-advantage claim"*, and the gain
+*"partly restores the exact M ↔ −M sign alias discarded by R6"* — that alias is
+R6c's projective quotient, worth at most **1 bit**, so it cannot by itself
+account for a 2-bit rise. The remaining gain needs its own account, and `p̄` is
+where to look for it.
+
+Also unpushed and unverifiable here: **HB0-T1** (`codex/hb0-active-tendril`,
+`dcd756a`/`2ec7fd8`/`9a8ed65`) — 13 controls, 43 tests, 27/27 envelopes reported.

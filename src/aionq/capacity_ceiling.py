@@ -90,6 +90,47 @@ def holevo_ceiling(rho: float) -> float:
     return 1.0 + math.exp(-4.0 * rho)
 
 
+def holevo_ceiling_general(success_dim: int, p_bar: float) -> float:
+    """``chi <= p_bar * log2(success_dim)`` -- the ceiling at ANY carrier width.
+
+    :func:`holevo_ceiling` is this with ``success_dim = 4`` and
+    ``p_bar = (1+q^2)/2``, i.e. the R6 encoding.  Written generally so a
+    differently-shaped encoding can be compared on its own terms instead of
+    against a constant that was only ever about a 5-dimensional carrier.
+
+    This exists because an external round (R6i) reports 3.000 bits from a
+    16-dimensional encoding against R6's 1.000 from a 5-dimensional one.  That
+    branch is not on the remote, so the number is UNVERIFIED here -- but the
+    comparison it needs can be set up in advance, and the shape of the answer
+    turns on one quantity:
+
+        p_bar = 1.00  ->  ceiling 4.000  ->  3.000 consistent
+        p_bar = 0.75  ->  ceiling 3.000  ->  3.000 consistent, exactly saturating
+        p_bar = 0.50  ->  ceiling 2.000  ->  3.000 EXCEEDS its own ceiling
+
+    So the single diagnostic that settles whether R6i is a rescue or an error is
+    its ``p_bar``.  A value near 1 means the encoding has no erasure branch, which
+    is precisely the structural change R6f named as its open door, and the rescue
+    is real.  A value near 1/2 would mean a post-selected encoding reporting more
+    bits than its own success weight permits.
+    """
+    if success_dim < 1:
+        raise ValueError("success_dim must be at least 1")
+    return float(p_bar) * math.log2(success_dim)
+
+
+def bits_per_log_dimension(chi: float, carrier_dim: int) -> float:
+    """The width-fair comparison: bits divided by ``log2`` of the carrier size.
+
+    Comparing 3 bits from a 16-dimensional carrier against 1 bit from a
+    5-dimensional one is not a comparison until width is divided out.  The R6
+    encoding sits at 0.4307 at BOTH one use and two uses -- exactly, because chi
+    is exactly additive over parallel uses and so is the log-dimension.  A
+    genuinely better map has to beat that ratio, not the absolute number.
+    """
+    return float(chi) / math.log2(carrier_dim)
+
+
 def entangled_probe(lam: float) -> np.ndarray:
     """``sqrt(lam)|00> + sqrt(1-lam)|11>``.  lam = 1/2 is Bell, lam -> 0 or 1 product."""
     return np.array([math.sqrt(lam), 0.0, 0.0, math.sqrt(1.0 - lam)], dtype=complex)
