@@ -2,17 +2,19 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Mapping
+from dataclasses import dataclass, field, replace
+from typing import Literal, Mapping
 import math
 
 import numpy as np
 
 from ..governance import EvidenceTag, GovernanceError
 from ..recognition.budget import BordonBudget
-from .core import (ChartFunctor, ClockSpec, CosmosCage, FunctionalOrgan, GerbeCell,
-                   LocalGeometry, ProfunctorTendril, RemainderEnvelope, WorldletState,
-                   TransportObservation, _unit_interval)
+from .core import (CarrierMismatch, ChartFunctor, ClockSpec, CosmosCage,
+                   FunctionalOrgan, GerbeCell, LocalGeometry,
+                   ProfunctorTendril, RemainderEnvelope, WorldletState,
+                   TransportObservation, _finite, _safe_exp_score,
+                   _unit_interval)
 from .identity import IdentityEcology, IdentityRegime
 from .mind import (ContactHamiltonianGovernor, HamiltonianEnvelope, ViabilityBounds,
                    ViabilityReport)
@@ -27,6 +29,48 @@ class KernelStepReport:
     viability: ViabilityReport
     governance_reasons: tuple[str, ...]
     evidence_tag: str = EvidenceTag.HYPOTHESIS
+
+
+TendrilMode = Literal[
+    "active",
+    "disabled_control",
+    "shuffled_target_control",
+]
+
+
+@dataclass(frozen=True)
+class TendrilTransactionReport:
+    """One staged real-carrier transport and its vector-valued landing trace."""
+
+    tick: int
+    tendril_id: str
+    mode: TendrilMode
+    source: str
+    declared_target: str
+    selected_target: str
+    accepted: bool
+    committed: bool
+    source_coordinates: tuple[float, ...]
+    transported_output: tuple[float, ...]
+    round_trip: tuple[float, ...]
+    transport_remainder: RemainderEnvelope
+    return_fidelity: float
+    target_before: tuple[float, ...]
+    staged_target: tuple[float, ...]
+    target_after: tuple[float, ...]
+    proposed_delta: tuple[float, ...]
+    committed_delta: tuple[float, ...]
+    proposed_delta_norm: float
+    committed_delta_norm: float
+    alignment_before: float
+    alignment_if_committed: float
+    alignment_after: float
+    coupling: float
+    permeability: float
+    cost: float
+    viability: ViabilityReport
+    governance_reasons: tuple[str, ...]
+    evidence_tag: str = EvidenceTag.MEASURED
 
 
 @dataclass
@@ -44,6 +88,7 @@ class PolycosmicKernel:
     budget: BordonBudget
     tick: int = 0
     evidence_ledger: list[KernelStepReport] = field(default_factory=list)
+    tendril_ledger: list[TendrilTransactionReport] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if len(self.worldlets) < 4:
@@ -74,6 +119,299 @@ class PolycosmicKernel:
             if tendril.woven:
                 observations.append(tendril.transport(self.worldlets[tendril.source].coordinates))
         return observations
+
+    @staticmethod
+    def _strict_real_vector(value: object, name: str) -> np.ndarray:
+        """Validate a real carrier without silently projecting away phase."""
+        raw = np.asarray(value)
+        if raw.ndim != 1:
+            raise GovernanceError(f"{name} must be a one-dimensional carrier")
+        if np.iscomplexobj(raw):
+            imaginary = np.asarray(raw.imag, dtype=float)
+            if np.any(imaginary != 0.0):
+                raise CarrierMismatch(
+                    f"{name} is complex-valued; HB0-T1 supports real carriers only"
+                )
+            raw = raw.real
+        out = np.asarray(raw, dtype=float)
+        if not np.all(np.isfinite(out)):
+            raise GovernanceError(f"{name} contains a non-finite coordinate")
+        return out.copy()
+
+    @staticmethod
+    def _retract_target(target: WorldletState, proposal: np.ndarray) -> np.ndarray:
+        """Return a staged coordinate in the target's declared local chart."""
+        out = PolycosmicKernel._strict_real_vector(
+            proposal, f"{target.id}.staged_target"
+        )
+        if out.shape != target.coordinates.shape:
+            raise CarrierMismatch(
+                f"{target.id}: staged shape {out.shape} != "
+                f"{target.coordinates.shape}"
+            )
+        if target.local_geometry == LocalGeometry.POINCARE_BALL:
+            norm = float(np.linalg.norm(out))
+            if norm >= 1.0:
+                out = out * ((1.0 - 1e-9) / norm)
+        return out
+
+    def _budget_snapshot(self) -> tuple[float, float, list, str]:
+        return (
+            float(self.budget.speculative_draw),
+            float(self.budget.level),
+            list(self.budget.interventions),
+            self.budget.state,
+        )
+
+    def _restore_budget(self, snapshot: tuple[float, float, list, str]) -> None:
+        speculative_draw, level, interventions, state = snapshot
+        self.budget.speculative_draw = speculative_draw
+        self.budget.level = level
+        self.budget.interventions = list(interventions)
+        self.budget.state = state
+
+    def transact_tendril(
+        self,
+        tendril_id: str,
+        *,
+        coupling: float,
+        authorized_sources: Mapping[str, float],
+        mode: TendrilMode = "active",
+        control_target: str | None = None,
+    ) -> TendrilTransactionReport:
+        """Stage, govern, and optionally commit exactly one tendril landing.
+
+        HB0-T1 deliberately supports only real-valued finite carriers.  The
+        transported output and both delta vectors remain in the report; a norm
+        is supplementary telemetry rather than a scalar replacement.
+        """
+        modes = {
+            "active",
+            "disabled_control",
+            "shuffled_target_control",
+        }
+        if mode not in modes:
+            raise GovernanceError(f"unknown tendril transaction mode {mode!r}")
+        coupling = _unit_interval(coupling, "coupling")
+        if tendril_id not in self.tendrils:
+            raise GovernanceError(f"unknown tendril {tendril_id!r}")
+        tendril = self.tendrils[tendril_id]
+        if not tendril.woven and mode != "disabled_control":
+            raise GovernanceError(f"{tendril_id}: a dewoven tendril cannot be active")
+
+        source = self.worldlets[tendril.source]
+        declared_target = self.worldlets[tendril.target]
+        if tendril.chart.source_carrier != source.carrier:
+            raise CarrierMismatch(
+                f"{tendril_id}: chart source {tendril.chart.source_carrier!r} "
+                f"!= worldlet carrier {source.carrier!r}"
+            )
+        if tendril.chart.target_carrier != declared_target.carrier:
+            raise CarrierMismatch(
+                f"{tendril_id}: chart target {tendril.chart.target_carrier!r} "
+                f"!= worldlet carrier {declared_target.carrier!r}"
+            )
+
+        if mode == "shuffled_target_control":
+            if control_target is None or control_target not in self.worldlets:
+                raise GovernanceError(
+                    "shuffled_target_control needs a known control_target"
+                )
+            if control_target == declared_target.id:
+                raise GovernanceError(
+                    "shuffled_target_control must differ from the declared target"
+                )
+            selected_target = self.worldlets[control_target]
+            matched = (
+                selected_target.carrier == declared_target.carrier
+                and selected_target.local_geometry == declared_target.local_geometry
+                and selected_target.dimension == declared_target.dimension
+                and abs(
+                    selected_target.permeability - declared_target.permeability
+                )
+                <= 1e-12
+            )
+            if not matched:
+                raise CarrierMismatch(
+                    "shuffled control target must match carrier, geometry, "
+                    "dimension, and permeability"
+                )
+        else:
+            if control_target is not None:
+                raise GovernanceError(
+                    "control_target is valid only for shuffled_target_control"
+                )
+            selected_target = declared_target
+
+        sources: dict[str, float] = {}
+        for component, value in authorized_sources.items():
+            value = _finite(value, f"authorized_sources[{component!r}]")
+            if value < 0.0:
+                raise GovernanceError("authorized source terms must be non-negative")
+            sources[str(component)] = value
+
+        world_snapshot = self._snapshot()
+        identity_snapshot = {
+            regime_id: regime.section.copy()
+            for regime_id, regime in self.identity.regimes.items()
+        }
+        budget_snapshot = self._budget_snapshot()
+        tick_snapshot = self.tick
+        ledger_size = len(self.tendril_ledger)
+
+        try:
+            source_coordinates = self._strict_real_vector(
+                source.coordinates, f"{tendril_id}.source"
+            )
+            transported = self._strict_real_vector(
+                tendril.chart.forward(source_coordinates.copy()),
+                f"{tendril_id}.output",
+            )
+            if tendril.chart.backward is None:
+                raise GovernanceError(
+                    f"{tendril_id}: HB0-T1 needs an explicit return map"
+                )
+            round_trip = self._strict_real_vector(
+                tendril.chart.backward(transported.copy()),
+                f"{tendril_id}.round_trip",
+            )
+            if round_trip.shape != source_coordinates.shape:
+                raise CarrierMismatch(
+                    f"{tendril_id}: round-trip shape {round_trip.shape} != "
+                    f"source shape {source_coordinates.shape}"
+                )
+            round_trip_defect = float(
+                np.linalg.norm(round_trip - source_coordinates)
+            )
+            transport_remainder = RemainderEnvelope(
+                name="[R]_transport",
+                channel="transport",
+                carrier=tendril.chart.source_carrier,
+                evidence_tag=EvidenceTag.MEASURED,
+                statement=(
+                    "round-trip defect of the staged active-tendril "
+                    "correspondence"
+                ),
+                instrument="l2_norm(backward(forward(x)) - x)",
+                magnitude=round_trip_defect,
+                provenance=tendril_id,
+            )
+            if transported.shape != selected_target.coordinates.shape:
+                raise CarrierMismatch(
+                    f"{tendril_id}: output shape {transported.shape} != "
+                    f"selected target shape {selected_target.coordinates.shape}"
+                )
+            target_before = self._strict_real_vector(
+                selected_target.coordinates, f"{selected_target.id}.target_before"
+            )
+            proposal = target_before + (
+                coupling
+                * selected_target.permeability
+                * (transported - target_before)
+            )
+            staged_target = self._retract_target(selected_target, proposal)
+            proposed_delta = staged_target - target_before
+            alignment_before = float(np.linalg.norm(transported - target_before))
+            alignment_if_committed = float(
+                np.linalg.norm(transported - staged_target)
+            )
+            cost = float(tendril.cost)
+
+            will_move = mode != "disabled_control"
+            staged_alignment = (
+                alignment_if_committed if will_move else alignment_before
+            )
+            before_coherence = alignment_before + round_trip_defect
+            after_coherence = staged_alignment + round_trip_defect
+            identity_defect = 1.0 - self.identity.identity_fidelity()
+            before_envelope = HamiltonianEnvelope(
+                compute=0.0,
+                coherence=before_coherence,
+                identity=identity_defect,
+                absorption=0.0,
+            )
+            after_envelope = HamiltonianEnvelope(
+                compute=cost,
+                coherence=after_coherence,
+                identity=identity_defect,
+                absorption=0.0,
+            )
+            observed = {
+                "gluing_defect": after_coherence,
+                "identity_defect": identity_defect,
+                "absorption": 0.0,
+                "compute": cost,
+                "plurality": self.identity.plurality(),
+                "lob_trap": 0.0,
+                "fragmentation": self.identity.fragmentation_risk(),
+            }
+            decision = self.governor.decide(
+                before_envelope,
+                after_envelope,
+                sources,
+                observed,
+            )
+            committed = bool(decision.accepted and will_move)
+            committed_delta = (
+                proposed_delta.copy()
+                if committed
+                else np.zeros_like(proposed_delta)
+            )
+            target_after = (
+                staged_target.copy() if committed else target_before.copy()
+            )
+            alignment_after = (
+                alignment_if_committed if committed else alignment_before
+            )
+            report = TendrilTransactionReport(
+                tick=self.tick + 1,
+                tendril_id=tendril_id,
+                mode=mode,
+                source=source.id,
+                declared_target=declared_target.id,
+                selected_target=selected_target.id,
+                accepted=decision.accepted,
+                committed=committed,
+                source_coordinates=tuple(float(x) for x in source_coordinates),
+                transported_output=tuple(float(x) for x in transported),
+                round_trip=tuple(float(x) for x in round_trip),
+                transport_remainder=transport_remainder,
+                return_fidelity=_safe_exp_score(round_trip_defect),
+                target_before=tuple(float(x) for x in target_before),
+                staged_target=tuple(float(x) for x in staged_target),
+                target_after=tuple(float(x) for x in target_after),
+                proposed_delta=tuple(float(x) for x in proposed_delta),
+                committed_delta=tuple(float(x) for x in committed_delta),
+                proposed_delta_norm=float(np.linalg.norm(proposed_delta)),
+                committed_delta_norm=float(np.linalg.norm(committed_delta)),
+                alignment_before=alignment_before,
+                alignment_if_committed=alignment_if_committed,
+                alignment_after=alignment_after,
+                coupling=coupling,
+                permeability=float(selected_target.permeability),
+                cost=cost,
+                viability=decision.viability,
+                governance_reasons=decision.reasons,
+            )
+
+            if committed:
+                selected_target.coordinates = target_after.copy()
+            self.tick += 1
+            self.budget.charge(cost * 0.01)
+            self.budget.tick(self.tick)
+            self.tendril_ledger.append(report)
+            return report
+        except Exception:
+            self._restore(world_snapshot)
+            for regime_id, section in identity_snapshot.items():
+                self.identity.regimes[regime_id] = replace(
+                    self.identity.regimes[regime_id],
+                    section=section.copy(),
+                )
+            self._restore_budget(budget_snapshot)
+            self.tick = tick_snapshot
+            del self.tendril_ledger[ledger_size:]
+            raise
 
     def step(
         self,
