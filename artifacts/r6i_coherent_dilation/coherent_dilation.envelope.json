@@ -1,0 +1,139 @@
+{
+  "claim_id": "EXP-R6I-COHERENT-DILATION",
+  "command": "python experiments/run_coherent_dilation.py",
+  "commit_sha": "52b86daa26b8db74faa6a6def2d6f29615dd8858",
+  "environment": {
+    "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
+    "fields": {
+      "machine": "AMD64",
+      "numpy": "2.4.5",
+      "platform": "windows",
+      "python": "3.13.14"
+    }
+  },
+  "environment_dependent": [
+    "SVD",
+    "eigendecomposition",
+    "PGM"
+  ],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "sha256:02675ffbd325542daee33556d93e3ecf3570da25a6cf644b1f79c461ac2acb7f",
+    "sha256:07916d942d7b3fb580f930f01cbb8a94b9522483c1f041627ff8559e775a42cc",
+    "sha256:09bc44805ce9fba08a6696afa6d8bd47472be4a0734a7d9d3be065511d199d5d",
+    "sha256:0e561f1c0a00ccc9ba98ede9a5d4f3aa25e13d818a1c9cbf0f8522c05a18f0f1",
+    "sha256:1297e513769e05f6ae73f518d6ba5700c5050e4db66f365bf0e093eed569b4eb",
+    "sha256:22c50f16aeec01f53256f2aa887cb34834c7021f87abd056568737021add33c4",
+    "sha256:5552b0c22a8e6b5f2d1590ca319eb68428d5433abac6f79845bbe43f9c19738f",
+    "sha256:5885bb0ea4b6e91cb836e1a3c8dac4ae9b80bd9104d39333bcf8a080d318795d",
+    "sha256:5fd46fd6d11b5f314aa4794ea4c77b3954cc3a243859d9fb2cc4a0ca10f1906c",
+    "sha256:65beda628db9031ec255e335de6f84e8f3f639a63ba997a0656dcf292cf92033",
+    "sha256:65e0c3e2a285f8f5c67e5370f00ff3f239fe2b63406aebe7ba2bc44a7220cae5",
+    "sha256:6a227c0f0adda2bb753092b3b8efcd1128b90ddeec86c1bcf887d2b449a24892",
+    "sha256:6f6d2afaed2d48c6220ca06d03e93d0a48ccb16c2cbbedec930d6470197fae8e",
+    "sha256:74732c8e8588fd551fff36c93629ab0c5bb8e712a05fad04251dd0f923191e17",
+    "sha256:76e514b9a3bc1d9c2a44ba3b636f0004b533655b6b5e7a2d23b4d44145a37f06",
+    "sha256:7dfe11c2791eb94c943e3f1786a99b1432ef605324294fd083fba53083184b60",
+    "sha256:8d3b82f3febaa24ff35b613475b151663b183ba431013c3a9974aba7558bf71c",
+    "sha256:a568eacfdee9dcf69c52aa9c642d89e33abf2f2bef5f0f3f5d73d04296554745",
+    "sha256:a6eead052a7ea5913fb86dd388fe5dad0a76c5208a246cb70ff75b38ca1cbbbf",
+    "sha256:a837dd963009fca75ad43d57a1e7c92c1c41a099ca433d5f919c45801b43d6e0",
+    "sha256:a9249763cbc3fc73d1986984fba64148ef7dda6297652a7dbcd7b45cc6cd5802",
+    "sha256:b4ff6f7abbf016eabbe73ce622ce55eeea8346589dce27d2efeb7f70f971d7f2",
+    "sha256:bbbc1daa25ebb2e9acaf3b2fa68d47f65756fc605ecdaa6309b735cea668c985",
+    "sha256:bda10401df6e151370145498fbb902f9135207d2c15ca41fed518f4d8bce4714",
+    "sha256:bf0be874263841737eb796c3c90783e75ac57b332a4a98898544e11466e2cb75",
+    "sha256:c6f3bf0de0360a9b85e5d297d3907417486f9de86f9697016944138d21a4241b",
+    "sha256:ca324de339cf88970972df42006811982d24ec6202a20259f9d9ffe2c0e1fb42",
+    "sha256:ce2c8066027a592daa5b8afe1ec3f7af17793d8326ed6150aac33aae6a94335f",
+    "sha256:ce6a60f263bcb6af3128fcf655cd808fa913160dafde44e1c6c605e1565db62a",
+    "sha256:d6ebb23396aa2b78ac7fb1aea814bd0c40806ed9e7b57e8b8e5eb2e60a6dca38",
+    "sha256:de1da45ac1c44bec723289bfeef2f143597be29eb3f3e2f92018e089df71d45a",
+    "sha256:e1dae66217042e99b498fbebac24a02951d8c3a70d1b860289aa2d1587986fde",
+    "sha256:e5c401f0b81205a290aa8e675dea6bfb9553e0d991c433bf8370d473d69a7a1c",
+    "sha256:e71eaf76aa9558fac97657baf062c7aa03dc4d783c71d5ee414a7c2cdbba808b",
+    "sha256:f23aaa569a31f56f562292e917a1f0c1b0c01650362c567f84114dce17ba24f7",
+    "sha256:fd59c17636e0e792a13a54aaace85cac70c41b1d9b3c4ce43bddd2790330bc4a"
+  ],
+  "observed_result": {
+    "controls": {
+      "attempt1_trace_bound": true,
+      "central_sign_matrix_identity": true,
+      "coherent_density_states": true,
+      "coherent_sign_overlap_identity": true,
+      "common_unitary_gauge_invariance": true,
+      "composition_defect_measured": true,
+      "defect_intertwining": true,
+      "identity_composition_known_answer": true,
+      "invariance_pgm_guards": true,
+      "passive_padding_invariance": true,
+      "permutation_invariance": true,
+      "pgm_and_information_numerics": true,
+      "r6_analytic_ceiling": true,
+      "r6_central_sign_alias": true,
+      "r6_density_states": true,
+      "same_exact_source_matrices": true,
+      "two_sided_unitarity": true
+    },
+    "map_specific": true,
+    "rescue_depths": [
+      0.1,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0
+    ],
+    "sample_size": 36,
+    "verdict": "RESCUE_FOR_THIS_MAP"
+  },
+  "platform": "",
+  "producer": "experiments/run_coherent_dilation.py",
+  "raw_artifacts": {
+    "artifacts/r6i_coherent_dilation/coherent_dilation.attempt1_eigh.json": "sha256:f183b18e09e79f3db36c348e6f37e86dd0d418b0bd38a2cf62a3742ad0624d7e",
+    "artifacts/r6i_coherent_dilation/coherent_dilation.json": "sha256:2cad415043f55251e552c1cc8a7ae37a090fbed9a701b915eeebdc58a315c579",
+    "experiments/run_coherent_dilation.py": "sha256:425bdbb8178f127fda53511e7ff3e704e1915e0755b3e45c1d14b99c176cf1fa",
+    "manifests/qsigma_r6i_coherent_dilation_correction.json": "sha256:6ca10b9260a35a0b15207e28311dff86ea429e9e18878ec0320facffbe9c94eb",
+    "manifests/qsigma_r6i_coherent_dilation_preregistration.json": "sha256:7f0a473552fc08e98965a73f940878cac208796a94dfcec88885667a61aac6de",
+    "src/aionq/coherent_dilation.py": "sha256:3bc3dac33e17c1058cb3403e7fd9dcfce9e136a9beb71cdddae81ea10960f068",
+    "tests/test_coherent_dilation.py": "sha256:7f77002ab4396aa501df2237f1c7f19629297d840baf94f71719cb4c7d21b759"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-29T08:14:49Z",
+  "typed_remainders": [
+    {
+      "carrier": "composition law",
+      "comparison": "the Halmos block is a pointwise unitary dilation. A nonzero composition defect forbids treating it as a finite-dimensional unitary representation of SL(2,R)",
+      "kind": "representation_remainder"
+    },
+    {
+      "carrier": "finite frozen ensembles",
+      "comparison": "Holevo chi upper-bounds accessible information and PGM is one achievable lower bound; this is not a regularized capacity result",
+      "kind": "capacity_remainder"
+    },
+    {
+      "carrier": "one coherent-dilation map",
+      "comparison": "either verdict applies to this map and frozen grid only; it does not prove a general fixed-width rescue or impossibility",
+      "kind": "scope_remainder"
+    },
+    {
+      "carrier": "M versus -M source pairs",
+      "comparison": "R6 aliases every frozen central-sign pair while the canonical positive-root dilation separates it with fidelity exp(-8 rho). A gain therefore partly restores a projective sign bit.",
+      "kind": "central_sign_remainder"
+    },
+    {
+      "carrier": "Halmos completion",
+      "comparison": "the positive-root completion is canonical, but completion gauges are nonunique. Only a codeword-independent common gauge is automatically information preserving.",
+      "kind": "completion_gauge_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}
