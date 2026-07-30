@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import math
 import sys
+from dataclasses import replace
+from itertools import combinations
 
 import numpy as np
 import pytest
@@ -22,9 +24,14 @@ from aionq.fusion import associator_defect, hexagon_defect, pentagon_defect, ver
 from aionq.identity import analyse_identity, holonomy_gram
 from aionq.process import non_markovianity
 from aionq.qrf import compare_frames
-from aionq.atlas import (CLASSICAL, SEPARABLE, STABILIZER, Interval,
+from aionq.atlas import (ALL_FREE, FREE_THEORIES, MATCHGATE, CLASSICAL,
+                         MINIMAL_FREE, SEPARABLE, STABILIZER, FreeTheory,
+                         Interval, IncomparableFibersError,
                          QuantumNecessityAtlas, embed_hierarchy,
-                         hierarchy_distortion, poincare_distance, resource_over)
+                         hierarchy_distortion,
+                         place_free_theories_on_universal_base,
+                         poincare_distance, resource_over)
+from aionq.hyperbolic import PoincareBallBase, UNIVERSAL_POINCARE_BASE
 from aionq.residency import (simulation_residency, max_bipartite_entanglement,
                              stabilizer_renyi_entropy)
 from aionq.selfknowledge import (copies_for_self_tomography, self_knowledge_tradeoff,
@@ -482,6 +489,9 @@ def test_real_free_theory_structure_is_not_tree_like():
     assert r["gromov_delta"] > 0.0
     # delta/diameter = 0.5 is the maximum possible for any metric space
     assert r["delta_over_diameter"] == pytest.approx(0.5, abs=1e-9)
+    # Frozen K13 placement: history remains reproducible after reinstatement.
+    assert r["hyperbolic_distortion"] == pytest.approx(5.289745803610123)
+    assert r["euclidean_distortion"] == pytest.approx(6.635501481435628)
 
 
 def test_gromov_delta_is_zero_on_a_tree():
@@ -728,12 +738,117 @@ def test_unknown_interval_policy_raises():
         a.dominates(b, interval_policy="wishful")
 
 
-def test_retired_poincare_instrument_warns():
+def test_universal_poincare_distance_is_live_and_legacy_name_is_deprecated():
     a = QuantumNecessityAtlas("a", STABILIZER)
     b = QuantumNecessityAtlas("b", SEPARABLE)
-    assert not hasattr(a, "base_distance")       # the live default is gone
-    with pytest.warns(UserWarning, match="RETIRED"):
-        a.experimental_poincare_instrument(b)
+    distance = a.base_distance(b)
+    assert distance > 0.0
+    assert a.geometric_base is b.geometric_base
+    assert a.geometric_base.dimension == 4
+    with pytest.warns(DeprecationWarning, match="deprecated"):
+        legacy_alias = a.experimental_poincare_instrument(b)
+    assert legacy_alias == pytest.approx(distance)
+
+
+def test_free_theory_identity_is_full_spec_not_a_binary_name_alias():
+    canonical = QuantumNecessityAtlas("canonical", STABILIZER)
+    alias = replace(
+        STABILIZER,
+        free_states="all states",
+        free_operations="all operations",
+        monotone="entanglement entropy",
+    )
+
+    with pytest.raises(ValueError, match="name alone does not identify a fiber"):
+        QuantumNecessityAtlas("unlocated alias", alias)
+
+    located_alias = QuantumNecessityAtlas(
+        "located alias",
+        alias,
+        base_point=canonical.base_point,
+    )
+    with pytest.raises(IncomparableFibersError, match="specifications"):
+        canonical.dominates(located_alias)
+    with pytest.raises(ValueError, match="matching a canonical name is insufficient"):
+        canonical.transport_to(alias)
+
+
+def test_resource_dispatch_uses_the_full_free_theory_spec_and_finite_state():
+    alias = replace(
+        STABILIZER,
+        free_states="all states",
+        monotone="entanglement entropy",
+    )
+    with pytest.raises(ValueError, match="canonical name alone"):
+        resource_over(np.array([1.0, 0.0]), alias)
+    with pytest.raises(ValueError, match="non-zero norm"):
+        resource_over(np.zeros(2), STABILIZER)
+    with pytest.raises(ValueError, match="finite"):
+        resource_over(np.array([1.0, float("nan")]), STABILIZER)
+
+
+def test_universal_free_theory_placement_is_n_dimensional_injective_and_stable():
+    original = place_free_theories_on_universal_base()
+    origin_lift = UNIVERSAL_POINCARE_BASE.to_hyperboloid(np.zeros(4))
+    tangent_vectors = np.stack(
+        [
+            UNIVERSAL_POINCARE_BASE.log(
+                origin_lift,
+                UNIVERSAL_POINCARE_BASE.to_hyperboloid(original[theory.name]),
+            )
+            for theory in FREE_THEORIES
+        ]
+    )
+    assert np.linalg.matrix_rank(tangent_vectors) == 4
+    for left, right in combinations(FREE_THEORIES, 2):
+        assert UNIVERSAL_POINCARE_BASE.distance(
+            original[left.name], original[right.name]
+        ) > UNIVERSAL_POINCARE_BASE.tolerance
+
+    extra = FreeTheory(
+        "aaa-extra",
+        "extra fiducial states",
+        "extra identity operations",
+        "trivial group",
+        "extra monotone",
+    )
+    extended = place_free_theories_on_universal_base(FREE_THEORIES + (extra,))
+    for theory in FREE_THEORIES:
+        assert np.array_equal(original[theory.name], extended[theory.name])
+
+
+def test_universal_free_theory_placement_fails_closed_on_flat_or_invalid_indices():
+    with pytest.raises(ValueError, match="must not be empty"):
+        place_free_theories_on_universal_base(())
+    with pytest.raises(ValueError, match="0 < spread < 1"):
+        place_free_theories_on_universal_base(spread=0.0)
+    with pytest.raises(ValueError, match="0 < spread < 1"):
+        place_free_theories_on_universal_base(spread=1.0)
+
+    dangling = FreeTheory("dangling", "s", "o", "g", "m", contains=("missing",))
+    with pytest.raises(ValueError, match="unresolved containment"):
+        place_free_theories_on_universal_base((dangling,))
+    left = FreeTheory("left", "s", "o", "g", "m", contains=("right",))
+    right = FreeTheory("right", "s", "o", "g", "m", contains=("left",))
+    with pytest.raises(ValueError, match="acyclic"):
+        place_free_theories_on_universal_base((left, right))
+
+    with pytest.raises(ValueError, match="not injective"):
+        place_free_theories_on_universal_base(
+            FREE_THEORIES,
+            geometric_base=PoincareBallBase("too-small-H1", 1),
+        )
+
+    curved = PoincareBallBase("curvature-minus-four-H4", 4, -4.0)
+    assert len(place_free_theories_on_universal_base(
+        geometric_base=curved,
+        spread=0.72,
+    )) == len(FREE_THEORIES)
+    with pytest.raises(ValueError, match="0 < spread < 1"):
+        place_free_theories_on_universal_base(
+            geometric_base=PoincareBallBase("curvature-quarter-H4", 4, -0.25),
+            spread=1.2,
+        )
 
 
 def test_syndrome_information_is_computed_not_hardcoded():

@@ -1,0 +1,165 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "HB0-QB2",
+  "title": "Positive-Chiral Spin-Density Connection over the Universal H4 Base",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-07-30",
+  "question": "Can the Levi-Civita transport of the declared Poincare H4 base be projected into one compact SU(2) chiral spin fiber, realized exactly as a one-qubit Qiskit circuit, and kept distinct from the noncompact SO(2,2) sectional substrate?",
+  "provenance": {
+    "local_predecessor": "HB0-QB1 Hopf-quotiented qutrit quantum shadow",
+    "sectional_repository": "jesusvilela/nnn-hyperbolic-ramdisk_v2",
+    "sectional_repository_commit": "0dbc6f9d138229d9d40b86a8e504516815139843",
+    "sectional_repository_role": "read-only operator and interface audit; no runtime dependency or copied storage service",
+    "qiskit_requirement": "qiskit>=2.0",
+    "qiskit_version_at_preregistration": "2.3.0"
+  },
+  "scope": {
+    "inside": [
+      "the existing AION-universal-H4 Poincare base and its exact hyperboloid Levi-Civita parallel transport",
+      "the canonical oriented conformal tetrad on the open four-ball",
+      "the positive self-dual Spin(4) chiral projection SU(2)+",
+      "closed-form continuously signed geodesic links and ordered piecewise-geodesic holonomy",
+      "qubit spinor and density transport, with an algebraic diag(1,U) lift for the QB1 radial-flag qutrit",
+      "one-qubit Qiskit UnitaryGate, Operator, Statevector, and DensityMatrix verification without a backend",
+      "an exact curved H4 triangle against an origin-tangent-matched flat R4 identity control",
+      "strictly typed sectional controls: normalized Hadamard amplitude mixing, Mobius base translation, and an SO(2,2) boost refusal",
+      "a 100-section geodesic refinement control and fixed phase 1.2368 gauge/circuit-order control"
+    ],
+    "outside": [
+      "a finite-dimensional unitary representation of the noncompact H4 isometry group SO+(4,1)",
+      "identifying Spin(2,2) or SO(2,2) boosts with the Riemannian H4 spin connection",
+      "claiming that a transported spin density equals QB1's canonical endpoint encoding",
+      "the omitted negative-chiral SU(2)- factor",
+      "Qiskit hardware execution, noise, transpilation cost, channel capacity, speedup, or quantum advantage",
+      "a durable or append-only reservoir integration",
+      "an SU(2) graph connection Laplacian",
+      "a two-qubit embedding of QB1's full qutrit",
+      "cognition, AGI, consciousness, or physical realization"
+    ]
+  },
+  "definition": {
+    "coframe": "e^a = 2R dx^a/(1-||x||^2)",
+    "self_dual_symbols": "eta^i_jk=epsilon_ijk and eta^i_j4=delta_ij for i,j,k in {1,2,3}",
+    "chiral_connection": "A^i_mu(x)=-2 eta^i_munu x^nu/(1-||x||^2), with T_i=-i sigma_i/2",
+    "chiral_curvature": "F^i_munu(x)=4 eta^i_munu/(1-||x||^2)^2; in the orthonormal frame F^i_ab=eta^i_ab/R^2",
+    "geodesic_link": "for p,q in B4, w=1-p dot q, b_i=eta^i_munu q^mu p^nu, s=hypot(w,b), U+(q<-p)=(w I-i b_i sigma_i)/s",
+    "path_order": "for links U_k from p_k to p_(k+1), U_path=U_(n-1)...U_1 U_0",
+    "density_transport": "rho_q=U_path rho_p U_path^dagger",
+    "qutrit_lift": "rho3_q=diag(1,U_path) rho3_p diag(1,U_path)^dagger; radial flag weight is unchanged",
+    "qiskit_projection": "append each already-certified SU(2) link as a one-qubit UnitaryGate in path order",
+    "flat_control": "the matched R4 global coframe has zero connection and identity loop holonomy",
+    "sectional_boundary": "Mobius operations remain on the H4 base; iH is an SU(2) amplitude/gauge control; nonzero SO(2,2) boosts are not qubit gates"
+  },
+  "predictions": [
+    {
+      "id": "P1",
+      "statement": "Every closed-form geodesic link is finite, unitary, determinant one, continuously signed with positive scalar part, identity on a radial edge, and its reverse is the exact adjoint."
+    },
+    {
+      "id": "P2",
+      "statement": "The Bloch adjoint of every SU(2)+ link agrees to 1e-10 with the positive self-dual projection of the existing H4 hyperboloid Levi-Civita frame transporter."
+    },
+    {
+      "id": "P3",
+      "statement": "Qubit and lifted qutrit density transport preserve Hermiticity, positivity, trace, spectrum, and the QB1 radial-flag weight."
+    },
+    {
+      "id": "P4",
+      "statement": "For the geodesic triangle 0->epsilon e1->epsilon e2->0, U=exp[-2 atan(epsilon^2) T3], its H4 area is 2 R^2 atan(epsilon^2), and the matched flat R4 loop is identity."
+    },
+    {
+      "id": "P5",
+      "statement": "A plus-x density probe sees triangle trace distance epsilon^2/sqrt(1+epsilon^4) and root fidelity 1/sqrt(1+epsilon^4), while a sigma3-aligned density is blind."
+    },
+    {
+      "id": "P6",
+      "statement": "The six local curvature planes span exactly three positive-chiral su(2) directions."
+    },
+    {
+      "id": "P7",
+      "statement": "One hundred Mobius-geodesic sections compose to the same continuously signed endpoint link within 1e-10."
+    },
+    {
+      "id": "P8",
+      "statement": "Qiskit reproduces the ordered NumPy path operator, statevector, and density within 1e-10, with no measurements, backend execution, randomness, or advantage claim."
+    },
+    {
+      "id": "P9",
+      "statement": "Qiskit retains the operator distinction between +I and -I even though one-qubit density conjugation identifies them; a controlled -I interferometric control detects the central sign."
+    },
+    {
+      "id": "P10",
+      "statement": "Strict Mobius translation preserves H4 pair distance; normalized Hadamard is only an amplitude/gauge control; a nonzero SO(2,2) boost preserves the split form but fails the Hilbert-unitary gate."
+    }
+  ],
+  "controls": [
+    {
+      "id": "C1",
+      "name": "independent Levi-Civita frame control",
+      "gate": "Construct SO(4) transport columnwise from the existing hyperboloid parallel transporter and compare its self-dual projection with the closed-form link's Bloch adjoint."
+    },
+    {
+      "id": "C2",
+      "name": "flat curvature ablation",
+      "gate": "The same closed polygon in the matched flat R4 global frame returns exactly I."
+    },
+    {
+      "id": "C3",
+      "name": "operator before density",
+      "gate": "Holonomy reports retain the signed SU(2) matrix and Wilson trace; density-only observations cannot certify the central Spin lift."
+    },
+    {
+      "id": "C4",
+      "name": "ordered Qiskit realization",
+      "gate": "Compare matrices directly, never Operator.equiv, against U_(n-1)...U_0."
+    },
+    {
+      "id": "C5",
+      "name": "sectional carrier separation",
+      "gate": "SO(2,2), H4, SU(2)+, qutrit density, and Qiskit circuit carriers remain separately typed."
+    },
+    {
+      "id": "C6",
+      "name": "evolved sectional metadata",
+      "gate": "Use phase 1.2368 as a fixed SU(2) gauge/circuit-order control and generation 100 as the refinement count; jitter 0.19685006 and seed 0b62c6dd remain inert because no operator or invariant is defined for them."
+    },
+    {
+      "id": "C7",
+      "name": "fail-closed conditioning",
+      "gate": "No clipping, renormalizing, polar projection, determinant correction, or silent matrix repair is allowed."
+    }
+  ],
+  "kill_conditions": [
+    "Any geodesic link is nonunitary, has determinant different from one, or disagrees with the independent Levi-Civita frame projection beyond tolerance.",
+    "Reverse-edge or same-geodesic refinement composition changes the continuously signed lift beyond tolerance.",
+    "The curved triangle is reported as flat, or the flat control acquires holonomy.",
+    "A density-only equality is used to identify +I and -I at the Spin lift.",
+    "Qiskit circuit order differs from the declared path product.",
+    "A nonunitary or non-SU(2) matrix is repaired rather than rejected.",
+    "A split-signature boost is submitted as a one-qubit unitary.",
+    "The QB1 qutrit is described as one qubit.",
+    "The SU(2)+ holonomy is promoted to a finite-dimensional unitary representation of SO+(4,1).",
+    "Any hardware, performance, capacity, cognition, AGI, consciousness, or quantum-advantage interpretation is promoted."
+  ],
+  "evidence_ceiling": {
+    "P": "exact and float64-verified geometry, representation, and circuit identities for the declared finite-dimensional slice",
+    "M": "local Qiskit simulator agreement and numerical conditioning defects",
+    "S": "telos-over-substrate interpretation",
+    "independent": false,
+    "excluded": [
+      "full Spin(4) connection",
+      "SO+(4,1) unitary representation",
+      "hardware execution",
+      "quantum advantage",
+      "cognitive performance"
+    ]
+  },
+  "resource_budget": {
+    "external_repository_calls": "one authenticated read-only clone at a pinned commit",
+    "quantum_width": "one qubit for path projection; two qubits only for the central-sign interferometric control",
+    "backend_jobs": 0,
+    "randomness": "none in primary predictions",
+    "expected_runtime": "under ten seconds for focused tests"
+  },
+  "stop_condition": "Stop after the exact SU(2)+ link, independent frame control, density and qutrit transport, triangle/flat/refinement/sectional controls, Qiskit operator-state-density projection, central-sign witness, bounded documentation, focused tests, full-suite regression, and evidence-envelope verification. Defer reservoir writes and graph Laplacians."
+}

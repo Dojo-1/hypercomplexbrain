@@ -19,8 +19,10 @@ An envelope that hashes a file the same process just wrote from the same prose i
 self-witnessing with extra steps.  That is the preregistered kill condition for
 this round, and it is the one most likely to fire.  Three defences:
 
-1.  ``ARTIFACT`` hashes are read from disk at verification time, not carried in
-    memory from whoever produced them.  A corrupted or edited artifact fails.
+1.  ``ARTIFACT`` hashes are recomputed at verification time, not carried in
+    memory from whoever produced them.  The working tree is checked first; a
+    changed or removed file can fall back only to the immutable blob at the
+    envelope's recorded commit, with an explicit historical-binding warning.
 2.  ``producer`` and ``verifier`` are separate fields and
     :meth:`EvidenceEnvelope.independent` is False when they coincide.  An
     envelope that verifies itself is *recorded as such* rather than counted.
@@ -48,11 +50,13 @@ from __future__ import annotations
 import hashlib
 import json
 import platform
+import re
 import subprocess
 import sys
 import time
 from dataclasses import asdict, dataclass, field
-from pathlib import Path
+from functools import lru_cache
+from pathlib import Path, PurePosixPath
 
 __all__ = ["EvidenceEnvelope", "ProofEnvelope", "VerificationResult",
            "file_digest", "environment_digest", "current_commit",
@@ -115,6 +119,29 @@ def current_commit(repo_root=None) -> str:
     except (OSError, subprocess.SubprocessError):   # pragma: no cover
         return "unknown"
     return out.stdout.strip() if out.returncode == 0 else "unknown"
+
+
+@lru_cache(maxsize=256)
+def _committed_file_digest(relative_path, commit_sha: str, repo_root) -> str | None:
+    """Digest a repository blob without trusting the mutable working tree."""
+
+    if not re.fullmatch(r"[0-9a-fA-F]{7,40}", commit_sha or ""):
+        return None
+    portable = PurePosixPath(str(relative_path).replace("\\", "/"))
+    if portable.is_absolute() or ".." in portable.parts or not portable.parts:
+        return None
+    try:
+        result = subprocess.run(
+            ["git", "cat-file", "blob", f"{commit_sha}:{portable.as_posix()}"],
+            capture_output=True,
+            timeout=30,
+            cwd=str(repo_root),
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if result.returncode != 0:
+        return None
+    return _digest_bytes(result.stdout)
 
 
 # --------------------------------------------------------------------------
@@ -253,11 +280,12 @@ EvidenceTag_REQUIRING_EVIDENCE = frozenset(_TAGS_REQUIRING_EVIDENCE)
 
 
 def verify(envelope, repo_root=None, check_commit: bool = True) -> VerificationResult:
-    """Re-check an envelope against the filesystem it points at.
+    """Re-check an envelope against its live files or recorded Git commit.
 
     Nothing here trusts a value the envelope carries about itself: artifact
-    digests are recomputed from disk, the commit is read from git, and the
-    environment digest is recomputed from the running interpreter.
+    digests are recomputed from disk or immutable Git blobs, the current commit
+    is read from Git, and the environment digest is recomputed from the running
+    interpreter.
     """
     failures: list = []
     warnings: list = []
@@ -291,13 +319,39 @@ def verify(envelope, repo_root=None, check_commit: bool = True) -> VerificationR
     for rel, declared in envelope.raw_artifacts.items():
         path = root / rel
         if not path.exists():
-            failures.append(f"{envelope.claim_id}: artifact missing: {rel}")
+            committed = _committed_file_digest(
+                rel,
+                envelope.commit_sha,
+                root,
+            )
+            if committed == declared:
+                warnings.append(
+                    f"{envelope.claim_id}: working-tree artifact is absent for "
+                    f"{rel}, but the declared digest matches recorded commit "
+                    f"{envelope.commit_sha[:8]}. Historical evidence remains "
+                    "bound to that commit."
+                )
+            else:
+                failures.append(f"{envelope.claim_id}: artifact missing: {rel}")
             continue
         actual = file_digest(path)
         if actual != declared:
-            failures.append(f"{envelope.claim_id}: artifact digest mismatch for "
-                            f"{rel}: declared {declared[:19]}..., found "
-                            f"{actual[:19]}...")
+            committed = _committed_file_digest(
+                rel,
+                envelope.commit_sha,
+                root,
+            )
+            if committed == declared:
+                warnings.append(
+                    f"{envelope.claim_id}: working-tree artifact differs for "
+                    f"{rel}, but the declared digest matches recorded commit "
+                    f"{envelope.commit_sha[:8]}. Historical evidence remains "
+                    "bound to that commit, not to the current file."
+                )
+            else:
+                failures.append(f"{envelope.claim_id}: artifact digest mismatch for "
+                                f"{rel}: declared {declared[:19]}..., found "
+                                f"{actual[:19]}...")
 
     # 2. Commit, read from git.
     if check_commit and envelope.commit_sha:

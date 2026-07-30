@@ -1,0 +1,119 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "HB0-QB1",
+  "title": "Hopf-Quotiented Quantum Shadow of the Universal Hyperbolic Base",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-07-30",
+  "question": "What geometry survives when one point of the declared universal Poincare H4 base is encoded as a fixed-width physical density operator without identifying the hyperbolic, split-signature, and quantum metrics?",
+  "scope": {
+    "inside": [
+      "the existing AION-universal-H4 Poincare base",
+      "a deterministic qutrit density encoding of radial depth and S3 direction",
+      "the Hopf quotient S3 to CP1 and its exact U(1) phase kernel",
+      "origin-preserving U(2) base isometries with covariant qutrit unitary transport",
+      "hyperbolic distance, tangent-matched Euclidean distance, trace distance, root fidelity, and Bures distance as separate fields",
+      "one deterministic dephasing data-processing control"
+    ],
+    "outside": [
+      "identifying the Poincare metric with Bures, Fisher, Fubini-Study, or split-signature geometry",
+      "general Lorentz translations of H4 as finite-dimensional quantum gates",
+      "channel capacity, optimized coding, hardware, noise, energy, cognition, AGI, consciousness, or quantum advantage",
+      "claiming that the qutrit shadow is an injective representation of H4"
+    ]
+  },
+  "definition": {
+    "base_point": "x in the open unit ball B4, r=||x||",
+    "direction": "for r>0, z=(x0+i*x1,x2+i*x3)/r in C2 with ||z||=1",
+    "density": "rho_x=(1-r)|flag><flag| direct-sum r|z><z| in D(C3)",
+    "origin": "rho_0=|flag><flag|; the arbitrary direction is multiplied by zero",
+    "radial_recovery": "r=Tr(P_qubit rho_x), d_H(0,x)=2R*atanh(r)",
+    "hopf_kernel": "z and exp(i*theta)z give the same density; the corresponding H4 points are generally distinct",
+    "transport": "U in U(2) acts by z->Uz and rho->diag(1,U) rho diag(1,U)^dagger",
+    "control": "the same realified U(2) action is orthogonal on R4 and therefore preserves both H4 distance and the tangent-matched Euclidean distance"
+  },
+  "predictions": [
+    {
+      "id": "P1",
+      "statement": "Every encoded state is Hermitian, positive semidefinite, trace one, and immutable."
+    },
+    {
+      "id": "P2",
+      "statement": "The qubit-block trace recovers r exactly and the hyperbolic radius is 2R*atanh(r)."
+    },
+    {
+      "id": "P3",
+      "statement": "Trace distance from the encoded origin is exactly r, so infinite hyperbolic depth compactifies to a finite quantum distance."
+    },
+    {
+      "id": "P4",
+      "statement": "A nontrivial common Hopf phase changes the H4 point while leaving the density operator exactly invariant; the generic differential rank is three, not four."
+    },
+    {
+      "id": "P5",
+      "statement": "Every declared U(2) chart preserves hyperbolic and Euclidean control distances and intertwines base transport with qutrit unitary conjugation."
+    },
+    {
+      "id": "P6",
+      "statement": "A fixed qutrit dephasing channel cannot increase trace distance or decrease root fidelity."
+    }
+  ],
+  "controls": [
+    {
+      "id": "C1",
+      "name": "typed geometry separation",
+      "gate": "Reports retain hyperbolic, Euclidean-control, trace, fidelity, and Bures observations as separate named fields with no weighted aggregate."
+    },
+    {
+      "id": "C2",
+      "name": "phase-aware source control",
+      "gate": "The source R4 vector distinguishes a nonzero Hopf phase orbit that the physical density aliases."
+    },
+    {
+      "id": "C3",
+      "name": "origin and boundary",
+      "gate": "The origin is direction-independent; points on or outside the open boundary are rejected rather than clipped."
+    },
+    {
+      "id": "C4",
+      "name": "transport covariance",
+      "gate": "Random frozen U(2) transports preserve source distances and quantum pair geometry to 1e-10."
+    },
+    {
+      "id": "C5",
+      "name": "nonunitary refusal",
+      "gate": "A nonunitary fiber chart is rejected before transport."
+    },
+    {
+      "id": "C6",
+      "name": "matched Euclidean ablation",
+      "gate": "The Euclidean control uses the existing origin-tangent-matched R4 contract and is never reported as a quantum metric."
+    }
+  ],
+  "kill_conditions": [
+    "Any density is non-Hermitian, non-positive, or not trace one.",
+    "The encoded origin depends on an arbitrary direction.",
+    "A Hopf phase is reported as observable in the physical density.",
+    "A U(2) chart changes hyperbolic distance, Euclidean control distance, trace distance, or root fidelity beyond tolerance.",
+    "A dephasing control increases trace distance or decreases root fidelity beyond numerical tolerance.",
+    "Any scalar combines base distance with quantum distinguishability.",
+    "Any cognition, AGI, consciousness, capacity, hardware, or quantum-advantage interpretation is promoted."
+  ],
+  "evidence_ceiling": {
+    "P": "finite-dimensional algebraic and numerical invariants of this declared encoding",
+    "S": "interpretation as a quantum shadow of the HB0 base",
+    "independent": false,
+    "excluded": [
+      "injective representation of H4",
+      "general Isom(H4) unitary realization",
+      "quantum capacity",
+      "cognitive performance"
+    ]
+  },
+  "resource_budget": {
+    "network_calls": "none",
+    "quantum_dimension": 3,
+    "randomness": "fixed deterministic test seeds only",
+    "expected_runtime": "under five seconds for focused tests"
+  },
+  "stop_condition": "Stop after the typed encoding, U(2) covariance, phase-kernel report, matched controls, bounded documentation, focused tests, full-suite regression, and evidence-envelope verification. Do not add a reservoir service, hardware emulator, or capacity experiment in this round."
+}

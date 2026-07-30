@@ -2,13 +2,24 @@
 
 **An audited almost-all-quantum polycosmic brain.**
 
+> **HB0 universal-base reinstatement.** The K13 measurement below remains
+> correct and remains historical evidence: the five-node free-theory
+> \(K_{2,3}\) graph does not earn curvature from tree-likeness. Its former
+> conclusion was too broad. This revision declares a conditioned Poincaré
+> \(H^n\) atlas as the repository-wide base under
+> `AXIOM-HB0-UNIVERSAL_POINCARE_BASE`. `FreeTheory` is a categorical fiber/index,
+> local metrics remain heterogeneous, and a tangent-matched Euclidean base
+> control remains mandatory. The new A-tag is a design contract, not a
+> retroactive positive K13 result. Its structural surrogate is test-covered and
+> promoted through a hashed working-tree envelope; that envelope is unsigned,
+> self-recomputed, and neither commit-bound nor independently witnessed.
+
 > **Revision note (R³).** QΣ-R killed an additive scalar and installed another.
 > QΣ-R² built an atlas to replace it — and left three flattenings inside the
 > atlas, plus one last monarchic scalar sitting on top of it. A second peer audit
-> found all four. They are fixed in §0.6, and one of them **falsifies the
-> hyperbolic base this architecture introduced one revision earlier.** Nothing is
-> defended that measurement contradicts, including when the measurement is
-> against the previous revision's own headline idea.
+> found all four. They are fixed in §0.6; historically, D10 then overgeneralized
+> a failed tree-likeness warrant into retirement of every hyperbolic base. The
+> HB0 axiom above supersedes that policy without rewriting the K13 measurement.
 
 QΣ∞ asked for an architecture as close to 100% quantum as possible. This revision
 does not raise that number. It makes the number *mean* something, reports what it
@@ -191,14 +202,15 @@ structure (`compare_embeddings_on_real_hierarchy`):
 | hyperbolic distortion | 5.29 |
 | Euclidean distortion | 6.64 |
 
-**δ/diameter = 0.5 is the maximum possible for any metric space.** The live base
-is maximally non-tree-like, so hyperbolic embedding is not indicated for it.
-
-> **K13 is falsified on the real base.** The Poincaré base — introduced in R² as
-> the answer to "don't flatten to a Euclidean scalar" — does not earn its
-> curvature on the structure it actually has to carry. It is retired here and
-> kept only as a hypothesis for deeper hierarchies, where it must be re-earned by
-> measurement of an actual conversion metric rather than by depth labels.
+**Historical D10 — the tree-likeness warrant failed.** On this \(K_{2,3}\)
+1-skeleton, δ/diameter = 0.5 falsifies the premise that the free-theory graph is
+tree-like. At R3 that result was overgeneralized into retirement of every
+Poincaré base. The HB0 A-contract supersedes that broad policy: it declares an
+independent universal atlas and does not identify graph distance with its
+metric. The frozen placement also gives lower distortion to the hyperbolic
+instrument (5.29 vs 6.64), so the old matched-Euclidean kill condition was
+**not** met; K13 supports only the narrower failure of the tree-likeness
+justification.
 
 The 1.02×/2.25× figures in §1 remain correct *about the synthetic tree* and are
 now labelled as such. They were never evidence about this architecture's base.
@@ -286,7 +298,7 @@ the claim and not to the code path.
 | # | claimed fixed | actually still present | now |
 |---|---|---|---|
 | D14a | D1 (`Q_cert` overclaim) | `residency.py` module docstring still read *"Q_cert is the fraction of the Hilbert-space exponent that a classical simulator is **actually forced to pay**"* — the exact lower-bound phrasing D1 retired | rewritten to `q_sim_upper`, upper-bound-only, compiler-dependence stated |
-| D14b | D10 (hyperbolic base retired) | `atlas.py` module docstring still asserted *"Its base is hyperbolic, not Euclidean"* with the full justification | rewritten: **no geometry is assigned**; δ/diam = 0.5 recorded; `poincare_distance` retained as instrument, not commitment |
+| D14b | D10 (hyperbolic base retired) | `atlas.py` module docstring still asserted *"Its base is hyperbolic, not Euclidean"* with the full justification | historically rewritten to no assigned geometry; the HB0 universal-base axiom later supersedes that policy with an explicit A-tagged atlas while preserving δ/diam = 0.5 |
 | D14c | D11 (scalar promotion retired) | `advantage.py` was added **in parallel and never wired in**. `QuantumNecessityAtlas.promote()` still ran `q_causal > threshold` — the retired monarch was the live code path | `promote()` now requires a posterior and a cone, delegates to `aionq.advantage.promote`, and returns **HOLD** without one |
 
 D14c was the substantive one: the previous revision announced the scalar gate's
@@ -306,9 +318,9 @@ all"*, contradicted by this repository's own measurement of **+0.019**; stale
 - `q_causal` remains retired and unmeasured. QΣ-R3B-0 calibrates four observable
   coordinates of the cone, but four constrained coordinates remain explicitly
   missing and the registered outcome is therefore `HOLD`.
-- The base metric is still a containment graph, not a measured free-conversion
-  metric `d(F_i,F_j) = −log sup p_succ`. Until that is measured, no geometry —
-  hyperbolic, Euclidean or otherwise — should be assigned to the base.
+- A free-conversion metric `d(F_i,F_j) = −log sup p_succ` is still unmeasured.
+  Therefore the universal Poincaré base is A-tagged architectural structure,
+  not an M-tagged claim that free-theory conversion induces its metric.
 - The base category is still one axis (resource theory). The full
   `Task × Interface × ResourceTheory × Compiler × Noise × Frame` is not built.
 - QΣ-R³B (the full four-cell causal organ test) remains specified and not run;
@@ -362,16 +374,21 @@ theories. Measured (`aionq.atlas.resource_over`):
 | GHZ₃ | 1.0000 | 0.0000 | 1.0000 |
 
 Same state, different answers. **"How quantum is it" is not a well-posed question
-until a base point is named.** Each Reality Cell now carries
+until a free-theory fiber/index specification is named.** Each Reality Cell now carries
 `(free_states, free_operations, admissible_group, monotone)`, and resource claims
 do not transport outside the admissible group.
 
-**(c) No assigned base geometry** — *this was the hyperbolic base, and it is
-retired.* The argument below was made against a **synthetic complete binary
-tree**, then tested against the structure the base actually has and failed
-(§0.6 D10: Gromov δ/diameter = 0.5 on the live diamond DAG). The table is kept
-because it is the evidence that retired the hypothesis, not because the
-hypothesis stands. Worst-case distortion against a synthetic tree metric:
+**(c) Universal Poincaré base, declared rather than inferred.** The shared
+architectural base is now \(B=H^n_{-\kappa}\). Free theories are categorical
+fiber/index labels placed in that atlas; Fisher, Riemannian, Euclidean,
+quaternionic, split-signature, and PSD structures are not identified with the
+base metric. A separate \(R^n\) control matches the Poincaré tangent metric at
+the origin.
+
+The old argument below was made against a **synthetic complete binary tree**.
+K13 then showed that the live free-theory graph is not such a tree
+(Gromov δ/diameter = 0.5). That kills the empirical justification, not the
+new A-tagged coordinate contract. The historical worst-case distortions remain:
 
 | depth | nodes | hyperbolic | euclidean | advantage |
 |---:|---:|---:|---:|---:|
@@ -380,12 +397,12 @@ hypothesis stands. Worst-case distortion against a synthetic tree metric:
 | 4 | 31 | 4.67 | 7.55 | 1.62× |
 | 6 | 127 | 13.35 | 30.03 | 2.25× |
 
-**Honest reading: the table above measures a synthetic tree, not this base.** On
-the real structure the hyperbolic hypothesis is falsified outright (§0.6 D10), and
-`base_distance` has been renamed `experimental_poincare_instrument` and made to
-emit a warning so the retired geometry cannot be used as a live default. A curved
-base that is not earning its curvature is decoration, and decoration is what this
-programme is for removing — including when the decoration is its own.
+**Honest reading:** the table measures a synthetic tree, while K13 measures one
+fixed placement of the five-node free-theory graph. Neither establishes a
+free-conversion metric. The live `base_distance` now evaluates the declared
+universal atlas; `experimental_poincare_instrument` remains a deprecated alias,
+and the frozen K13 placement continues to reproduce its original 5.29/6.64
+distortions without being reused as the live \(H^4\) placement.
 
 **The promotion gate is a pre-registered advantage cone** over the outcome vector
 (§0.6 D11), evaluated against a matched free-theory control. `q_causal > 0` as a
@@ -695,7 +712,7 @@ Kill conditions. Each names the matched control that would retire the component.
 | K10 | the metric resists equivalence attacks | an identity circuit scores > 0 | **survived after fix** (was 0.4568, now 0.0000) |
 | K11 | the raw exponent is sound | pre-clip exponent negative or non-finite | **survived** (range [0.000, 0.533]) |
 | K12 | self-measurement is impossible | a non-disturbing informative self-measurement exists | **falsified** — syndrome extraction, fidelity 1.000000 |
-| K13 | the hyperbolic base earns its curvature | Euclidean matches it on the live hierarchy | **FALSIFIED on the real base** — δ/diam = 0.5, maximally non-tree-like |
+| K13 | the free-theory graph empirically earns hyperbolic curvature from tree-likeness | Euclidean matches it on the frozen live-hierarchy placement | **tree-likeness premise falsified; original matched-control kill not met** — δ/diam = 0.5, while distortion is 5.29 hyperbolic vs 6.64 Euclidean; preserved separately from the HB0 A-tagged universal atlas |
 | K15 | fibers are comparable without transport | a cross-fiber comparison succeeds | **falsified**, now raises |
 | K16 | promotion is one-dimensional | one scalar reproduces the cone's five verdicts | **falsified** — 1 promote, 4 distinct refusals |
 | K17 | coordinates are commensurable | bits and audit-strength compare without error | **falsified**, now raises |
@@ -727,6 +744,12 @@ the section-only holonomy defect of ∞ (an artifact of this module's transport
 rule, which nulls base-relative coordinates because no free-conversion map is
 implemented). In every case the qualitative result survives and the tier does
 not.
+
+`AXIOM-HB0-UNIVERSAL_POINCARE_BASE` is the additional HB0 A-object:
+constructors, Hⁿ coverage, chart invariants, cage identity and the
+tangent-matched Euclidean control are checked. Negative curvature is declared,
+not inferred from K13. The structural envelope verifies against the current
+working tree but is not commit-bound or independently witnessed.
 
 **P — mathematically established.** Stinespring dilation; Gottesman–Knill; Bravyi–Gosset
 stabilizer rank; stabilizer Rényi entropy as a magic monotone; Bennett reversible
@@ -812,6 +835,7 @@ capacity as a count of holonomies.
 | QΣ-R0.6 | second audit: transport, orientation, real-base geometry, advantage cone | ✅ 48/48 tests |
 | QΣ-R0.7 | typed quantities; transport holonomy measured | ✅ 57/57 tests |
 | QΣ-R0.8 | self-review: half-applied fixes completed; cone wired into `promote()` | ✅ 59/59 tests |
+| HB0 universal base | conditioned \(H^n\) atlas, H⁴ default, typed Euclidean base control, live Atlas/HB-0 placement; K13 frozen separately | structurally implemented as `AXIOM-HB0-UNIVERSAL_POINCARE_BASE`; hashed working-tree envelope verifies, while independent witnessing and task benefit remain absent |
 | QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network / matchgate / low-treewidth families not yet covered |
 | Σ∞-S3 | §16 exp. 1: sheaf obstruction localisation, 8 coordinate systems, 300 trials; plus the QΣ query claim | ✅ 128 tests; sheaf clause survives, hypercomplex clause killed, octonionic clause ill-posed |
 | S4-G100 | Reversible Recognition Chamber: aperture, ordered roles, nest gate, 10 preregistered gates | ✅ 193 tests; 6/10 gates fail, chamber retired, S3 claim superseded as basis-dependent |

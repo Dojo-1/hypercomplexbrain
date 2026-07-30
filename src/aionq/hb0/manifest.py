@@ -5,7 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from ..governance import EvidenceTag
+from ..governance import EvidenceTag, GovernanceError, registry
+from ..hyperbolic import (
+    EuclideanBaseControl,
+    PoincareBallBase,
+    UNIVERSAL_POINCARE_BASE,
+)
 from .core import LocalGeometry, QUALITY_ORDER, REMAINDER_CHANNELS
 
 
@@ -22,9 +27,10 @@ def validate_hb0_manifest(blob: Mapping[str, Any], strict: bool = True) -> HB0Ma
     """Validate the HB-0 architecture contract without executing manifest data.
 
     This validator is intentionally separate from the S4-G100 validator: the
-    latter has four fixed geometry names tied to a specific sheaf experiment,
-    whereas HB-0 permits local Poincare/Fisher/Riemannian charts while requiring
-    an explicit Euclidean control and forbidding a universal geometry.
+    latter has four fixed geometry names tied to a specific sheaf experiment.
+    HB-0 declares a universal Poincare atlas while preserving heterogeneous
+    Poincare/Fisher/Riemannian/Euclidean fiber geometries and a mandatory
+    Euclidean ablation.
     """
     errors: list[str] = []
     warnings: list[str] = []
@@ -39,7 +45,7 @@ def validate_hb0_manifest(blob: Mapping[str, Any], strict: bool = True) -> HB0Ma
     required = (
         "name", "evidence_floor", "worldlets", "tendrils", "identity",
         "clocks", "dynamics", "evidence", "observables", "falsifiers",
-        "qualities", "controls",
+        "qualities", "controls", "universal_base",
     )
     for key in required:
         check(key in blob, f"missing required field {key!r}")
@@ -66,8 +72,84 @@ def validate_hb0_manifest(blob: Mapping[str, Any], strict: bool = True) -> HB0Ma
     check(len(geometries) >= 2, "HB-0 requires more than one local geometry")
     check(LocalGeometry.EUCLIDEAN_CONTROL in geometries,
           "a Euclidean capacity-matched control chart is mandatory")
-    check(blob.get("base_geometry") in (None, "none", "dynamic_cover"),
-          "a universal base geometry would reintroduce flat collapse")
+    raw_base = blob["universal_base"]
+    check(isinstance(raw_base, Mapping), "universal_base must be a mapping")
+    base = raw_base if isinstance(raw_base, Mapping) else {}
+    check(blob.get("base_geometry") == LocalGeometry.POINCARE_BALL,
+          "base_geometry must reinstate the Poincare ball")
+    check(base.get("model") == LocalGeometry.POINCARE_BALL,
+          "universal base model must be poincare_ball")
+    check(base.get("scope") == "universal_atlas",
+          "Poincare base scope must be universal_atlas")
+    base_claim_id = base.get("claim_id")
+    check(base_claim_id == "AXIOM-HB0-UNIVERSAL_POINCARE_BASE",
+          "universal base must bind the HB0 Poincare axiom claim")
+    check(base.get("evidence_tag") == EvidenceTag.AXIOMATIZED,
+          "universal Poincare base must be visibly AXIOMATIZED")
+    if base_claim_id == "AXIOM-HB0-UNIVERSAL_POINCARE_BASE":
+        check(registry[base_claim_id].tag == EvidenceTag.AXIOMATIZED,
+              "universal base claim must remain A-tagged in governance")
+    envelope_status = base.get("evidence_envelope_status")
+    check(envelope_status in ("pending", "verified"),
+          "universal base must declare its evidence-envelope status")
+    if envelope_status == "verified":
+        check(bool(base.get("evidence_envelope")),
+              "verified envelope status requires an evidence_envelope path")
+        check(
+            base.get("evidence_envelope")
+            == "artifacts/hb0_universal_base/universal_base.envelope.json",
+            "verified universal base must name the canonical evidence envelope",
+        )
+        if base_claim_id == "AXIOM-HB0-UNIVERSAL_POINCARE_BASE":
+            check(
+                len(registry.envelopes(base_claim_id)) == 1,
+                "verified universal-base claim must carry exactly one loaded envelope",
+            )
+    elif envelope_status == "pending":
+        warnings.append(
+            "universal-base A claim is structurally checked but has no "
+            "commit-bound evidence envelope yet"
+        )
+    check(base.get("supersedes") == "RET-R3-HYPERBOLIC_BASE",
+          "universal base must preserve the historical retirement pointer")
+    check(base.get("heterogeneous_local_fibers") is True,
+          "universal base must preserve heterogeneous local fibers")
+    check(base.get("euclidean_ablation_required") is True,
+          "universal base must retain a matched Euclidean ablation")
+    parsed_base = None
+    try:
+        parsed_base = PoincareBallBase.from_spec(dict(base))
+    except (GovernanceError, TypeError, ValueError, OverflowError) as exc:
+        check(False, f"invalid universal Poincare specification: {exc}")
+    if parsed_base is not None:
+        check(
+            parsed_base.to_spec() == UNIVERSAL_POINCARE_BASE.to_spec(),
+            "manifest universal base must match the repository-wide H4 specification",
+        )
+    raw_control = base.get("euclidean_control")
+    check(isinstance(raw_control, Mapping),
+          "universal base needs a typed Euclidean control specification")
+    if isinstance(raw_control, Mapping):
+        try:
+            control = EuclideanBaseControl.from_spec(dict(raw_control))
+        except (GovernanceError, TypeError, ValueError) as exc:
+            check(False, f"invalid Euclidean base-control specification: {exc}")
+        else:
+            check(
+                raw_control.get("matching")
+                == "same tangent metric at the Poincare origin",
+                "Euclidean control must declare origin-tangent matching",
+            )
+            if parsed_base is not None:
+                check(
+                    control.dimension == parsed_base.dimension,
+                    "Euclidean control dimension must match the universal base",
+                )
+                check(
+                    abs(control.metric_scale - 2.0 * parsed_base.radius)
+                    <= parsed_base.tolerance,
+                    "Euclidean control scale must match the Poincare origin metric",
+                )
     for worldlet in worldlets:
         wid = worldlet.get("id")
         check(worldlet.get("local_geometry") in LocalGeometry.ALL,

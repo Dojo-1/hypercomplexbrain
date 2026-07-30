@@ -128,6 +128,25 @@ def test_a_corrupted_artifact_fails_verification(artifact):
     assert any("digest mismatch" in f for f in result.failures)
 
 
+def test_commit_bound_history_survives_a_later_worktree_edit(
+    artifact,
+    monkeypatch,
+):
+    import aionq.evidence as evidence_module
+
+    env = _envelope(artifact, commit_sha="abcdef1")
+    committed_digest = next(iter(env.raw_artifacts.values()))
+    artifact.write_text(json.dumps({"auroc": 0.99}))
+    monkeypatch.setattr(
+        evidence_module,
+        "_committed_file_digest",
+        lambda _path, _commit, _root: committed_digest,
+    )
+    result = verify(env, check_commit=False)
+    assert result.ok
+    assert any("recorded commit" in warning for warning in result.warnings)
+
+
 def test_a_missing_artifact_fails_verification(artifact):
     env = _envelope(artifact)
     artifact.unlink()
@@ -192,11 +211,49 @@ def test_promotion_with_a_broken_envelope_is_refused(artifact):
 
 def test_promotion_with_a_verified_envelope_succeeds(artifact):
     reg = Registry([Claim("TEST-R4-CANDIDATE", EvidenceTag.HYPOTHESIS, "x",
-                          kill_condition="k")])
+                          kill_condition="k", sample_size=3,
+                          interval=(0.8, 1.0), null="chance")])
     reg.promote("TEST-R4-CANDIDATE", EvidenceTag.MEASURED,
                 envelope=_envelope(artifact, claim_id="TEST-R4-CANDIDATE"))
     assert reg["TEST-R4-CANDIDATE"].tag == EvidenceTag.MEASURED
     assert reg.envelopes("TEST-R4-CANDIDATE")
+
+
+def test_verified_envelope_cannot_bypass_destination_tag_invariants(artifact):
+    reg = Registry([Claim("TEST-R4-CANDIDATE", EvidenceTag.HYPOTHESIS, "x",
+                          kill_condition="k")])
+    envelope = _envelope(artifact, claim_id="TEST-R4-CANDIDATE")
+    with pytest.raises(GovernanceError, match="destination tag M"):
+        reg.promote(
+            "TEST-R4-CANDIDATE",
+            EvidenceTag.MEASURED,
+            envelope=envelope,
+        )
+    assert reg["TEST-R4-CANDIDATE"].tag == EvidenceTag.HYPOTHESIS
+
+
+@pytest.mark.parametrize(
+    "binding",
+    [
+        {"claim_id": "TEST-R4-OTHER"},
+        {"evidence_tag": EvidenceTag.AXIOMATIZED},
+    ],
+)
+def test_envelope_binding_must_match_promoted_claim_and_tag(artifact, binding):
+    reg = Registry([Claim("TEST-R4-CANDIDATE", EvidenceTag.HYPOTHESIS, "x",
+                          kill_condition="k", sample_size=3,
+                          interval=(0.8, 1.0), null="chance")])
+    envelope_fields = {"claim_id": "TEST-R4-CANDIDATE"}
+    envelope_fields.update(binding)
+    envelope = _envelope(artifact, **envelope_fields)
+    with pytest.raises(GovernanceError, match="envelope binding"):
+        reg.promote(
+            "TEST-R4-CANDIDATE",
+            EvidenceTag.MEASURED,
+            envelope=envelope,
+        )
+    assert reg["TEST-R4-CANDIDATE"].tag == EvidenceTag.HYPOTHESIS
+    assert not reg.envelopes("TEST-R4-CANDIDATE")
 
 
 def test_demotion_never_requires_evidence():

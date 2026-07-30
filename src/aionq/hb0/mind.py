@@ -10,7 +10,8 @@ import numpy as np
 
 from ..governance import EvidenceTag, GovernanceError
 from .core import (CarrierMismatch, MindQualityField, QUALITY_ORDER,
-                   RemainderEnvelope, _as_vector, _safe_exp_score, _unit_interval)
+                   RemainderEnvelope, _as_vector, _finite, _safe_exp_score,
+                   _unit_interval)
 from .identity import RecognitionReport
 
 
@@ -45,6 +46,48 @@ class OperatorContext:
     typed_remainders: int = 0
     total_remainders: int = 1
 
+    def __post_init__(self) -> None:
+        for name in (
+            "fast_delta_norm",
+            "slow_delta_norm",
+            "coverage_gain",
+            "information_gain",
+            "diversity_gain",
+            "compute_cost",
+            "coherence_loss",
+            "identity_risk",
+            "resource_headroom",
+            "clock_desynchronisation",
+            "associator_defect",
+            "gluing_defect",
+            "reconstruction_fidelity",
+            "metaplastic_gain",
+            "rule_change_norm",
+        ):
+            value = _finite(getattr(self, name), f"operator_context.{name}")
+            if value < 0.0:
+                raise GovernanceError(f"operator_context.{name} must be non-negative")
+            object.__setattr__(self, name, value)
+        for name, minimum in (
+            ("integration_completed", 0),
+            ("integration_required", 1),
+            ("distinct_clocks", 0),
+            ("corrections_retained", 0),
+            ("corrections_required", 1),
+            ("typed_remainders", 0),
+            ("total_remainders", 1),
+        ):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, (int, np.integer)):
+                raise GovernanceError(f"operator_context.{name} must be an integer")
+            if int(value) < minimum:
+                raise GovernanceError(
+                    f"operator_context.{name} must be at least {minimum}"
+                )
+            object.__setattr__(self, name, int(value))
+        if any(not isinstance(ref, str) or not ref.strip() for ref in self.evidence_refs):
+            raise GovernanceError("operator_context evidence refs must be non-empty strings")
+
 
 @dataclass(frozen=True)
 class OperatorReport:
@@ -69,8 +112,8 @@ class MindOperatorBank:
 
     @staticmethod
     def _bounded_ratio(numerator: float, denominator: float) -> float:
-        numerator = max(0.0, float(numerator))
-        denominator = max(1e-12, float(denominator))
+        numerator = max(0.0, _finite(numerator, "bounded_ratio.numerator"))
+        denominator = max(1e-12, _finite(denominator, "bounded_ratio.denominator"))
         raw = numerator / denominator
         return float(raw / (1.0 + raw))
 
@@ -181,6 +224,25 @@ class ViabilityBounds:
     max_lob_trap: float = 0.2
     max_fragmentation: float = 0.5
 
+    def __post_init__(self) -> None:
+        for name in (
+            "max_gluing_defect",
+            "max_identity_defect",
+            "max_absorption",
+            "max_compute",
+            "max_lob_trap",
+            "max_fragmentation",
+        ):
+            value = _finite(getattr(self, name), f"viability_bounds.{name}")
+            if value < 0.0:
+                raise GovernanceError(f"viability_bounds.{name} must be non-negative")
+            object.__setattr__(self, name, value)
+        object.__setattr__(
+            self,
+            "min_plurality",
+            _unit_interval(self.min_plurality, "viability_bounds.min_plurality"),
+        )
+
 
 @dataclass(frozen=True)
 class ViabilityReport:
@@ -203,14 +265,28 @@ class HamiltonianEnvelope:
     exploration_credit: float = 0.0
     integration_credit: float = 0.0
 
+    def __post_init__(self) -> None:
+        for name in (
+            "compute",
+            "coherence",
+            "identity",
+            "absorption",
+            "exploration_credit",
+            "integration_credit",
+        ):
+            value = _finite(getattr(self, name), f"hamiltonian.{name}")
+            if value < 0.0:
+                raise GovernanceError(f"hamiltonian.{name} must be non-negative")
+            object.__setattr__(self, name, value)
+
     def components(self) -> dict[str, float]:
         return {
-            "compute": max(0.0, float(self.compute)),
-            "coherence": max(0.0, float(self.coherence)),
-            "identity": max(0.0, float(self.identity)),
-            "absorption": max(0.0, float(self.absorption)),
-            "exploration_credit": max(0.0, float(self.exploration_credit)),
-            "integration_credit": max(0.0, float(self.integration_credit)),
+            "compute": self.compute,
+            "coherence": self.coherence,
+            "identity": self.identity,
+            "absorption": self.absorption,
+            "exploration_credit": self.exploration_credit,
+            "integration_credit": self.integration_credit,
         }
 
 
@@ -246,16 +322,20 @@ class ContactHamiltonianGovernor:
         missing = required - set(observed)
         if missing:
             raise GovernanceError(f"viability observation missing {sorted(missing)}")
-        gates = {
-            "gluing": observed["gluing_defect"] <= self.bounds.max_gluing_defect,
-            "identity": observed["identity_defect"] <= self.bounds.max_identity_defect,
-            "non_absorption": observed["absorption"] <= self.bounds.max_absorption,
-            "compute": observed["compute"] <= self.bounds.max_compute,
-            "plurality": observed["plurality"] >= self.bounds.min_plurality,
-            "anti_lob": observed["lob_trap"] <= self.bounds.max_lob_trap,
-            "fragmentation": observed["fragmentation"] <= self.bounds.max_fragmentation,
+        clean = {
+            name: _finite(observed[name], f"viability.{name}")
+            for name in required
         }
-        return ViabilityReport(gates=gates, observed=dict(observed))
+        gates = {
+            "gluing": clean["gluing_defect"] <= self.bounds.max_gluing_defect,
+            "identity": clean["identity_defect"] <= self.bounds.max_identity_defect,
+            "non_absorption": clean["absorption"] <= self.bounds.max_absorption,
+            "compute": clean["compute"] <= self.bounds.max_compute,
+            "plurality": clean["plurality"] >= self.bounds.min_plurality,
+            "anti_lob": clean["lob_trap"] <= self.bounds.max_lob_trap,
+            "fragmentation": clean["fragmentation"] <= self.bounds.max_fragmentation,
+        }
+        return ViabilityReport(gates=gates, observed=clean)
 
     def decide(
         self,
@@ -268,7 +348,14 @@ class ContactHamiltonianGovernor:
         a = after.components()
         component_budget = {}
         for component in ("compute", "coherence", "identity", "absorption"):
-            source = max(0.0, float(authorized.get(component, 0.0)))
+            source = _finite(
+                authorized.get(component, 0.0),
+                f"authorized_source.{component}",
+            )
+            if source < 0.0:
+                raise GovernanceError(
+                    f"authorized_source.{component} must be non-negative"
+                )
             component_budget[component] = a[component] <= b[component] + source + 1e-12
         viability = self.viability(observed)
         reasons = [name for name, ok in component_budget.items() if not ok]

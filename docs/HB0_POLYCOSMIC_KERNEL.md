@@ -16,6 +16,7 @@ evidence. A first task benchmark must be treated as calibration.
 
 ```text
 manifests/hb0_polycosmic_architecture.json
+src/aionq/hyperbolic.py
 src/aionq/hb0/
 tests/test_hb0.py
 ```
@@ -32,14 +33,17 @@ A Worldlet is
 W_i=(X_i,g_i,A_i,Theta_i,O_i,boundary_i,energy_i,Q_i,R_i).
 ```
 
-`X_i` is a local carrier, `g_i` a local geometry, `A_i` an algebra/observability
+Every worldlet also has an immutable point \(b_i\) in the shared universal
+Poincaré base \(B=H^n\). `X_i` is a local fiber carrier, `g_i` a local geometry, `A_i` an algebra/observability
 regime, `Theta_i` its clocks, `O_i` its observers, `Q_i` the sixteen-coordinate
 quality field, and `R_i` typed remainders. Arrays from different carriers or
 geometries cannot be compared until an explicit transport is supplied.
 
 The reference cover deliberately mixes local Poincare, Fisher, Riemannian, and
-Euclidean-control charts. Poincare geometry is local and ablated, not a universal
-base. Quaternion labels are diagnostic; matched real carriers remain mandatory.
+Euclidean-control fiber charts over that one base. A separate
+origin-tangent-matched \(R^n\) base control ablates curvature. Thus universal
+base does not collapse local fibers. Quaternion labels are diagnostic; matched
+real carriers remain mandatory.
 
 ## Tendrils, functors, profunctors, and remainders
 

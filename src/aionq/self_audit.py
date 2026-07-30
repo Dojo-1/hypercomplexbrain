@@ -185,7 +185,7 @@ CORRECTIONS = (
         "the no-advantage rule twice reported as decorative: first a tamper "
         "helper that recursed into a dict copy, then a test for an exception "
         "from a report-returning validator",
-        "tests/test_hb0.py::test_hb0_manifest_validator_catches_flat_collapse_and_quantum_overclaim",
+        "tests/test_hb0.py::test_hb0_manifest_validator_catches_fiber_collapse_base_drift_and_overclaim",
         True,
     ),
     Correction(

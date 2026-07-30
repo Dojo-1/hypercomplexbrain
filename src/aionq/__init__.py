@@ -12,6 +12,7 @@ atlas         Quantum Necessity Atlas: intervals, free-theory bundle, transport
 advantage     causal advantage cone: promotion is a region, not a scalar
 stack         typed quantities and transport holonomy around free-theory loops
 governance    the P/A/M/H/S/R evidence lattice as executable CI policy
+hyperbolic    universal Poincare H^n base and tangent-matched Euclidean control
 visibility    coupling field g_r: structure invisible to depth-r local probes
 splitform     split/hyperbolic forms over R and F_2; computed code distance
 cayley_dickson  the associator failure ladder as an observability atlas
@@ -26,12 +27,12 @@ fusion        Fibonacci fusion grammar with pentagon/hexagon verification
 identity      polyholonomic identity, Gram PSD theorem, frame invariance
 selfknowledge bounds on self-knowledge, and the syndrome counterexample to them
 qrf           quantum reference frames: entanglement is frame-relative
-hb0           typed polycosmic kernel; local charts, profunctors, gerbes, controls
+hb0           typed polycosmic kernel over the shared base; heterogeneous fibers
 """
 
 from . import (advantage, atlas, bordon, budget, cayley_dickson, coherentize,
                fusion, governance, hb0, identity, process, qrf, quantities,
-               residency, selfknowledge, sentinel, splitform, stack, stokes,
+               hyperbolic, residency, selfknowledge, sentinel, splitform, stack, stokes,
                visibility)
 
 __version__ = "0.1.0"
@@ -47,6 +48,7 @@ __all__ = [
     "fusion",
     "governance",
     "hb0",
+    "hyperbolic",
     "identity",
     "process",
     "quantities",

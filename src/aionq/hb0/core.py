@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
+from types import MappingProxyType
 from typing import Any, Callable, Iterable, Mapping
 import math
 
 import numpy as np
 
+from ..carriers import CarrierMismatch, _as_vector, _finite
 from ..governance import EvidenceTag, GovernanceError
 
 CORE_QUALITIES = (
@@ -39,17 +41,6 @@ class FlatCollapseError(GovernanceError):
     """Raised when a heterogeneous object is forced into one promotion scalar."""
 
 
-class CarrierMismatch(TypeError):
-    """Raised when transport or comparison lacks a declared common carrier."""
-
-
-def _finite(value: float, name: str) -> float:
-    value = float(value)
-    if not math.isfinite(value):
-        raise GovernanceError(f"{name} must be finite, got {value!r}")
-    return value
-
-
 def _unit_interval(value: float, name: str) -> float:
     value = _finite(value, name)
     if value < -1e-12 or value > 1.0 + 1e-12:
@@ -57,26 +48,21 @@ def _unit_interval(value: float, name: str) -> float:
     return float(min(1.0, max(0.0, value)))
 
 
-def _as_vector(value: Any, name: str = "value") -> np.ndarray:
-    out = np.asarray(value, dtype=float)
-    if out.ndim != 1:
-        raise GovernanceError(f"{name} must be a one-dimensional carrier")
-    if not np.all(np.isfinite(out)):
-        raise GovernanceError(f"{name} contains a non-finite coordinate")
-    return out.copy()
-
-
 def _normalised(value: Any, name: str = "state") -> np.ndarray:
     out = np.asarray(value, dtype=complex).reshape(-1)
+    if out.size == 0 or not (
+        np.all(np.isfinite(out.real)) and np.all(np.isfinite(out.imag))
+    ):
+        raise GovernanceError(f"{name} must be non-empty and finite")
     norm = float(np.linalg.norm(out))
-    if norm <= 1e-15:
+    if not math.isfinite(norm) or norm <= 1e-15:
         raise GovernanceError(f"{name} must have non-zero norm")
     return out / norm
 
 
 def _safe_exp_score(raw: float) -> float:
     """Map a non-negative defect to [0, 1] without changing its raw report."""
-    raw = max(0.0, float(raw))
+    raw = max(0.0, _finite(raw, "defect"))
     return float(math.exp(-raw))
 
 
@@ -174,7 +160,28 @@ class MindQualityField:
                 f"quality field mismatch; missing={sorted(missing)}, extra={sorted(extra)}"
             )
         clean = {name: _unit_interval(self.values[name], name) for name in QUALITY_ORDER}
-        object.__setattr__(self, "values", clean)
+        policies = {}
+        for field_name, source in (
+            ("obligations", self.obligations),
+            ("kill_conditions", self.kill_conditions),
+        ):
+            unknown = set(source) - set(QUALITY_ORDER)
+            if unknown:
+                raise GovernanceError(
+                    f"{field_name} names unknown qualities {sorted(unknown)}"
+                )
+            frozen = {}
+            for quality, entries in source.items():
+                entries = tuple(entries)
+                if any(not isinstance(entry, str) or not entry.strip() for entry in entries):
+                    raise GovernanceError(
+                        f"{field_name}[{quality!r}] must contain non-empty strings"
+                    )
+                frozen[quality] = entries
+            policies[field_name] = MappingProxyType(frozen)
+        object.__setattr__(self, "values", MappingProxyType(clean))
+        object.__setattr__(self, "obligations", policies["obligations"])
+        object.__setattr__(self, "kill_conditions", policies["kill_conditions"])
 
     @classmethod
     def zero(cls) -> "MindQualityField":
@@ -249,10 +256,25 @@ class ClockSpec:
     role: str
 
     def __post_init__(self) -> None:
-        if not self.id or self.period < 1 or self.rate <= 0:
+        if (
+            not self.id
+            or not self.role
+            or isinstance(self.period, (bool, np.bool_))
+            or not isinstance(self.period, (int, np.integer))
+            or int(self.period) < 1
+        ):
             raise GovernanceError("clock id, positive period, and positive rate are required")
+        rate = _finite(self.rate, f"{self.id or 'clock'}.rate")
+        if rate <= 0.0:
+            raise GovernanceError("clock id, positive period, and positive rate are required")
+        object.__setattr__(self, "period", int(self.period))
+        object.__setattr__(self, "rate", rate)
 
     def due(self, tick: int) -> bool:
+        if isinstance(tick, (bool, np.bool_)) or not isinstance(
+            tick, (int, np.integer)
+        ):
+            raise GovernanceError("clock tick must be an integer")
         return tick % self.period == 0
 
 
@@ -289,18 +311,48 @@ class WorldletState:
         if not self.clocks:
             raise GovernanceError(f"{self.id}: at least one clock is required")
         if self.metric_tensor is not None:
-            metric = np.asarray(self.metric_tensor, dtype=float)
+            metric = np.array(self.metric_tensor, dtype=float, copy=True)
             n = self.coordinates.size
             if metric.shape != (n, n):
                 raise GovernanceError(f"{self.id}: metric tensor must be {n} x {n}")
+            if not np.all(np.isfinite(metric)):
+                raise GovernanceError(f"{self.id}: metric tensor must be finite")
             if np.linalg.norm(metric - metric.T) > 1e-9:
                 raise GovernanceError(f"{self.id}: metric tensor must be symmetric")
-            if float(np.min(np.linalg.eigvalsh(metric))) <= 0.0:
+            try:
+                minimum_eigenvalue = float(np.min(np.linalg.eigvalsh(metric)))
+            except np.linalg.LinAlgError as exc:
+                raise GovernanceError(
+                    f"{self.id}: metric eigendecomposition failed"
+                ) from exc
+            if not math.isfinite(minimum_eigenvalue) or minimum_eigenvalue <= 0.0:
                 raise GovernanceError(f"{self.id}: metric tensor must be positive definite")
-            self.metric_tensor = metric
+            frozen_metric = np.frombuffer(
+                np.ascontiguousarray(metric).tobytes(),
+                dtype=float,
+            ).reshape(metric.shape)
+            self.metric_tensor = frozen_metric
         if self.local_geometry == LocalGeometry.POINCARE_BALL:
+            if self.metric_tensor is not None:
+                raise GovernanceError(
+                    f"{self.id}: Poincare fibers use their induced metric, "
+                    "not an arbitrary tensor"
+                )
             if np.linalg.norm(self.coordinates) >= 1.0:
                 raise GovernanceError(f"{self.id}: a Poincare coordinate must lie inside the ball")
+        elif self.local_geometry in (
+            LocalGeometry.FISHER_METRIC,
+            LocalGeometry.RIEMANNIAN_CHART,
+        ):
+            if self.metric_tensor is None:
+                raise GovernanceError(
+                    f"{self.id}: {self.local_geometry} requires an explicit metric tensor"
+                )
+        elif self.local_geometry == LocalGeometry.DISCRETE and self.metric_tensor is not None:
+            raise GovernanceError(
+                f"{self.id}: a discrete fiber needs an adjacency/transition relation, "
+                "not a continuous metric tensor"
+            )
 
     @property
     def dimension(self) -> int:
@@ -319,10 +371,27 @@ class WorldletState:
         if self.local_geometry == LocalGeometry.POINCARE_BALL:
             nx = float(np.dot(x, x))
             ny = float(np.dot(y, y))
-            denominator = max(1e-15, (1.0 - nx) * (1.0 - ny))
-            argument = 1.0 + 2.0 * float(np.dot(x - y, x - y)) / denominator
-            return float(np.arccosh(max(1.0, argument)))
-        metric = self.metric_tensor if self.metric_tensor is not None else np.eye(self.dimension)
+            denominator = math.sqrt((1.0 - nx) * (1.0 - ny))
+            ratio = float(np.linalg.norm(x - y)) / denominator
+            return _finite(2.0 * float(np.arcsinh(ratio)), "worldlet Poincare distance")
+        if self.local_geometry == LocalGeometry.DISCRETE:
+            return 0.0 if np.array_equal(x, y) else 1.0
+        left_metric = (
+            self.metric_tensor
+            if self.metric_tensor is not None
+            else np.eye(self.dimension)
+        )
+        right_metric = (
+            other.metric_tensor
+            if other.metric_tensor is not None
+            else np.eye(other.dimension)
+        )
+        if not np.allclose(left_metric, right_metric, rtol=1e-10, atol=1e-12):
+            raise CarrierMismatch(
+                f"{self.id} and {other.id} use different local metrics; "
+                "transport through a declared connection first"
+            )
+        metric = 0.5 * (left_metric + right_metric)
         delta = x - y
         return float(math.sqrt(max(0.0, float(delta @ metric @ delta))))
 
@@ -330,11 +399,52 @@ class WorldletState:
         delta = _as_vector(delta, f"{self.id}.delta")
         if delta.shape != self.coordinates.shape:
             raise CarrierMismatch(f"{self.id}: delta shape {delta.shape} != {self.coordinates.shape}")
-        self.coordinates = self.coordinates + float(rate) * delta
+        rate = _finite(rate, f"{self.id}.rate")
+        if rate < 0.0:
+            raise GovernanceError(f"{self.id}.rate must be non-negative")
+        tangent = rate * delta
         if self.local_geometry == LocalGeometry.POINCARE_BALL:
-            norm = float(np.linalg.norm(self.coordinates))
-            if norm >= 1.0:
-                self.coordinates = self.coordinates * ((1.0 - 1e-9) / norm)
+            x = self.coordinates
+            tangent_norm = float(np.linalg.norm(tangent))
+            if tangent_norm == 0.0:
+                candidate = x.copy()
+            else:
+                conformal_factor = 2.0 / (1.0 - float(x @ x))
+                radial = (
+                    math.tanh(0.5 * conformal_factor * tangent_norm)
+                    * tangent
+                    / tangent_norm
+                )
+                x2 = float(x @ x)
+                y2 = float(radial @ radial)
+                xy = float(x @ radial)
+                denominator = 1.0 + 2.0 * xy + x2 * y2
+                if not math.isfinite(denominator) or denominator <= 0.0:
+                    raise GovernanceError(
+                        f"{self.id}: Poincare exponential left the conditioned chart"
+                    )
+                candidate = (
+                    (1.0 + 2.0 * xy + y2) * x
+                    + (1.0 - x2) * radial
+                ) / denominator
+            if (
+                not np.all(np.isfinite(candidate))
+                or float(candidate @ candidate) >= 1.0
+            ):
+                raise GovernanceError(
+                    f"{self.id}: Poincare exponential left the open ball"
+                )
+            self.coordinates = candidate
+        elif self.local_geometry == LocalGeometry.DISCRETE:
+            if np.any(np.abs(tangent) > 0.0):
+                raise GovernanceError(
+                    f"{self.id}: discrete updates require a declared transition relation"
+                )
+        else:
+            candidate = self.coordinates + tangent
+            if not np.all(np.isfinite(candidate)):
+                raise GovernanceError(f"{self.id}: update produced non-finite coordinates")
+            self.coordinates = candidate
 
 
 @dataclass(frozen=True)
@@ -492,12 +602,13 @@ class GerbeCell:
 
 @dataclass
 class CosmosCage:
-    """One Russian-doll cage in a non-cyclic nested polycosmos."""
+    """One local Russian-doll cage carried over an optional shared base."""
 
     id: str
     geometry: str
     worldlet_ids: tuple[str, ...] = ()
     children: list["CosmosCage"] = field(default_factory=list)
+    base_id: str = ""
 
     def walk(self) -> Iterable["CosmosCage"]:
         yield self

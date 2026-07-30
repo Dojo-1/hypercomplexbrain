@@ -158,11 +158,18 @@ own biological language, and states it better than this repository had:
 > architecture: a biophysically plausible multicompartmental dendro-somatic core,
 > plus an **optional** geometric layer for representation and regularisation.
 
-Read across: the geometric layer is a *representation choice that must earn its
-place*, not an ontology. That is the same verdict this repository reached by
-measurement when it retired the Poincaré base at δ/diameter = 0.5 — the geometry
-was optional, was tested, and did not earn its place on the structure it had to
-carry.
+Read across: a geometric layer is an architectural representation choice, not a
+biological ontology.  The K13 measurement established a narrower result:
+the five-node free-theory graph is \(K_{2,3}\), with
+\(\delta/\operatorname{diameter}=0.5\), so tree-likeness does not empirically
+induce a Poincaré metric on that graph.  The HB0 base axiom reinstates a conditioned
+\(H^n\) Poincaré atlas as an **A-tagged universal base** instead: `FreeTheory`
+is a categorical fiber/index, local fiber metrics remain heterogeneous, and
+graph distance is not promoted to the base metric.  Thus the measurement and
+the architectural declaration coexist without turning geometry into ontology.
+The structural surrogate is implemented and its hashed working-tree envelope
+verifies. The envelope is unsigned, self-recomputed, and neither commit-bound
+nor independently witnessed.
 
 ---
 
@@ -210,6 +217,38 @@ classes of different formal systems."* That is a typed-remainder statement in th
 sense of §1.2, and a sharper one than this repository has: it says two remainders
 may be structurally incomparable because they belong to different formal systems,
 not merely to different kinds. Recorded as the next remainder-typing target.
+
+---
+
+## 5b.1. UTAI sectoral and Čech anti-flattening mathematics
+
+The external local corpus `H:\NP Completeness Bunny UTAI study` was inspected
+for operators rather than vocabulary. Three pieces transfer:
+
+1. `L21_SectoralDecomposition.lean` retains every character sector
+   \(k\in\operatorname{Fin}(n)\) under an invertible Fourier transform and states
+   a block decomposition of the cover Laplacian.
+2. `L22_HolonomyAnnihilators.lean` and `L24_ZModRecognition.lean` relate each
+   sector separately to holonomy annihilators and sum the kernel dimensions;
+   retaining only one sector or an argmax would violate that invariant.
+3. `cech_cover_gluing_harness.md` requires both double-overlap compatibility
+   and a triple cocycle. Its evidence is a finite combinatorial harness, not an
+   analytic sheaf theorem. A local rerun on 2026-07-30 reported 76/76 controlled
+   witnesses gluable and all 29/29 adversarial tears detected.
+
+HB0 adopts the operational shadow, not the external theorem: each n-ary
+quaternion field now carries all unitary DFT sectors with reconstruction and
+Parseval checks, while three-chart gluing checks a triple transition cocycle.
+It also retains exterior-cell coordinates over \(H^n\). On 2026-07-30 the
+targeted command
+`lake build ConnectionLaplacian.L21_SectoralDecomposition
+ConnectionLaplacian.L22_HolonomyAnnihilators
+ConnectionLaplacian.L24_ZModRecognition` completed under Lean 4.11.0 with lint
+warnings only. A whole-project `lake build` did **not** complete: it failed at
+`L47_FanoBerryKnotTower.lean` with elaboration and proof errors. Thus the three
+cited strata have a local kernel check, but neither the entire external corpus
+nor any connection-Laplacian/classifying-topos conclusion is imported as an
+HB0 theorem.
 
 ---
 

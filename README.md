@@ -123,7 +123,7 @@ Four invariants keep the map scientific:
 |---|---|---|
 | **I · notation** | Counting unitary-labelled edges returned `1.0000` for every all-unitary core. | Simulation-cost intervals with explicit lower/upper semantics. |
 | **II · scalar** | `Q_cert` repeated the same compression; even `H T T† H = I` scored `0.4568`. | An eight-coordinate Quantum Necessity Atlas. |
-| **III · geometry** | The live free-theory diamond measured `δ / diameter = 0.5`, the maximal metric-space value; the claimed Poincaré base was not earned. | A containment graph with no curvature assigned until a conversion metric is measured. |
+| **III · geometry** | The live free-theory diamond measured `δ / diameter = 0.5`; this killed the claim that its 1-skeleton *empirically earned* curvature. | Poincaré \(H^4\) is reinstated as an **A-tagged universal atlas**, while FreeTheory remains a categorical fiber/index and the K13 result stays historical evidence. A hashed working-tree envelope verifies the structural surrogate; it is unsigned, self-recomputed, and neither commit-bound nor independently witnessed. |
 | **IV · transport** | In the implemented A-tier transport surrogate, carrying a lossy summary section around a free-theory loop produced defect `∞`, while the underlying state loop returned with defect `0.0`. | State transport and section transport are modeled separately; neither module-local result is promoted to a universal theorem. |
 
 Corrections are versioned and preserved. A failed instrument is part of the
@@ -416,9 +416,11 @@ docs/                   derivations, ledgers, limitations, handoffs
 | Whether the implemented P/A/M/H/S/R publication policy is followed | A proof of `P = NP`, `P ≠ NP`, or a bridge from either statement to cognition |
 
 `q_sim_upper` remains an upper bound supplied by the implemented classical
-simulation portfolio. Better classical algorithms may lower it. The containment
-base has no assigned geometry until a real free-conversion metric exists. The
-advantage cone is ready to receive evidence; it is not itself evidence.
+simulation portfolio. Better classical algorithms may lower it. The
+architectural base is the declared universal Poincaré atlas, with a
+tangent-matched Euclidean ablation; the free-theory containment graph is not
+claimed to induce that metric. The advantage cone is ready to receive evidence;
+it is not itself evidence.
 
 > **Scientific posture:** preserve the failed run, preserve the null, preserve
 > the frame, preserve the remainder. Promotion is the last operation—not the

@@ -1,0 +1,102 @@
+{
+  "all_structural_checks_passed": true,
+  "atlas": {
+    "free_theory_count": 5,
+    "minimum_pair_distance": 0.6885888469646843,
+    "tangent_rank": 4
+  },
+  "base": {
+    "ambient_signature": [
+      4,
+      1
+    ],
+    "canonical_model": "future_hyperboloid",
+    "chart": "open_poincare_ball",
+    "dimension": 4,
+    "euclidean_control_declared": true,
+    "id": "AION-universal-H4",
+    "numerical_domain": "conditioned-float64",
+    "schema": "aionq.poincare-universal-base.v2",
+    "scope": "universal_atlas",
+    "sectional_curvature": -1.0,
+    "tangent_signature": [
+      4,
+      0
+    ],
+    "tolerance": 1e-10,
+    "universal": true
+  },
+  "checks": {
+    "atlas_placement_injective": true,
+    "atlas_tangent_rank_full": true,
+    "canonical_base_spec": true,
+    "heterogeneous_local_fibers": true,
+    "k13_measurement_preserved": true,
+    "kernel_coverage": true,
+    "manifest_strict": true,
+    "matched_euclidean_control": true
+  },
+  "claim_id": "AXIOM-HB0-UNIVERSAL_POINCARE_BASE",
+  "coverage": {
+    "affine_rank": 4,
+    "base_id": "AION-universal-H4",
+    "cages_share_base": true,
+    "euclidean_ablation_present": true,
+    "hyperboloid_rank": 5,
+    "intrinsic_geometry": {
+      "base_id": "AION-universal-H4",
+      "dimension": 4,
+      "isometries_reviewed": 0,
+      "maximum_chart_roundtrip_defect": 6.245004513516506e-17,
+      "maximum_distance_chart_defect": 4.3767495828917735e-16,
+      "maximum_hyperboloid_constraint_defect": 5.551115123125783e-16,
+      "maximum_isometry_distance_defect": 0.0,
+      "minimum_boundary_margin": 0.8064,
+      "minimum_metric_eigenvalue": 4.117736970821386,
+      "pairs_reviewed": 496,
+      "passed": true,
+      "points_reviewed": 32,
+      "violations": []
+    },
+    "local_fiber_geometries": [
+      "euclidean_control",
+      "fisher_metric",
+      "poincare_ball",
+      "riemannian_chart"
+    ],
+    "passed": true,
+    "point_count": 32,
+    "tangent_rank": 4,
+    "violations": []
+  },
+  "euclidean_control": {
+    "dimension": 4,
+    "id": "AION-universal-euclidean-control-R4",
+    "matching": "same tangent metric at the Poincare origin",
+    "metric_scale": 2.0,
+    "schema": "aionq.euclidean-base-control.v1"
+  },
+  "evidence_tag": "A",
+  "historical_k13": {
+    "delta_over_diameter": 0.5,
+    "diameter": 2.0,
+    "euclidean_distortion": 6.635501481435628,
+    "gromov_delta": 1.0,
+    "hyperbolic_distortion": 5.289745803610123,
+    "nodes": 5,
+    "tree_like": false
+  },
+  "manifest": {
+    "checks_run": 173,
+    "warnings": []
+  },
+  "schema": "aionq.hb0-universal-base-audit.v1",
+  "scope_boundary": {
+    "architectural_contract": true,
+    "cognitive_benefit_measured": false,
+    "euclidean_superiority_claim": false,
+    "independent_witness": false,
+    "negative_curvature_inferred_from_k13": false
+  },
+  "seed": 5
+}

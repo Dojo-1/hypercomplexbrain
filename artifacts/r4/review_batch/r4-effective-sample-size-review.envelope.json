@@ -1,7 +1,7 @@
 {
   "claim_id": "METHOD-R4-EFFECTIVE_SAMPLE_SIZE",
   "command": "(review only -- the claim is the artifact)",
-  "commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
+  "commit_sha": "ad9a43f579e0b435a5cc110189617e8ded4c30a7",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -44,7 +44,7 @@
     },
     {
       "carrier": "src/aionq/evidence.py digest",
-      "comparison": "REBOUND, not silently re-run. Merge 726c91b changed evidence.py and this envelope's digest check correctly went red -- that is the membrane doing its job, and a digest mismatch is informative rather than automatically a refutation. Inspected before re-binding: the entire diff is four lines adding encoding='utf-8' to write_text and read_text, and effective_sample_size -- the function this claim is ABOUT -- is byte-identical between the two commits. The claim survives; only the file's hash moved, for a reason unrelated to it. superseded digest: sha256:1a8c7ce9e6e18aa5c370361d81b4f50b3073333b26f5c03ff8deccfafaebd219; current: sha256:c076491b94ce7187fe762169c9df186866a2a6231f58b3c4f2b36d2edd137cb2",
+      "comparison": "REBOUND, not silently re-run, at commit ad9a43f579e0b435a5cc110189617e8ded4c30a7; the original review snapshot was cd3a2ac67a458eda55a2e5314fd020ce40aad0c2. Merge 726c91b changed evidence.py and this envelope's digest check correctly went red -- that is the membrane doing its job, and a digest mismatch is informative rather than automatically a refutation. Inspected before re-binding: the entire diff is four lines adding encoding='utf-8' to write_text and read_text, and effective_sample_size -- the function this claim is ABOUT -- is byte-identical between the two commits. The claim survives; only the file's hash moved, for a reason unrelated to it. superseded digest: sha256:1a8c7ce9e6e18aa5c370361d81b4f50b3073333b26f5c03ff8deccfafaebd219; current: sha256:c076491b94ce7187fe762169c9df186866a2a6231f58b3c4f2b36d2edd137cb2",
       "kind": "supersession_remainder"
     }
   ],

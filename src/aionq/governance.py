@@ -39,7 +39,8 @@ history.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
+from pathlib import Path
 
 __all__ = [
     "EvidenceTag", "PROMOTION_RULES", "Claim", "Remainder", "RemainderKind",
@@ -251,11 +252,16 @@ class Registry:
 
     # ---- R4-D: the registry stops being its own witness -------------------
 
-    def attach_envelope(self, claim_id: str, envelope) -> None:
+    def attach_envelope(self, claim_id: str, envelope, repo_root=None) -> None:
         """Record the artifact a claim rests on.  Verified, not merely stored."""
         from .evidence import verify
         claim = self._claims[claim_id]
-        result = verify(envelope)
+        if envelope.claim_id != claim_id or envelope.evidence_tag != claim.tag:
+            raise GovernanceError(
+                f"{claim_id}: envelope binding does not match claim/tag "
+                f"{envelope.claim_id!r}/{envelope.evidence_tag!r}"
+            )
+        result = verify(envelope, repo_root=repo_root)
         if not result.ok:
             raise GovernanceError(
                 f"{claim_id}: envelope rejected -- " + "; ".join(result.failures))
@@ -264,7 +270,7 @@ class Registry:
     def envelopes(self, claim_id: str) -> list:
         return list(self._envelopes.get(claim_id, ()))
 
-    def promote(self, claim_id: str, to_tag: str, envelope=None) -> Claim:
+    def promote(self, claim_id: str, to_tag: str, envelope=None, repo_root=None) -> Claim:
         """Change a claim's tag.  Only an artifact can do it, never an edit.
 
         R4-D.  This is the method the round exists for.  Before it, a claim's
@@ -284,17 +290,31 @@ class Registry:
         rank = {EvidenceTag.RETIRED: 0, EvidenceTag.SEMANTIC: 1,
                 EvidenceTag.HYPOTHESIS: 2, EvidenceTag.MEASURED: 3,
                 EvidenceTag.AXIOMATIZED: 3, EvidenceTag.PROVED: 4}
-        if rank[to_tag] > rank[claim.tag]:
+        upward = rank[to_tag] > rank[claim.tag]
+        if upward:
             if to_tag not in EvidenceTag_REQUIRING_EVIDENCE:
                 raise GovernanceError(f"{claim_id}: no promotion path to {to_tag}")
             if envelope is None:
                 raise GovernanceError(
                     f"{claim_id}: promotion {claim.tag} -> {to_tag} requires an "
                     "EvidenceEnvelope. A registry edit is not evidence.")
-            result = verify(envelope)
+            if envelope.claim_id != claim_id or envelope.evidence_tag != to_tag:
+                raise GovernanceError(
+                    f"{claim_id}: envelope binding does not match requested "
+                    f"promotion {envelope.claim_id!r}/{envelope.evidence_tag!r}"
+                )
+            result = verify(envelope, repo_root=repo_root)
             if not result.ok:
                 raise GovernanceError(
                     f"{claim_id}: promotion refused -- " + "; ".join(result.failures))
+        try:
+            replace(claim, tag=to_tag)
+        except GovernanceError as exc:
+            raise GovernanceError(
+                f"{claim_id}: destination tag {to_tag} violates claim "
+                f"invariants -- {exc}"
+            ) from exc
+        if upward:
             self._envelopes.setdefault(claim_id, []).append(envelope)
         claim.tag = to_tag
         return claim
@@ -1333,10 +1353,27 @@ CLAIMS = [
     Claim("RET-R2-QCERT_CERTIFICATE", EvidenceTag.RETIRED,
           "Q_cert is the fraction a classical simulator is forced to pay.",
           corrections=("upper bound, not a certificate; renamed q_sim_upper",)),
+    Claim("AXIOM-HB0-UNIVERSAL_POINCARE_BASE", EvidenceTag.SEMANTIC,
+          "A conditioned Poincare H^n atlas is the universal architectural base; "
+          "free theories and heterogeneous local metrics remain fiber/index data.",
+          artifact="aionq.hyperbolic.PoincareBallBase",
+          surrogate=("constructors, manifests, cage identities, base-point coverage, "
+                     "chart invariants, and matched Euclidean ablations are checked; "
+                     "negative curvature is declared, not inferred from the "
+                     "free-theory containment graph"),
+          assumptions=("the base is an architectural coordinate substrate",
+                       "local Fisher, Euclidean, Riemannian, quaternionic, split, "
+                       "and PSD structures are not identified with its metric"),
+          corrections=("K13 remains a valid falsification of the earlier claim that "
+                       "the five-node free-theory diamond empirically earns curvature",
+                       "the new A-tag does not convert K13 into positive evidence")),
     Claim("RET-R3-HYPERBOLIC_BASE", EvidenceTag.RETIRED,
           "The free-theory base is hyperbolic and the Poincare ball is its geometry.",
           corrections=("delta/diameter = 0.5 on the live diamond DAG: maximally "
-                       "non-tree-like; no geometry assigned",)),
+                       "non-tree-like; R3 then assigned no geometry",
+                       "that broad policy is superseded by "
+                       "AXIOM-HB0-UNIVERSAL_POINCARE_BASE, which separates the "
+                       "declared atlas from free-theory graph distance")),
     Claim("RET-R2-SELF_TOMOGRAPHY_IMPOSSIBLE", EvidenceTag.RETIRED,
           "No-cloning makes self-tomography impossible.",
           corrections=("syndrome extraction: 2 bits at logical fidelity 1.0",)),
@@ -1351,6 +1388,26 @@ CLAIMS = [
 ]
 
 registry = Registry(CLAIMS)
+
+
+def _promote_bundled_universal_base(reg: Registry) -> None:
+    """Promote the HB0 base only through its repository-bound audit envelope."""
+
+    from .evidence import load_envelope
+
+    repo_root = Path(__file__).resolve().parents[2]
+    envelope = load_envelope(
+        repo_root
+        / "artifacts"
+        / "hb0_universal_base"
+        / "universal_base.envelope.json"
+    )
+    reg.promote(
+        "AXIOM-HB0-UNIVERSAL_POINCARE_BASE",
+        EvidenceTag.AXIOMATIZED,
+        envelope=envelope,
+        repo_root=repo_root,
+    )
 
 
 def _link_supersessions(reg: Registry) -> None:
@@ -1370,6 +1427,7 @@ def _link_supersessions(reg: Registry) -> None:
         ("EXP-S5-INVARIANT_LOCALISATION", "EXP-S6-ACAF_REPLICATION"),
         ("MATH-S5-LAPLACIAN_INVARIANT", "MATH-S6-LAPLACIAN_INVARIANT_SAFE"),
         ("RET-R4-REGISTRY_SELF_WITNESS", "METHOD-R4-EVIDENCE_ENVELOPE"),
+        ("RET-R3-HYPERBOLIC_BASE", "AXIOM-HB0-UNIVERSAL_POINCARE_BASE"),
         ("FQHE-S9-FINITE_SIZE", "FQHE-S9-ISOLATION_KILL"),
     ):
         old, new = reg[old_id], reg[new_id]
@@ -1378,4 +1436,5 @@ def _link_supersessions(reg: Registry) -> None:
             new.supersedes = old.id
 
 
+_promote_bundled_universal_base(registry)
 _link_supersessions(registry)

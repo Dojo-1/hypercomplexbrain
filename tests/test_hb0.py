@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import math
 
 import numpy as np
 import pytest
 
-from aionq.governance import EvidenceTag, GovernanceError
+from aionq.governance import EvidenceTag, GovernanceError, registry
 from aionq.hb0 import (
     QUALITY_ORDER,
     AdiabaticController,
     AdiabaticState,
     CarrierMismatch,
     ChartFunctor,
+    ClockSpec,
     ContactHamiltonianGovernor,
     CosmosCage,
     FlatCollapseError,
@@ -20,12 +22,14 @@ from aionq.hb0 import (
     HoloportiveReconstructor,
     IdentityEcology,
     IdentityRegime,
+    LorentzIsometry,
     MindOperatorBank,
     MindQualityField,
     MorphogenesisGate,
     MutualRecognitionCoupler,
     OperatorContext,
     ProfunctorTendril,
+    PoincareBallBase,
     RecognitionInput,
     RemainderEnvelope,
     ViabilityBounds,
@@ -73,6 +77,31 @@ def test_quality_field_uses_partial_order():
     assert mixed.pareto_relation(low) == "incomparable"
 
 
+def test_quality_field_is_deeply_immutable():
+    field = MindQualityField(
+        {name: 0.5 for name in QUALITY_ORDER},
+        obligations={"grounding": ("retain provenance",)},
+        kill_conditions={"grounding": ("kill on missing source",)},
+    )
+    with pytest.raises(TypeError):
+        field.values["grounding"] = float("nan")
+    with pytest.raises(TypeError):
+        field.obligations["grounding"] = ("changed",)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"period": True, "rate": 1.0},
+        {"period": 1, "rate": float("nan")},
+        {"period": 1, "rate": float("inf")},
+    ],
+)
+def test_clock_spec_fails_closed_on_nonfinite_or_boolean_parameters(kwargs):
+    with pytest.raises(GovernanceError):
+        ClockSpec("clock", role="test", **kwargs)
+
+
 def test_remainders_are_typed_and_measured_ones_need_instruments():
     with pytest.raises(GovernanceError):
         RemainderEnvelope("R", "identity", "x", "M", "bad", magnitude=1.0)
@@ -108,6 +137,98 @@ def test_worldlet_distance_refuses_undeclared_cross_geometry_comparison():
     b = WorldletState("b", "R2", "euclidean_control", "real", np.zeros(2), ("fast",))
     with pytest.raises(CarrierMismatch):
         a.distance_to(b)
+
+
+def test_worldlet_metric_is_finite_immutable_and_comparison_is_symmetric():
+    source_metric = np.eye(2)
+    left = WorldletState(
+        "left", "R2", "riemannian_chart", "real", np.zeros(2), ("fast",),
+        metric_tensor=source_metric,
+    )
+    right = WorldletState(
+        "right", "R2", "riemannian_chart", "real", np.ones(2), ("fast",),
+        metric_tensor=np.eye(2),
+    )
+    source_metric[0, 0] = 99.0
+    assert left.metric_tensor[0, 0] == 1.0
+    with pytest.raises(ValueError):
+        left.metric_tensor.setflags(write=True)
+    assert left.distance_to(right) == pytest.approx(right.distance_to(left))
+
+    mismatch = WorldletState(
+        "mismatch", "R2", "riemannian_chart", "real", np.ones(2), ("fast",),
+        metric_tensor=4.0 * np.eye(2),
+    )
+    with pytest.raises(CarrierMismatch, match="different local metrics"):
+        left.distance_to(mismatch)
+    with pytest.raises(CarrierMismatch, match="different local metrics"):
+        mismatch.distance_to(left)
+
+
+@pytest.mark.parametrize(
+    "metric",
+    [
+        np.array([[float("nan"), 0.0], [0.0, 1.0]]),
+        np.array([[float("inf"), 0.0], [0.0, 1.0]]),
+    ],
+)
+def test_worldlet_metric_rejects_nonfinite_entries(metric):
+    with pytest.raises(GovernanceError, match="finite"):
+        WorldletState(
+            "bad", "R2", "riemannian_chart", "real", np.zeros(2), ("fast",),
+            metric_tensor=metric,
+        )
+
+
+def test_worldlet_geometry_variants_do_not_share_one_silent_metric_rule():
+    with pytest.raises(GovernanceError, match="induced metric"):
+        WorldletState(
+            "p", "R2", "poincare_ball", "real", np.zeros(2), ("fast",),
+            metric_tensor=np.eye(2),
+        )
+    with pytest.raises(GovernanceError, match="requires an explicit metric"):
+        WorldletState(
+            "f", "R2", "fisher_metric", "real", np.zeros(2), ("fast",)
+        )
+    discrete_a = WorldletState(
+        "da", "bits2", "discrete", "symbolic", np.array([0.0, 1.0]), ("fast",)
+    )
+    discrete_b = WorldletState(
+        "db", "bits2", "discrete", "symbolic", np.array([1.0, 1.0]), ("fast",)
+    )
+    assert discrete_a.distance_to(discrete_a) == 0.0
+    assert discrete_a.distance_to(discrete_b) == 1.0
+    with pytest.raises(GovernanceError, match="transition relation"):
+        discrete_a.apply_delta(np.array([1.0, 0.0]))
+
+
+def test_worldlet_poincare_distance_is_stable_near_boundary():
+    left = WorldletState(
+        "left", "R1", "poincare_ball", "real",
+        np.array([1.0 - 1e-12]), ("fast",),
+    )
+    right = WorldletState(
+        "right", "R1", "poincare_ball", "real",
+        np.array([1.0 - 2e-12]), ("fast",),
+    )
+    typed_base = PoincareBallBase("local-H1-check", 1)
+    assert left.distance_to(right) == pytest.approx(
+        typed_base.distance(left.coordinates, right.coordinates),
+        rel=1e-12,
+    )
+
+
+def test_worldlet_poincare_delta_uses_exponential_and_fails_atomically():
+    world = WorldletState(
+        "world", "R2", "poincare_ball", "real", np.array([0.8, 0.0]), ("fast",)
+    )
+    before = world.coordinates.copy()
+    with pytest.raises(GovernanceError):
+        world.apply_delta(np.ones(2), rate=float("nan"))
+    assert np.array_equal(world.coordinates, before)
+    world.apply_delta(np.array([0.01, 0.02]), rate=0.5)
+    assert np.linalg.norm(world.coordinates) < 1.0
+    assert not np.array_equal(world.coordinates, before + 0.5 * np.array([0.01, 0.02]))
 
 
 def test_exact_profunctor_round_trip_has_zero_remainder():
@@ -240,6 +361,58 @@ def test_mind_operator_bank_emits_all_sixteen_coordinates():
     assert report.field.values["adiabatic_patience"] > 0.9
 
 
+@pytest.mark.parametrize(
+    "updates",
+    [
+        {"coherence_loss": float("nan")},
+        {"gluing_defect": float("inf")},
+        {"fast_delta_norm": float("nan")},
+    ],
+)
+def test_mind_operator_context_rejects_nonfinite_values_instead_of_rewarding_them(
+    updates,
+):
+    with pytest.raises(GovernanceError):
+        OperatorContext(**updates)
+
+
+@pytest.mark.parametrize(
+    "values",
+    [
+        (float("nan"), 0.0, 0.0, 0.0),
+        (0.0, float("inf"), 0.0, 0.0),
+        (-1.0, 0.0, 0.0, 0.0),
+    ],
+)
+def test_hamiltonian_envelope_rejects_unknown_or_negative_components(values):
+    with pytest.raises(GovernanceError):
+        HamiltonianEnvelope(*values)
+
+
+def test_governor_rejects_nonfinite_sources_and_observations():
+    governor = ContactHamiltonianGovernor(ViabilityBounds())
+    before = HamiltonianEnvelope(0.0, 0.0, 0.0, 0.0)
+    after = HamiltonianEnvelope(1.0, 0.0, 0.0, 0.0)
+    observed = {
+        "gluing_defect": 0.0,
+        "identity_defect": 0.0,
+        "absorption": 0.0,
+        "compute": 1.0,
+        "plurality": 1.0,
+        "lob_trap": 0.0,
+        "fragmentation": 0.0,
+    }
+    with pytest.raises(GovernanceError):
+        governor.decide(before, after, {"compute": float("nan")}, observed)
+    with pytest.raises(GovernanceError):
+        governor.decide(
+            before,
+            after,
+            {"compute": 1.0},
+            {**observed, "gluing_defect": float("nan")},
+        )
+
+
 def test_adiabatic_controller_separates_three_timescales():
     controller = AdiabaticController()
     state = AdiabaticState(np.zeros(2), np.zeros(2), np.zeros(2))
@@ -363,12 +536,175 @@ def test_hb0_rolls_back_an_absorptive_move():
         assert np.array_equal(kernel.worldlets[wid].coordinates, coordinates)
 
 
-def test_hb0_hyperbolic_chart_is_local_not_universal():
+def test_hb0_step_validation_and_exceptions_are_transactional():
+    kernel = build_hb0(seed=91)
+    ids = list(kernel.worldlets)
+    before = {wid: world.coordinates.copy() for wid, world in kernel.worldlets.items()}
+    budget_before = (
+        kernel.budget.level,
+        kernel.budget.speculative_draw,
+        kernel.budget.state,
+        tuple(kernel.budget.interventions),
+    )
+    with pytest.raises(CarrierMismatch):
+        kernel.step(
+            {
+                ids[0]: np.zeros(kernel.worldlets[ids[0]].dimension),
+                ids[1]: np.zeros(kernel.worldlets[ids[1]].dimension + 1),
+            }
+        )
+    assert kernel.tick == 0
+    assert not kernel.evidence_ledger
+    assert all(
+        np.array_equal(kernel.worldlets[wid].coordinates, coordinates)
+        for wid, coordinates in before.items()
+    )
+    assert (
+        kernel.budget.level,
+        kernel.budget.speculative_draw,
+        kernel.budget.state,
+        tuple(kernel.budget.interventions),
+    ) == budget_before
+
+    with pytest.raises(GovernanceError):
+        kernel.step({ids[0]: np.zeros(kernel.worldlets[ids[0]].dimension)},
+                    absorption=float("nan"))
+    assert kernel.tick == 0
+
+    tendril = next(iter(kernel.tendrils.values()))
+    original_chart = tendril.chart
+    calls = {"count": 0}
+
+    def fail_after_preflight(value):
+        calls["count"] += 1
+        if calls["count"] == 2:
+            raise RuntimeError("synthetic post-mutation transport failure")
+        return original_chart.forward(value)
+
+    tendril.chart = replace(original_chart, forward=fail_after_preflight)
+    with pytest.raises(RuntimeError, match="post-mutation"):
+        kernel.step({ids[0]: np.full(kernel.worldlets[ids[0]].dimension, 0.001)})
+    assert kernel.tick == 0
+    assert not kernel.evidence_ledger
+    assert all(
+        np.array_equal(kernel.worldlets[wid].coordinates, coordinates)
+        for wid, coordinates in before.items()
+    )
+    assert (
+        kernel.budget.level,
+        kernel.budget.speculative_draw,
+        kernel.budget.state,
+        tuple(kernel.budget.interventions),
+    ) == budget_before
+
+
+def test_hb0_universal_contract_is_immutable_after_construction():
+    from aionq.hb0 import EuclideanBaseControl
+
+    kernel = build_hb0(seed=92)
+    with pytest.raises(AttributeError, match="immutable universal-base contract"):
+        kernel.euclidean_base_control = EuclideanBaseControl(
+            "wrong-scale",
+            kernel.base.dimension,
+            metric_scale=999.0,
+        )
+    assert kernel.review_universal_base().passed
+
+
+def test_hb0_constructor_checks_mapping_ids_and_clock_references():
+    kernel = build_hb0(seed=93)
+    clocks = dict(kernel.clocks)
+    clocks["renamed"] = clocks.pop("fast")
+    with pytest.raises(GovernanceError, match="mapping keys"):
+        replace(kernel, clocks=clocks)
+
+    worldlets = dict(kernel.worldlets)
+    worldlet_id = next(iter(worldlets))
+    worldlets[worldlet_id] = replace(
+        worldlets[worldlet_id],
+        clocks=("missing-clock",),
+    )
+    with pytest.raises(GovernanceError, match="undeclared clocks"):
+        replace(kernel, worldlets=worldlets)
+
+
+def test_hb0_uses_one_universal_hyperbolic_base_without_flattening_local_fibers():
     kernel = build_hb0(seed=11)
     geometries = {w.local_geometry for w in kernel.worldlets.values()}
+    assert kernel.base.scope == "universal_atlas"
+    assert kernel.base.dimension == 4
+    assert kernel.cages.geometry == "dynamic_cover"
+    assert all(cage.base_id == kernel.base.id for cage in kernel.cages.walk())
     assert "poincare_ball" in geometries
     assert "euclidean_control" in geometries
     assert len(geometries) > 1
+    review = kernel.review_universal_base()
+    assert review.passed, review.violations
+    assert review.affine_rank == kernel.base.dimension
+    assert review.hyperboloid_rank == kernel.base.dimension + 1
+    assert kernel.base_distance("W_somatic_00", "W_episodic_00") > 0.0
+    with pytest.raises(TypeError):
+        kernel.base_points["W_somatic_00"] = np.zeros(kernel.base.dimension)
+    with pytest.raises(ValueError):
+        kernel.base_points["W_somatic_00"].setflags(write=True)
+
+
+def test_universal_base_is_n_dimensional_and_not_a_hidden_disk():
+    kernel = build_hb0(seed=12, base_dim=6)
+    review = kernel.review_universal_base()
+    assert review.passed, review.violations
+    assert kernel.base.dimension == 6
+    assert review.tangent_rank == 6
+    assert review.hyperboloid_rank == 7
+
+
+def test_common_lorentz_transport_preserves_universal_base_review_and_distances():
+    kernel = build_hb0(seed=13)
+    rapidity = 0.2
+    matrix = np.eye(kernel.base.dimension + 1)
+    matrix[:2, :2] = np.array(
+        [
+            [math.cosh(rapidity), math.sinh(rapidity)],
+            [math.sinh(rapidity), math.cosh(rapidity)],
+        ]
+    )
+    isometry = LorentzIsometry(matrix)
+    moved_points = {
+        worldlet_id: kernel.base.from_hyperboloid(
+            kernel.base.apply_isometry(
+                isometry,
+                kernel.base.to_hyperboloid(point),
+            )
+        )
+        for worldlet_id, point in kernel.base_points.items()
+    }
+    moved = replace(kernel, base_points=moved_points)
+    before_review = kernel.review_universal_base()
+    after_review = moved.review_universal_base()
+    assert after_review.passed, after_review.violations
+    assert after_review.tangent_rank == before_review.tangent_rank
+    assert after_review.hyperboloid_rank == before_review.hyperboloid_rank
+    ids = tuple(kernel.worldlets)
+    for left, right in zip(ids[:5], ids[5:10]):
+        assert moved.base_distance(left, right) == pytest.approx(
+            kernel.base_distance(left, right),
+            rel=1e-10,
+        )
+
+
+def test_fiber_motion_does_not_move_base_and_euclidean_control_matches_origin():
+    kernel = build_hb0(seed=14)
+    left, right = "W_social_00", "W_prospective_00"
+    before = kernel.base_distance(left, right)
+    kernel.worldlets[left].apply_delta(
+        np.full(kernel.worldlets[left].dimension, 0.01),
+        rate=1.0,
+    )
+    assert kernel.base_distance(left, right) == pytest.approx(before)
+    assert kernel.euclidean_base_control.metric_tensor == pytest.approx(
+        kernel.base.metric_tensor(np.zeros(kernel.base.dimension))
+    )
+    assert kernel.euclidean_base_distance(left, right) > 0.0
 
 
 def test_hb0_manifest_passes_strict_validation():
@@ -383,7 +719,30 @@ def test_hb0_manifest_passes_strict_validation():
     assert report.summary["declared_worldlets"] == 32
 
 
-def test_hb0_manifest_validator_catches_flat_collapse_and_quantum_overclaim():
+def test_universal_poincare_axiom_supersedes_without_erasing_k13_retirement():
+    from pathlib import Path
+
+    from aionq.evidence import verify
+
+    retired = registry["RET-R3-HYPERBOLIC_BASE"]
+    active = registry["AXIOM-HB0-UNIVERSAL_POINCARE_BASE"]
+    assert retired.tag == EvidenceTag.RETIRED
+    assert active.tag == EvidenceTag.AXIOMATIZED
+    assert retired.superseded_by == active.id
+    assert active.supersedes == retired.id
+    assert "declared, not inferred" in active.surrogate
+    envelopes = registry.envelopes(active.id)
+    assert len(envelopes) == 1
+    root = Path(__file__).resolve().parent.parent
+    verification = verify(envelopes[0], repo_root=root)
+    assert verification.ok
+    assert not verification.independent
+    assert active.id not in registry.unwitnessed(
+        tags=(EvidenceTag.AXIOMATIZED,)
+    )
+
+
+def test_hb0_manifest_validator_catches_fiber_collapse_base_drift_and_overclaim():
     import json
     from pathlib import Path
     from aionq.hb0 import validate_hb0_manifest
@@ -393,9 +752,10 @@ def test_hb0_manifest_validator_catches_flat_collapse_and_quantum_overclaim():
     for worldlet in blob["worldlets"]:
         worldlet["local_geometry"] = "poincare_ball"
     blob["base_geometry"] = "poincare_ball"
+    blob["universal_base"]["scope"] = "local_chart"
     blob["quantum_transport"]["advantage_claim"] = True
     report = validate_hb0_manifest(blob)
     assert not report.ok
     assert any("Euclidean" in error for error in report.errors)
-    assert any("universal base" in error for error in report.errors)
+    assert any("universal_atlas" in error for error in report.errors)
     assert any("quantum advantage" in error for error in report.errors)

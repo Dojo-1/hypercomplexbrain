@@ -1,0 +1,71 @@
+{
+  "claim_id": "AXIOM-HB0-UNIVERSAL_POINCARE_BASE",
+  "command": "python experiments/run_hb0_universal_base_audit.py --output artifacts/hb0_universal_base/universal_base_audit.json",
+  "commit_sha": "",
+  "environment": {
+    "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
+    "fields": {
+      "machine": "AMD64",
+      "numpy": "2.4.5",
+      "platform": "windows",
+      "python": "3.13.14"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "A",
+  "input_hashes": [
+    "sha256:7927d94e630221d34618991ef17b19fe0458d6f877ff2e0a7eff02c5b604d2bb"
+  ],
+  "observed_result": {
+    "atlas_tangent_rank": 4,
+    "base_dimension": 4,
+    "historical_k13_delta_over_diameter": 0.5,
+    "hyperboloid_rank": 5,
+    "manifest_checks_run": 173,
+    "sample_size": 1,
+    "structural_checks_passed": true,
+    "worldlet_points": 32
+  },
+  "platform": "windows",
+  "producer": "codex-gpt-5.6-sol",
+  "raw_artifacts": {
+    "artifacts/hb0_universal_base/universal_base_audit.json": "sha256:05f545ee9eb90d255cd054ed04d04a65d6401c0ceef26981d240fe84f96f1e7f",
+    "experiments/run_hb0_universal_base_audit.py": "sha256:503c4eeef4051e5a08d8a2c205e3ea898a3fa9b033998925581a6f47632b069c",
+    "manifests/hb0_polycosmic_architecture.json": "sha256:7927d94e630221d34618991ef17b19fe0458d6f877ff2e0a7eff02c5b604d2bb",
+    "src/aionq/atlas.py": "sha256:b5076626d769fe98ce5f555a6671eb75211554c9ca709a667e21b58d9b3da7e6",
+    "src/aionq/evidence.py": "sha256:9033013ff0edb99c688ed2965c8b4cb11fe626103b58ded6b2aa897901817ac5",
+    "src/aionq/governance.py": "sha256:53740b15ccfa528610110b6a55c42279d84dcae4595e940ba894e440744a2083",
+    "src/aionq/hb0/kernel.py": "sha256:f490ff52e541b50635bd6b23782e079d373b784e8a415f6c17a8c31f995a3a4e",
+    "src/aionq/hb0/manifest.py": "sha256:ae42fc3cac93c3a04b4203b3aa6dd330392d9a96f7919b05d3e3f1999899cf89",
+    "src/aionq/hyperbolic.py": "sha256:3a7a1036944271e23e049f596ddd3a7f5a0f650498f30d3e5a04076bf0a3d006"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [
+    5
+  ],
+  "signature_status": "unsigned",
+  "timestamp": "2026-07-30T09:23:41Z",
+  "typed_remainders": [
+    {
+      "kind": "semantic_remainder",
+      "statement": "The checked surrogate is an architectural coordinate contract, not evidence of consciousness, AGI, cognitive benefit, or quantum advantage."
+    },
+    {
+      "kind": "empirical_residual",
+      "statement": "The envelope is bound to the current working-tree artifacts but not to a commit and has no independent witness."
+    }
+  ],
+  "uncertainty": {
+    "commit_bound": false,
+    "cognitive_benefit_measured": false,
+    "independent_witness": false,
+    "negative_curvature_inferred_from_k13": false,
+    "scope": "deterministic structural surrogate only"
+  },
+  "verification_mode": "recomputed",
+  "verifier": "codex-gpt-5.6-sol",
+  "working_directory": ".",
+  "witness_conversation_url": "",
+  "witness_environment": "same local Windows/Python environment",
+  "witness_notes": "Self-recomputed; integrity-bound but not independently witnessed."
+}

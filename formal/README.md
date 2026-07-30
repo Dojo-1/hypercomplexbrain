@@ -1,32 +1,45 @@
-# Formalisation surface — S4-G100
+# Formalisation surfaces
 
-## Status: **NOT COMPILED**
+## Status at 2026-07-30: **MIXED**
 
-There is no Lean, `lake` or `elan` on `PATH` in this environment, and no
-`lakefile` or toolchain pin exists in this repository. `RecognitionChamber.lean`
-has therefore **never been checked by a kernel**. It is a set of theorem
-statements written in Lean 4 syntax, not a verification.
+This checkout tracks exactly two Lean files:
 
-Nothing in `docs/`, `README.md` or `aionq.governance` claims Lean verification
-for any S4 result. The three P-tagged S4 claims
+| file | dependency surface | observed command | current result |
+|---|---|---|---|
+| `OhniumObservatory.lean` | Lean core/prelude only | `lean formal/OhniumObservatory.lean` | **accepted**, exit `0`, under local unpinned Lean `4.32.2` |
+| `RecognitionChamber.lean` | Mathlib | `lean formal/RecognitionChamber.lean` | **not compiled**, exit `1`: `unknown module prefix 'Mathlib'` |
+
+`lean`, `lake` and `elan` are present on `PATH`. The repository still has no
+`lean-toolchain`, `lakefile.lean`, `lakefile.toml` or `lake-manifest.json`, so
+the successful Ohnium check is a direct local kernel check, not a pinned
+reproducible project build.
+
+`RecognitionChamber.lean` has not been checked successfully. It also contains
+a `sorry` in the finite-depletion target, so merely resolving Mathlib would not
+make it a closed proof artifact. The three P-tagged S4 claims
 (`MATH-S4-LOOP_ZERO`, `MATH-S4-GAUGE_INVARIANCE`, `MODEL-S4-BORDON_CEILING`)
-rest on **exact numerical checks** in `tests/test_s4_g100.py` plus two-line
-arguments, and each records in its `assumptions` that the Lean statement is
-present and uncompiled. That is the honest tier: they are P because the
-mathematics is a definitional consequence, not because a proof assistant agreed.
+continue to rest on exact numerical checks in `tests/test_s4_g100.py` and their
+stated mathematical assumptions; they must not be cited as Lean-verified.
 
-To check them, install a Lean 4 toolchain with Mathlib and run `lake build`. If
-the file does not compile, that is a finding about this file and should be
-recorded as a correction — not quietly fixed.
+To make the Recognition surface reproducible, add a pinned Lean/Mathlib project,
+close all admitted obligations, run `lake build`, and bind the result to a
+`ProofEnvelope`.
 
-## What each target says, and what it does not
+## Ohnium scope
+
+The accepted Ohnium file proves only a three-step A/U/M cadence, the exact
+cardinalities `40` and `7 + 21 = 28`, and a conjunction whose return/accounting
+properties are explicit hypotheses. It does not formalize the Hopf map, QFI,
+adiabatic or quantum dynamics, cognition, or a physical observatory.
+
+## RecognitionChamber theorem targets
 
 | target | statement | status |
 |---|---|---|
 | **P1** | `0 ≤ loopDefect T x` for any pseudo-metric | trivial from `dist_nonneg`; exercised by 200 seeded random transports |
 | **P2** | `T.backward (T.forward x) = x → loopDefect T x = 0` | trivial from `dist_self`; exercised by identity, exact permutation inverse, orthogonal gauge round trip — all return `0.0` exactly, not approximately |
 | **P3** | `loopDefect (conj G T) (G x) = loopDefect T x` for isometric `G` | the one with content; verified numerically to `1e-12` on a *deliberately lossy* probe, and the chamber's output is bit-identical under an orthogonal gauge change |
-| **P4** | `d > ρ → ∃ t, level t ≤ 0` for constant refill and draw | a model consequence; says nothing about any physical system |
+| **P4** | `d > ρ → ∃ t, level t ≤ 0` for constant refill and draw | model target; the current source contains `sorry`, so this obligation is open |
 | **P5** | authorising nodes inside the generating dependency closure cannot promote | enforced in `nest.py` *before* any numeric gate is consulted |
 
 ### What is deliberately not attempted

@@ -1,4 +1,4 @@
-"""The Quantum Necessity Atlas: quantumness is not a scalar and not Euclidean.
+"""The Quantum Necessity Atlas over a universal Poincare base.
 
 QSigma-R made a real correction and then repeated the original mistake one level
 up.  It killed an additive scalar (Q_naive) and installed a different scalar
@@ -29,26 +29,18 @@ rather than chosen for ornament.
     Resource monotones are defined only relative to a free theory.  Magic is
     magic *with respect to* stabilizer states and Clifford operations; under a
     non-Clifford change of frame a stabilizer state can become a magic state.
-    So the resource coordinate is a fiber over a base of free theories, and
+    So the resource coordinate belongs to a named free-theory fiber/index, and
     "how much resource does this state have" is not a well-posed question until
-    a base point is named.  :func:`resource_over` makes this numerical: the same
-    state returns 1.0 over one base point and 0.0 over another.
+    that full specification is named.  :func:`resource_over` makes this
+    numerical: the same state returns 1.0 in one fiber and 0.0 in another.
 
-3.  Its base carries NO assigned geometry.
-    An earlier revision made the base the Poincare ball, on the argument that
-    containment hierarchies are tree-like and embed badly in Euclidean space.
-    That argument was then tested against the structure the base actually has,
-    and it failed: the live free-theory Hasse diagram is a diamond DAG
-    (classical-reversible sits below three parents), with Gromov delta = 1.0 on
-    a diameter-2 metric, so delta/diameter = 0.5 -- the *maximum possible* for
-    any metric space.  The base is maximally non-tree-like and hyperbolic
-    embedding is not indicated.  See
-    :func:`compare_embeddings_on_real_hierarchy`.
-
-    :func:`poincare_distance` and :func:`hierarchy_distortion` are retained as
-    instruments, not as commitments.  The hyperbolic hypothesis may be re-earned
-    once a measured free-conversion metric exists
-    (d(F_i,F_j) = -log sup p_succ); until then no geometry is assigned.
+3.  Its architectural base is the universal Poincare atlas ``H^n``.
+    This is an A-tagged coordinate contract, not an empirical conclusion from
+    the five-node free-theory graph.  The earlier K13 measurement remains valid:
+    that graph has delta/diameter = 0.5 and does not *earn* curvature from
+    tree-likeness.  ``FreeTheory`` therefore remains a categorical fiber/index;
+    it is placed in ``H^n`` by a declared chart, not identified with the
+    hyperbolic metric.  A dimension-matched Euclidean chart remains the ablation.
 
 Promotion requires a pre-registered advantage cone over the outcome vector --
 see :mod:`aionq.advantage`.  The scalar gate ``q_causal > 0`` is retired:
@@ -58,10 +50,18 @@ hardness never promotes, and neither does a single asserted number.
 from __future__ import annotations
 
 import math
+import hashlib
+import json
 from dataclasses import dataclass, field
+from itertools import combinations
 
 import numpy as np
 
+from .hyperbolic import (
+    PoincareBallBase,
+    UNIVERSAL_EUCLIDEAN_CONTROL,
+    UNIVERSAL_POINCARE_BASE,
+)
 from .quantities import (Bits, Effect, Fraction, IncommensurableError, Monotone,
                          Quantity, Strength, coerce)
 from .residency import max_bipartite_entanglement, stabilizer_renyi_entropy
@@ -78,11 +78,14 @@ __all__ = [
     "compare_embeddings_on_real_hierarchy",
     "poincare_distance",
     "embed_hierarchy",
+    "place_free_theories_on_universal_base",
     "resource_over",
     "Interval",
     "QuantumNecessityAtlas",
     "PromotionVerdict",
     "IntervalOrder",
+    "UNIVERSAL_POINCARE_BASE",
+    "UNIVERSAL_EUCLIDEAN_CONTROL",
 ]
 
 
@@ -121,7 +124,7 @@ class Interval:
 
 @dataclass(frozen=True)
 class FreeTheory:
-    """A base point: what counts as free, and which frames preserve that.
+    """A categorical fiber/index: what is free and which frames preserve it.
 
     A resource monotone is meaningless without this.  ``admissible_group`` is the
     set of frame transformations under which the monotone is invariant; outside
@@ -203,26 +206,31 @@ FREE_THEORIES = (CLASSICAL, STABILIZER, MATCHGATE, SEPARABLE, ALL_FREE)
 
 
 # --------------------------------------------------------------------------
-# Hyperbolic base geometry
+# Universal Poincare base and its matched Euclidean chart
 # --------------------------------------------------------------------------
 
 def poincare_distance(u: np.ndarray, v: np.ndarray) -> float:
     """Geodesic distance in the Poincare ball.
 
-    d(u,v) = arcosh(1 + 2|u-v|^2 / ((1-|u|^2)(1-|v|^2)))
+    The stable form
 
-    Used instead of Euclidean distance because the base is a branching
-    containment hierarchy: sibling free theories must be farther from each other
-    than from their common parent, and that separation grows without bound as
-    the hierarchy deepens.  Euclidean space of fixed dimension cannot supply it.
+        d(u,v) = 2 asinh(|u-v| / sqrt((1-|u|^2)(1-|v|^2)))
+
+    resolves very small separations that cancel in ``arcosh(1 + epsilon)``.
+    This is the curvature ``-1`` specialization used by legacy callers.
+    Typed atlas sections use :data:`UNIVERSAL_POINCARE_BASE` directly.
     """
     u = np.asarray(u, dtype=float)
     v = np.asarray(v, dtype=float)
+    if u.ndim != 1 or v.ndim != 1 or u.shape != v.shape:
+        raise ValueError("Poincare points must be equal-size one-dimensional arrays")
+    if not np.all(np.isfinite(u)) or not np.all(np.isfinite(v)):
+        raise ValueError("Poincare points must be finite")
     nu, nv = float(u @ u), float(v @ v)
     if nu >= 1.0 or nv >= 1.0:
         raise ValueError("points must lie strictly inside the unit ball")
-    num = 2.0 * float((u - v) @ (u - v))
-    return float(np.arccosh(1.0 + num / ((1.0 - nu) * (1.0 - nv))))
+    ratio = float(np.linalg.norm(u - v)) / math.sqrt((1.0 - nu) * (1.0 - nv))
+    return float(2.0 * np.arcsinh(ratio))
 
 
 def hierarchy_distortion(depth: int, spread: float = 0.95) -> dict:
@@ -282,43 +290,158 @@ def hierarchy_distortion(depth: int, spread: float = 0.95) -> dict:
     }
 
 
-def embed_hierarchy(theories=FREE_THEORIES, spread: float = 0.72) -> dict:
-    """Embed the containment hierarchy of free theories in the Poincare disk.
+def place_free_theories_on_universal_base(
+    theories=FREE_THEORIES,
+    spread: float = 0.72,
+    geometric_base: PoincareBallBase = UNIVERSAL_POINCARE_BASE,
+) -> dict:
+    """Place the free-theory index category in the universal Poincare chart.
 
-    Depth in the containment order maps to hyperbolic radius; siblings are
-    spread by angle.  The root (universal, the least free theory) sits near the
-    origin and the most restrictive theories sit near the boundary, which is
-    where hyperbolic volume is.
+    Depth controls radius, but the directions span ``H^n`` rather than a disk.
+    This declared placement does not assert that graph distance equals
+    hyperbolic distance; K13 remains the counterexample to that inference.
     """
+    if not isinstance(geometric_base, PoincareBallBase):
+        raise TypeError(
+            "universal placement needs a typed PoincareBallBase"
+        )
+    theories = tuple(theories)
+    if not theories:
+        raise ValueError("free-theory index must not be empty")
+    if any(not isinstance(theory, FreeTheory) for theory in theories):
+        raise TypeError("every free-theory index entry must be a FreeTheory")
+    if (
+        isinstance(spread, (bool, np.bool_))
+        or not np.isfinite(spread)
+        or not 0.0 < float(spread) < 1.0
+    ):
+        raise ValueError(
+            "spread must be finite and satisfy 0 < spread < 1 in the unit-ball chart"
+        )
     by_name = {t.name: t for t in theories}
+    if len(by_name) != len(theories):
+        raise ValueError("free-theory index names must be unique")
+    dangling = sorted({
+        child
+        for theory in theories
+        for child in theory.contains
+        if child not in by_name
+    })
+    if dangling:
+        raise ValueError(
+            f"free-theory index has unresolved containment names: {dangling}"
+        )
 
+    memo: dict[str, int] = {}
+    visiting: set[str] = set()
     def depth(t: FreeTheory) -> int:
-        if not t.contains:
-            return 0
-        return 1 + max(depth(by_name[c]) for c in t.contains if c in by_name)
+        if t.name in memo:
+            return memo[t.name]
+        if t.name in visiting:
+            raise ValueError(
+                f"free-theory containment must be acyclic; cycle at {t.name!r}"
+            )
+        visiting.add(t.name)
+        value = (
+            0
+            if not t.contains
+            else 1 + max(depth(by_name[child]) for child in t.contains)
+        )
+        visiting.remove(t.name)
+        memo[t.name] = value
+        return value
 
-    max_depth = max(depth(t) for t in theories)
     order = sorted(theories, key=lambda t: (-depth(t), t.name))
 
     coords: dict[str, np.ndarray] = {}
-    level_counts: dict[int, int] = {}
     for t in order:
-        d = max_depth - depth(t)
-        level_counts[d] = level_counts.get(d, 0) + 1
-
-    seen: dict[int, int] = {}
-    for t in order:
-        d = max_depth - depth(t)
-        seen[d] = seen.get(d, 0) + 1
-        k, total = seen[d] - 1, level_counts[d]
-        angle = 2.0 * math.pi * k / max(1, total)
-        radius = spread * (1.0 - math.exp(-1.2 * d))
-        coords[t.name] = np.array([radius * math.cos(angle), radius * math.sin(angle)])
+        identity_payload = json.dumps(
+            {
+                "name": t.name,
+                "free_states": t.free_states,
+                "free_operations": t.free_operations,
+                "admissible_group": t.admissible_group,
+                "monotone": t.monotone,
+                "contains": list(t.contains),
+            },
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        seed = int.from_bytes(
+            hashlib.sha256(identity_payload).digest()[:8],
+            byteorder="big",
+            signed=False,
+        )
+        direction_rng = np.random.default_rng(seed)
+        direction = direction_rng.normal(size=geometric_base.dimension)
+        direction_norm = float(np.linalg.norm(direction))
+        if not math.isfinite(direction_norm) or direction_norm <= 0.0:
+            raise ValueError(f"failed to derive a direction for {t.name!r}")
+        direction = direction / direction_norm
+        # Radius depends only on this object's containment depth.  Adding an
+        # unrelated object cannot adiabatically move an existing atlas point.
+        radius = spread / (1.0 + depth(t))
+        coords[t.name] = geometric_base.point(
+            radius * direction,
+            f"free_theory:{t.name}",
+        )
+    collisions = [
+        (left.name, right.name)
+        for left, right in combinations(order, 2)
+        if geometric_base.distance(coords[left.name], coords[right.name])
+        <= geometric_base.tolerance
+    ]
+    if collisions:
+        raise ValueError(
+            "free-theory placement is not injective in this base dimension: "
+            f"{collisions}"
+        )
     return coords
 
 
+def embed_hierarchy(theories=FREE_THEORIES, spread: float = 0.72) -> dict:
+    """Legacy two-dimensional placement used to reproduce the K13 audit.
+
+    This function is intentionally frozen: changing it would rewrite the
+    historical 5.29/6.64 distortion result.  Live atlas sections use
+    :func:`place_free_theories_on_universal_base`.
+    """
+
+    by_name = {theory.name: theory for theory in theories}
+
+    def depth(theory: FreeTheory) -> int:
+        if not theory.contains:
+            return 0
+        return 1 + max(
+            depth(by_name[child])
+            for child in theory.contains
+            if child in by_name
+        )
+
+    maximum_depth = max(depth(theory) for theory in theories)
+    order = sorted(theories, key=lambda theory: (-depth(theory), theory.name))
+    level_counts: dict[int, int] = {}
+    for theory in order:
+        level = maximum_depth - depth(theory)
+        level_counts[level] = level_counts.get(level, 0) + 1
+
+    seen: dict[int, int] = {}
+    coordinates = {}
+    for theory in order:
+        level = maximum_depth - depth(theory)
+        seen[level] = seen.get(level, 0) + 1
+        index, total = seen[level] - 1, level_counts[level]
+        angle = 2.0 * math.pi * index / max(1, total)
+        radius = spread * (1.0 - math.exp(-1.2 * level))
+        coordinates[theory.name] = np.array(
+            [radius * math.cos(angle), radius * math.sin(angle)]
+        )
+    return coordinates
+
+
 # --------------------------------------------------------------------------
-# The fiber: a resource monotone is only defined over a base point
+# The fiber: a resource monotone is defined by a full FreeTheory specification
 # --------------------------------------------------------------------------
 
 def _relative_entropy_of_coherence(state: np.ndarray) -> float:
@@ -334,28 +457,44 @@ def resource_over(state: np.ndarray, theory: FreeTheory) -> float:
     """Resource content of `state` measured over the free theory `theory`.
 
     The point of this function is that it is not a property of the state alone.
-    The same state returns different numbers over different base points, which
-    is why "how quantum is it" has no answer until a free theory is named.
+    The same state returns different numbers in different fibers, which is why
+    "how quantum is it" has no answer until a complete free theory is named.
     """
-    if theory.name == CLASSICAL.name:
-        return _relative_entropy_of_coherence(state)
-    if theory.name == STABILIZER.name:
-        return stabilizer_renyi_entropy(state)
-    if theory.name == SEPARABLE.name:
-        n = int(math.log2(len(np.asarray(state).ravel())))
-        return max_bipartite_entanglement(state) if n >= 2 else 0.0
-    if theory.name == MATCHGATE.name:
+    if not isinstance(theory, FreeTheory):
+        raise TypeError("resource theory must be a FreeTheory")
+    registered = FREE_THEORIES + (MINIMAL_FREE,)
+    if theory not in registered:
+        raise ValueError(
+            "unregistered FreeTheory specification; a canonical name alone "
+            "does not select a resource monotone"
+        )
+    vec = np.asarray(state, dtype=complex).ravel()
+    if vec.size == 0 or not (
+        np.all(np.isfinite(vec.real)) and np.all(np.isfinite(vec.imag))
+    ):
+        raise ValueError("state vector must be non-empty and finite")
+    norm = float(np.linalg.norm(vec))
+    if not np.isfinite(norm) or norm <= 0.0:
+        raise ValueError("state vector must have finite non-zero norm")
+    vec = vec / norm
+
+    if theory == CLASSICAL:
+        return _relative_entropy_of_coherence(vec)
+    if theory == STABILIZER:
+        return stabilizer_renyi_entropy(vec)
+    if theory == SEPARABLE:
+        n = int(math.log2(len(vec)))
+        return max_bipartite_entanglement(vec) if n >= 2 else 0.0
+    if theory == MATCHGATE:
         # Placeholder: a real non-Gaussianity monotone is not implemented.
         return float("nan")
-    if theory.name == ALL_FREE.name:
+    if theory == ALL_FREE:
         return 0.0      # everything is free, so nothing is a resource
-    if theory.name == MINIMAL_FREE.name:
+    if theory == MINIMAL_FREE:
         # Almost nothing is free, so almost every state carries resource.  Use
         # distance from the fiducial |0...0>.
-        vec = np.asarray(state, dtype=complex).ravel()
-        vec = vec / np.linalg.norm(vec)
         return float(1.0 - abs(vec[0]) ** 2)
-    return float("nan")  # unknown theory: refuse to invent a number
+    raise AssertionError("registered FreeTheory dispatch is incomplete")
 
 
 # --------------------------------------------------------------------------
@@ -426,17 +565,22 @@ class PromotionVerdict:
 
 @dataclass
 class QuantumNecessityAtlas:
-    """Eight coordinates, several interval-valued, over a named free theory.
+    """Eight coordinates in a fiber over a named point of universal ``H^n``.
 
     No coordinate dominates another and there is no total order.  Comparing two
-    organs means comparing sections within one fiber: a partial order on the
-    typed scalar coordinates plus an explicit :class:`IntervalOrder` policy on
-    ``q_sim`` -- not a subtraction of floats, and not a distance on the base,
-    which carries no assigned geometry.
+    organs means comparing sections within one free-theory fiber: a partial
+    order on typed coordinates plus an explicit :class:`IntervalOrder` policy.
+    The legacy field name ``base`` denotes that free-theory index; the geometric
+    base is explicitly ``geometric_base``.
     """
 
     organ: str
     base: FreeTheory
+    geometric_base: PoincareBallBase = field(
+        default_factory=lambda: UNIVERSAL_POINCARE_BASE,
+        kw_only=True,
+    )
+    base_point: np.ndarray | None = field(default=None, kw_only=True)
 
     q_phys: Fraction | float = 0.0      # state/transitions in protected quantum dof
     q_coh: Fraction | float = 0.0       # coherence actually *used* by interference
@@ -448,6 +592,31 @@ class QuantumNecessityAtlas:
     q_audit: Strength | float = 0.0     # external certification strength
 
     def __post_init__(self) -> None:
+        if not isinstance(self.base, FreeTheory):
+            raise TypeError("atlas base index must be a FreeTheory")
+        if not isinstance(self.geometric_base, PoincareBallBase):
+            raise TypeError("atlas geometric_base must be a PoincareBallBase")
+        if self.geometric_base.scope != "universal_atlas":
+            raise ValueError("atlas geometric base must have universal_atlas scope")
+        if self.base_point is None:
+            if self.base not in FREE_THEORIES:
+                raise ValueError(
+                    "an unregistered FreeTheory needs an explicit universal-base "
+                    "point; a canonical name alone does not identify a fiber"
+                )
+            placement = place_free_theories_on_universal_base(
+                geometric_base=self.geometric_base,
+            )
+            if self.base.name not in placement:
+                raise ValueError(
+                    f"free theory {self.base.name!r} has no universal-base placement"
+                )
+            self.base_point = placement[self.base.name]
+        else:
+            self.base_point = self.geometric_base.point(
+                self.base_point,
+                f"atlas:{self.organ}.base_point",
+            )
         # Coordinates are stored typed, not as bare floats.  This is what makes
         # the comparison rules enforceable rather than advisory: `q_process` in
         # bits can no longer be ranked against `q_audit` in audit-strength, and
@@ -459,6 +628,12 @@ class QuantumNecessityAtlas:
         self.q_logical = coerce(self.q_logical, Fraction)
         self.q_causal = coerce(self.q_causal, Effect)
         self.q_audit = coerce(self.q_audit, Strength)
+
+    @property
+    def free_theory(self) -> FreeTheory:
+        """Unambiguous name for the legacy ``base`` field."""
+
+        return self.base
 
     def promote(self, posterior=None, cone=None, **kwargs) -> PromotionVerdict:
         """Promotion requires a pre-registered advantage cone.
@@ -499,12 +674,21 @@ class QuantumNecessityAtlas:
         """
         if interval_policy not in IntervalOrder.ALL:
             raise ValueError(f"unknown interval order policy {interval_policy!r}")
-        if self.base.name != other.base.name:
+        if self.base != other.base:
             raise IncomparableFibersError(
                 f"cannot compare a section over '{self.base.name}' "
                 f"(monotone: {self.base.monotone}) with one over "
                 f"'{other.base.name}' (monotone: {other.base.monotone}). "
+                "FreeTheory specifications, not names alone, identify fibers. "
                 "Transport to a common chart first; see transport_to()."
+            )
+        if self.geometric_base.to_spec() != other.geometric_base.to_spec():
+            raise IncomparableFibersError(
+                "cannot compare sections carried by different geometric bases"
+            )
+        if self.geometric_base.distance(self.base_point, other.base_point) > 1e-10:
+            raise IncomparableFibersError(
+                "same free-theory label is attached to different base points"
             )
         mine = self._vector()
         theirs = other._vector()
@@ -522,13 +706,21 @@ class QuantumNecessityAtlas:
         was preserved, transformed, lost, and what remainder the transport
         leaves -- never a silently rebased number.
         """
-        if target.name == self.base.name:
+        if not isinstance(target, FreeTheory):
+            raise TypeError("transport target must be a FreeTheory")
+        if target == self.base:
             return Transport(self, preserved=("all",), transformed=(), lost=(),
                              remainder="none: identity transport",
                              evidence="same base point")
+        if target not in FREE_THEORIES:
+            raise ValueError(
+                "transport target has no registered universal-base point; "
+                "matching a canonical name is insufficient"
+            )
 
         moved = QuantumNecessityAtlas(
             organ=self.organ, base=target,
+            geometric_base=self.geometric_base,
             q_phys=self.q_phys, q_coh=self.q_coh,
             q_resource=float("nan"),          # not transportable without recompute
             q_process=self.q_process, q_logical=self.q_logical,
@@ -537,7 +729,7 @@ class QuantumNecessityAtlas:
         return Transport(
             moved,
             preserved=("q_phys", "q_process", "q_logical", "q_sim", "q_audit"),
-            transformed=(),
+            transformed=("free_theory_fiber", "geometric_base_point"),
             lost=("q_resource", "q_causal"),
             remainder=(f"q_resource must be recomputed as {target.monotone}; "
                        f"q_causal is task- and control-relative and does not "
@@ -552,31 +744,42 @@ class QuantumNecessityAtlas:
                                         self.q_process, self.q_logical,
                                         self.q_causal, self.q_audit))
 
-    def experimental_poincare_instrument(self, other: "QuantumNecessityAtlas",
-                                        coords=None) -> float:
-        """RETIRED HYPOTHESIS, kept as an instrument. Not a distance on this base.
+    def base_distance(self, other: "QuantumNecessityAtlas") -> float:
+        """Live distance in the shared universal Poincare atlas."""
 
-        Formerly ``base_distance``, which made the Poincare ball the default
-        geometry of the base. That geometry was measured against the structure it
-        actually carries and failed: the live free-theory graph has Gromov
-        delta/diameter = 0.5, the maximum possible for any metric space (see
-        :func:`compare_embeddings_on_real_hierarchy`). No geometry is assigned to
-        the base. This method computes the retired quantity for comparison only,
-        and emits a warning so it cannot be used as though it were current.
-        """
+        if self.geometric_base.to_spec() != other.geometric_base.to_spec():
+            raise IncomparableFibersError(
+                "base distance needs one shared universal Poincare specification"
+            )
+        return self.geometric_base.distance(self.base_point, other.base_point)
+
+    def experimental_poincare_instrument(
+        self,
+        other: "QuantumNecessityAtlas",
+        coords=None,
+    ) -> float:
+        """Deprecated compatibility alias for the now-live base distance."""
+
         import warnings
         warnings.warn(
-            "the Poincare base is a RETIRED hypothesis (delta/diameter = 0.5 on "
-            "the live free-theory graph); this value is an instrument reading, "
-            "not a distance on this base",
-            UserWarning, stacklevel=2)
-        coords = coords or embed_hierarchy()
-        return poincare_distance(coords[self.base.name], coords[other.base.name])
+            "experimental_poincare_instrument is deprecated; use base_distance. "
+            "K13 remains historical evidence against graph-inferred curvature.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if coords is None:
+            return self.base_distance(other)
+        return poincare_distance(
+            coords[self.base.name],
+            coords[other.base.name],
+        )
 
     def __str__(self) -> str:  # pragma: no cover - display only
         return "\n".join([
             f"organ        : {self.organ}",
-            f"base theory  : {self.base.name}  (monotone: {self.base.monotone})",
+            f"free theory  : {self.base.name}  (monotone: {self.base.monotone})",
+            f"geometry     : {self.geometric_base.id} @ "
+            f"{np.asarray(self.base_point).round(4).tolist()}",
             f"  q_phys     : {self.q_phys:.3f}      physical/logical residency",
             f"  q_coh      : {self.q_coh:.3f}      coherence actually used",
             f"  q_resource : {self.q_resource:.3f}      over this base only",
@@ -646,13 +849,14 @@ def gromov_delta(dist: np.ndarray) -> float:
 
 
 def compare_embeddings_on_real_hierarchy() -> dict:
-    """Test the hyperbolic base against the structure it actually has to carry.
+    """Reproduce the frozen K13 free-theory-graph diagnostic.
 
     Reports the Gromov delta of the live free-theory graph, its diameter, and
     the normalised ratio delta/diameter.  A tree gives 0.  Values near 0.5 mean
-    the structure is not tree-like and hyperbolic embedding is not indicated --
-    in which case the Poincare base is decoration and should be retired for this
-    base, whatever it may be worth for deeper hierarchies.
+    the structure is not tree-like, so that graph does not *induce* or
+    empirically earn a hyperbolic metric.  This narrow result is preserved
+    independently of the A-tagged universal Poincare atlas: graph distance is
+    not declared to be the atlas metric.
     """
     names, dist = free_theory_graph_metric()
     finite = dist[np.isfinite(dist)]

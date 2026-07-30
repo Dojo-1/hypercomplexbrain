@@ -1,9 +1,10 @@
-"""Documentation must not present retired claims as current.
+"""Documentation must respect the evidence ledger and its supersessions.
 
-The repository accumulated a *revision superposition*: §0.6 retired the
-hyperbolic base and the scalar promotion gate, while a later section of the same
-document still asserted both in the present tense. Prose drifts out of step with
-code silently, so the ledger is checked mechanically here.
+The repository accumulated a *revision superposition*: §0.6 retired an
+empirical inference from free-theory tree-likeness, while HB0 later reinstated a
+Poincaré atlas as an A-tagged architectural contract.  The scalar promotion
+gate remains retired. Prose drifts out of step with code silently, so the ledger
+is checked mechanically here.
 
 Rule: a retired phrase may appear only in a section that is explicitly
 historical (a correction ledger, a falsification table, an evidence ledger), or
@@ -23,7 +24,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 # Present-tense assertions of claims this repository has retired.
 RETIRED_PHRASES = [
     "The promotion gate is `q_causal > 0`",
-    "Its base is hyperbolic",
+    "the free-theory graph empirically proves the Poincaré metric",
     "the coordinates are still untyped floats",
     "Q_cert is the fraction",
     "self-tomography is impossible",
