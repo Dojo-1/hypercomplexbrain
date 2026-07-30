@@ -12,6 +12,17 @@
 *.txt  text eol=lf
 *.csv  text eol=lf
 
+# These preregistered artifacts are hash-bound byte-for-byte by their evidence
+# envelopes. They predate the LF policy and must retain their committed CRLF
+# bytes; normalizing them silently invalidates the evidence chain.
+artifacts/ohnium_v2/ohnium_atlas.json -text -diff
+artifacts/r3b_four_cell/four_cell_calibration.json -text -diff
+artifacts/r7_source_information/source_information.json -text -diff
+artifacts/r8_quantum_movement/quantum_movement.json -text -diff
+artifacts/s9_fqhe/fqhe_probe.corrected.json -text -diff
+artifacts/s9_fqhe/fqhe_probe.json -text -diff
+artifacts/hb0_universal_base/universal_base_audit.json -text -diff
+
 # Binary research artifacts must never be normalized.
 *.npz  binary
 *.npy  binary
