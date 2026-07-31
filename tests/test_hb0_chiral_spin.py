@@ -15,6 +15,7 @@ from aionq.hb0.chiral_spin import (
     ChiralSpinLink,
     QiskitProjectionUnavailable,
     SectionalAcceleratorBoundary,
+    SpinPathReport,
     probe_central_lift_qiskit,
     project_spin_path_to_qiskit,
     spinor_preparation_unitary,
@@ -710,3 +711,202 @@ def test_qiskit_central_plus_identity_control_is_dark():
     assert report.passed
     assert report.positive_identity_distance == pytest.approx(0.0)
     assert report.control_one_probability == pytest.approx(0.0, abs=1e-12)
+
+
+def test_raw_exact_link_instance_cannot_bypass_validation():
+    forged = object.__new__(ChiralSpinLink)
+    for name, value in {
+        "base_id": CONNECTION.base.id,
+        "curvature_radius": CONNECTION.base.radius,
+        "source": np.zeros(4),
+        "target": np.zeros(4),
+        "unitary": np.array([[0.0, -1.0], [1.0, 0.0]], dtype=complex),
+    }.items():
+        object.__setattr__(forged, name, value)
+    assert not forged.passed
+    with pytest.raises(CarrierMismatch):
+        project_spin_path_to_qiskit(forged)
+
+
+def test_mutated_exact_link_is_revalidated_at_qiskit_boundary():
+    link = CONNECTION.link(np.zeros(4), np.zeros(4))
+    object.__setattr__(
+        link,
+        "unitary",
+        np.array([[0.0, -1.0], [1.0, 0.0]], dtype=complex),
+    )
+    assert not link.passed
+    with pytest.raises(GovernanceError):
+        project_spin_path_to_qiskit(link)
+
+
+def test_qiskit_live_pass_revalidates_nested_links_and_receipt_arrays():
+    report = project_spin_path_to_qiskit(IDENTITY_PATH)
+    object.__setattr__(
+        report.links[0],
+        "unitary",
+        np.array([[0.0, -1.0], [1.0, 0.0]], dtype=complex),
+    )
+    assert not report.passed
+
+    fresh = project_spin_path_to_qiskit(IDENTITY_PATH)
+    object.__setattr__(
+        fresh,
+        "output_statevector",
+        np.array([0.0, 1.0], dtype=complex),
+    )
+    object.__setattr__(
+        fresh,
+        "output_density",
+        np.array([[0.0, 0.0], [0.0, 1.0]], dtype=complex),
+    )
+    assert not fresh.passed
+
+
+def test_qiskit_receipt_rejects_nonfinite_arrays_and_gate_refactorisation():
+    report = project_spin_path_to_qiskit(IDENTITY_PATH)
+    nan_matrix = np.full((2, 2), np.nan + 0.0j)
+    with pytest.raises(GovernanceError):
+        replace(
+            report,
+            expected_circuit_operator=nan_matrix,
+            circuit_operator=nan_matrix,
+            circuit_operator_defect=0.0,
+        )
+
+    from qiskit.circuit.library import UnitaryGate
+
+    detached = np.array([[0.0, -1.0], [1.0, 0.0]], dtype=complex)
+    report.circuit.data.clear()
+    report.circuit.append(UnitaryGate(detached, label="detached"), [0])
+    report.circuit.append(
+        UnitaryGate(detached.conj().T, label="detached_inverse"),
+        [0],
+    )
+    assert not report.passed
+    with pytest.raises(GovernanceError):
+        replace(report)
+
+
+def test_central_lift_probe_rejects_a_noncentral_su2_gate():
+    noncentral = np.array([[0.0, -1.0], [1.0, 0.0]], dtype=complex)
+    with pytest.raises(GovernanceError, match="only the \\+I or -I"):
+        probe_central_lift_qiskit(noncentral)
+
+
+def test_hyperbolic_adjacency_does_not_use_euclidean_tolerance():
+    origin = np.zeros(4)
+    left_endpoint = np.array([0.99, 0.0, 0.0, 0.0])
+    right_endpoint = np.array([0.99, 5e-11, 0.0, 0.0])
+    assert np.linalg.norm(left_endpoint - right_endpoint) < CONNECTION.tolerance
+    assert (
+        CONNECTION.base.distance(left_endpoint, right_endpoint)
+        > CONNECTION.tolerance
+    )
+    with pytest.raises(CarrierMismatch):
+        project_spin_path_to_qiskit(
+            (
+                CONNECTION.link(origin, left_endpoint),
+                CONNECTION.link(right_endpoint, origin),
+            )
+        )
+    assert not CONNECTION.path((left_endpoint, right_endpoint)).is_loop
+
+
+def test_refinement_receipt_revalidates_bound_link_and_geodesic_path():
+    report = SECTIONAL.refine(
+        CONNECTION,
+        np.array([0.08, 0.01, 0.0, 0.0]),
+        np.array([0.0, 0.09, 0.02, 0.0]),
+        sections=8,
+    )
+    assert report.direct_link.passed
+    assert len(report.refined_path.links) == report.sections
+    object.__setattr__(
+        report.direct_link,
+        "unitary",
+        np.array([[0.0, -1.0], [1.0, 0.0]], dtype=complex),
+    )
+    assert not report.passed
+
+
+def test_sectional_receipt_binds_mobius_operands_and_refuses_split_carrier():
+    report = SECTIONAL.audit(
+        CONNECTION,
+        left=np.array([0.08, 0.01, 0.0, 0.0]),
+        right=np.array([0.0, 0.09, 0.02, 0.0]),
+        translation=np.array([0.02, -0.01, 0.0, 0.0]),
+        rapidity=0.0,
+    )
+    assert not report.split_qiskit_eligible
+    with pytest.raises(GovernanceError):
+        replace(report, moved_left=np.zeros(4))
+    zero_boost = np.zeros((4, 4))
+    with pytest.raises(GovernanceError):
+        replace(
+            report,
+            split_boost=zero_boost,
+            split_signature_defect=2.0,
+            split_hilbert_unitarity_defect=2.0,
+        )
+    other_boost = SECTIONAL.split_boost(0.7)
+    split22 = np.diag([1.0, 1.0, -1.0, -1.0])
+    with pytest.raises(GovernanceError):
+        replace(
+            report,
+            split_boost=other_boost,
+            split_signature_defect=float(
+                np.linalg.norm(
+                    other_boost.T @ split22 @ other_boost - split22,
+                    ord="fro",
+                )
+            ),
+            split_hilbert_unitarity_defect=float(
+                np.linalg.norm(
+                    other_boost.T @ other_boost - np.eye(4),
+                    ord="fro",
+                )
+            ),
+        )
+
+
+def test_holonomy_and_triangle_revalidate_their_nested_paths():
+    holonomy = CONNECTION.loop(
+        (
+            np.zeros(4),
+            np.array([0.1, 0.0, 0.0, 0.0]),
+            np.array([0.0, 0.1, 0.0, 0.0]),
+            np.zeros(4),
+        )
+    )
+    incomplete_path = object.__new__(SpinPathReport)
+    object.__setattr__(incomplete_path, "points", holonomy.path.points)
+    object.__setattr__(incomplete_path, "is_loop", True)
+    object.__setattr__(incomplete_path, "tolerance", 1e-10)
+    with pytest.raises(CarrierMismatch):
+        replace(holonomy, path=incomplete_path)
+
+    object.__setattr__(
+        holonomy.path.links[0],
+        "unitary",
+        np.array([[0.0, -1.0], [1.0, 0.0]], dtype=complex),
+    )
+    with pytest.raises(GovernanceError):
+        replace(holonomy)
+
+    triangle = CONNECTION.triangle_curvature(0.2)
+    object.__setattr__(
+        triangle.holonomy.path.links[0],
+        "unitary",
+        np.array([[0.0, -1.0], [1.0, 0.0]], dtype=complex),
+    )
+    with pytest.raises(GovernanceError):
+        replace(triangle)
+
+
+def test_mobius_scalar_fails_when_hyperboloid_chart_cannot_certify_output():
+    with pytest.raises(GovernanceError, match="conditioned float64"):
+        SECTIONAL.mobius_scalar(
+            10.0,
+            np.array([0.5, 0.0, 0.0, 0.0]),
+        )

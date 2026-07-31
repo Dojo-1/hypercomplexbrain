@@ -13,7 +13,7 @@ frame holonomy along a declared path.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace as dataclass_replace
 import math
 from typing import Any, Iterable, Sequence
 
@@ -149,6 +149,21 @@ def _strict_density(value, tolerance: float, name: str = "density") -> np.ndarra
     if abs(trace.imag) > tolerance or abs(trace.real - 1.0) > tolerance:
         raise GovernanceError(f"{name} must have trace one")
     return _readonly_complex(density)
+
+
+def _finite_complex_array(
+    value,
+    shape: tuple[int, ...],
+    name: str,
+) -> np.ndarray:
+    """Copy one complex receipt array and reject every non-finite coordinate."""
+
+    array = np.array(value, dtype=complex, copy=True)
+    if array.shape != shape or not np.all(np.isfinite(array)):
+        raise GovernanceError(
+            f"{name} must be one finite complex array with shape {shape}"
+        )
+    return _readonly_complex(array)
 
 
 def _normalised_spinor(
@@ -486,15 +501,64 @@ class ChiralSpinLink:
 
     @property
     def passed(self) -> bool:
+        try:
+            validated = _revalidated_spin_link(
+                self,
+                self.tolerance,
+                "chiral_spin_link.live",
+            )
+        except Exception:
+            return False
         return max(
-            self.conditioning_error,
-            self.tangent_orthogonality_defect,
-            self.tangent_determinant_defect,
-            self.unitary_defect,
-            self.determinant_defect,
-            self.spin_intertwining_defect,
-            self.bloch_imaginary_defect,
-        ) <= self.tolerance
+            validated.conditioning_error,
+            validated.tangent_orthogonality_defect,
+            validated.tangent_determinant_defect,
+            validated.unitary_defect,
+            validated.determinant_defect,
+            validated.spin_intertwining_defect,
+            validated.bloch_imaginary_defect,
+        ) <= validated.tolerance
+
+
+def _revalidated_spin_link(
+    value,
+    tolerance: float,
+    name: str,
+) -> ChiralSpinLink:
+    """Reconstruct one link instead of trusting a Python object identity."""
+
+    tolerance = _numerical_tolerance(
+        tolerance,
+        f"{name}.tolerance",
+        maximum=1e-10,
+    )
+    if type(value) is not ChiralSpinLink:
+        raise CarrierMismatch(f"{name} requires an exact ChiralSpinLink")
+    try:
+        return ChiralSpinLink(
+            base_id=value.base_id,
+            curvature_radius=value.curvature_radius,
+            source=value.source,
+            target=value.target,
+            unitary=value.unitary,
+            tangent_rotation=value.tangent_rotation,
+            chiral_rotation=value.chiral_rotation,
+            base_distance=value.base_distance,
+            scalar_part=value.scalar_part,
+            bivector=value.bivector,
+            conditioning_error=value.conditioning_error,
+            tangent_orthogonality_defect=value.tangent_orthogonality_defect,
+            tangent_determinant_defect=value.tangent_determinant_defect,
+            unitary_defect=value.unitary_defect,
+            determinant_defect=value.determinant_defect,
+            spin_intertwining_defect=value.spin_intertwining_defect,
+            bloch_imaginary_defect=value.bloch_imaginary_defect,
+            tolerance=tolerance,
+        )
+    except AttributeError as exc:
+        raise CarrierMismatch(
+            f"{name} is an incomplete or uninitialised spin-link carrier"
+        ) from exc
 
 
 @dataclass(frozen=True)
@@ -538,11 +602,13 @@ class SpinPathReport:
                 "spin path report needs one typed link between every two points"
             )
         canonical_spec = UNIVERSAL_POINCARE_BASE.to_spec()
+        validated_links = []
         for index, link in enumerate(links):
-            if type(link) is not ChiralSpinLink:
-                raise CarrierMismatch(
-                    "spin path report accepts only typed chiral-spin links"
-                )
+            link = _revalidated_spin_link(
+                link,
+                tolerance,
+                f"spin_path_report.link[{index}]",
+            )
             if (
                 link.base_id != UNIVERSAL_POINCARE_BASE.id
                 or abs(
@@ -566,12 +632,14 @@ class SpinPathReport:
                     "spin path link has a noncanonical H4 specification"
                 )
             if (
-                np.linalg.norm(link.source - points[index]) > tolerance
-                or np.linalg.norm(link.target - points[index + 1]) > tolerance
+                not np.array_equal(link.source, points[index])
+                or not np.array_equal(link.target, points[index + 1])
             ):
                 raise CarrierMismatch(
-                    "spin path link endpoints do not match the declared path"
+                    "spin path links must share the exact declared endpoints"
                 )
+            validated_links.append(link)
+        links = tuple(validated_links)
         expected_unitary = np.eye(2, dtype=complex)
         for link in links:
             expected_unitary = link.unitary @ expected_unitary
@@ -600,7 +668,10 @@ class SpinPathReport:
             identity_distance,
             negative_identity_distance,
         )
-        is_loop = bool(np.linalg.norm(points[0] - points[-1]) <= tolerance)
+        is_loop = bool(
+            UNIVERSAL_POINCARE_BASE.distance(points[0], points[-1])
+            <= tolerance
+        )
         expected_scalars = {
             "signed_half_trace": float(half_trace.real),
             "trace_imaginary_defect": float(abs(half_trace.imag)),
@@ -631,6 +702,39 @@ class SpinPathReport:
         object.__setattr__(self, "tolerance", tolerance)
 
 
+def _revalidated_spin_path(
+    value,
+    tolerance: float,
+    name: str,
+) -> SpinPathReport:
+    """Reconstruct a path and all nested links at a public trust boundary."""
+
+    tolerance = _numerical_tolerance(
+        tolerance,
+        f"{name}.tolerance",
+        maximum=1e-10,
+    )
+    if type(value) is not SpinPathReport:
+        raise CarrierMismatch(f"{name} requires an exact SpinPathReport")
+    try:
+        return SpinPathReport(
+            points=value.points,
+            links=value.links,
+            unitary=value.unitary,
+            is_loop=value.is_loop,
+            signed_half_trace=value.signed_half_trace,
+            trace_imaginary_defect=value.trace_imaginary_defect,
+            identity_distance=value.identity_distance,
+            negative_identity_distance=value.negative_identity_distance,
+            projective_identity_distance=value.projective_identity_distance,
+            tolerance=tolerance,
+        )
+    except AttributeError as exc:
+        raise CarrierMismatch(
+            f"{name} is an incomplete or uninitialised spin-path carrier"
+        ) from exc
+
+
 @dataclass(frozen=True)
 class SpinHolonomyReport:
     path: SpinPathReport
@@ -641,17 +745,28 @@ class SpinHolonomyReport:
     def __post_init__(self) -> None:
         if type(self.path) is not SpinPathReport:
             raise CarrierMismatch("spin holonomy requires a typed spin path")
-        if len(self.path.points) < 4 or not self.path.is_loop:
+        try:
+            path_tolerance = self.path.tolerance
+        except AttributeError as exc:
+            raise CarrierMismatch(
+                "spin holonomy received an incomplete spin-path carrier"
+            ) from exc
+        path = _revalidated_spin_path(
+            self.path,
+            path_tolerance,
+            "spin_holonomy.path",
+        )
+        if len(path.points) < 4 or not path.is_loop:
             raise GovernanceError(
                 "spin holonomy requires a closed path with at least three edges"
             )
         flat = _su2(
             self.flat_control_unitary,
-            self.path.tolerance,
+            path.tolerance,
             "spin_holonomy.flat_control",
         )
         expected_flat = np.eye(2, dtype=complex)
-        if np.linalg.norm(flat - expected_flat, ord="fro") > self.path.tolerance:
+        if np.linalg.norm(flat - expected_flat, ord="fro") > path.tolerance:
             raise GovernanceError(
                 "the declared flat R4 connection must have identity holonomy"
             )
@@ -664,7 +779,7 @@ class SpinHolonomyReport:
         )
         if (
             supplied_distance < 0.0
-            or abs(supplied_distance - expected_distance) > self.path.tolerance
+            or abs(supplied_distance - expected_distance) > path.tolerance
         ):
             raise GovernanceError(
                 "flat-control distance disagrees with its unitary"
@@ -674,6 +789,7 @@ class SpinHolonomyReport:
             raise GovernanceError(
                 "spin holonomy must retain the typed negative-chirality remainder"
             )
+        object.__setattr__(self, "path", path)
         object.__setattr__(self, "flat_control_unitary", _readonly_complex(flat))
         object.__setattr__(
             self,
@@ -681,6 +797,27 @@ class SpinHolonomyReport:
             expected_distance,
         )
         object.__setattr__(self, "omitted_chirality", expected_remainder)
+
+
+def _revalidated_spin_holonomy(
+    value,
+    name: str,
+) -> SpinHolonomyReport:
+    """Reconstruct a holonomy and its complete nested geometric path."""
+
+    if type(value) is not SpinHolonomyReport:
+        raise CarrierMismatch(f"{name} requires an exact SpinHolonomyReport")
+    try:
+        return SpinHolonomyReport(
+            path=value.path,
+            flat_control_unitary=value.flat_control_unitary,
+            flat_control_identity_distance=value.flat_control_identity_distance,
+            omitted_chirality=value.omitted_chirality,
+        )
+    except AttributeError as exc:
+        raise CarrierMismatch(
+            f"{name} is an incomplete or uninitialised spin-holonomy carrier"
+        ) from exc
 
 
 @dataclass(frozen=True)
@@ -793,8 +930,10 @@ class TriangleCurvatureReport:
         epsilon = _finite(self.epsilon, "triangle_report.epsilon")
         if epsilon <= 0.0 or epsilon >= 1.0:
             raise GovernanceError("triangle-report epsilon must lie in (0, 1)")
-        if type(self.holonomy) is not SpinHolonomyReport:
-            raise CarrierMismatch("triangle report requires typed spin holonomy")
+        holonomy = _revalidated_spin_holonomy(
+            self.holonomy,
+            "triangle_report.holonomy",
+        )
         expected_points = (
             np.zeros(4),
             np.array([epsilon, 0.0, 0.0, 0.0]),
@@ -802,16 +941,16 @@ class TriangleCurvatureReport:
             np.zeros(4),
         )
         if any(
-            np.linalg.norm(actual - expected) > self.holonomy.path.tolerance
+            np.linalg.norm(actual - expected) > holonomy.path.tolerance
             for actual, expected in zip(
-                self.holonomy.path.points,
+                holonomy.path.points,
                 expected_points,
             )
-        ) or len(self.holonomy.path.points) != len(expected_points):
+        ) or len(holonomy.path.points) != len(expected_points):
             raise GovernanceError(
                 "triangle holonomy does not use the declared H4 triangle"
             )
-        tolerance = self.holonomy.path.tolerance
+        tolerance = holonomy.path.tolerance
         angle = math.atan(epsilon * epsilon)
         expected_unitary = (
             np.eye(2, dtype=complex)
@@ -841,7 +980,7 @@ class TriangleCurvatureReport:
             * angle
         )
         spin_rotation = -2.0 * angle
-        unitary = self.holonomy.path.unitary
+        unitary = holonomy.path.unitary
         plus_x = 0.5 * np.array(
             [[1.0, 1.0], [1.0, 1.0]],
             dtype=complex,
@@ -895,6 +1034,7 @@ class TriangleCurvatureReport:
                 )
             object.__setattr__(self, name, expected)
         object.__setattr__(self, "epsilon", epsilon)
+        object.__setattr__(self, "holonomy", holonomy)
         object.__setattr__(self, "expected_unitary", expected_unitary)
 
 
@@ -903,6 +1043,8 @@ class SectionalRefinementReport:
     """Exact geodesic subdivision control; not an adiabatic-theorem claim."""
 
     sections: int
+    direct_link: ChiralSpinLink
+    refined_path: SpinPathReport
     direct_unitary: np.ndarray
     refined_unitary: np.ndarray
     composition_defect: float
@@ -919,6 +1061,53 @@ class SectionalRefinementReport:
             raise GovernanceError("sectional refinement count must be an integer")
         if self.sections < 1 or self.sections > 4096:
             raise GovernanceError("sectional refinement count lies outside its guard")
+        direct_link = _revalidated_spin_link(
+            self.direct_link,
+            tolerance,
+            "sectional_refinement.direct_link",
+        )
+        refined_path = _revalidated_spin_path(
+            self.refined_path,
+            tolerance,
+            "sectional_refinement.refined_path",
+        )
+        if (
+            len(refined_path.links) != self.sections
+            or len(refined_path.points) != self.sections + 1
+            or UNIVERSAL_POINCARE_BASE.distance(
+                refined_path.points[0],
+                direct_link.source,
+            )
+            > tolerance
+            or UNIVERSAL_POINCARE_BASE.distance(
+                refined_path.points[-1],
+                direct_link.target,
+            )
+            > tolerance
+        ):
+            raise CarrierMismatch(
+                "sectional refinement path is not bound to its direct H4 link"
+            )
+        boundary = SectionalAcceleratorBoundary(tolerance=tolerance)
+        expected_points = tuple(
+            boundary.geodesic_section(
+                direct_link.source,
+                direct_link.target,
+                index / self.sections,
+            )
+            for index in range(self.sections + 1)
+        )
+        if any(
+            not np.array_equal(actual, expected)
+            for actual, expected in zip(
+                refined_path.points,
+                expected_points,
+                strict=True,
+            )
+        ):
+            raise CarrierMismatch(
+                "sectional refinement path is not the declared Mobius geodesic"
+            )
         direct = _su2(
             self.direct_unitary,
             tolerance,
@@ -929,6 +1118,21 @@ class SectionalRefinementReport:
             tolerance,
             "sectional_refinement.refined",
         )
+        if (
+            np.linalg.norm(
+                direct - direct_link.unitary,
+                ord="fro",
+            )
+            > tolerance
+            or np.linalg.norm(
+                refined - refined_path.unitary,
+                ord="fro",
+            )
+            > tolerance
+        ):
+            raise GovernanceError(
+                "sectional refinement matrices are detached from their carriers"
+            )
         computed = float(np.linalg.norm(refined - direct, ord="fro"))
         supplied = _finite(
             self.composition_defect,
@@ -938,33 +1142,56 @@ class SectionalRefinementReport:
             self.maximum_segment_distance,
             "sectional_refinement.maximum_segment_distance",
         )
+        expected_maximum_segment = max(
+            link.base_distance for link in refined_path.links
+        )
         if supplied < 0.0 or abs(supplied - computed) > tolerance:
             raise GovernanceError(
                 "sectional refinement defect disagrees with its unitaries"
             )
-        if maximum_segment < 0.0:
+        if (
+            maximum_segment < 0.0
+            or abs(maximum_segment - expected_maximum_segment) > tolerance
+        ):
             raise GovernanceError(
-                "sectional refinement segment distance must be non-negative"
+                "sectional refinement segment distance is detached from its path"
             )
+        object.__setattr__(self, "direct_link", direct_link)
+        object.__setattr__(self, "refined_path", refined_path)
         object.__setattr__(self, "direct_unitary", direct)
         object.__setattr__(self, "refined_unitary", refined)
         object.__setattr__(self, "composition_defect", computed)
-        object.__setattr__(self, "maximum_segment_distance", maximum_segment)
+        object.__setattr__(
+            self,
+            "maximum_segment_distance",
+            expected_maximum_segment,
+        )
         object.__setattr__(self, "tolerance", tolerance)
 
     @property
     def passed(self) -> bool:
-        return self.composition_defect <= self.tolerance
+        try:
+            validated = dataclass_replace(self)
+        except Exception:
+            return False
+        return validated.composition_defect <= validated.tolerance
 
 
 @dataclass(frozen=True)
 class SectionalBoundaryReport:
+    base_id: str
+    left: np.ndarray
+    right: np.ndarray
+    translation: np.ndarray
+    moved_left: np.ndarray
+    moved_right: np.ndarray
     hadamard4: np.ndarray
     hadamard4_orthogonality_defect: float
     hadamard_spin_gate: np.ndarray
     hadamard_spin_unitary_defect: float
     hadamard_spin_determinant_defect: float
     mobius_pair_distance_defect: float
+    split_rapidity: float
     split_boost: np.ndarray
     split_signature_defect: float
     split_hilbert_unitarity_defect: float
@@ -986,6 +1213,50 @@ class SectionalBoundaryReport:
             "sectional_boundary_report.tolerance",
             maximum=1e-10,
         )
+        if self.base_id != UNIVERSAL_POINCARE_BASE.id:
+            raise CarrierMismatch(
+                "sectional report must retain the universal H4 base id"
+            )
+        left = _readonly_real(
+            UNIVERSAL_POINCARE_BASE.point(
+                self.left,
+                "sectional_boundary_report.left",
+            )
+        )
+        right = _readonly_real(
+            UNIVERSAL_POINCARE_BASE.point(
+                self.right,
+                "sectional_boundary_report.right",
+            )
+        )
+        translation = _readonly_real(
+            UNIVERSAL_POINCARE_BASE.point(
+                self.translation,
+                "sectional_boundary_report.translation",
+            )
+        )
+        moved_left = _readonly_real(
+            UNIVERSAL_POINCARE_BASE.point(
+                self.moved_left,
+                "sectional_boundary_report.moved_left",
+            )
+        )
+        moved_right = _readonly_real(
+            UNIVERSAL_POINCARE_BASE.point(
+                self.moved_right,
+                "sectional_boundary_report.moved_right",
+            )
+        )
+        boundary = SectionalAcceleratorBoundary(tolerance=tolerance)
+        expected_moved_left = boundary.mobius_add(translation, left)
+        expected_moved_right = boundary.mobius_add(translation, right)
+        if (
+            not np.array_equal(moved_left, expected_moved_left)
+            or not np.array_equal(moved_right, expected_moved_right)
+        ):
+            raise GovernanceError(
+                "sectional report Mobius outputs are detached from its operands"
+            )
         expected_hadamard4 = 0.5 * np.array(
             [
                 [1.0, 1.0, 1.0, 1.0],
@@ -1034,6 +1305,15 @@ class SectionalBoundaryReport:
         ):
             raise GovernanceError(
                 "sectional report split boost has the wrong carrier"
+            )
+        split_rapidity = _finite(
+            self.split_rapidity,
+            "sectional_boundary_report.split_rapidity",
+        )
+        expected_boost = boundary.split_boost(split_rapidity)
+        if np.linalg.norm(boost - expected_boost, ord="fro") > tolerance:
+            raise GovernanceError(
+                "sectional report split boost is detached from its rapidity"
             )
         phase_gate = _su2(
             self.fixed_phase_gate,
@@ -1095,20 +1375,33 @@ class SectionalBoundaryReport:
                     f"sectional report {name} disagrees with its matrix"
                 )
             object.__setattr__(self, name, expected)
+        if computed["split_signature_defect"] > tolerance:
+            raise GovernanceError(
+                "sectional report split boost does not preserve Q(2,2)"
+            )
+        expected_mobius_defect = abs(
+            UNIVERSAL_POINCARE_BASE.distance(left, right)
+            - UNIVERSAL_POINCARE_BASE.distance(
+                expected_moved_left,
+                expected_moved_right,
+            )
+        )
         mobius_defect = _finite(
             self.mobius_pair_distance_defect,
             "sectional_boundary_report.mobius_pair_distance_defect",
         )
-        if mobius_defect < 0.0 or mobius_defect > tolerance:
+        if (
+            mobius_defect < 0.0
+            or abs(mobius_defect - expected_mobius_defect) > tolerance
+            or expected_mobius_defect > tolerance
+        ):
             raise GovernanceError(
-                "sectional report Mobius isometry defect exceeds tolerance"
+                "sectional report Mobius defect is detached or exceeds tolerance"
             )
-        split_eligible = bool(
-            computed["split_hilbert_unitarity_defect"] <= tolerance
-        )
-        if self.split_qiskit_eligible is not split_eligible:
+        split_eligible = False
+        if self.split_qiskit_eligible is not False:
             raise GovernanceError(
-                "sectional report split/Qiskit eligibility was forged"
+                "the split-signature carrier is never a one-qubit Qiskit carrier"
             )
         if (
             _finite(self.fixed_phase, "sectional_boundary_report.fixed_phase")
@@ -1128,13 +1421,19 @@ class SectionalBoundaryReport:
             raise GovernanceError(
                 "sectional report must retain the split-signature remainder"
             )
+        object.__setattr__(self, "left", left)
+        object.__setattr__(self, "right", right)
+        object.__setattr__(self, "translation", translation)
+        object.__setattr__(self, "moved_left", expected_moved_left)
+        object.__setattr__(self, "moved_right", expected_moved_right)
         object.__setattr__(self, "hadamard4", _readonly_real(hadamard4))
         object.__setattr__(self, "hadamard_spin_gate", hadamard_spin)
         object.__setattr__(
             self,
             "mobius_pair_distance_defect",
-            mobius_defect,
+            expected_mobius_defect,
         )
+        object.__setattr__(self, "split_rapidity", split_rapidity)
         object.__setattr__(self, "split_boost", _readonly_real(boost))
         object.__setattr__(self, "split_qiskit_eligible", split_eligible)
         object.__setattr__(self, "fixed_phase", _GEN100_PHASE)
@@ -1199,11 +1498,13 @@ class QiskitSpinProjectionReport:
             raise GovernanceError(
                 "Qiskit spin projection needs a nonempty typed-link receipt"
             )
+        validated_links = []
         for index, link in enumerate(links):
-            if type(link) is not ChiralSpinLink:
-                raise CarrierMismatch(
-                    "Qiskit spin projection accepts only ChiralSpinLink values"
-                )
+            link = _revalidated_spin_link(
+                link,
+                tolerance,
+                f"qiskit_projection_report.link[{index}]",
+            )
             if (
                 link.base_id != UNIVERSAL_POINCARE_BASE.id
                 or abs(
@@ -1216,12 +1517,16 @@ class QiskitSpinProjectionReport:
                 )
             if (
                 index
-                and np.linalg.norm(links[index - 1].target - link.source)
-                > tolerance
+                and not np.array_equal(
+                    validated_links[index - 1].target,
+                    link.source,
+                )
             ):
                 raise CarrierMismatch(
-                    "Qiskit spin links do not form one adjacent geometric path"
+                    "Qiskit spin links must share one exact geometric endpoint"
                 )
+            validated_links.append(link)
+        links = tuple(validated_links)
         preparation = _su2(
             self.preparation_unitary,
             tolerance,
@@ -1239,10 +1544,26 @@ class QiskitSpinProjectionReport:
             raise GovernanceError(
                 "Qiskit path unitary disagrees with its typed geometric links"
             )
-        expected_operator = _readonly_complex(self.expected_circuit_operator)
-        circuit_operator = _readonly_complex(self.circuit_operator)
-        output_state = _readonly_complex(self.output_statevector)
-        expected_state = _readonly_complex(self.expected_statevector)
+        expected_operator = _finite_complex_array(
+            self.expected_circuit_operator,
+            (2, 2),
+            "qiskit_projection_report.expected_circuit_operator",
+        )
+        circuit_operator = _finite_complex_array(
+            self.circuit_operator,
+            (2, 2),
+            "qiskit_projection_report.circuit_operator",
+        )
+        output_state = _finite_complex_array(
+            self.output_statevector,
+            (2,),
+            "qiskit_projection_report.output_statevector",
+        )
+        expected_state = _finite_complex_array(
+            self.expected_statevector,
+            (2,),
+            "qiskit_projection_report.expected_statevector",
+        )
         output_density = _strict_density(
             self.output_density,
             tolerance,
@@ -1254,11 +1575,7 @@ class QiskitSpinProjectionReport:
             "qiskit_projection_report.expected_density",
         )
         if (
-            expected_operator.shape != (2, 2)
-            or circuit_operator.shape != (2, 2)
-            or output_state.shape != (2,)
-            or expected_state.shape != (2,)
-            or output_density.shape != (2, 2)
+            output_density.shape != (2, 2)
             or expected_density.shape != (2, 2)
         ):
             raise GovernanceError("Qiskit projection report has an invalid carrier")
@@ -1283,8 +1600,8 @@ class QiskitSpinProjectionReport:
             )
         (
             qiskit,
-            _QuantumCircuit,
-            _UnitaryGate,
+            QuantumCircuit,
+            UnitaryGate,
             DensityMatrix,
             Operator,
             Statevector,
@@ -1293,14 +1610,40 @@ class QiskitSpinProjectionReport:
             raise GovernanceError(
                 "Qiskit projection version receipt disagrees with the live library"
             )
-        live_operator = np.asarray(Operator(self.circuit).data, dtype=complex)
-        live_state = np.asarray(
-            Statevector.from_instruction(self.circuit).data,
-            dtype=complex,
+        expected_circuit = QuantumCircuit(
+            1,
+            name="hb0_qb2_spin_expected",
         )
-        live_density = np.asarray(
+        expected_circuit.append(
+            UnitaryGate(preparation, label="prepare_z"),
+            [0],
+        )
+        for index, link in enumerate(links):
+            expected_circuit.append(
+                UnitaryGate(link.unitary, label=f"lc_plus_{index}"),
+                [0],
+            )
+        _validate_qiskit_instruction_sequence(
+            self.circuit,
+            expected_circuit,
+            Operator,
+            tolerance,
+            "Qiskit spin projection",
+        )
+        live_operator = _finite_complex_array(
+            Operator(self.circuit).data,
+            (2, 2),
+            "qiskit_projection_report.live_operator",
+        )
+        live_state = _finite_complex_array(
+            Statevector.from_instruction(self.circuit).data,
+            (2,),
+            "qiskit_projection_report.live_state",
+        )
+        live_density = _strict_density(
             DensityMatrix.from_instruction(self.circuit).data,
-            dtype=complex,
+            tolerance,
+            "qiskit_projection_report.live_density",
         )
         if max(
             float(np.linalg.norm(live_operator - circuit_operator, ord="fro")),
@@ -1362,31 +1705,17 @@ class QiskitSpinProjectionReport:
 
     @property
     def passed(self) -> bool:
-        recorded = max(
-            self.path_unitary_defect,
-            self.path_determinant_defect,
-            self.circuit_operator_defect,
-            self.statevector_defect,
-            self.density_intertwining_defect,
-        )
         try:
-            from qiskit.quantum_info import Operator
-
-            live_operator = np.asarray(Operator(self.circuit).data, dtype=complex)
-            live_defect = float(
-                np.linalg.norm(
-                    live_operator - self.expected_circuit_operator,
-                    ord="fro",
-                )
-            )
+            validated = dataclass_replace(self)
         except Exception:
             return False
-        return (
-            max(recorded, live_defect) <= self.tolerance
-            and getattr(self.circuit, "num_clbits", 1) == 0
-            and getattr(self.circuit, "num_qubits", 0) == 1
-            and len(getattr(self.circuit, "data", ())) == self.link_count + 1
-        )
+        return max(
+            validated.path_unitary_defect,
+            validated.path_determinant_defect,
+            validated.circuit_operator_defect,
+            validated.statevector_defect,
+            validated.density_intertwining_defect,
+        ) <= validated.tolerance
 
 
 @dataclass(frozen=True)
@@ -1413,6 +1742,19 @@ class CentralLiftProbeReport:
             tolerance,
             "central_lift_report.unitary",
         )
+        positive_identity_distance = float(
+            np.linalg.norm(unitary - np.eye(2), ord="fro")
+        )
+        negative_identity_distance = float(
+            np.linalg.norm(unitary + np.eye(2), ord="fro")
+        )
+        if min(
+            positive_identity_distance,
+            negative_identity_distance,
+        ) > tolerance:
+            raise GovernanceError(
+                "central-lift probe accepts only the +I or -I Spin center"
+            )
         (
             qiskit,
             QuantumCircuit,
@@ -1428,6 +1770,13 @@ class CentralLiftProbeReport:
             [0, 1],
         )
         expected_circuit.h(0)
+        _validate_qiskit_instruction_sequence(
+            self.circuit,
+            expected_circuit,
+            Operator,
+            tolerance,
+            "central-lift probe",
+        )
         if (
             getattr(self.circuit, "num_qubits", None) != 2
             or getattr(self.circuit, "num_clbits", None) != 0
@@ -1465,12 +1814,8 @@ class CentralLiftProbeReport:
         )
         moved_density = unitary @ source_density @ unitary.conj().T
         computed = {
-            "positive_identity_distance": float(
-                np.linalg.norm(unitary - np.eye(2), ord="fro")
-            ),
-            "negative_identity_distance": float(
-                np.linalg.norm(unitary + np.eye(2), ord="fro")
-            ),
+            "positive_identity_distance": positive_identity_distance,
+            "negative_identity_distance": negative_identity_distance,
             "density_change": float(
                 np.linalg.norm(moved_density - source_density, ord="fro")
             ),
@@ -1506,104 +1851,13 @@ class CentralLiftProbeReport:
         """Revalidate the mutable Qiskit circuit against the frozen receipt."""
 
         try:
-            tolerance = _numerical_tolerance(
-                self.tolerance,
-                "central_lift_report.live_tolerance",
-                maximum=1e-10,
-            )
-            unitary = _su2(
-                self.unitary,
-                tolerance,
-                "central_lift_report.live_unitary",
-            )
-            (
-                qiskit,
-                QuantumCircuit,
-                UnitaryGate,
-                DensityMatrix,
-                Operator,
-                Statevector,
-            ) = _load_qiskit_projection_types()
-            if (
-                self.qiskit_version != str(qiskit.__version__)
-                or self.simulator_only is not True
-                or self.backend_executed is not False
-                or getattr(self.circuit, "num_qubits", None) != 2
-                or getattr(self.circuit, "num_clbits", None) != 0
-                or len(getattr(self.circuit, "data", ())) != 3
-            ):
-                return False
-            expected_circuit = QuantumCircuit(
-                2,
-                name="hb0_qb2_central_sign_live_expected",
-            )
-            expected_circuit.h(0)
-            expected_circuit.append(
-                UnitaryGate(unitary, label="spin_lift").control(1),
-                [0, 1],
-            )
-            expected_circuit.h(0)
-            live_operator = np.asarray(
-                Operator(self.circuit).data,
-                dtype=complex,
-            )
-            expected_operator = np.asarray(
-                Operator(expected_circuit).data,
-                dtype=complex,
-            )
-            live_state = np.asarray(
-                Statevector.from_instruction(self.circuit).data,
-                dtype=complex,
-            )
-            expected_state = np.asarray(
-                Statevector.from_instruction(expected_circuit).data,
-                dtype=complex,
-            )
-            if max(
-                float(
-                    np.linalg.norm(
-                        live_operator - expected_operator,
-                        ord="fro",
-                    )
-                ),
-                float(np.linalg.norm(live_state - expected_state)),
-            ) > tolerance:
-                return False
-            control_one_probability = float(
-                sum(
-                    abs(live_state[index]) ** 2
-                    for index in range(live_state.size)
-                    if index & 1
-                )
-            )
-            source_density = np.asarray(
-                DensityMatrix([1.0 + 0.0j, 0.0 + 0.0j]).data,
-                dtype=complex,
-            )
-            moved_density = unitary @ source_density @ unitary.conj().T
-            expected = {
-                "positive_identity_distance": float(
-                    np.linalg.norm(unitary - np.eye(2), ord="fro")
-                ),
-                "negative_identity_distance": float(
-                    np.linalg.norm(unitary + np.eye(2), ord="fro")
-                ),
-                "density_change": float(
-                    np.linalg.norm(
-                        moved_density - source_density,
-                        ord="fro",
-                    )
-                ),
-                "control_one_probability": control_one_probability,
-            }
-            return all(
-                math.isfinite(float(getattr(self, name)))
-                and float(getattr(self, name)) >= 0.0
-                and abs(float(getattr(self, name)) - value) <= tolerance
-                for name, value in expected.items()
-            )
+            validated = dataclass_replace(self)
         except Exception:
             return False
+        return min(
+            validated.positive_identity_distance,
+            validated.negative_identity_distance,
+        ) <= validated.tolerance
 
 
 @dataclass(frozen=True)
@@ -1780,7 +2034,7 @@ class ChiralSpinConnection:
             np.linalg.norm(unitary + np.eye(2), ord="fro")
         )
         is_loop = bool(
-            np.linalg.norm(points[0] - points[-1]) <= self.tolerance
+            self.base.distance(points[0], points[-1]) <= self.tolerance
         )
         return SpinPathReport(
             points=points,
@@ -2027,14 +2281,17 @@ class SectionalAcceleratorBoundary:
     def mobius_scalar(self, scalar: float, point) -> np.ndarray:
         scalar = _finite(scalar, "sectional.mobius.scalar")
         point = self.base.point(point, "sectional.mobius.scalar_point")
+        self.base.to_hyperboloid(point)
         norm = float(np.linalg.norm(point))
         if norm == 0.0:
             return point
         radial = math.tanh(scalar * math.atanh(norm))
-        return self.base.point(
+        output = self.base.point(
             radial * point / norm,
             "sectional.mobius.scalar_output",
         )
+        self.base.to_hyperboloid(output)
+        return output
 
     def geodesic_section(self, source, target, parameter: float) -> np.ndarray:
         parameter = _finite(parameter, "sectional.geodesic.parameter")
@@ -2101,6 +2358,8 @@ class SectionalAcceleratorBoundary:
             raise GovernanceError("geodesic refinement changed the signed spin lift")
         return SectionalRefinementReport(
             sections=sections,
+            direct_link=direct,
+            refined_path=refined,
             direct_unitary=direct.unitary,
             refined_unitary=refined.unitary,
             composition_defect=defect,
@@ -2169,16 +2428,21 @@ class SectionalAcceleratorBoundary:
             phase_defect,
         ) > self.tolerance:
             raise GovernanceError("sectional carrier-boundary audit failed")
-        split_eligible = bool(hilbert_defect <= self.tolerance)
-        if abs(rapidity) > self.tolerance and split_eligible:
-            raise GovernanceError("a nonzero split boost was misclassified as unitary")
+        split_eligible = False
         return SectionalBoundaryReport(
+            base_id=self.base.id,
+            left=left,
+            right=right,
+            translation=translation,
+            moved_left=moved_left,
+            moved_right=moved_right,
             hadamard4=hadamard4,
             hadamard4_orthogonality_defect=h4_defect,
             hadamard_spin_gate=hadamard_spin,
             hadamard_spin_unitary_defect=h_unitary_defect,
             hadamard_spin_determinant_defect=float(h_determinant_defect),
             mobius_pair_distance_defect=mobius_defect,
+            split_rapidity=rapidity,
             split_boost=boost,
             split_signature_defect=split_defect,
             split_hilbert_unitarity_defect=hilbert_defect,
@@ -2242,6 +2506,64 @@ def _load_qiskit_projection_types():
     )
 
 
+def _validate_qiskit_instruction_sequence(
+    live_circuit,
+    expected_circuit,
+    operator_type,
+    tolerance: float,
+    name: str,
+) -> None:
+    """Bind a receipt to each ordered gate and wire, not only to total action."""
+
+    live_data = tuple(getattr(live_circuit, "data", ()))
+    expected_data = tuple(getattr(expected_circuit, "data", ()))
+    if len(live_data) != len(expected_data):
+        raise GovernanceError(f"{name} instruction count is inconsistent")
+    for index, (live, expected) in enumerate(
+        zip(live_data, expected_data, strict=True)
+    ):
+        live_qubits = tuple(
+            live_circuit.find_bit(qubit).index for qubit in live.qubits
+        )
+        expected_qubits = tuple(
+            expected_circuit.find_bit(qubit).index for qubit in expected.qubits
+        )
+        live_clbits = tuple(
+            live_circuit.find_bit(clbit).index for clbit in live.clbits
+        )
+        expected_clbits = tuple(
+            expected_circuit.find_bit(clbit).index for clbit in expected.clbits
+        )
+        if (
+            live_qubits != expected_qubits
+            or live_clbits != expected_clbits
+        ):
+            raise GovernanceError(
+                f"{name} instruction {index} uses the wrong carrier wires"
+            )
+        live_matrix = np.asarray(
+            operator_type(live.operation).data,
+            dtype=complex,
+        )
+        expected_matrix = np.asarray(
+            operator_type(expected.operation).data,
+            dtype=complex,
+        )
+        if (
+            live_matrix.shape != expected_matrix.shape
+            or not np.all(np.isfinite(live_matrix))
+            or not np.all(np.isfinite(expected_matrix))
+            or np.linalg.norm(
+                live_matrix - expected_matrix,
+                ord="fro",
+            )
+            > tolerance
+        ):
+            raise GovernanceError(
+                f"{name} instruction {index} is detached from its typed gate"
+            )
+
+
 def _typed_spin_links(
     path_or_links: SpinPathReport | ChiralSpinLink | Iterable[ChiralSpinLink],
     tolerance: float,
@@ -2249,7 +2571,11 @@ def _typed_spin_links(
     """Normalize a geometric path without accepting detached SU(2) matrices."""
 
     if type(path_or_links) is SpinPathReport:
-        links = path_or_links.links
+        links = _revalidated_spin_path(
+            path_or_links,
+            tolerance,
+            "qiskit_projection.path",
+        ).links
     elif type(path_or_links) is ChiralSpinLink:
         links = (path_or_links,)
     else:
@@ -2263,11 +2589,13 @@ def _typed_spin_links(
         raise GovernanceError(
             "Qiskit projection needs at least one typed geometric spin link"
         )
+    validated_links = []
     for index, link in enumerate(links):
-        if type(link) is not ChiralSpinLink:
-            raise CarrierMismatch(
-                "detached SU(2) matrices are not geometric spin-link carriers"
-            )
+        link = _revalidated_spin_link(
+            link,
+            tolerance,
+            f"qiskit_projection.link[{index}]",
+        )
         if (
             link.base_id != UNIVERSAL_POINCARE_BASE.id
             or abs(link.curvature_radius - UNIVERSAL_POINCARE_BASE.radius)
@@ -2278,13 +2606,16 @@ def _typed_spin_links(
             )
         if (
             index
-            and np.linalg.norm(links[index - 1].target - link.source)
-            > tolerance
+            and not np.array_equal(
+                validated_links[index - 1].target,
+                link.source,
+            )
         ):
             raise CarrierMismatch(
-                "typed spin links do not form one adjacent geometric path"
+                "typed spin links must share one exact geometric endpoint"
             )
-    return tuple(links)
+        validated_links.append(link)
+    return tuple(validated_links)
 
 
 def project_spin_path_to_qiskit(

@@ -229,6 +229,11 @@ No runtime dependency or storage service was imported.
 The 100-section check is exact path-refinement invariance. It is not an
 adiabatic-theorem or spectral-gap result.
 
+Strict Möbius operations are fail-closed. Compensated scalar sums and the
+independent hyperboloid chart bound coordinate error; inverse cancellation and
+near-boundary amplification are rejected when float64 cannot certify the
+\(10^{-10}\) gate. No result is clipped back into the ball.
+
 The carrier separation is structural:
 
 \[
@@ -283,6 +288,37 @@ advantage_claim  = false
 The repository currently declares Qiskit as a core dependency. The lazy import
 in QB2 is a defensive typed failure boundary, not a claim that the complete
 package works without Qiskit.
+
+## Receipt and trust boundary
+
+A Python class name is not evidence that its constructor ran. Public QB2
+boundaries therefore reconstruct every `ChiralSpinLink` from its full receipt:
+base specification, endpoints, signed unitary, complete \(SO(4)\) frame
+transport, self-dual and Bloch projections, and all declared defects. This
+rejects raw `object.__new__` instances and post-construction mutation.
+
+The same rule is recursive:
+
+- path links share exact endpoint coordinates; approximate loop closure is
+  decided with the \(H^4\) distance rather than Euclidean coordinate distance;
+- holonomy and triangle receipts reconstruct their complete nested paths;
+- a sectional-refinement receipt retains its direct link and complete
+  Möbius-geodesic path, and recomputes every segment and defect;
+- a sectional-boundary receipt retains its Möbius operands and outputs plus
+  the split rapidity, generator action, and split-form defect;
+- a Qiskit receipt validates finite operator/state/density arrays, reconstructs
+  its path, and checks every ordered gate matrix and wire—not only the total
+  circuit operator;
+- the live `passed` gates rerun those validations, so mutation makes the
+  receipt fail;
+- the central-lift probe accepts only \(+I\) or \(-I\), not a generic
+  \(SU(2)\) gate;
+- `split_qiskit_eligible` is always false because a \(4\times4\)
+  split-signature carrier is not a one-qubit carrier, even when its numerical
+  Hilbert-orthogonality defect is small.
+
+These checks protect an in-process evidence boundary; they are not an
+immutable signature or a sandbox against arbitrary code execution.
 
 ## Evidence ceiling
 
