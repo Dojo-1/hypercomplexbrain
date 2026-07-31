@@ -349,19 +349,26 @@ def test_the_repository_has_recomputed_more_than_it_has_been_recomputed():
     assert r["mutual"] is False
 
 
-def test_the_single_independent_claim_is_someone_elses_work():
+def test_no_independently_witnessed_claim_was_produced_by_this_party():
     """The Goedelian shape of the corpus, stated as an assertion.
 
-    Every independently witnessed claim in this repository was PRODUCED
-    elsewhere. The apparatus works; it has simply never been pointed back. If a
-    claim produced here ever becomes independent, this test fails and the docs
-    are wrong -- which is the correct way for it to fail.
+    Every independently witnessed claim was produced by someone else, or by a
+    party the envelope does not identify. None was produced by this one. The
+    apparatus works; it has never been pointed back.
+
+    This test previously asserted the producer string was neither 'claude-code'
+    nor an experiments/ path, and R6k-W1 broke it -- correctly. Its reproduction
+    envelope names a SCRIPT as producer, which identifies no party at all, so the
+    string test could no longer tell "someone else made this" from "we made
+    this". `party_kind` is the right instrument: the assertion is that no
+    independent claim has a SELF producer, and ambiguous ones are named rather
+    than counted as either.
     """
+    from aionq.self_audit import party_kind
     r = independence_report()
     assert r["by_rank"]["INDEPENDENT"] >= 1
     for claim in r["independent_claims"]:
-        assert claim["producer"] not in ("claude-code",)
-        assert not claim["producer"].startswith("experiments/")
+        assert party_kind(claim["producer"]) != "self", claim
         assert claim["mode"] == "recomputed"
 
 
@@ -436,3 +443,51 @@ def test_the_self_audit_envelope_is_itself_unwitnessed():
     assert me["verification_mode"] == "not_requested"
     kinds = {r["kind"] for r in me["typed_remainders"] if isinstance(r, dict)}
     assert "self_reference_remainder" in kinds
+
+
+# ------------------------------------------- a script path is not a party
+
+def test_a_script_path_is_not_a_party_identity():
+    """The defect R6k-W1 introduced into this module, and then had to repair.
+
+    `_is_self` read any `experiments/` producer as this agent, reasoning that a
+    script in this tree ran here. R6k falsified it: the identical script produced
+    R6k on one machine and its reproduction on another, so one string names two
+    parties.
+
+    The damage was directional, which is why it mattered. The producer read as
+    self and the verifier `claude-code-linux` read as other, so a recomputation
+    this agent PERFORMED was counted as one it RECEIVED, and `mutual` went True
+    on a relation with nothing coming back. An audit that refuses inflated
+    evidence inflated its own headline number from an artifact it had just
+    written.
+    """
+    from aionq.self_audit import party_kind
+    assert party_kind("experiments/run_equal_resource_reservoir.py") == "ambiguous"
+    assert party_kind("some_runner.py") == "ambiguous"
+    assert party_kind("") == "ambiguous"
+    assert party_kind("claude-code") == "self"
+    assert party_kind("claude-code-linux") == "self"      # prefix, not equality
+    assert party_kind("gpt/polycosmic-hb0-kernel") == "other"
+    assert party_kind("codex-gpt5.6") == "other"
+
+
+def test_an_ambiguous_party_never_reaches_mutual(fake_root):
+    """Counted, never directed. `mutual` must not be reachable through it."""
+    _envelope(fake_root, "scriptmade", producer="experiments/run_thing.py",
+              verifier="claude-code-linux", verification_mode="recomputed")
+    r = recognition_asymmetry(fake_root)
+    assert r["recomputations_of_ambiguous_party"] == 1
+    assert r["recomputations_performed_on_others"] == 0
+    assert r["recomputations_received_from_others"] == 0
+    assert r["mutual"] is False
+
+
+def test_mutual_still_reachable_when_both_parties_are_named(fake_root):
+    """The complementary case, or the test above only proves the counter is dead."""
+    _envelope(fake_root, "outward", producer="other-agent",
+              verifier="claude-code", verification_mode="recomputed")
+    _envelope(fake_root, "inward", producer="claude-code",
+              verifier="other-agent", verification_mode="recomputed")
+    r = recognition_asymmetry(fake_root)
+    assert r["mutual"] is True

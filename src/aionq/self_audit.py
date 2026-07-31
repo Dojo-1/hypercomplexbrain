@@ -58,7 +58,8 @@ from aionq.witness_nerve import (EvidenceRank, WitnessAct, WitnessGraph,
 
 __all__ = [
     "Correction", "CORRECTIONS", "SELF_PARTIES", "ENVELOPE_SCHEMA_PREFIX",
-    "repo_root", "iter_envelopes", "envelope_census", "witness_graph",
+    "party_kind", "repo_root", "iter_envelopes", "envelope_census",
+    "witness_graph",
     "independence_report", "recognition_asymmetry", "typed_remainder_census",
     "corrections_are_bound", "preregistration_ordering", "godelian_gap",
     "self_audit",
@@ -69,14 +70,42 @@ __all__ = [
 #: list would have to be updated by the same party it audits.
 ENVELOPE_SCHEMA_PREFIX = "hypercomplexbrain.evidence."
 
-#: Parties that are this agent.  Producer strings in the corpus are a mix of
-#: agent names and the experiment script that emitted the row; a script in this
-#: tree ran here, so both forms are self.
+#: Parties that are this agent.  Matched by PREFIX, because the same agent
+#: reports itself with a platform suffix in different rounds.
 SELF_PARTIES = ("claude-code",)
 
 
+def party_kind(party: str) -> str:
+    """``self`` | ``other`` | ``ambiguous``.
+
+    A SCRIPT PATH IS NOT A PARTY, and treating it as one was a real defect.  The
+    original rule read ``party in SELF_PARTIES or party.startswith("experiments/")``
+    -- any experiments/ producer was self, on the reasoning that a script in this
+    tree ran here.  R6k falsified that: the identical script produced R6k on one
+    machine and its reproduction on another, so the same string names two
+    different parties.
+
+    The damage was not that the act went uncounted.  It counted, in the WRONG
+    DIRECTION: producer read as self, verifier ``claude-code-linux`` read as
+    other, so a recomputation this agent PERFORMED was recorded as one it
+    RECEIVED, and :func:`recognition_asymmetry` flipped ``mutual`` to True on a
+    one-way relation.  An audit built to refuse inflated evidence inflated its
+    own headline number.
+
+    So a script path resolves to ``ambiguous`` and is counted in its own bucket,
+    never assigned a direction and never contributing to ``mutual``.  Recovering
+    the real party would need the two environment digests, which live in two
+    different envelopes; that is named as a remainder rather than guessed at.
+    """
+    if not party:
+        return "ambiguous"
+    if party.startswith("experiments/") or party.endswith(".py"):
+        return "ambiguous"
+    return "self" if any(party.startswith(p) for p in SELF_PARTIES) else "other"
+
+
 def _is_self(party: str) -> bool:
-    return party in SELF_PARTIES or party.startswith("experiments/")
+    return party_kind(party) == "self"
 
 
 # --------------------------------------------------------------------------
@@ -217,6 +246,18 @@ CORRECTIONS = (
         "tests/test_self_audit.py::test_ordering_uses_commit_topology_not_the_clock",
         True,
     ),
+    Correction(
+        "R6k-W1",
+        "a script path treated as a party identity: _is_self returned True for "
+        "any producer starting with 'experiments/', so when the same script "
+        "produced R6k on one machine and its reproduction on another, an act "
+        "this agent PERFORMED was filed as one it RECEIVED and mutual flipped "
+        "to True on a one-way relation. The audit built to refuse inflated "
+        "evidence inflated its own headline number, using an artifact this "
+        "round had just written",
+        "tests/test_self_audit.py::test_a_script_path_is_not_a_party_identity",
+        True,
+    ),
 )
 
 
@@ -347,6 +388,7 @@ def recognition_asymmetry(root=None) -> dict:
     """
     out_acts: list = []
     in_acts: list = []
+    ambiguous_acts: list = []
     for _path, env in iter_envelopes(root):
         if env is None:
             continue
@@ -358,15 +400,22 @@ def recognition_asymmetry(root=None) -> dict:
             continue
         row = {"claim_id": env.get("claim_id", "?"),
                "producer": producer, "verifier": verifier}
-        if _is_self(verifier) and not _is_self(producer):
+        pk, vk = party_kind(producer), party_kind(verifier)
+        if "ambiguous" in (pk, vk):
+            # Neither direction can be assigned. Counted, never directed, and
+            # never allowed to reach `mutual` -- see party_kind.
+            ambiguous_acts.append(dict(row, producer_kind=pk, verifier_kind=vk))
+        elif vk == "self" and pk == "other":
             out_acts.append(row)
-        elif _is_self(producer) and not _is_self(verifier):
+        elif pk == "self" and vk == "other":
             in_acts.append(row)
     return {
         "recomputations_performed_on_others": len(out_acts),
         "recomputations_received_from_others": len(in_acts),
+        "recomputations_of_ambiguous_party": len(ambiguous_acts),
         "outward": out_acts,
         "inward": in_acts,
+        "ambiguous": ambiguous_acts,
         "mutual": bool(out_acts) and bool(in_acts),
     }
 
