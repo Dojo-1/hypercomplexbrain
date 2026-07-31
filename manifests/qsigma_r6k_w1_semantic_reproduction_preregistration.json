@@ -1,0 +1,155 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "QSigma-R6k-W1 - Semantic reproduction of R6k on a second platform, and the frozen depth prediction it cannot yet test",
+  "freeze_status": {
+    "committed_before_any_implementation": true,
+    "required_freeze_target": "This manifest must be committed alone on branch claude/r6k-semantic-reproduction-witness before the comparator module, its tests, the runner, or any output artifact exists.",
+    "outcome_blind": false,
+    "outcome_blind_reason": "A feasibility probe was run BEFORE this manifest was written, to establish whether R6k's protocol is callable at all outside its runner. It is, and it produced numbers. Those numbers are named in scoping_run_already_seen below. Writing this manifest as if the primary comparison were unseen would be backdating, which is the specific dishonesty the preregistration mechanism exists to prevent. Part B of this round IS outcome-blind and is marked as such.",
+    "scoping_run_already_seen": {
+      "what": "one call to aionq.equal_resource_reservoir.run_protocol on Linux, output written outside the repository, compared leaf-by-leaf against the committed R6k result",
+      "worst_absolute_float_difference": 3.3113392159116226e-11,
+      "worst_difference_location": "truncation_stress_control.retrieval_rows[0].receiver.completeness_residual",
+      "event_rows": "320 both sides",
+      "verdict": "ANISOTROPIC_ANGULAR_GAIN_NO_RADIAL_GAIN both sides",
+      "non_numeric_mismatches": 494,
+      "non_numeric_mismatches_are_all_digests": true
+    }
+  },
+  "baseline": {
+    "branch_under_audit": "claude/aion-brain-architecture-27f8ji",
+    "c_pre_commit": "350d03796a4021bc01c1814e9b71269d1ab63f6d",
+    "tests_at_c_pre_on_this_platform": 1889,
+    "envelopes_at_c_pre": "28/28 verified",
+    "independently_witnessed_claims_at_c_pre": 1
+  },
+  "position": "R6l seals R6k byte-for-byte as upstream. R6k has never been recomputed by a second party on a second platform, and the existing witness machinery cannot honestly promote it -- see machinery_defects_this_round_must_not_use. This round performs the recomputation and compares it semantically, on a separate branch, without touching the R6l chronology or the R6k artifacts that R6l pins.",
+
+  "part_a": {
+    "name": "semantic reproduction of R6k on Linux",
+    "outcome_blind": false,
+    "question": "Does R6k's numerical content reproduce on a second platform under a frozen tolerance, and does its discrete verdict survive?",
+    "producer_of_record": "experiments/run_equal_resource_reservoir.py",
+    "verifier_of_record": "claude-code-linux",
+    "verification_mode_to_be_recorded": "recomputed",
+    "execution_rule": "Call aionq.equal_resource_reservoir.run_protocol directly with a fresh event path. The R6k RUNNER is deliberately not invoked; see machinery_defects_this_round_must_not_use.runner_cannot_run_from_a_clean_clone.",
+    "comparison_rules_frozen_now": {
+      "float_tolerance_absolute": 1e-10,
+      "float_tolerance_rationale": "Chosen above the 3.31e-11 already observed and below the smallest scientifically meaningful margin in the R6k decision record. It is a threshold this round can fail: any leaf exceeding it is a CONTRADICTION, not a note.",
+      "schema_must_be_equal": true,
+      "discrete_verdict_must_be_equal": true,
+      "event_row_count_must_be_equal": true,
+      "event_key_set_and_order_must_be_equal": true,
+      "control_flags_must_be_equal": true,
+      "resource_ledger_integers_must_be_equal": true,
+      "input_cell_count_must_be_equal": 116,
+      "primary_cell_count_must_be_equal": 96,
+      "truncation_control_cell_count_must_be_equal": 20,
+      "digests_are_NOT_required_to_match": true,
+      "digests_rationale": "R6k's input_hashes, query_digest, template_digest, confusion_digest and source_matrix_digest are SHA-256 of computed floating-point arrays. They are platform-dependent by construction, so digest equality is the wrong instrument for a cross-platform witness and demanding it would guarantee a false CONTRADICTION. Every such field is enumerated in the report and counted, never silently skipped."
+    },
+    "predictions": {
+      "A1": "every scientific float agrees within 1e-10",
+      "A2": "the discrete verdict is identical",
+      "A3": "the event row count is identical at 320",
+      "A4": "every mismatching leaf is a digest field, and the count of non-digest mismatches is exactly 0"
+    },
+    "kill_conditions": {
+      "K1": "if any non-digest leaf exceeds 1e-10 the round reports CONTRADICTED and does not soften the tolerance",
+      "K2": "if the comparator reports agreement while comparing zero scientific floats, the round is void -- this is the exact defect found in apply_witness and this round must not reproduce it",
+      "K3": "no claim of independent witnessing may be recorded for R6k itself; this round produces its OWN envelope and leaves the R6k envelope byte-identical because R6l pins its hash",
+      "K4": "no quantum-advantage, capacity, architecture, cognition or hardware claim follows from agreement"
+    },
+    "controls": {
+      "C1": "a deliberately perturbed copy of the reproduction, one scientific float moved by 1e-9, must be reported CONTRADICTED. A comparator that cannot fail has established nothing.",
+      "C2": "the count of scientific floats actually compared must be reported and must be greater than 4000, so agreement cannot be reached vacuously",
+      "C3": "the digest fields must be counted and reported, not dropped from the denominator"
+    }
+  },
+
+  "part_b": {
+    "name": "the depth at which R6l's projective margin recovers",
+    "outcome_blind": true,
+    "status": "FROZEN AND NOT EXECUTABLE AT THIS COMMIT",
+    "why_not_executable": "R6l's C_exec and C_raw are local to the other party and unpushed. This prediction is recorded now so that it precedes their arrival on origin, and executed only when they land.",
+    "background": "R6l reported the projective margin passing at 4 of 5 depths, missing only at rho = 0.1. A first explanation offered here -- that at rho = 0.1 the radial and angular directions have 'not yet separated' -- is WITHDRAWN as backwards. The exact QFI at rho = 0.1 is J_rho = 16.2660, J_phi = 3.3078, J_psi = 0.0329: the three directions are MOST separated at small depth, spanning a factor of 494, and they converge to (0, 1, 1) as depth grows. Separation is not the mechanism.",
+    "candidate_mechanism": "The swirl-angle Fisher information J_psi = (1 - e^{-2 rho})^2 is 0.0329 at rho = 0.1, two orders below J_phi. If the projective task's probability margin is set by the WEAKER angular direction rather than by the stronger one, the failure threshold is a J_psi threshold.",
+    "frozen_prediction": {
+      "held_out_depths": [0.15, 0.2, 0.25, 0.3, 0.4],
+      "held_out_depths_note": "none of these appear in the R6k or R6l grids, which are (0.1, 0.5, 1.0, 2.0, 4.0)",
+      "B1": "the projective probability margin crosses from fail to pass at a depth rho_star strictly inside [0.15, 0.30]",
+      "B2": "equivalently the crossing occurs where J_psi = (1 - e^{-2 rho})^2 rises through the interval [0.05, 0.20], i.e. rho in [0.1265, 0.2964]",
+      "B3": "the information margin remains positive at every held-out depth including those below rho_star, as it already does at rho = 0.1"
+    },
+    "kill_conditions": {
+      "K5": "if the projective margin passes at rho = 0.15 the J_psi mechanism is REFUTED and must be withdrawn, not rescaled",
+      "K6": "if the projective margin still fails at rho = 0.40 the J_psi mechanism is REFUTED",
+      "K7": "if the margin is non-monotone in depth across the held-out set, no single crossing exists and B1 is meaningless as stated; report that rather than picking the first crossing"
+    },
+    "what_this_is_not": "This is not a QFI-to-retrieval theorem. J_psi is a property of the source geometry under R6b's closed form; the projective margin is a property of R6l's pooled PGM on one winding ring. A confirmed crossing would be a numerical coincidence of two curves at one ring, and would need held-out rings before it is a mechanism."
+  },
+
+  "machinery_defects_this_round_must_not_use": {
+    "empty_commit_sha_skips_the_commit_check": {
+      "where": "src/aionq/evidence.py, the guard reads `if check_commit and envelope.commit_sha:`",
+      "consequence": "an envelope binding to NO commit verifies clean while one binding to a stale commit warns; the cheapest way to silence the warning is to delete the field",
+      "exploiting_envelopes_at_c_pre": ["EXP-R6K-EQUAL_RESOURCE_RESERVOIR", "the HB0 universal base envelope"],
+      "this_round": "records a full resolvable commit SHA in its own envelope. It does NOT patch evidence.py; that repair belongs after the R6l C_env gate."
+    },
+    "apply_witness_can_certify_without_comparing_a_number": {
+      "where": "src/aionq/witness.py, apply_witness builds `comparable` by removing environment_dependent paths from raw_artifacts",
+      "measured_for_r6k": "R6k declares 13 raw artifacts and marks exactly the 2 outputs as environment-dependent. The comparable set is therefore 11 files: 1 runner, 2 manifests, 6 source modules, 2 test files. Every one is a TRACKED REPOSITORY FILE that any verifier reproduces by cloning.",
+      "consequence": "a verifier could be recorded as having independently recomputed R6k while comparing only files it obtained for free from git, and never one computed number. The existing empty-comparable guard does not fire, because the comparable set is non-empty.",
+      "this_round": "does its own comparison over scientific leaves and reports how many were compared. It does NOT patch witness.py; that repair belongs after the R6l C_env gate."
+    },
+    "runner_cannot_run_from_a_clean_clone": {
+      "where": "experiments/run_equal_resource_reservoir.py, the PRESERVED gate",
+      "measured": "the runner demands sha256 f94809ca... for artifacts/s4_g100/summaries/acaf_frame_sweep.json and cfd3128d... for moving_frame_audit.json. At C_pre those files hash to 8d03960c... and 9e458867... on a clean checkout. The demanded bytes exist only in one working tree.",
+      "consequence": "the R6k runner is not executable from origin by anyone, including its author on a fresh clone",
+      "this_round": "calls the library entry point directly and says so, rather than editing the runner"
+    }
+  },
+
+  "files_expected_to_change": [
+    "src/aionq/semantic_reproduction.py",
+    "tests/test_semantic_reproduction.py",
+    "experiments/run_r6k_semantic_reproduction.py",
+    "docs/R6K_SEMANTIC_REPRODUCTION.md"
+  ],
+  "artifacts_expected_to_be_created": [
+    "artifacts/r6k_w1_semantic_reproduction/reproduction.json",
+    "artifacts/r6k_w1_semantic_reproduction/events.jsonl",
+    "artifacts/r6k_w1_semantic_reproduction/comparison.json",
+    "artifacts/r6k_w1_semantic_reproduction/reproduction.envelope.json"
+  ],
+  "files_that_must_not_change": [
+    "artifacts/r6k_equal_resource_reservoir/equal_resource_reservoir.json",
+    "artifacts/r6k_equal_resource_reservoir/equal_resource_reservoir.envelope.json",
+    "artifacts/r6k_equal_resource_reservoir/events.jsonl",
+    "src/aionq/witness.py",
+    "src/aionq/evidence.py",
+    "experiments/run_equal_resource_reservoir.py",
+    "manifests/qsigma_r6l_common_receiver_preregistration.json",
+    "artifacts/s4_g100/summaries/acaf_frame_sweep.json",
+    "artifacts/s4_g100/summaries/moving_frame_audit.json"
+  ],
+  "branch_rule": "All work lands on claude/r6k-semantic-reproduction-witness. Nothing is pushed to claude/aion-brain-architecture-27f8ji, because that branch's next commit must be the R6l C_env child and any commit inserted before it would break the frozen chronology.",
+  "stop_condition": "Stop after the comparison artifact and its envelope exist and the suite is green. Do not repair evidence.py or witness.py in this round. Do not execute part_b. Do not open a pull request.",
+  "typed_remainder": [
+    {
+      "kind": "witness_remainder",
+      "carrier": "what this round can establish",
+      "comparison": "semantic agreement of one protocol across two platforms, computed by a second party. NOT that the protocol is correct, NOT that R6i's differential is real, NOT that the R6k runner is reproducible -- it is measurably not."
+    },
+    {
+      "kind": "method_remainder",
+      "carrier": "party identity",
+      "comparison": "the producer string 'experiments/run_equal_resource_reservoir.py' names a SCRIPT, not a party. The same script produced R6k on Windows and this reproduction on Linux. Only the environment digest distinguishes them, and aionq.self_audit.recognition_asymmetry currently treats any experiments/ producer as self, so it will not count this act until that is fixed."
+    },
+    {
+      "kind": "scope_remainder",
+      "carrier": "part_b",
+      "comparison": "frozen, unexecuted, and dependent on artifacts that are not on origin. It is a claim about what will be measured, and until R6l lands it is worth exactly what any unexecuted prediction is worth."
+    }
+  ]
+}
