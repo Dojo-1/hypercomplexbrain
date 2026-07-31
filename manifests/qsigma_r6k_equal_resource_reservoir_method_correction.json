@@ -1,0 +1,94 @@
+{
+  "schema": "hypercomplexbrain.method-correction.v1",
+  "round": "QSigma-R6k",
+  "status": "pre-result method correction; no primary artifact existed when frozen",
+  "superseded_protocol_component": {
+    "path": "manifests/qsigma_r6k_equal_resource_reservoir_preregistration.json",
+    "sha256": "sha256:c633d4fbbfa9a639bfe6a75857f583654be252118cebc8627f0db0c8feef7d3b",
+    "preserved_unchanged": true
+  },
+  "reason": "Independent pre-run code and mathematical review found overbroad verdict semantics, an incorrect trace-error formula for the explicitly flagged truncation state, an underspecified perturbation mixture, and missing finite-grid/decoder guards. Correct these before the append-once execution rather than preserving a known-invalid protocol.",
+  "outcome_status": {
+    "primary_result_visible": false,
+    "pilot_calculations_visible": true,
+    "blind_preregistration": false
+  },
+  "corrections": [
+    {
+      "id": "C1",
+      "target": "anisotropic verdict",
+      "old": "ANISOTROPIC_ANGULAR_SURVIVAL_RADIAL_COLLAPSE",
+      "new": "ANISOTROPIC_ANGULAR_GAIN_NO_RADIAL_GAIN",
+      "reason": "Failure of a differential R6i-over-R6 radial margin does not imply that either map has zero radial information. The report must preserve each map's absolute radial accuracy, mutual information, and adjacent-depth trace distances."
+    },
+    {
+      "id": "C2",
+      "target": "Boolean verdict coverage",
+      "new": "SIGN_ONLY requires signed=true and angular=false, radial=false, joint=false. NO_SURVIVAL_FOR_THIS_MAP requires all four survival booleans false. Every other uncovered combination returns HOLD.",
+      "reason": "A label may not ignore a positive radial or joint endpoint."
+    },
+    {
+      "id": "C3",
+      "target": "R6T trace error",
+      "old": "sqrt(tau)",
+      "new": "For rho_trunc=|P psi><P psi|+tau|e><e| versus the infinite pure orbit, trace distance is (tau+sqrt(4*tau-3*tau^2))/2.",
+      "reason": "sqrt(tau) is the pure normalized-projection distance, not the distance of the emitted flagged mixed state."
+    },
+    {
+      "id": "C4",
+      "target": "required cutoff at a trace-distance budget b",
+      "new": "Convert b to tail budget tau_max=(1+b-sqrt(1+2*b-3*b^2))/2, then require tanh(rho)^(2 cutoff)<=tau_max.",
+      "reason": "The cutoff gate must use the exact flagged-state trace distance from C3."
+    },
+    {
+      "id": "C5",
+      "target": "query perturbations",
+      "new": "The two preregistered perturbations are equiprobable and unobserved; each class query is their uniform density-state mixture. Sign partners receive the same perturbation before both angles are shifted by pi.",
+      "reason": "Linear PGM statistics permit this mixture, but nonlinear classical decoding otherwise differs from averaging two separately observed queries."
+    },
+    {
+      "id": "C6",
+      "target": "classical density oracle",
+      "old": "maximize Tr(template*query)",
+      "new": "minimize ||template-query||_F^2 with tie-aware credit",
+      "reason": "Overlap is not Hilbert-Schmidt nearest-neighbor distance when template purities differ."
+    },
+    {
+      "id": "C7",
+      "target": "finite-grid decision guard",
+      "new": "Require exactly 96 unique finite primary cells with the frozen map/task/depth/noise/class key set and exactly 20 unique finite R6T cells. Duplicate, missing, extra, nonfinite, or wrong-cardinality rows force HOLD.",
+      "reason": "Dictionary overwrite or ignored extra rows must not yield a scientific verdict."
+    },
+    {
+      "id": "C8",
+      "target": "R6 passive-padding control",
+      "new": "In addition to trace/spectrum/Holevo invariance, compare native-C5 and embedded-C16 clean complete-PGM correct probability, mutual information, abstention, and receiver completeness.",
+      "reason": "This was promised by the frozen control but not implemented."
+    },
+    {
+      "id": "C9",
+      "target": "associative reservoir path",
+      "new": "Every clean signed template used to derive task mixtures must be fetched back from its deterministic shard; direct pre-store arrays may only serve as digest controls.",
+      "reason": "Otherwise the four-shard reservoir is a write-only evidence sidecar rather than part of retrieval."
+    },
+    {
+      "id": "C10",
+      "target": "Qiskit resource proxy",
+      "new": "Validate the complete R6i circuit against vec_F(U_A)/2 and validate R6 success-plus-common-erasure postprocessing against encode_r6. Keep R6 common-erasure coarse graining explicitly uncharged.",
+      "reason": "A correct isolated Halmos core does not prove that the compiled encoder prepares the declared state."
+    }
+  ],
+  "unchanged_primary_items": [
+    "ambient D=16 and four allocated qubits",
+    "R6 and R6i map definitions",
+    "depths, source grid, paired perturbation values, and uniform priors",
+    "signed, genuine Z2-projective, radial, and joint tasks",
+    "global depolarizing strengths",
+    "clean complete-PGM receiver with explicit abstention and no row normalization",
+    "one-chance-unit probability margins and 0.02-bit margin",
+    "vector resource ledger and no global winner",
+    "R6T is a non-competing truncation stress control",
+    "no architecture, hardware, advantage, cognition, or AGI claim"
+  ],
+  "execution_rule": "The append-once runner must bind and verify both the original preregistration hash and this correction-ledger hash before creating any event or result artifact."
+}

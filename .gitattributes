@@ -12,6 +12,9 @@
 *.txt  text eol=lf
 *.csv  text eol=lf
 
+# The R6k event ledger is envelope-bound and was emitted as canonical LF JSONL.
+artifacts/r6k_equal_resource_reservoir/events.jsonl text eol=lf
+
 # These preregistered artifacts are hash-bound byte-for-byte by their evidence
 # envelopes. They predate the LF policy and must retain their committed CRLF
 # bytes; normalizing them silently invalidates the evidence chain.

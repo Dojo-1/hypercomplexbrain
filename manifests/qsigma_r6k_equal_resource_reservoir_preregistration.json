@@ -1,0 +1,255 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "QSigma-R6k - dimension-matched, cost-accounted R6 versus R6i associative hyperbolic retrieval",
+  "freeze_status": {
+    "committed_before_implementation": false,
+    "history_witnessed": false,
+    "statement": "Final-version hash-frozen in the uncommitted working tree before the R6k implementation and primary execution. Independent exploratory audit calculations, including a joint-task threshold audit, were visible before the final hash freeze, so this is not an outcome-blind preregistration. The runner must reject any byte change to this final version."
+  },
+  "baseline": {
+    "commit_sha": "5e6fc0968b3e708c98500f7f84ba1414cd5df2eb",
+    "branch": "claude/aion-brain-architecture-27f8ji",
+    "pre_existing_modified_files_excluded": [
+      "artifacts/s4_g100/summaries/acaf_frame_sweep.json",
+      "artifacts/s4_g100/summaries/moving_frame_audit.json"
+    ]
+  },
+  "question": "Under one common ambient Hilbert dimension D=16, does the R6i coherent Julia/Halmos point map retain more retrievable SL(2,R) source structure than the R6 attempted-use map after charging map-specific unitary preparation, postselection, symmetric noise, and a separately typed infinite-representation truncation stress control?",
+  "experiment_kind": {
+    "name": "one-shot associative reservoir retrieval",
+    "not_claimed": [
+      "temporal quantum reservoir computing",
+      "fading-memory capacity",
+      "recurrent dynamics",
+      "asymptotic channel capacity",
+      "quantum advantage"
+    ],
+    "reason": "Neither R6 nor R6i supplies a validated recurrent update law, and R6i is a point encoding with a nonzero composition defect."
+  },
+  "competing_maps": {
+    "R6": {
+      "definition": "The existing Bell-probe attempted-use state omega_A in C^5, embedded isometrically into C^16 with the common erasure flag at basis index 0 and the four-dimensional success block at indices 12..15.",
+      "ambient_dimension": 16,
+      "native_density_dimension": 5,
+      "postselection": "p_Bell=(1+exp(-4 rho))/2; the one-shot erasure density already charges failure and must not be multiplied by p again",
+      "representation_truncation_error": null
+    },
+    "R6i": {
+      "definition": "A=M/||M||_2; U_A=[[A,D_Astar],[D_A,-A^dagger]] with both defect roots built from one guarded SVD; rho_A=|vec(U_A)/2><vec(U_A)/2| in C^16.",
+      "ambient_dimension": 16,
+      "native_density_dimension": 16,
+      "postselection": "none",
+      "representation_truncation_error": null,
+      "provenance": "Corrected instrument adapted from local commit 52b86da; its old result artifact is not imported as evidence."
+    }
+  },
+  "matched_resources": {
+    "ambient_dimension": 16,
+    "allocated_qubits": 4,
+    "same_source_matrices": true,
+    "same_priors": "uniform",
+    "same_query_perturbations": true,
+    "same_noise_channels": true,
+    "same_clean_receiver_rule": true,
+    "qualification": "This matches ambient allowance, not active expressivity. Clean mean-support rank and per-codeword rank are reported separately; noise-induced full rank is not representational capacity."
+  },
+  "frozen_source_grid": {
+    "depths": [0.1, 0.5, 1.0, 2.0, 4.0],
+    "signed_codewords_per_depth": 32,
+    "coordinates": "phi_k=2*pi*k/32; psi_k=2*pi*((3*k) mod 32)/32",
+    "central_pair_control": "For k=0..15 verify ||M_(k+16)+M_k||_F <= 1e-10.",
+    "query_perturbations": [
+      {
+        "delta_rho": 0.01,
+        "delta_phi": "pi/64",
+        "delta_psi": "-pi/80"
+      },
+      {
+        "delta_rho": -0.01,
+        "delta_phi": "-pi/64",
+        "delta_psi": "pi/80"
+      }
+    ],
+    "pairing_rule": "A sign partner is constructed explicitly by adding pi to both perturbed angles. Independent partner jitter is forbidden.",
+    "numerical_tolerance": 1e-10
+  },
+  "retrieval_tasks": {
+    "signed_fixed_depth": {
+      "role": "mechanism diagnostic",
+      "classes": 32,
+      "meaning": "Distinguishes M from -M and therefore exposes the exact R6 sign alias."
+    },
+    "projective_fixed_depth": {
+      "role": "primary angular endpoint",
+      "classes": 16,
+      "class_state": "rho_[k]=(rho_k+rho_(k+16))/2",
+      "meaning": "A genuine Z2 twirl on PSL(2,R), not a half-grid section."
+    },
+    "radial": {
+      "role": "co-primary depth endpoint",
+      "classes": 5,
+      "class_state": "Uniform mixture of all 32 signed angular codewords at one depth.",
+      "meaning": "Tests whether rho remains retrievable when angle is marginalized rather than supplied to the decoder."
+    },
+    "joint_depth_projective": {
+      "role": "co-primary joint endpoint",
+      "classes": 80,
+      "class_state": "One Z2-twirled projective angle class at each of five depths.",
+      "meaning": "Tests joint depth and projective-angle retrieval without side information about rho."
+    }
+  },
+  "receiver": {
+    "primary": "One clean pretty-good measurement trained on exact stored templates and then frozen for every perturbed/noisy query.",
+    "completion": "Add E_perp=I-Pi_support. Count it as abstention/failure and never renormalize noisy outcome rows after omitting support complement.",
+    "metrics": [
+      "mean correct-outcome probability per attempted query",
+      "mutual information including the abstention outcome",
+      "mean abstention probability",
+      "Holevo chi of the query ensemble",
+      "clean mean-support rank",
+      "POVM positivity and completeness residuals"
+    ],
+    "secondary_oracle": "Tie-aware Hilbert-Schmidt nearest-template accuracy using full density matrices; this is a tomography oracle, not resource-matched classical retrieval.",
+    "not_used": "No global positive geodesic nearest-neighbor claim is made on the Lorentzian SL(2,R) source sheet."
+  },
+  "noise": {
+    "primary_channel": "D-dimensional global depolarization D_eta(rho)=(1-eta)rho+eta*I/16",
+    "strengths": [0.0, 0.01, 0.03, 0.1],
+    "properties": [
+      "same CPTP map for both encodings",
+      "basis invariant",
+      "channel-level stress test rather than device noise"
+    ],
+    "excluded_from_primary": "Local dephasing and amplitude damping are tensor-factorization and basis dependent; they require a separate hardware-shaped diagnostic and cannot change this verdict."
+  },
+  "cost_ledger": {
+    "rule": "Costs remain a vector and are not collapsed into a weighted scalar.",
+    "structural_fields": [
+      "ambient dimension",
+      "allocated and active qubits",
+      "clean mean-support rank and per-codeword rank",
+      "shared Halmos core calls",
+      "Bell-pair preparations",
+      "measurement and common-erasure coarse graining",
+      "p_Bell, p_min, and expected attempts",
+      "R6i composition defect",
+      "receiver synthesis cost explicitly uncharged"
+    ],
+    "compiler_proxy": {
+      "qiskit_basis_gates": ["u", "cx"],
+      "optimization_level": 3,
+      "seed_transpiler": 11,
+      "reported_fields": ["u", "cx", "measure", "depth", "size"],
+      "qualification": "Environment-dependent encoder compilation proxy, not intrinsic hardware cost. The compiled shared core is checked against its target up to global phase."
+    }
+  },
+  "truncation_stress_control": {
+    "name": "R6T exact cutoff-four two-mode-squeezed lowest-weight orbit",
+    "competitor": false,
+    "ambient_dimension": 16,
+    "cutoff_per_mode": 4,
+    "orbit": "|psi(rho,theta)>=sech(rho) sum_n>=0 (exp(i theta)tanh(rho))^n |n,n>",
+    "finite_state": "|P4 psi><P4 psi| + tau |e><e| with one frozen unused erasure basis vector and tau=tanh(rho)^8",
+    "trace_error": "sqrt(tau)",
+    "theta": "psi-phi; the orbit represents SU(1,1)/U(1), not all three SL(2,R) coordinates",
+    "mean_total_photons": "2*sinh(rho)^2",
+    "cutoff_max_total_photons": 6,
+    "primary_trace_error_budget": 0.05,
+    "sensitivity_budgets": [0.01, 0.1],
+    "required_cutoff": "ceil(log(epsilon_tail)/log(tanh(rho)^2)); required two-mode dimension is cutoff^2",
+    "decision_role": "Price the truncation wall only. Retrieval outside the error budget is reported but cannot support an R6 or R6i survival verdict."
+  },
+  "decision_rule": {
+    "practical_margin_probability": "one chance unit 1/C for a task with C equiprobable classes; this is 1/32 signed, 1/16 projective angular, 1/5 radial, and 1/80 joint",
+    "practical_margin_bits": 0.02,
+    "angular_survival": "For every depolarizing strength, R6i exceeds R6 by at least one 16-class chance unit in correct probability and by at least 0.02 bits on the projective fixed-depth task at at least three of five depths.",
+    "signed_survival": "For every depolarizing strength, R6i exceeds R6 by at least one 32-class chance unit in correct probability and by at least 0.02 bits on the signed fixed-depth task at at least three of five depths.",
+    "radial_survival": "For every depolarizing strength, R6i exceeds R6 by at least one five-class chance unit in correct probability and by at least 0.02 bits on the radial task.",
+    "joint_survival": "For every depolarizing strength, R6i exceeds R6 by at least one 80-class chance unit in correct probability and by at least 0.02 bits on the joint depth-projective task.",
+    "resource_envelope": "Both use D=16/four allocated qubits and exactly one common Halmos core; R6i may use at most one additional active qubit, one additional Bell-pair preparation, and one additional compiled CX relative to R6, while R6 alone incurs postselection/coarse-graining.",
+    "verdicts": {
+      "ISOTROPIC_SURVIVAL_WITH_RESOURCE_TRADEOFF": "angular, radial, and joint survival pass inside the resource envelope",
+      "ANISOTROPIC_ANGULAR_SURVIVAL_RADIAL_COLLAPSE": "angular and joint survival pass inside the resource envelope but radial survival fails",
+      "SIGN_ONLY": "signed survival passes but projective angular survival fails",
+      "NO_SURVIVAL_FOR_THIS_MAP": "neither signed nor projective angular survival passes",
+      "HOLD": "any numerical/source/CPTP/POVM/unitarity/grid/resource control fails, or another Boolean combination occurs"
+    },
+    "global_winner": "No global winner is declared without Pareto dominance across the full cost vector."
+  },
+  "controls": [
+    "Every map emits a finite Hermitian positive-semidefinite trace-one density matrix.",
+    "Every R6/R6i pair uses byte-identical source coordinates and matrices.",
+    "R6 passive embedding preserves trace, spectrum, Holevo chi, and clean PGM metrics.",
+    "R6i Halmos blocks pass two-sided unitarity and defect-intertwining residuals <=1e-10.",
+    "The identity composition defect remains 2*sqrt(2), preventing representation language.",
+    "The true Z2 twirl is used; no half-grid quotient is permitted.",
+    "The depolarizing channel is trace preserving, completely positive by construction, and maps every query to a valid density state.",
+    "The complete PGM plus complement effect has completeness and positivity residuals <=1e-10.",
+    "Raw outcome probabilities are finite, >=-1e-10, and sum to one within 1e-10 without row repair.",
+    "The four-shard in-memory associative store is deterministic and its JSONL event trace is append-only within the run.",
+    "R6T finite-state trace equals one and its omitted tail matches tanh(rho)^8.",
+    "The manifest digest, source-grid digest, and pre-existing dirty-file digests remain unchanged through execution."
+  ],
+  "outcome_visible_before_freeze": {
+    "status": "exploratory, non-evidentiary, disclosed",
+    "observations": [
+      "Independent scratch calculations indicated a proper Z2-twirled angular gain for R6i.",
+      "Independent scratch calculations indicated essentially identical five-class radial PGM accuracy for R6 and R6i.",
+      "Independent scratch calculations exposed rapid cutoff-four truncation failure through tau=tanh(rho)^8.",
+      "A final pre-hash audit found that a uniform 0.02 absolute probability threshold was knife-edge on the 80-class joint task: the clean gain was 0.020008 and the eta=0.1 gain was 0.018320 despite about 60 percent relative uplift and more than 0.56 bits of information gain. Before the final hash freeze, the probability threshold was therefore replaced by the task-granularity rule of one equiprobable chance unit 1/C; the 0.02-bit threshold was retained."
+    ],
+    "consequence": "The primary run is confirmatory only in the sense of executing this now-frozen full protocol; it is not a blind replication or independent witness."
+  },
+  "literature_basis": [
+    {
+      "arxiv": "2004.08240",
+      "url": "https://arxiv.org/abs/2004.08240",
+      "use": "Operational memory-capacity and normalized-error benchmarking motivate measurable retrieval rather than geometric volume alone."
+    },
+    {
+      "arxiv": "2302.07164",
+      "url": "https://arxiv.org/abs/2302.07164",
+      "use": "Hilbert-space size and information spreading motivate matching ambient dimension and reporting active support separately."
+    },
+    {
+      "arxiv": "2301.06814",
+      "url": "https://arxiv.org/abs/2301.06814",
+      "use": "Noise effects in quantum reservoir computing can be channel dependent, so no monotonic-noise assumption is built into the verdict."
+    },
+    {
+      "arxiv": "2212.12078",
+      "url": "https://arxiv.org/abs/2212.12078",
+      "use": "Dissipation can be a computational resource in temporal QRC; this supports typing global depolarization as a stress channel rather than a universal device-noise model."
+    },
+    {
+      "arxiv": "2602.07739",
+      "url": "https://arxiv.org/abs/2602.07739",
+      "use": "Hierarchy-sensitive hyperbolic retrieval is an empirical possibility, not a presupposed advantage; retrieval must be measured on the declared task."
+    }
+  ],
+  "kill_conditions": [
+    "Any post-result change to the grid, noise strengths, query perturbations, receiver, margins, resource envelope, or decision rule invalidates the primary verdict.",
+    "Any use of a half-grid section as the M~-M quotient invalidates the projective endpoint.",
+    "Any renormalization that removes PGM abstention or truncation/postselection failure invalidates the cost comparison.",
+    "Any scalar score that averages retrieval, gates, postselection, energy, and truncation invalidates the global interpretation.",
+    "Any promotion to a finite-dimensional unitary representation, temporal reservoir, hardware advantage, cognition, consciousness, sentience, AGI, or P-versus-NP claim is forbidden."
+  ],
+  "evidence_floor": {
+    "status": "self-recomputed measurement on one deterministic finite grid",
+    "independent_witness": false,
+    "allowed_claim": "map-specific, dimension-matched, cost-accounted associative retrieval result",
+    "forbidden_claim": "architecture or hardware conclusion"
+  },
+  "files_expected_after_freeze": [
+    "src/aionq/coherent_dilation.py",
+    "src/aionq/equal_resource_reservoir.py",
+    "tests/test_coherent_dilation.py",
+    "tests/test_equal_resource_reservoir.py",
+    "experiments/run_equal_resource_reservoir.py",
+    "docs/QSIGMA_R6K_EQUAL_RESOURCE_RESERVOIR.md",
+    "artifacts/r6k_equal_resource_reservoir/equal_resource_reservoir.json",
+    "artifacts/r6k_equal_resource_reservoir/equal_resource_reservoir.envelope.json",
+    "artifacts/r6k_equal_resource_reservoir/events.jsonl"
+  ],
+  "stop_condition": "Stop after one append-once execution, evidence verification, focused/full regression, and independent read-only peer review. Do not add architecture, device, FPGA, or hardware claims in this round."
+}
