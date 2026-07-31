@@ -249,6 +249,42 @@ def _bloch_rotation(unitary: np.ndarray) -> tuple[np.ndarray, float]:
     return _readonly_real(output), float(imaginary_defect)
 
 
+def _spin_link_diagnostics(
+    conditioning: float,
+    unitary: np.ndarray,
+    tangent_rotation: np.ndarray,
+    chiral_rotation: np.ndarray,
+) -> dict[str, float]:
+    """Recompute every diagnostic carried by one chiral spin link."""
+
+    bloch_rotation, bloch_imaginary = _bloch_rotation(unitary)
+    return {
+        "conditioning_error": float(conditioning),
+        "tangent_orthogonality_defect": float(
+            np.linalg.norm(
+                tangent_rotation.T @ tangent_rotation - np.eye(4),
+                ord="fro",
+            )
+        ),
+        "tangent_determinant_defect": abs(
+            float(np.linalg.det(tangent_rotation)) - 1.0
+        ),
+        "unitary_defect": float(
+            np.linalg.norm(
+                unitary.conj().T @ unitary - np.eye(2),
+                ord="fro",
+            )
+        ),
+        "determinant_defect": float(
+            abs(complex(np.linalg.det(unitary)) - 1.0)
+        ),
+        "spin_intertwining_defect": float(
+            np.linalg.norm(chiral_rotation - bloch_rotation, ord="fro")
+        ),
+        "bloch_imaginary_defect": float(bloch_imaginary),
+    }
+
+
 def _omitted_chirality_remainder() -> RemainderEnvelope:
     return RemainderEnvelope(
         name="[R]_negative_chirality",
@@ -366,6 +402,11 @@ class ChiralSpinLink:
             expected_unitary -= (
                 1.0j * (float(raw_bivector[index]) / scale) * _PAULI[index]
             )
+        expected_unitary = _su2(
+            expected_unitary,
+            tolerance,
+            "chiral_spin_link.canonical_unitary",
+        )
         unitary = _su2(
             self.unitary,
             tolerance,
@@ -410,46 +451,42 @@ class ChiralSpinLink:
             raise GovernanceError(
                 "tangent rotation is not the declared H4 Levi-Civita transport"
             )
-        expected_chiral = _self_dual_rotation(tangent_rotation)
+        expected_supplied_chiral = _self_dual_rotation(tangent_rotation)
         if np.linalg.norm(
-            chiral_rotation - expected_chiral,
+            chiral_rotation - expected_supplied_chiral,
             ord="fro",
         ) > tolerance:
             raise GovernanceError(
                 "chiral rotation disagrees with the declared tangent rotation"
             )
-        bloch_rotation, bloch_imaginary = _bloch_rotation(unitary)
-        computed = {
-            "conditioning_error": float(conditioning),
-            "tangent_orthogonality_defect": float(
-                np.linalg.norm(
-                    tangent_rotation.T @ tangent_rotation - np.eye(4),
-                    ord="fro",
-                )
-            ),
-            "tangent_determinant_defect": abs(
-                float(np.linalg.det(tangent_rotation)) - 1.0
-            ),
-            "unitary_defect": float(
-                np.linalg.norm(
-                    unitary.conj().T @ unitary - np.eye(2),
-                    ord="fro",
-                )
-            ),
-            "determinant_defect": float(
-                abs(complex(np.linalg.det(unitary)) - 1.0)
-            ),
-            "spin_intertwining_defect": float(
-                np.linalg.norm(chiral_rotation - bloch_rotation, ord="fro")
-            ),
-            "bloch_imaginary_defect": float(bloch_imaginary),
-        }
-        for name, value in computed.items():
+        supplied_diagnostics = _spin_link_diagnostics(
+            conditioning,
+            unitary,
+            tangent_rotation,
+            chiral_rotation,
+        )
+        for name, value in supplied_diagnostics.items():
             supplied = _finite(getattr(self, name), f"chiral_spin_link.{name}")
             if supplied < 0.0 or abs(supplied - value) > tolerance:
                 raise GovernanceError(
                     f"chiral spin-link {name} disagrees with its matrices"
                 )
+        if max(supplied_diagnostics.values()) > tolerance:
+            raise GovernanceError(
+                "chiral spin-link diagnostics exceed the declared tolerance"
+            )
+        expected_chiral = _self_dual_rotation(expected_tangent)
+        canonical_diagnostics = _spin_link_diagnostics(
+            conditioning,
+            expected_unitary,
+            expected_tangent,
+            expected_chiral,
+        )
+        if max(canonical_diagnostics.values()) > tolerance:
+            raise GovernanceError(
+                "canonical chiral spin link exceeds the declared tolerance"
+            )
+        for name, value in canonical_diagnostics.items():
             object.__setattr__(self, name, value)
         expected_distance = declared_base.distance(source, target)
         supplied_distance = _finite(
@@ -483,16 +520,16 @@ class ChiralSpinLink:
         object.__setattr__(self, "curvature_radius", radius)
         object.__setattr__(self, "source", _readonly_real(source))
         object.__setattr__(self, "target", _readonly_real(target))
-        object.__setattr__(self, "unitary", unitary)
+        object.__setattr__(self, "unitary", expected_unitary)
         object.__setattr__(
             self,
             "tangent_rotation",
-            _readonly_real(tangent_rotation),
+            _readonly_real(expected_tangent),
         )
         object.__setattr__(
             self,
             "chiral_rotation",
-            _readonly_real(chiral_rotation),
+            _readonly_real(expected_chiral),
         )
         object.__setattr__(self, "base_distance", expected_distance)
         object.__setattr__(self, "scalar_part", float(scalar / scale))
@@ -535,6 +572,12 @@ def _revalidated_spin_link(
     if type(value) is not ChiralSpinLink:
         raise CarrierMismatch(f"{name} requires an exact ChiralSpinLink")
     try:
+        declared_tolerance = _numerical_tolerance(
+            value.tolerance,
+            f"{name}.declared_tolerance",
+            maximum=1e-10,
+        )
+        tolerance = min(tolerance, declared_tolerance)
         return ChiralSpinLink(
             base_id=value.base_id,
             curvature_radius=value.curvature_radius,
@@ -717,6 +760,12 @@ def _revalidated_spin_path(
     if type(value) is not SpinPathReport:
         raise CarrierMismatch(f"{name} requires an exact SpinPathReport")
     try:
+        declared_tolerance = _numerical_tolerance(
+            value.tolerance,
+            f"{name}.declared_tolerance",
+            maximum=1e-10,
+        )
+        tolerance = min(tolerance, declared_tolerance)
         return SpinPathReport(
             points=value.points,
             links=value.links,
@@ -1610,19 +1659,24 @@ class QiskitSpinProjectionReport:
             raise GovernanceError(
                 "Qiskit projection version receipt disagrees with the live library"
             )
-        expected_circuit = QuantumCircuit(
-            1,
-            name="hb0_qb2_spin_expected",
-        )
-        expected_circuit.append(
-            UnitaryGate(preparation, label="prepare_z"),
-            [0],
-        )
-        for index, link in enumerate(links):
+        try:
+            expected_circuit = QuantumCircuit(
+                1,
+                name="hb0_qb2_spin_expected",
+            )
             expected_circuit.append(
-                UnitaryGate(link.unitary, label=f"lc_plus_{index}"),
+                UnitaryGate(preparation, label="prepare_z"),
                 [0],
             )
+            for index, link in enumerate(links):
+                expected_circuit.append(
+                    UnitaryGate(link.unitary, label=f"lc_plus_{index}"),
+                    [0],
+                )
+        except Exception as exc:
+            raise GovernanceError(
+                "Qiskit spin projection expected circuit could not be constructed"
+            ) from exc
         _validate_qiskit_instruction_sequence(
             self.circuit,
             expected_circuit,
@@ -1630,18 +1684,26 @@ class QiskitSpinProjectionReport:
             tolerance,
             "Qiskit spin projection",
         )
+        try:
+            live_operator_data = Operator(self.circuit).data
+            live_state_data = Statevector.from_instruction(self.circuit).data
+            live_density_data = DensityMatrix.from_instruction(self.circuit).data
+        except Exception as exc:
+            raise GovernanceError(
+                "Qiskit spin projection circuit could not be evaluated"
+            ) from exc
         live_operator = _finite_complex_array(
-            Operator(self.circuit).data,
+            live_operator_data,
             (2, 2),
             "qiskit_projection_report.live_operator",
         )
         live_state = _finite_complex_array(
-            Statevector.from_instruction(self.circuit).data,
+            live_state_data,
             (2,),
             "qiskit_projection_report.live_state",
         )
         live_density = _strict_density(
-            DensityMatrix.from_instruction(self.circuit).data,
+            live_density_data,
             tolerance,
             "qiskit_projection_report.live_density",
         )
@@ -1763,13 +1825,21 @@ class CentralLiftProbeReport:
             Operator,
             Statevector,
         ) = _load_qiskit_projection_types()
-        expected_circuit = QuantumCircuit(2, name="hb0_qb2_central_sign_expected")
-        expected_circuit.h(0)
-        expected_circuit.append(
-            UnitaryGate(unitary, label="spin_lift").control(1),
-            [0, 1],
-        )
-        expected_circuit.h(0)
+        try:
+            expected_circuit = QuantumCircuit(
+                2,
+                name="hb0_qb2_central_sign_expected",
+            )
+            expected_circuit.h(0)
+            expected_circuit.append(
+                UnitaryGate(unitary, label="spin_lift").control(1),
+                [0, 1],
+            )
+            expected_circuit.h(0)
+        except Exception as exc:
+            raise GovernanceError(
+                "central-lift expected circuit could not be constructed"
+            ) from exc
         _validate_qiskit_instruction_sequence(
             self.circuit,
             expected_circuit,
@@ -1785,11 +1855,20 @@ class CentralLiftProbeReport:
             raise GovernanceError(
                 "central-lift circuit shape disagrees with its receipt"
             )
-        live_operator = np.asarray(Operator(self.circuit).data, dtype=complex)
-        expected_operator = np.asarray(
-            Operator(expected_circuit).data,
-            dtype=complex,
-        )
+        try:
+            live_operator = np.asarray(Operator(self.circuit).data, dtype=complex)
+            expected_operator = np.asarray(
+                Operator(expected_circuit).data,
+                dtype=complex,
+            )
+            state = np.asarray(
+                Statevector.from_instruction(self.circuit).data,
+                dtype=complex,
+            )
+        except Exception as exc:
+            raise GovernanceError(
+                "central-lift circuit could not be evaluated"
+            ) from exc
         if (
             np.linalg.norm(live_operator - expected_operator, ord="fro")
             > tolerance
@@ -1797,10 +1876,6 @@ class CentralLiftProbeReport:
             raise GovernanceError(
                 "central-lift circuit is not bound to its declared SU(2) operator"
             )
-        state = np.asarray(
-            Statevector.from_instruction(self.circuit).data,
-            dtype=complex,
-        )
         control_one_probability = float(
             sum(
                 abs(state[index]) ** 2
@@ -1808,8 +1883,8 @@ class CentralLiftProbeReport:
                 if index & 1
             )
         )
-        source_density = np.asarray(
-            DensityMatrix([1.0 + 0.0j, 0.0 + 0.0j]).data,
+        source_density = np.array(
+            [[1.0 + 0.0j, 0.0 + 0.0j], [0.0 + 0.0j, 0.0 + 0.0j]],
             dtype=complex,
         )
         moved_density = unitary @ source_density @ unitary.conj().T
@@ -2515,25 +2590,45 @@ def _validate_qiskit_instruction_sequence(
 ) -> None:
     """Bind a receipt to each ordered gate and wire, not only to total action."""
 
-    live_data = tuple(getattr(live_circuit, "data", ()))
-    expected_data = tuple(getattr(expected_circuit, "data", ()))
+    try:
+        live_data = tuple(getattr(live_circuit, "data", ()))
+        expected_data = tuple(getattr(expected_circuit, "data", ()))
+    except Exception as exc:
+        raise GovernanceError(
+            f"{name} instruction sequence could not be read by Qiskit"
+        ) from exc
     if len(live_data) != len(expected_data):
         raise GovernanceError(f"{name} instruction count is inconsistent")
     for index, (live, expected) in enumerate(
         zip(live_data, expected_data, strict=True)
     ):
-        live_qubits = tuple(
-            live_circuit.find_bit(qubit).index for qubit in live.qubits
-        )
-        expected_qubits = tuple(
-            expected_circuit.find_bit(qubit).index for qubit in expected.qubits
-        )
-        live_clbits = tuple(
-            live_circuit.find_bit(clbit).index for clbit in live.clbits
-        )
-        expected_clbits = tuple(
-            expected_circuit.find_bit(clbit).index for clbit in expected.clbits
-        )
+        try:
+            live_qubits = tuple(
+                live_circuit.find_bit(qubit).index for qubit in live.qubits
+            )
+            expected_qubits = tuple(
+                expected_circuit.find_bit(qubit).index for qubit in expected.qubits
+            )
+            live_clbits = tuple(
+                live_circuit.find_bit(clbit).index for clbit in live.clbits
+            )
+            expected_clbits = tuple(
+                expected_circuit.find_bit(clbit).index for clbit in expected.clbits
+            )
+            live_matrix = np.asarray(
+                operator_type(live.operation).data,
+                dtype=complex,
+            )
+            expected_matrix = np.asarray(
+                operator_type(expected.operation).data,
+                dtype=complex,
+            )
+        except GovernanceError:
+            raise
+        except Exception as exc:
+            raise GovernanceError(
+                f"{name} instruction {index} could not be evaluated by Qiskit"
+            ) from exc
         if (
             live_qubits != expected_qubits
             or live_clbits != expected_clbits
@@ -2541,14 +2636,6 @@ def _validate_qiskit_instruction_sequence(
             raise GovernanceError(
                 f"{name} instruction {index} uses the wrong carrier wires"
             )
-        live_matrix = np.asarray(
-            operator_type(live.operation).data,
-            dtype=complex,
-        )
-        expected_matrix = np.asarray(
-            operator_type(expected.operation).data,
-            dtype=complex,
-        )
         if (
             live_matrix.shape != expected_matrix.shape
             or not np.all(np.isfinite(live_matrix))
@@ -2571,7 +2658,7 @@ def _typed_spin_links(
     """Normalize a geometric path without accepting detached SU(2) matrices."""
 
     if type(path_or_links) is SpinPathReport:
-        links = _revalidated_spin_path(
+        return _revalidated_spin_path(
             path_or_links,
             tolerance,
             "qiskit_projection.path",
@@ -2654,24 +2741,29 @@ def project_spin_path_to_qiskit(
         Operator,
         Statevector,
     ) = _load_qiskit_projection_types()
-    circuit = QuantumCircuit(1, name="hb0_qb2_spin")
-    circuit.append(UnitaryGate(preparation, label="prepare_z"), [0])
-    for index, link in enumerate(links):
-        circuit.append(
-            UnitaryGate(link.unitary, label=f"lc_plus_{index}"),
-            [0],
+    try:
+        circuit = QuantumCircuit(1, name="hb0_qb2_spin")
+        circuit.append(UnitaryGate(preparation, label="prepare_z"), [0])
+        for index, link in enumerate(links):
+            circuit.append(
+                UnitaryGate(link.unitary, label=f"lc_plus_{index}"),
+                [0],
+            )
+        circuit_operator = np.asarray(Operator(circuit).data, dtype=complex)
+        output_statevector = np.asarray(
+            Statevector.from_instruction(circuit).data,
+            dtype=complex,
         )
+        output_density = np.asarray(
+            DensityMatrix.from_instruction(circuit).data,
+            dtype=complex,
+        )
+    except Exception as exc:
+        raise GovernanceError(
+            "Qiskit spin projection circuit could not be constructed or evaluated"
+        ) from exc
 
     expected_operator = path_unitary @ preparation
-    circuit_operator = np.asarray(Operator(circuit).data, dtype=complex)
-    output_statevector = np.asarray(
-        Statevector.from_instruction(circuit).data,
-        dtype=complex,
-    )
-    output_density = np.asarray(
-        DensityMatrix.from_instruction(circuit).data,
-        dtype=complex,
-    )
     expected_statevector = path_unitary @ spinor
     expected_density = np.outer(
         expected_statevector,
@@ -2747,11 +2839,19 @@ def probe_central_lift_qiskit(
         _Operator,
         Statevector,
     ) = _load_qiskit_projection_types()
-    circuit = QuantumCircuit(2, name="hb0_qb2_central_sign")
-    circuit.h(0)
-    circuit.append(UnitaryGate(unitary, label="spin_lift").control(1), [0, 1])
-    circuit.h(0)
-    state = np.asarray(Statevector.from_instruction(circuit).data, dtype=complex)
+    try:
+        circuit = QuantumCircuit(2, name="hb0_qb2_central_sign")
+        circuit.h(0)
+        circuit.append(UnitaryGate(unitary, label="spin_lift").control(1), [0, 1])
+        circuit.h(0)
+        state = np.asarray(
+            Statevector.from_instruction(circuit).data,
+            dtype=complex,
+        )
+    except Exception as exc:
+        raise GovernanceError(
+            "central-lift circuit could not be constructed or evaluated"
+        ) from exc
     control_one_probability = float(
         sum(
             abs(state[index]) ** 2
@@ -2759,8 +2859,8 @@ def probe_central_lift_qiskit(
             if index & 1
         )
     )
-    source_density = np.asarray(
-        DensityMatrix([1.0 + 0.0j, 0.0 + 0.0j]).data,
+    source_density = np.array(
+        [[1.0 + 0.0j, 0.0 + 0.0j], [0.0 + 0.0j, 0.0 + 0.0j]],
         dtype=complex,
     )
     moved_density = unitary @ source_density @ unitary.conj().T

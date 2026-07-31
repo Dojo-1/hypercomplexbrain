@@ -297,6 +297,14 @@ base specification, endpoints, signed unitary, complete \(SO(4)\) frame
 transport, self-dual and Bloch projections, and all declared defects. This
 rejects raw `object.__new__` instances and post-construction mutation.
 
+The endpoints are authoritative during that reconstruction. Supplied matrices
+must agree with the endpoint-derived connection within the declared tolerance,
+every supplied and canonical diagnostic must pass, and the retained link uses
+the canonical endpoint-derived matrices. Consequently, individually
+sub-tolerance receipt perturbations cannot accumulate into a detached path
+operator. A consumer also uses the stricter of its own tolerance and the
+nested receipt tolerance; revalidation never widens an existing certificate.
+
 The same rule is recursive:
 
 - path links share exact endpoint coordinates; approximate loop closure is
@@ -309,6 +317,9 @@ The same rule is recursive:
 - a Qiskit receipt validates finite operator/state/density arrays, reconstructs
   its path, and checks every ordered gate matrix and wire—not only the total
   circuit operator;
+- Qiskit construction and simulation failures cross the public boundary as
+  typed `GovernanceError` values while import absence remains the narrower
+  `QiskitProjectionUnavailable`;
 - the live `passed` gates rerun those validations, so mutation makes the
   receipt fail;
 - the central-lift probe accepts only \(+I\) or \(-I\), not a generic

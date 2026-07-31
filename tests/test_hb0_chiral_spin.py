@@ -9,6 +9,7 @@ import math
 import numpy as np
 import pytest
 
+import aionq.hb0.chiral_spin as chiral_spin_module
 from aionq.governance import EvidenceTag, GovernanceError
 from aionq.hb0.chiral_spin import (
     ChiralSpinConnection,
@@ -740,6 +741,91 @@ def test_mutated_exact_link_is_revalidated_at_qiskit_boundary():
         project_spin_path_to_qiskit(link)
 
 
+def test_failed_link_diagnostics_cannot_enter_a_nested_receipt():
+    link = CONNECTION.link(np.zeros(4), np.zeros(4))
+    delta = 4e-11
+    tangent = (1.0 + delta) * np.eye(4)
+    chiral = chiral_spin_module._self_dual_rotation(tangent)
+    changes = {
+        "tangent_rotation": tangent,
+        "chiral_rotation": chiral,
+        "tangent_orthogonality_defect": float(
+            np.linalg.norm(tangent.T @ tangent - np.eye(4), ord="fro")
+        ),
+        "tangent_determinant_defect": abs(
+            float(np.linalg.det(tangent)) - 1.0
+        ),
+        "spin_intertwining_defect": float(
+            np.linalg.norm(chiral - np.eye(3), ord="fro")
+        ),
+    }
+    assert changes["tangent_orthogonality_defect"] > link.tolerance
+
+    with pytest.raises(GovernanceError, match="diagnostics exceed"):
+        replace(link, **changes)
+
+    mutated = CONNECTION.link(np.zeros(4), np.zeros(4))
+    for name, value in changes.items():
+        object.__setattr__(mutated, name, value)
+    assert not mutated.passed
+    with pytest.raises(GovernanceError):
+        project_spin_path_to_qiskit(mutated)
+
+
+def test_subtolerance_link_bias_is_canonicalized_before_composition():
+    link = CONNECTION.link(np.zeros(4), np.zeros(4))
+    angle = 3e-11
+    biased_unitary = np.diag(
+        [np.exp(-1.0j * angle), np.exp(1.0j * angle)]
+    )
+    biased_bloch, biased_imaginary = chiral_spin_module._bloch_rotation(
+        biased_unitary
+    )
+    biased = replace(
+        link,
+        unitary=biased_unitary,
+        unitary_defect=float(
+            np.linalg.norm(
+                biased_unitary.conj().T @ biased_unitary - IDENTITY2,
+                ord="fro",
+            )
+        ),
+        determinant_defect=float(
+            abs(complex(np.linalg.det(biased_unitary)) - 1.0)
+        ),
+        spin_intertwining_defect=float(
+            np.linalg.norm(
+                link.chiral_rotation - biased_bloch,
+                ord="fro",
+            )
+        ),
+        bloch_imaginary_defect=biased_imaginary,
+    )
+    unrepaired_path = np.linalg.matrix_power(biased_unitary, 8)
+    assert np.linalg.norm(unrepaired_path - IDENTITY2, ord="fro") > link.tolerance
+    assert np.array_equal(biased.unitary, IDENTITY2)
+
+    report = project_spin_path_to_qiskit((biased,) * 8)
+    assert report.passed
+    assert np.array_equal(report.path_unitary, IDENTITY2)
+
+
+def test_link_revalidation_never_widens_its_declared_tolerance():
+    tight_connection = ChiralSpinConnection(tolerance=1e-12)
+    link = tight_connection.link(np.zeros(4), np.zeros(4))
+    report = project_spin_path_to_qiskit(link)
+    assert report.links[0].tolerance == tight_connection.tolerance
+
+    angle = 2e-11
+    biased_unitary = np.diag(
+        [np.exp(-1.0j * angle), np.exp(1.0j * angle)]
+    )
+    object.__setattr__(link, "unitary", biased_unitary)
+    assert not link.passed
+    with pytest.raises(GovernanceError):
+        project_spin_path_to_qiskit(link)
+
+
 def test_qiskit_live_pass_revalidates_nested_links_and_receipt_arrays():
     report = project_spin_path_to_qiskit(IDENTITY_PATH)
     object.__setattr__(
@@ -786,6 +872,129 @@ def test_qiskit_receipt_rejects_nonfinite_arrays_and_gate_refactorisation():
     assert not report.passed
     with pytest.raises(GovernanceError):
         replace(report)
+
+
+def test_qiskit_unsupported_instruction_uses_the_governance_boundary():
+    from qiskit.circuit.library import UnitaryGate
+
+    report = project_spin_path_to_qiskit(IDENTITY_PATH)
+    report.circuit.data.clear()
+    report.circuit.append(
+        UnitaryGate(report.preparation_unitary, label="prepare_z"),
+        [0],
+    )
+    report.circuit.reset(0)
+
+    assert not report.passed
+    with pytest.raises(
+        GovernanceError,
+        match="instruction 1 could not be evaluated",
+    ) as caught:
+        replace(report)
+    assert caught.value.__cause__ is not None
+
+
+def test_qiskit_runtime_failures_are_wrapped_for_reports_and_factories(
+    monkeypatch,
+):
+    from qiskit.quantum_info import Statevector
+
+    report = project_spin_path_to_qiskit(IDENTITY_PATH)
+
+    def fail_statevector(*_args, **_kwargs):
+        raise RuntimeError("simulator failure")
+
+    monkeypatch.setattr(Statevector, "from_instruction", fail_statevector)
+
+    with pytest.raises(GovernanceError) as reconstructed:
+        replace(report)
+    assert isinstance(reconstructed.value.__cause__, RuntimeError)
+    assert not report.passed
+
+    with pytest.raises(GovernanceError) as projected:
+        project_spin_path_to_qiskit(IDENTITY_PATH)
+    assert isinstance(projected.value.__cause__, RuntimeError)
+
+    with pytest.raises(GovernanceError) as probed:
+        probe_central_lift_qiskit(-IDENTITY2)
+    assert isinstance(probed.value.__cause__, RuntimeError)
+
+
+def test_qiskit_constructor_failures_are_wrapped_for_report_revalidation(
+    monkeypatch,
+):
+    report = project_spin_path_to_qiskit(IDENTITY_PATH)
+    original_loader = chiral_spin_module._load_qiskit_projection_types
+    qiskit_types = original_loader()
+
+    def fail_quantum_circuit(*_args, **_kwargs):
+        raise RuntimeError("constructor failure")
+
+    def broken_loader():
+        return (
+            qiskit_types[0],
+            fail_quantum_circuit,
+            *qiskit_types[2:],
+        )
+
+    monkeypatch.setattr(
+        chiral_spin_module,
+        "_load_qiskit_projection_types",
+        broken_loader,
+    )
+    with pytest.raises(GovernanceError) as caught:
+        replace(report)
+    assert isinstance(caught.value.__cause__, RuntimeError)
+    assert not report.passed
+
+
+def test_spin_path_qiskit_projection_avoids_duplicate_link_revalidation(
+    monkeypatch,
+):
+    path = CONNECTION.path(
+        (
+            np.zeros(4),
+            np.array([0.08, 0.01, 0.0, 0.0]),
+            np.array([0.0, 0.09, 0.02, 0.0]),
+        )
+    )
+    calls = []
+    original = chiral_spin_module._revalidated_spin_link
+
+    def counted(value, tolerance, name):
+        calls.append(name)
+        return original(value, tolerance, name)
+
+    monkeypatch.setattr(
+        chiral_spin_module,
+        "_revalidated_spin_link",
+        counted,
+    )
+    report = project_spin_path_to_qiskit(path)
+    count = len(path.links)
+    assert calls == (
+        [f"spin_path_report.link[{index}]" for index in range(count)]
+        + [
+            f"qiskit_projection_report.link[{index}]"
+            for index in range(count)
+        ]
+    )
+
+    calls.clear()
+    assert report.passed
+    assert calls == [
+        f"qiskit_projection_report.link[{index}]"
+        for index in range(count)
+    ]
+
+    mutated = CONNECTION.path(path.points)
+    object.__setattr__(
+        mutated.links[0],
+        "unitary",
+        np.array([[0.0, -1.0], [1.0, 0.0]], dtype=complex),
+    )
+    with pytest.raises(GovernanceError):
+        project_spin_path_to_qiskit(mutated)
 
 
 def test_central_lift_probe_rejects_a_noncentral_su2_gate():
