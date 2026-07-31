@@ -1,0 +1,52 @@
+{
+  "schema_version": "hypercomplexbrain.r6l-freeze-receipt.v1",
+  "round": "QSigma-R6l",
+  "repository": "jesusvilela/hypercomplexbrain",
+  "branch": "claude/aion-brain-architecture-27f8ji",
+  "baseline_commit_sha": "07e2a7956c0cf25d24515637d54c1233ea8d3dc2",
+  "correction_inventory": [],
+  "preregistration": {
+    "path": "manifests/qsigma_r6l_common_receiver_preregistration.json",
+    "commit_sha": "350d03796a4021bc01c1814e9b71269d1ab63f6d",
+    "first_add_commit_sha": "350d03796a4021bc01c1814e9b71269d1ab63f6d",
+    "manifest_sha256": "sha256:af0470284c19d857f347a541be5e54c00cd536b62b875cacee6d25b864811bef",
+    "hash_source": "exact Git blob 350d03796a4021bc01c1814e9b71269d1ab63f6d:manifests/qsigma_r6l_common_receiver_preregistration.json",
+    "worktree_sha256_at_receipt_creation": "sha256:af0470284c19d857f347a541be5e54c00cd536b62b875cacee6d25b864811bef",
+    "git_blob_equals_worktree": true,
+    "c_pre_changed_paths": [
+      "manifests/qsigma_r6l_common_receiver_preregistration.json"
+    ]
+  },
+  "effective_protocol": {
+    "object": {
+      "schema_version": "hypercomplexbrain.r6l-effective-protocol.v1",
+      "manifest_sha256": "sha256:af0470284c19d857f347a541be5e54c00cd536b62b875cacee6d25b864811bef",
+      "corrections": []
+    },
+    "canonical_json": "{\"corrections\":[],\"manifest_sha256\":\"sha256:af0470284c19d857f347a541be5e54c00cd536b62b875cacee6d25b864811bef\",\"schema_version\":\"hypercomplexbrain.r6l-effective-protocol.v1\"}",
+    "digest": "sha256:ac13a2085a9319066b05e29b193469c430f1f1c205c0b735ce00133b80adbbab"
+  },
+  "remote_anchor": {
+    "remote": "origin",
+    "repository_url": "https://github.com/jesusvilela/hypercomplexbrain.git",
+    "ref": "refs/tags/qsigma-r6l-prereg-v1",
+    "kind": "lightweight direct commit ref",
+    "resolved_commit_sha": "350d03796a4021bc01c1814e9b71269d1ab63f6d",
+    "commit_url": "https://github.com/jesusvilela/hypercomplexbrain/commit/350d03796a4021bc01c1814e9b71269d1ab63f6d",
+    "same_party_public_history_anchor": true,
+    "independent_timestamp_or_witness": false
+  },
+  "derivation_commands": [
+    "git log --diff-filter=A --format=%H -- manifests/qsigma_r6l_common_receiver_preregistration.json",
+    "git diff-tree --no-commit-id --name-only -r 350d03796a4021bc01c1814e9b71269d1ab63f6d",
+    "git cat-file blob 350d03796a4021bc01c1814e9b71269d1ab63f6d:manifests/qsigma_r6l_common_receiver_preregistration.json",
+    "git ls-remote origin refs/tags/qsigma-r6l-prereg-v1",
+    "Get-FileHash manifests/qsigma_r6l_common_receiver_preregistration.json -Algorithm SHA256"
+  ],
+  "pre_implementation_observation": {
+    "r6l_output_directory_absent": true,
+    "pooled_common_receiver_outcomes_run": false,
+    "implementation_present": false,
+    "statement": "The manifest was committed and remotely anchored before this C_exec implementation began. This same-party receipt does not claim independent witnessing."
+  }
+}

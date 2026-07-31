@@ -1,6 +1,7 @@
 # Evidence envelopes hash committed bytes. Text normalization must therefore be
 # explicit rather than inherited from each runner's core.autocrlf setting.
 * text=auto
+/.gitattributes text eol=lf
 
 *.py   text eol=lf
 *.md   text eol=lf
@@ -14,6 +15,9 @@
 
 # The R6k event ledger is envelope-bound and was emitted as canonical LF JSONL.
 artifacts/r6k_equal_resource_reservoir/events.jsonl text eol=lf
+
+# The R6l event ledger is a canonical LF hash chain fixed before execution.
+artifacts/r6l_common_receiver/events.jsonl text eol=lf
 
 # These preregistered artifacts are hash-bound byte-for-byte by their evidence
 # envelopes. They predate the LF policy and must retain their committed CRLF
