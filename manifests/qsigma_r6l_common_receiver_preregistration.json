@@ -1,0 +1,490 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "object": "QSigma-R6l - map-blind common-receiver R6 versus R6i retrieval",
+  "freeze_status": {
+    "draft_observation": "This file was first created in an uncommitted working tree. This observation never upgrades in place.",
+    "required_freeze_target": "The next authorized repository commit must contain this manifest and no R6l implementation or result file. Git history plus a separately generated immutable freeze receipt will identify that C_pre commit.",
+    "required_chronology": [
+      "Commit this manifest by itself before implementation.",
+      "Push that exact C_pre commit to origin and create the non-reused lightweight remote tag refs/tags/qsigma-r6l-prereg-v1 pointing directly to C_pre before implementation.",
+      "Commit implementation, tests, runner, and pre-result documentation from a clean tree.",
+      "Execute that source commit once into a fresh configurable output directory.",
+      "Commit raw result, event ledger, receiver catalog, decision record, and run receipt.",
+      "Create the producer envelope exclusively after the raw-artifact commit, binding both source and raw-artifact commits.",
+      "Commit only the new producer envelope as a final C_env evidence commit."
+    ],
+    "statement": "The manifest bytes must not change after the manifest-only commit. Any necessary pre-result correction is a separately hashed correction artifact. The remote tag is a same-party public history anchor, not an independent timestamp or witness."
+  },
+  "baseline": {
+    "repository": "jesusvilela/hypercomplexbrain",
+    "branch": "claude/aion-brain-architecture-27f8ji",
+    "r6k_publication_commit": "07e2a7956c0cf25d24515637d54c1233ea8d3dc2",
+    "normative_upstream_sha256": {
+      "artifacts/r6k_equal_resource_reservoir/equal_resource_reservoir.envelope.json": "sha256:6a28edfcfeb7f84ab2a3dc7cf9c7eef8e8c004d016dbc718dc5437688d3a4b79",
+      "artifacts/r6k_equal_resource_reservoir/equal_resource_reservoir.json": "sha256:ae49b8eaab8a3050ece0d4fa1466726a93d5d15b9813463aeaa657be8bcef938",
+      "artifacts/r6k_equal_resource_reservoir/events.jsonl": "sha256:8fe0da03ba4fc5549ef6f258d6ccca5896624a66915948fba8b6119cb52ffe24",
+      "experiments/run_equal_resource_reservoir.py": "sha256:91f1262fb10d6cb1139b19c8352f74670b63357333d1a8d3c448e25beda2f6be",
+      "manifests/qsigma_r6k_equal_resource_reservoir_method_correction.json": "sha256:aaa26bbd1cd5db9e222848734aa8d0e51e586be656a002598e3e3346c1f333ee",
+      "manifests/qsigma_r6k_equal_resource_reservoir_preregistration.json": "sha256:c633d4fbbfa9a639bfe6a75857f583654be252118cebc8627f0db0c8feef7d3b",
+      "src/aionq/coherent_dilation.py": "sha256:174843edde3447139eff5ceeabba2bfeb29d00ea11753f71a8f41aa60e7b1ab7",
+      "src/aionq/equal_resource_reservoir.py": "sha256:9978b8051d8b6afc1b7fa454a214bd49b3263efeb83bb7da9222ae6b17c02691",
+      "src/aionq/evidence.py": "sha256:9033013ff0edb99c688ed2965c8b4cb11fe626103b58ded6b2aa897901817ac5",
+      "src/aionq/holevo_sandwich.py": "sha256:5cb89b9f71c329a9ce590db30a1923c2484b1a55a828d247bb0fbe7bf1e9aef0",
+      "src/aionq/hyperbolic_qubit.py": "sha256:f6424cd337fb7dcf987a68a7ed375ca3955be29223d529f33b1cce847376e484",
+      "src/aionq/quantum_channel_geometry.py": "sha256:f6c5498356814ead07ca867e9a8348e5d90c54df4a9ad455b57fee3bfce06f38",
+      "tests/test_coherent_dilation.py": "sha256:a556306b845689c4053b5470f7c7c6468557d114b861fd7dd207294e5faa3f5f",
+      "tests/test_equal_resource_reservoir.py": "sha256:f1a3de321544f288fdc4bf55faad58d652b72e94c90f018ddd3bc7104ce782a9"
+    },
+    "pre_existing_modified_files_excluded": {
+      "artifacts/s4_g100/summaries/acaf_frame_sweep.json": "sha256:f94809ca6b3df2c8991155cdbfae06f5125996739651a720fb23f6898e254529",
+      "artifacts/s4_g100/summaries/moving_frame_audit.json": "sha256:cfd3128d5af7563b95debed4b6dd2f833df0adb5b19b2756d805f50becb02eca"
+    }
+  },
+  "question": "Does the R6i-minus-R6 retrieval differential measured by R6k survive when both maps feed the same clean, map-blind receiver with identical state-noise and receiver-label-noise channels?",
+  "reason_for_new_slice": {
+    "r6k_gap": "R6k used the same receiver construction rule but fitted a different clean PGM to each map. Receiver optimization and realization cost were therefore not exactly matched.",
+    "falsifier": "If the differential disappears under one pooled receiver, the R6k gain is decoder-dependent and cannot justify receiver-independent architecture work.",
+    "ordering": "Gate-level Naimark and Aer diagnostics remain out of scope until this cheaper common-receiver falsifier is evaluated."
+  },
+  "experiment_kind": {
+    "name": "deterministic one-shot associative retrieval with a common receiver",
+    "not_claimed": [
+      "temporal quantum reservoir computing",
+      "fading-memory capacity",
+      "device or hardware performance",
+      "minimum POVM circuit complexity",
+      "quantum advantage",
+      "cognition, consciousness, sentience, or AGI"
+    ]
+  },
+  "sealed_upstream": {
+    "maps_and_queries": "Use the committed R6k map definitions, D=16 embeddings, source grid, exact Z2 mixtures, paired perturbations, and task construction byte-for-byte without modifying the sealed R6k modules.",
+    "r6k_result": "artifacts/r6k_equal_resource_reservoir/equal_resource_reservoir.json",
+    "r6k_envelope": "artifacts/r6k_equal_resource_reservoir/equal_resource_reservoir.envelope.json",
+    "r6k_events": "artifacts/r6k_equal_resource_reservoir/events.jsonl",
+    "maps": ["R6", "R6i"],
+    "ambient_dimension": 16,
+    "priors": "uniform"
+  },
+  "common_receiver": {
+    "pooling_rule": "For every task class c, tau_c=(rho_c_R6+rho_c_R6i)/2 using the two clean stored templates with equal weight exactly 1/2.",
+    "fit": "Call the exact build_pgm_receiver implementation in src/aionq/equal_resource_reservoir.py from commit 07e2a7956c0cf25d24515637d54c1233ea8d3dc2, whose file SHA-256 is pinned in baseline.normative_upstream_sha256; use tolerance 1e-10 and uniform priors.",
+    "support_cutoff": "Use the sealed build_pgm_receiver rule exactly: retain mean-state eigenvalues greater than 64*eps_float64*D*maximum_eigenvalue.",
+    "completion": "Use the single E_perp=I-Pi_support reject effect returned by the sealed build_pgm_receiver call exactly once; do not add a second completion effect.",
+    "application": "Freeze that exact effect tuple and apply it unchanged to both maps at every state-noise and receiver-noise cell.",
+    "hilbert_identification": "Identify the two declared ambient carriers only by J=I_16 in the committed R6k computational basis. Map-dependent permutations, unitaries, gauge alignment, and preconditioning are forbidden.",
+    "forbidden": [
+      "map-specific refitting",
+      "query-dependent receiver updates",
+      "row renormalization",
+      "dropping the reject outcome",
+      "choosing a half-grid section instead of the Z2 density mixture"
+    ],
+    "basis_qualification": "The common receiver uses the declared R6k D=16 computational-basis embeddings. Its conclusion is basis- and embedding-specific."
+  },
+  "structural_naimark_cost": {
+    "role": "exact shared receiver resource description, not a compiled gate count",
+    "construction": "Use the principal Hermitian square root and V=sum_y |y> tensor sqrt(E_y), including E_perp, padded with unused outcome labels to the next power of two; V_dagger V=I_16.",
+    "square_root_rule": "Reject an effect eigenvalue below -1e-10. Clamp only eigenvalues in [-1e-10,0] to zero, take the nonnegative principal square root, and reconstruct the effect within 1e-10.",
+    "rank_rule": "Report effect rank using the same cutoff 64*eps_float64*D*maximum_effect_eigenvalue after the tolerated-negative rule; zero effects have rank zero.",
+    "outcome_order": "Outcome labels are class 0 through C-1, then the mathematical reject at label C, then unused padding labels C+1 through 2^a-1.",
+    "tensor_order": "The canonical matrix rows use row_index=system_index+16*outcome_label, with system_index 0..15 varying fastest. Columns are the declared input computational basis 0..15.",
+    "complex_array_digest": "Convert every matrix to contiguous little-endian complex128 bytes in row-major order and hash with SHA-256 prefixed by 'sha256:'.",
+    "residual_norms": "Bind the sealed receiver completeness_residual and support_projector_residual as spectral norms. Use spectral norm for V_dagger V-I and Frobenius norm for each independently reconstructed E_y-(sqrt(E_y))^2. Every listed residual must be at most 1e-10.",
+    "task_rows": {
+      "signed_fixed_depth": {
+        "classes": 32,
+        "outcomes_including_reject": 33,
+        "outcome_ancilla_qubits": 6,
+        "total_signal_plus_outcome_qubits": 10
+      },
+      "projective_fixed_depth": {
+        "classes": 16,
+        "outcomes_including_reject": 17,
+        "outcome_ancilla_qubits": 5,
+        "total_signal_plus_outcome_qubits": 9
+      },
+      "radial": {
+        "classes": 5,
+        "outcomes_including_reject": 6,
+        "outcome_ancilla_qubits": 3,
+        "total_signal_plus_outcome_qubits": 7
+      },
+      "joint_depth_projective": {
+        "classes": 80,
+        "outcomes_including_reject": 81,
+        "outcome_ancilla_qubits": 7,
+        "total_signal_plus_outcome_qubits": 11
+      }
+    },
+    "reported_fields": [
+      "effect ranks",
+      "support and reject ranks",
+      "outcome count and padding count",
+      "signal, outcome-ancilla, and total qubits",
+      "isometry and effect-reconstruction residuals"
+    ],
+    "qualification": "The listed 7, 9, 10, and 11 qubits belong to this canonical uncompressed full-system Lueders dilation; individual effects may be rank-deficient, and these are not minimum POVM ancilla counts or minimum circuit complexity.",
+    "excluded": "No generic Isometry transpilation, coupling map, timing, calibration, readout, or hardware cost enters the R6l verdict."
+  },
+  "tasks": {
+    "signed_fixed_depth": {
+      "role": "sign-alias mechanism diagnostic",
+      "depths": [0.1, 0.5, 1.0, 2.0, 4.0],
+      "classes": 32,
+      "receivers": 5
+    },
+    "projective_fixed_depth": {
+      "role": "primary common-receiver endpoint",
+      "depths": [0.1, 0.5, 1.0, 2.0, 4.0],
+      "classes": 16,
+      "receivers": 5,
+      "class_state": "true Z2 mixture of the M and -M codewords"
+    },
+    "radial": {
+      "role": "anisotropy control",
+      "depths": null,
+      "classes": 5,
+      "receivers": 1
+    },
+    "joint_depth_projective": {
+      "role": "joint depth-angle control",
+      "depths": null,
+      "classes": 80,
+      "receivers": 1
+    }
+  },
+  "noise": {
+    "state_channel": {
+      "definition": "D_eta(rho)=(1-eta)rho+eta*I/16",
+      "strengths": [0.0, 0.01, 0.03, 0.1],
+      "qualification": "basis-invariant channel stress, not device noise"
+    },
+    "receiver_label_channel": {
+      "strengths": [0.0, 0.01, 0.03, 0.1],
+      "definition": "For C class labels, p'_j=(1-epsilon)p_j+epsilon/(C-1)*sum_{l!=j}p_l; preserve p'_perp=p_perp exactly.",
+      "matrix_and_orientation": "Let P have one input-class row and C class-output columns followed by reject. Build row-stochastic T of shape [C+1,C+1]: T[l,l]=1-epsilon for class l; T[l,j]=epsilon/(C-1) for distinct class labels l,j; T[C,C]=1; every class-to-reject and reject-to-class entry is 0. Compute P_post=P_pre @ T.",
+      "properties": [
+        "same stochastic channel for both maps",
+        "reject mass is preserved",
+        "class-label mass is conserved",
+        "no probability repair or renormalization"
+      ],
+      "qualification": "post-measurement symmetric label confusion, not gate-local or hardware readout noise"
+    }
+  },
+  "exact_grid": {
+    "maps": 2,
+    "task_receivers_per_map": 12,
+    "state_noise_strengths": 4,
+    "receiver_noise_strengths": 4,
+    "evaluation_cells": 384,
+    "calculation": "2*(5+5+1+1)*4*4=384",
+    "sample_semantics": "sample_size=384 counts distinct deterministic parameter cells, not stochastic replicates, trials, seeds, or inferential observations",
+    "seeds": [],
+    "confidence_interval": null
+  },
+  "metrics": [
+    "raw mean correct-outcome probability per attempted query",
+    "mutual information including reject as an outcome",
+    "mean reject probability",
+    "conditional correct probability given a non-reject response",
+    "minimum and maximum raw probability",
+    "maximum raw row-sum and imaginary-part defects",
+    "common-receiver support and effect ranks"
+  ],
+  "probability_semantics": {
+    "pre_label": "Compute raw Born probabilities for class effects followed by the mathematical reject; validate before applying label noise.",
+    "post_label": "Apply the frozen label channel to the raw class probabilities, preserve reject, then validate the complete row again.",
+    "validation": "Both rows must be finite, real within imaginary residual 1e-10, lie in [-1e-10,1+1e-10], and sum to one within 1e-10. Report residuals and do not clip or normalize.",
+    "correct_probability": "Uniform-prior mean of the post-label diagonal class probability; reject is never correct.",
+    "mutual_information": "Use the R6k convention exactly: joint=conditional/C under uniform input prior; sum p_xy*log2(p_xy/(p_x*p_y)) only when p_xy, p_x, and p_y are each greater than 1e-15; include reject as an output; do not repair rows."
+  },
+  "decision_rule": {
+    "semantics": "Every field named survival is an R6i-minus-R6 differential-threshold predicate. It does not assert that either map has or lacks absolute information. Preserve absolute accuracy, information, and reject metrics for both maps in every cell.",
+    "probability_margin": "one equiprobable chance unit 1/C for each task",
+    "information_margin_bits": 0.02,
+    "cell_pass": "Using the unrounded float64 metric values, with no additional comparison tolerance, R6i-R6 correct probability is at least 1/C and R6i-R6 mutual information is at least 0.02 bits.",
+    "signed_survival": "For every one of the 16 (eta,epsilon) pairs, at least three of five signed depths pass.",
+    "projective_survival": "For every one of the 16 (eta,epsilon) pairs, at least three of five projective depths pass.",
+    "radial_survival": "The single radial cell passes for every one of the 16 (eta,epsilon) pairs.",
+    "joint_survival": "The single joint cell passes for every one of the 16 (eta,epsilon) pairs.",
+    "precedence": "Evaluate all controls first. Any failed control yields HOLD before every scientific verdict; otherwise evaluate survive, then fragile, then absent.",
+    "primary_verdicts": {
+      "COMMON_RECEIVER_PROJECTIVE_GAIN_SURVIVES": "projective_survival is true",
+      "COMMON_RECEIVER_PROJECTIVE_GAIN_FRAGILE": "the clean_projective_passing_depth_count is at least three but projective_survival is false",
+      "COMMON_RECEIVER_PROJECTIVE_GAIN_ABSENT": "the clean_projective_passing_depth_count is below three",
+      "HOLD": "any source, receiver, channel, probability, grid, event, digest, or evidence control fails"
+    },
+    "clean_projective_passing_depth_count": "The number of the five projective depths satisfying cell_pass at exactly eta=0 and epsilon=0 after every control has passed.",
+    "secondary_output": "Emit the complete signed/projective/radial/joint differential-survival Boolean vector, absolute per-map metrics, and every per-(eta,epsilon) passing-depth count; do not infer missing axes.",
+    "global_winner": "No global map winner or scalar resource score is permitted."
+  },
+  "event_ledger": {
+    "format": "append-only LF JSONL with a SHA-256 hash chain",
+    "store_events": 320,
+    "common_receiver_freeze_events": 12,
+    "evaluation_events": 384,
+    "total_events": 716,
+    "sequence": "Exactly the integers 0 through 715 with no gap or duplicate.",
+    "genesis_previous_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "canonical_bytes": "json.dumps(value, sort_keys=True, separators=(',',':'), ensure_ascii=False, allow_nan=False).encode('utf-8')",
+    "outer_event_exact_field_set": ["sequence", "previous_event_digest", "kind", "key", "payload", "event_digest"],
+    "event_key": "For kind='store', use 'store:'+protocol_store_id; for kind='common_receiver_freeze', use 'common_receiver_freeze:'+protocol_receiver_id; for kind='evaluation', use 'evaluation:'+protocol_cell_id. These identifiers include the sha256: prefix and never include numerical array digests, metrics, or runtime fields.",
+    "event_digest": "SHA-256, prefixed by 'sha256:', of canonical_bytes(event_without_event_digest), including sequence, previous_event_digest, kind, key, and payload. The JSONL newline is excluded from this digest.",
+    "line_encoding": "canonical_bytes(the complete event including event_digest) followed by exactly one LF byte",
+    "ordering": "First 320 stores in map order R6,R6i, then depth order [0.1,0.5,1.0,2.0,4.0], then source_index 0..31; next 12 receiver freezes in task order signed depths, projective depths, radial, joint; finally 384 evaluations in map order R6,R6i, that same receiver order, eta order [0,0.01,0.03,0.1], then epsilon order [0,0.01,0.03,0.1].",
+    "closed_payload_schemas": {
+      "store": {
+        "exact_fields": ["schema_version", "protocol_store_id", "map", "depth_index", "rho_decimal", "source_index", "reservoir_key", "stored_template_digest"],
+        "rules": "schema_version='hypercomplexbrain.r6l-event-store.v1'; the identity coordinates equal protocol_store_object; reservoir_key is exactly f'{map}:rho={rho_decimal}:k={source_index:02d}'; stored_template_digest is the matching clean signed-template complex-array digest."
+      },
+      "common_receiver_freeze": {
+        "exact_fields": ["schema_version", "protocol_receiver_id", "receiver_index", "task", "depth_index", "rho_decimal", "classes", "clean_map_template_digests", "pooled_template_digest", "common_receiver_digest", "structural_receiver_cost_digest", "prior_and_perturbation_definition_digest", "support_rank", "effect_ranks", "outcomes_including_reject", "padded_outcome_dimension", "signal_qubits", "outcome_ancilla_qubits", "total_qubits", "residuals", "controls"],
+        "nested_exact_fields": "clean_map_template_digests has exactly keys R6,R6i; residuals has exactly completeness_spectral, support_projector_spectral, isometry_spectral, maximum_effect_reconstruction_fro; controls has exactly pooled_weights_exact, receiver_valid, naimark_valid. effect_ranks is C class ranks followed by reject rank.",
+        "rules": "schema_version='hypercomplexbrain.r6l-event-receiver.v1'; all identifiers and dimensions equal the frozen receiver object/cost row; every digest follows producer_array_bindings."
+      },
+      "evaluation": {
+        "exact_fields": ["schema_version", "protocol_cell_id", "protocol_receiver_id", "map", "receiver_index", "task", "depth_index", "rho_decimal", "classes", "eta_index", "eta_decimal", "epsilon_index", "epsilon_decimal", "producer_array_bindings", "metrics", "validation"],
+        "nested_exact_fields": "producer_array_bindings has exactly producer_array_bindings.required_per_cell_binding_field_set; metrics has exactly correct_probability, mutual_information_bits, mean_reject_probability, conditional_correct_probability_given_nonreject, minimum_pre_label_probability, maximum_pre_label_probability, minimum_post_label_probability, maximum_post_label_probability, maximum_pre_label_row_sum_defect, maximum_post_label_row_sum_defect, maximum_pre_label_imaginary_residual, maximum_post_label_imaginary_residual; validation has exactly pre_label_valid and post_label_valid.",
+        "rules": "schema_version='hypercomplexbrain.r6l-event-evaluation.v1'; identity coordinates equal the protocol cell; all metrics are finite JSON numbers except conditional_correct_probability_given_nonreject, which is null exactly when mean non-reject mass is at most 1e-15 and otherwise equals correct_probability/(1-mean_reject_probability); validation values are JSON Booleans."
+      }
+    },
+    "field_closure": "Unknown, missing, duplicate, NaN, Infinity, timestamp, path, environment, machine, library, wall-clock, memory, or arbitrary runtime fields invalidate the ledger.",
+    "producer_integrity": "The producer ledger is an immutable raw artifact. Its exact bytes, all 716 event_digest values, and ledger_root must match the C_raw blob and producer envelope exactly.",
+    "independent_semantic_rule": "A regenerated ledger must validate its own internal chain but need not reproduce producer event digests or root. Exact cross-witness fields are schema versions, portable protocol IDs, event keys/order, map/task/index/decimal coordinates, shapes, dtypes, roles, dimensions, ranks, nulls, Booleans, semantic channel/prior-definition digests, controls, and verdict. Every numerical-array or aggregate digest string must match its own ledger/catalog bytes exactly, but producer and regenerated digest strings need not equal each other; compare their underlying arrays/tables with frozen tolerances and record both digest sets and both ledger roots.",
+    "ledger_root": "The event_digest of sequence 715. Bind it in the result, decision record, run receipt, raw-artifact commit, and producer envelope.",
+    "sample_size_exclusion": "Event count is not effective sample size."
+  },
+  "protocol_versioning": {
+    "manifest_sha256": "At C_exec, hash the exact C_pre manifest blob bytes with SHA-256 and prefix with 'sha256:'.",
+    "correction_inventory": "Before C_exec, list every committed pre-result correction whose path matches manifests/qsigma_r6l_common_receiver_correction_*.json, sorted by UTF-8 path bytes. Each list item is exactly {'path':POSIX-relative-string,'sha256':byte-digest}. The expected list for this freeze is empty.",
+    "effective_protocol_object": {
+      "schema_version": "hypercomplexbrain.r6l-effective-protocol.v1",
+      "manifest_sha256": "the C_pre manifest byte digest",
+      "corrections": "the ordered correction inventory"
+    },
+    "effective_protocol_digest": "'sha256:'+sha256(canonical_bytes(effective_protocol_object)).hexdigest(), where canonical_bytes is the event_ledger canonical-JSON rule.",
+    "reuse_guard": "Any semantic correction changes the correction inventory and effective_protocol_digest. A changed protocol must not reuse an earlier protocol_cell_id. The freeze receipt records the object and digest before any implementation evaluation."
+  },
+  "cell_identity": {
+    "role": "Portable identity of a pre-evaluation protocol cell. Numerical array and eigensolver bytes are deliberately excluded and are bound separately as producer provenance.",
+    "typed_schema_in_exact_field_set": {
+      "schema_version": "string constant hypercomplexbrain.r6l-cell.v2",
+      "effective_protocol_digest": "sha256-prefixed lowercase hexadecimal string from protocol_versioning",
+      "map": "enum string R6 or R6i",
+      "receiver_index": "JSON integer 0..11 in the frozen receiver order",
+      "task": "enum string signed_fixed_depth, projective_fixed_depth, radial, or joint_depth_projective",
+      "depth_index": "JSON integer 0..4 for fixed-depth tasks or null",
+      "rho_decimal": "one of the exact strings '0.1','0.5','1.0','2.0','4.0' for fixed-depth tasks or null",
+      "classes": "JSON integer fixed by the task",
+      "eta_index": "JSON integer 0..3",
+      "eta_decimal": "one of the exact strings '0','0.01','0.03','0.1'",
+      "epsilon_index": "JSON integer 0..3",
+      "epsilon_decimal": "one of the exact strings '0','0.01','0.03','0.1'"
+    },
+    "receiver_order": "indices 0..4 signed depths [0.1,0.5,1.0,2.0,4.0], 5..9 projective depths in that order, 10 radial, 11 joint_depth_projective",
+    "protocol_receiver_object": "Exactly {'schema_version':'hypercomplexbrain.r6l-receiver.v1','effective_protocol_digest':string,'receiver_index':integer,'task':string,'depth_index':integer-or-null,'rho_decimal':string-or-null,'classes':integer}; protocol_receiver_id is the sha256-prefixed digest of its canonical bytes.",
+    "protocol_store_object": "Exactly {'schema_version':'hypercomplexbrain.r6l-store.v1','effective_protocol_digest':string,'map':string,'depth_index':integer,'rho_decimal':string,'source_index':integer}; protocol_store_id is the sha256-prefixed digest of its canonical bytes.",
+    "canonical_bytes": "json.dumps(the exact typed object, sort_keys=True, separators=(',',':'), ensure_ascii=False, allow_nan=False).encode('utf-8')",
+    "digest": "protocol_cell_id='sha256:'+sha256(canonical_bytes).hexdigest()",
+    "computation_order": "Verify sealed upstream bytes and the effective-protocol receipt; enumerate the frozen receiver and noise indices; assemble and hash every portable typed identity; require the complete identity grid before constructing or evaluating numerical arrays.",
+    "uniqueness": "A validation path separate from production reconstructs the full typed set and requires exactly 384 distinct canonical objects and 384 distinct protocol_cell_id values.",
+    "forbidden_fields": [
+      "any template, query, receiver, channel-matrix, eigensolver, Naimark, cost, probability, or other numerical-array digest",
+      "run id",
+      "event sequence or event digest",
+      "timestamp",
+      "output path",
+      "machine, environment, or library version",
+      "source, raw-artifact, or envelope commit SHA",
+      "artifact, result, decision, receipt, or ledger digest",
+      "observed probability, information, reject, control, or verdict value",
+      "any post-evaluation value"
+    ]
+  },
+  "producer_array_bindings": {
+    "role": "Byte-environment-bound producer provenance, mandatory in result/catalog/events but excluded from protocol_cell_id. Independent witnesses compare the underlying arrays numerically rather than demanding equal producer digests.",
+    "canonical_bytes": "Use event_ledger.canonical_bytes for every semantic or aggregate JSON object.",
+    "complex_array_record": "Convert the array to C-contiguous little-endian complex128. Record exactly {'index':JSON-integer,'role':string,'shape':[JSON-integers],'dtype':'<c16','array_digest':'sha256:'+sha256(raw_C_order_bytes).hexdigest()}.",
+    "real_array_record": "Convert the array to C-contiguous little-endian float64. Record exactly {'index':JSON-integer,'role':string,'shape':[JSON-integers],'dtype':'<f8','array_digest':'sha256:'+sha256(raw_C_order_bytes).hexdigest()}.",
+    "aggregate_digest": "For each field below, build exactly the declared aggregate object with no extra key, encode it with canonical_bytes, and prefix its SHA-256 hexadecimal digest with 'sha256:'. Item order is semantic and must not be sorted after construction.",
+    "class_order": {
+      "signed_fixed_depth": "class_index 0..31 in sealed source_grid order: positive indices 0..15 followed by their central-sign partners 16..31",
+      "projective_fixed_depth": "class_index 0..15, where class k is the equal Z2 mixture of signed indices k and k+16",
+      "radial": "class_index 0..4 in depth order [0.1,0.5,1.0,2.0,4.0]",
+      "joint_depth_projective": "class_index=16*depth_index+projective_index, depth_index 0..4 outer and projective_index 0..15 inner"
+    },
+    "aggregate_field_contracts": {
+      "clean_map_template_digest": "Digest {'schema_version':'hypercomplexbrain.r6l-array-aggregate.v1','kind':'clean_map_templates','protocol_receiver_id':string,'map':map-string,'items':[complex_array_record with index=class_index, role='clean_template', and shape [16,16] for each clean template in class_order]}.",
+      "pooled_template_digest": "Digest {'schema_version':'hypercomplexbrain.r6l-array-aggregate.v1','kind':'pooled_templates','protocol_receiver_id':string,'map':null,'items':[complex_array_record with index=class_index, role='pooled_template', and shape [16,16] for tau_c in class_order]}.",
+      "common_receiver_digest": "Digest {'schema_version':'hypercomplexbrain.r6l-array-aggregate.v1','kind':'common_receiver_effects','protocol_receiver_id':string,'map':null,'items':[complex_array_record with shape [16,16], roles 'class_effect' at indices 0..C-1, followed by role 'reject_effect' at index C]}.",
+      "perturbed_query_digest": "Digest {'schema_version':'hypercomplexbrain.r6l-array-aggregate.v1','kind':'perturbed_queries','protocol_receiver_id':string,'map':map-string,'items':[complex_array_record with index=class_index, role='clean_query', and shape [16,16] for each clean perturbed query in class_order]}.",
+      "state_noised_query_digest": "Digest {'schema_version':'hypercomplexbrain.r6l-array-aggregate.v1','kind':'state_noised_queries','protocol_receiver_id':string,'map':map-string,'eta_index':integer,'eta_decimal':string,'items':[complex_array_record with index=class_index, role='state_noised_query', and shape [16,16] after D_eta for each query in class_order]}.",
+      "pre_label_probability_digest": "Digest {'schema_version':'hypercomplexbrain.r6l-array-aggregate.v1','kind':'pre_label_probabilities','protocol_cell_id':string,'items':[real_array_record with index 0, role 'conditional_probability_table', shape [C,C+1], and the complete class-then-reject Born table]}.",
+      "post_label_probability_digest": "Digest {'schema_version':'hypercomplexbrain.r6l-array-aggregate.v1','kind':'post_label_probabilities','protocol_cell_id':string,'items':[real_array_record with index 0, role 'conditional_probability_table', shape [C,C+1], and the complete class-then-reject post-label table]}.",
+      "structural_receiver_cost_digest": "Digest {'schema_version':'hypercomplexbrain.r6l-array-aggregate.v1','kind':'structural_receiver_cost','protocol_receiver_id':string,'signal_dimension':16,'classes':C,'outcome_dimension':2^a,'signal_qubits':4,'outcome_ancilla_qubits':a,'total_qubits':4+a,'effect_ranks':[C class ranks then reject rank],'items':[complex_array_record shape [16,16] with roles 'sqrt_class_effect' at indices 0..C-1, then shape [16,16] role 'sqrt_reject_effect' at index C, then shape [16*2^a,16] role 'naimark_isometry' at index C+1]}.",
+      "state_channel_digest": "Digest the exact semantic object {'schema_version':'hypercomplexbrain.r6l-channel.v1','kind':'global_depolarization','dimension':16,'eta_index':integer,'eta_decimal':string,'definition':'(1-eta)*rho+eta*I/16'}.",
+      "receiver_label_channel_digest": "Digest the exact semantic object {'schema_version':'hypercomplexbrain.r6l-channel.v1','kind':'symmetric_class_label_confusion','classes':C,'epsilon_index':integer,'epsilon_decimal':string,'reject_rule':'fixed','definition':'diag=1-epsilon;offdiag=epsilon/(C-1)'}. The separately stored channel matrix uses real_array_record index 0 and role 'label_channel_matrix' with shape [C+1,C+1].",
+      "prior_and_perturbation_definition_digest": "Digest the exact semantic object {'schema_version':'hypercomplexbrain.r6l-prior-perturbation.v1','protocol_receiver_id':string,'source_blob_sha256':'sha256:9978b8051d8b6afc1b7fa454a214bd49b3263efeb83bb7da9222ae6b17c02691','uniform_class_prior':{'numerator':1,'denominator':C},'query_mixture_weights':[{'numerator':1,'denominator':2},{'numerator':1,'denominator':2}],'perturbations_symbolic':[{'delta_rho':'1/100','delta_phi':'pi/64','delta_psi':'-pi/80'},{'delta_rho':'-1/100','delta_phi':'-pi/64','delta_psi':'pi/80'}]}.",
+      "receiver_label_matrix_digest": "Digest {'schema_version':'hypercomplexbrain.r6l-array-aggregate.v1','kind':'receiver_label_matrix','protocol_receiver_id':string,'epsilon_index':integer,'epsilon_decimal':string,'items':[the single label-channel real_array_record]}"
+    },
+    "required_per_cell_binding_field_set": [
+      "clean_map_template_digest",
+      "pooled_template_digest",
+      "common_receiver_digest",
+      "perturbed_query_digest",
+      "state_noised_query_digest",
+      "pre_label_probability_digest",
+      "post_label_probability_digest",
+      "state_channel_digest",
+      "receiver_label_channel_digest",
+      "receiver_label_matrix_digest",
+      "structural_receiver_cost_digest",
+      "prior_and_perturbation_definition_digest"
+    ],
+    "npz_catalog_keys": "Use receiver token r00..r11, map token R6 or R6i, eta token e00..e03, and epsilon token l00..l03. Store exactly rXX__MAP__clean_templates, rXX__MAP__clean_queries, rXX__pooled_templates, rXX__receiver_effects, rXX__sqrt_effects, rXX__naimark_isometry, rXX__MAP__eYY__state_noised_queries, rXX__lZZ__label_matrix, rXX__MAP__eYY__lZZ__pre_label_probabilities, and rXX__MAP__eYY__lZZ__post_label_probabilities. Array first axes follow class/outcome order. The JSON catalog maps every aggregate item to its NPZ key and slice; missing, extra, object-dtype, or duplicate arrays fail controls."
+  },
+  "controls": [
+    "Every path in baseline.normative_upstream_sha256 matches the exact blob bytes at R6k commit 07e2a7956c0cf25d24515637d54c1233ea8d3dc2 before and after execution.",
+    "C_pre contains the manifest and no R6l implementation/result; origin refs/tags/qsigma-r6l-prereg-v1 resolves exactly to C_pre before C_exec; C_exec descends from C_pre and has no R6l output directory; C_raw descends from C_exec; C_env changes only the producer envelope.",
+    "The freeze receipt's manifest digest, correction inventory, and effective_protocol_digest satisfy protocol_versioning before any numerical construction or evaluation.",
+    "The pre-existing modified S4/G100 files retain their protected hashes in the original checkout and remain outside every R6l commit; execution occurs in a separate clean C_exec worktree.",
+    "C_exec adds an exact-path text eol=lf .gitattributes rule for artifacts/r6l_common_receiver/events.jsonl before any event file is produced.",
+    "Every paired R6/R6i cell uses byte-identical source coordinates, priors, task labels, query perturbations, state channel, receiver effects, label channel, and structural receiver cost.",
+    "Every pooled class uses weights exactly (0.5,0.5).",
+    "Every density is finite, Hermitian, positive semidefinite, and trace one within 1e-10.",
+    "Every common PGM effect is finite, Hermitian, positive semidefinite, and the effects plus reject sum to identity within 1e-10.",
+    "The structural Naimark isometry satisfies V_dagger V=I_16 and reconstructs every effect within 1e-10.",
+    "Every receiver-label channel matrix is stochastic and preserves reject exactly within 1e-12.",
+    "Both pre-label and post-label raw probability rows remain finite, lie in [-1e-10,1+1e-10], and sum to one within 1e-10 without clipping or normalization.",
+    "A validation path separate from event production reconstructs exactly 384 unique portable protocol cell identities and validates 716 unique contiguous hash-chained events against the closed payload schemas.",
+    "Every cell has exactly the required producer array-binding fields; every digest aggregate follows its frozen item order; every referenced array has exactly one declared JSON-catalog locator and NPZ key with the frozen dtype and shape.",
+    "The manifest and every implementation dependency retain their pre-run hashes through execution.",
+    "The producer result, events, receiver catalog, decision record, and run receipt remain raw-digest comparable and are never classified as environment-dependent."
+  ],
+  "evidence_lifecycle": {
+    "commits": {
+      "C_pre": "Manifest-only commit. It contains this preregistration and no R6l implementation, test, documentation, runner, or result. Before C_exec, push this commit and the non-reused lightweight tag refs/tags/qsigma-r6l-prereg-v1 to origin and verify the remote tag resolves directly and exactly to C_pre.",
+      "C_exec": "Additive source commit descending from C_pre. It contains the freeze receipt, .gitattributes rule, implementation, tests, runner, and pre-result documentation, but no R6l output directory.",
+      "C_raw": "Raw-artifact commit descending from C_exec. It adds result, receiver JSON/NPZ catalog, decision record, 716-event ledger, and run receipt.",
+      "C_env": "Envelope-only commit descending from C_raw. It adds the exclusively created producer envelope and changes no declared raw artifact."
+    },
+    "execution_worktree": "Run from a separate Git worktree checked out exactly at C_exec. Before execution git status --porcelain must be empty and the requested output directory must not exist. The two protected dirty files remain only in the original shared checkout and are never copied into the execution worktree.",
+    "production_command": "python experiments/run_common_receiver_reservoir.py run --output-dir artifacts/r6l_common_receiver",
+    "envelope_command_template": "python experiments/run_common_receiver_reservoir.py envelope --artifact-dir artifacts/r6l_common_receiver --raw-commit C_RAW_SHA --source-commit C_EXEC_SHA --prereg-commit C_PRE_SHA",
+    "recompute_command": "python experiments/run_common_receiver_reservoir.py recompute --reference-dir artifacts/r6l_common_receiver",
+    "recompute_behavior": "Create a fresh OS temporary directory, regenerate all raw scientific outputs from the recorded source protocol, perform the frozen comparator, emit a comparison receipt to stdout, and never overwrite the reference or producer envelope.",
+    "producer_envelope": {
+      "schema_version": "hypercomplexbrain.evidence.v1 plus the explicitly required R6l provenance fields below",
+      "claim_id": "EXP-R6L-COMMON-RECEIVER",
+      "evidence_tag": "M",
+      "producer": "experiments/run_common_receiver_reservoir.py",
+      "command": "python experiments/run_common_receiver_reservoir.py run --output-dir artifacts/r6l_common_receiver",
+      "command_rule": "The command field is the production command, never the later envelope-packaging or witness command.",
+      "recompute_command": "python experiments/run_common_receiver_reservoir.py recompute --reference-dir artifacts/r6l_common_receiver",
+      "packaging_command": "Record the instantiated evidence_lifecycle.envelope_command_template separately from command and recompute_command.",
+      "working_directory": ".",
+      "input_hashes": "Exactly the 384 distinct protocol_cell_id strings in event_ledger evaluation order.",
+      "seeds": [],
+      "observed_result": {
+        "sample_size": 384,
+        "sample_unit": "distinct deterministic map/task/depth/state-noise/label-noise protocol cells; not trials, replicates, seeds, or inferential observations",
+        "all_controls_pass": "JSON Boolean",
+        "verdict": "one frozen primary verdict string",
+        "signed_survival": "JSON Boolean",
+        "projective_survival": "JSON Boolean",
+        "radial_survival": "JSON Boolean",
+        "joint_survival": "JSON Boolean",
+        "clean_projective_passing_depth_count": "JSON integer 0..5",
+        "ledger_root": "producer event digest at sequence 715"
+      },
+      "environment_dependent": [],
+      "commit_sha": "exact C_raw SHA containing every declared raw artifact",
+      "source_commit_sha": "exact C_exec SHA stored as separate provenance",
+      "preregistration_commit_sha": "exact C_pre SHA stored as separate provenance",
+      "preregistration_remote_ref": "refs/tags/qsigma-r6l-prereg-v1",
+      "preregistration_remote_url": "https://github.com/jesusvilela/hypercomplexbrain/commit/C_PRE_SHA",
+      "independent": false,
+      "verifier": "",
+      "verification_mode": "not_requested",
+      "signature_status": "unsigned",
+      "effective_sample_size_rule": "The repository evidence verifier must return n_eff=384 from the 384 distinct input_hashes. Any other value fails the envelope.",
+      "creation": "exclusive create after C_raw; raw_artifacts is exactly evidence_lifecycle.raw_artifact_map_rule; envelope excludes itself from raw_artifacts and is committed alone in C_env"
+    },
+    "declared_raw_artifacts": [
+      ".gitattributes",
+      "manifests/qsigma_r6l_common_receiver_preregistration.json",
+      "manifests/qsigma_r6l_common_receiver_freeze_receipt.json",
+      "src/aionq/common_receiver_reservoir.py",
+      "tests/test_common_receiver_reservoir.py",
+      "experiments/run_common_receiver_reservoir.py",
+      "docs/QSIGMA_R6L_COMMON_RECEIVER.md",
+      "artifacts/r6l_common_receiver/common_receiver_reservoir.json",
+      "artifacts/r6l_common_receiver/common_receivers.json",
+      "artifacts/r6l_common_receiver/common_receivers.npz",
+      "artifacts/r6l_common_receiver/decision.json",
+      "artifacts/r6l_common_receiver/events.jsonl",
+      "artifacts/r6l_common_receiver/run_receipt.json"
+    ],
+    "raw_artifact_map_rule": "The producer envelope raw_artifacts map is the union of evidence_lifecycle.declared_raw_artifacts and every path in baseline.normative_upstream_sha256, hashed as bytes at C_raw. The upstream values must equal the preregistered digests. The producer envelope itself is excluded.",
+    "freeze_receipt_rule": "At C_exec, derive C_pre as the first Git commit adding this manifest; require that C_pre's R6l path set contains only this manifest; require git ls-remote origin refs/tags/qsigma-r6l-prereg-v1 to resolve exactly to C_pre; and record C_pre, manifest blob SHA-256, correction inventory, effective_protocol_digest, baseline commit, branch, remote URL/ref, remote resolution, and derivation commands in the immutable freeze receipt.",
+    "run_receipt_rule": "The run receipt binds pre-run dependency hashes, C_pre, C_exec, manifest hash, output hashes for result/catalog/NPZ/decision/events, grid and ledger roots, environment, and commands. It never hashes itself or the later producer envelope.",
+    "producer_outputs_digest_policy": "All declared raw artifacts are immutable and commit-bound. Result, catalog, NPZ, decision, event ledger, and receipt are not put in an environment-dependent exclusion list.",
+    "future_witness_comparator": {
+      "sidecar_only": "Create a new witness sidecar binding the immutable producer-envelope SHA-256; never call a helper that rewrites the producer envelope.",
+      "existing_v1_witness_forbidden": "Do not route R6l through the current apply_witness or witness_envelope exact-artifact path. It mutates the producer envelope and cannot express tolerance-based semantic recomputation. The producer envelope remains independent=false.",
+      "independent_regeneration_required": true,
+      "exact_comparisons": [
+        "384 typed protocol cell identity objects and protocol_cell_id values",
+        "task/map/depth/noise labels, shapes, dtypes, roles, dimensions, ranks, event kinds/keys/order, schema versions, portable protocol IDs, semantic channel/prior-definition digests, control names, nulls, Boolean decisions, and verdict; numerical-array and aggregate digest strings are realization-local and are excluded from cross-witness exact equality",
+        "the producer's 716 events and root match its immutable raw bytes and envelope exactly",
+        "the regenerated 716 events independently validate as contiguous, unique, and internally hash-chained; regenerated event digests and root are recorded but are not required to equal producer byte digests"
+      ],
+      "tolerance_comparisons": "Compare every numeric field in every closed event payload and every one of the 384 cells' probability, mutual-information, reject, and residual metrics field-by-field with absolute tolerance 1e-10. Compare every clean/noised query, clean/pooled template, receiver/square-root/reject effect, label matrix, pre/post conditional table, and Naimark matrix loaded from the NPZ catalog with maximum Frobenius difference 1e-10; ranks, shapes, labels, indices, nulls, and Booleans remain exact.",
+      "required_scientific_surfaces": [
+        "result",
+        "receiver JSON and NPZ catalogs",
+        "decision record",
+        "complete event ledger",
+        "controls and ledger root"
+      ],
+      "sidecar_required_fields": "producer_envelope_sha256, producer_commit_sha, source_commit_sha, preregistration_commit_sha, witness_identity, witness_environment, witness_command, producer_ledger_root, regenerated_ledger_root, exact_field_counts, maximum_scalar_absolute_deviation, maximum_matrix_frobenius_deviation, per-surface pass flags, semantic_independence, timestamp, signature status, and notes.",
+      "failure_rule": "Unknown, missing, or extra fields; nonfinite numbers; absent surfaces; n_eff other than 384; or any failed exact/tolerance comparison prevents claim-level semantic_independence=true even if source hashes and verdict agree."
+    },
+    "environment_dependent_rule": "The producer envelope field is exactly [] for the declared R6l artifacts. Optional compiler or wall-clock telemetry would require a pre-result correction plus a separately declared artifact; none is in this protocol. Numerical artifacts remain byte-environment-bound for provenance but mandatory for semantic comparison."
+  },
+  "pre_freeze_exploration": {
+    "status": "disclosed design feasibility only; no pooled common-receiver retrieval result has been evaluated",
+    "observations": [
+      "R6k parent outcomes and its anisotropic verdict were known before this protocol.",
+      "A synthetic Qiskit Isometry API check compiled random non-target isometries successfully.",
+      "Read-only audits compiled map-specific, not pooled, projective receivers at rho=1 and exposed large, gauge-dependent upper-bound costs.",
+      "The map-specific pilot receiver counts and clean residuals cannot enter the R6l common-receiver verdict or tune its margins."
+    ]
+  },
+  "kill_conditions": [
+    "Any edit to this manifest after its manifest-only commit invalidates R6l; use a separately hashed pre-result correction instead.",
+    "Any implementation or result in the manifest-only commit invalidates the history-witnessed freeze.",
+    "Any map-specific receiver, unequal pooling weight, omitted reject, probability repair, or half-grid quotient invalidates the comparison.",
+    "Any post-result change to grids, noise strengths, margins, cell semantics, event counts, or verdict logic invalidates the primary verdict.",
+    "Any envelope created before the raw-artifact commit, or any witness that omits scientific output comparison, is invalid.",
+    "Any architecture, device, FPGA, hardware, quantum-advantage, cognition, consciousness, sentience, AGI, or complexity-class claim is forbidden."
+  ],
+  "files_expected_after_freeze": [
+    ".gitattributes",
+    "manifests/qsigma_r6l_common_receiver_freeze_receipt.json",
+    "src/aionq/common_receiver_reservoir.py",
+    "tests/test_common_receiver_reservoir.py",
+    "experiments/run_common_receiver_reservoir.py",
+    "docs/QSIGMA_R6L_COMMON_RECEIVER.md",
+    "artifacts/r6l_common_receiver/common_receiver_reservoir.json",
+    "artifacts/r6l_common_receiver/common_receivers.json",
+    "artifacts/r6l_common_receiver/common_receivers.npz",
+    "artifacts/r6l_common_receiver/decision.json",
+    "artifacts/r6l_common_receiver/events.jsonl",
+    "artifacts/r6l_common_receiver/run_receipt.json",
+    "artifacts/r6l_common_receiver/common_receiver_reservoir.envelope.json"
+  ],
+  "stop_condition": "Stop now after creating and hashing this manifest. Do not implement or execute R6l until the manifest-only commit is separately authorized and created."
+}
