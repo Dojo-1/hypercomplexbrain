@@ -99,11 +99,13 @@
     "C2_enough_scientific_leaves_compared": true,
     "C3_identity_leaves_counted_not_dropped": true,
     "environment_exclusion_list_is_closed": true,
+    "event_identity_values_are_well_formed_sha256": true,
     "event_semantic_fields_actually_compared": true,
     "event_semantic_values_agree": true,
     "event_sequences_agree": true,
     "event_sequences_contiguous": true,
     "frozen_runner_only_digest_matches": true,
+    "no_declared_producer_only_leaf_went_missing": true,
     "no_r6k_artifact_was_written": true,
     "producer_only_leaves_match_the_frozen_set_exactly": true,
     "reproduction_emitted_no_leaf_the_producer_lacks": true
@@ -113,6 +115,8 @@
   "events": {
     "identity_fields_differing": 175,
     "key_order_equal": true,
+    "malformed_identity_examples": [],
+    "malformed_identity_values": 0,
     "produced_rows": 320,
     "reproduced_rows": 320,
     "row_count_equal": true,
@@ -201,6 +205,7 @@
   "verdict_detail": {
     "backstop": 1000,
     "contradiction_reasons": {},
+    "declared_but_absent_only_in_produced": [],
     "declared_only_in_produced": [
       ".architecture_or_hardware_claim_authorized",
       ".checks.ambient_dimension_matches_module",
