@@ -73,6 +73,7 @@ PREREG = ROOT / "manifests" / "qsigma_r6k_w1_semantic_reproduction_preregistrati
 CORRECTION = ROOT / "manifests" / "qsigma_r6k_w1_semantic_reproduction_method_correction.json"
 PARTB = ROOT / "manifests" / "qsigma_r6k_w1_partb_interval_correction.json"
 PARTB_PROTOCOL = ROOT / "manifests" / "qsigma_r6k_w1_partb_effective_protocol.json"
+PARTB_PROTOCOL_V2 = ROOT / "manifests" / "qsigma_r6k_w1_partb_effective_protocol_v2.json"
 TOLERANCE = 1e-10
 PERTURBATION = 1e-9
 
@@ -254,6 +255,10 @@ def phase_run() -> int:
             events["semantic_value_mismatch_count"] == 0,
         "event_semantic_fields_actually_compared":
             events["semantic_fields_compared"] > 0,
+        "event_identity_values_are_well_formed_sha256":
+            events["malformed_identity_values"] == 0,
+        "no_declared_producer_only_leaf_went_missing":
+            not verdict["declared_but_absent_only_in_produced"],
         "environment_exclusion_list_is_closed":
             set(ENVIRONMENT_METADATA_LEAVES)
             == {".resource_ledger.compiler_proxy.qiskit_version"},
@@ -338,6 +343,19 @@ def phase_envelope() -> int:
     provenance.
     """
     report = json.loads((OUT / "comparison.json").read_text(encoding="utf-8"))
+
+    # REFUSE ON ANY FALSE CONTROL. The run phase exited 1 when a control failed
+    # and this phase never read the controls at all, so an exit-1 report could
+    # still be enveloped by invoking the second phase by hand. An external audit
+    # demonstrated it. The gate is here, not only in the caller's exit status.
+    failed = sorted(k for k, v in report["controls"].items() if not v)
+    if failed or report["verdict"] != "CONFIRMED":
+        print(json.dumps({
+            "phase": "envelope", "FAILED": True,
+            "reason": "the run did not pass every control, or its verdict is not CONFIRMED",
+            "verdict": report["verdict"], "failed_controls": failed}, indent=2))
+        return 1
+
     commit = current_commit()
     # The three manifests are in raw_artifacts, NOT in observed_result.
     # `rules_bound_to` was informational: zeroing a digest there left
@@ -356,6 +374,7 @@ def phase_envelope() -> int:
             CORRECTION,
         "manifests/qsigma_r6k_w1_partb_interval_correction.json": PARTB,
         "manifests/qsigma_r6k_w1_partb_effective_protocol.json": PARTB_PROTOCOL,
+        "manifests/qsigma_r6k_w1_partb_effective_protocol_v2.json": PARTB_PROTOCOL_V2,
     }
     binding = {}
     for rel, path in raw.items():

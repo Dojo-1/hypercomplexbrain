@@ -347,6 +347,58 @@ CORRECTIONS = (
         "tests/test_semantic_reproduction.py::test_part_b_protocol_fixes_the_three_arithmetic_errors",
         False,
     ),
+    Correction(
+        "R6k-W1",
+        "True == 1 in the event comparison: type classes were never compared, so "
+        "substituting the boolean true for the integer 1 at sequence and at "
+        "metadata.source_index in the real trace gave zero mismatches and "
+        "CONFIRMED. compare_results was protected by its leaf-kind guard; the "
+        "event path was not. An ill-formed sha256 value was also exempted from "
+        "comparison by wearing the prefix, without the prefix ever being validated",
+        "tests/test_semantic_reproduction.py::test_true_is_not_one_in_the_event_comparison",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "the exact 43-path control lived only in the runner: the verdict asked "
+        "whether every OBSERVED producer-only leaf was inside the declared set, "
+        "so 42 observed against 43 declared returned CONFIRMED. The runner exited "
+        "1 and the envelope phase never read the controls, so an exit-1 report "
+        "could still be enveloped by invoking the second phase by hand",
+        "tests/test_semantic_reproduction.py::test_a_declared_producer_only_leaf_going_missing_contradicts",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "the part B outcome table contradicted itself four ways in one document: "
+        "0.296392 was said to lie inside (0.30, 0.40) and does not; the prose "
+        "made a first pass at 0.40 INCONCLUSIVE while the lookup table made it "
+        "REFUTED; a B3 information-margin failure had no outcome; and K9 slice "
+        "disagreement had no outcome. A table decided by whoever reads it is an "
+        "unfrozen threshold wearing a schema",
+        "tests/test_part_b_outcome.py::test_the_upper_endpoint_is_not_inside_the_last_bracket",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "part B's margins were referenced rather than frozen, and the "
+        "probability gate was written strictly positive where R6l gates "
+        "inclusively on m_P = delta_P - 1/16 >= 0 and m_I = delta_I - 0.02 >= 0. "
+        "A strict gate is a different gate and the difference is reachable, "
+        "because 1/16 is exact in binary64",
+        "tests/test_part_b_outcome.py::test_the_gates_are_r6ls_and_inclusive",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "part B's execution precondition named C_exec and C_raw on origin. Raw "
+        "artifacts without their envelope have no commit binding, no digest "
+        "binding and no declared verifier -- part B may not consume upstream "
+        "evidence weaker than the evidence it intends to produce. The "
+        "precondition is now a verified R6l C_env",
+        "tests/test_part_b_outcome.py::test_the_manifest_requires_c_env_not_c_raw",
+        False,
+    ),
 )
 
 

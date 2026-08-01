@@ -1,0 +1,111 @@
+{
+  "schema": "hypercomplexbrain.preregistration.amendment.v1",
+  "round": "QSigma-R6k-W1",
+  "part": "B",
+  "status": "pre-execution. Supersedes qsigma_r6k_w1_partb_effective_protocol.json, which superseded qsigma_r6k_w1_partb_interval_correction.json. Where any of the three differ, this one governs.",
+  "supersedes": [
+    "manifests/qsigma_r6k_w1_partb_effective_protocol.json",
+    "manifests/qsigma_r6k_w1_partb_interval_correction.json"
+  ],
+
+  "reason": "The previous effective protocol wrote its outcome table as English and the English contradicted itself in four ways, all found externally. A table decided by whoever reads it is an unfrozen threshold wearing a schema. The table is now a FUNCTION -- src/aionq/part_b_outcome.py -- total over its declared inputs, and this manifest quotes it rather than restating it. Restating it is how the two copies came to disagree.",
+
+  "execution_precondition": {
+    "requirement": "R6l C_env must be SEALED AND VERIFIED on origin. C_exec and C_raw reaching origin is not sufficient.",
+    "why_the_previous_wording_was_wrong": "the earlier manifests said part B becomes executable when C_exec and C_raw reach origin. Raw artifacts without their envelope are numbers with no commit binding, no digest binding and no declared verifier -- exactly the state this whole round was opened to repair in R6k. Part B may not consume upstream evidence weaker than the evidence it intends to produce.",
+    "checkable": "the R6l C_env commit must exist on origin, its envelope must verify, and its declared raw artifacts must resolve at its recorded commit with matching bytes"
+  },
+
+  "the_outcome_table_is_code": {
+    "module": "src/aionq/part_b_outcome.py",
+    "entry_point": "part_b_outcome(rows, clean_slice_rows=None)",
+    "totality": "every input either returns one of INVALID, REFUTED, INCONCLUSIVE, SUPPORTING with a stated reason, or raises. No input falls through to a default.",
+    "tests": "tests/test_part_b_outcome.py",
+    "the_four_self_contradictions_it_removes": [
+      "0.296392 was said to lie inside the bracket (0.30, 0.40). It does not; 0.296392 < 0.30. Only (0.25, 0.30) contains it.",
+      "the prose made a first pass at 0.40 INCONCLUSIVE while the lookup table in the same document made 0.40 REFUTED.",
+      "a B3 failure -- the information margin going negative at a held-out depth -- had no outcome at all.",
+      "K9 -- clean and noisy slices disagreeing about the crossing -- had no typed outcome either."
+    ]
+  },
+
+  "frozen_margins": {
+    "probability": "m_P = delta_P - 1/16",
+    "information": "m_I = delta_I - 0.02",
+    "gate": "INCLUSIVE, >= 0, on both. NOT strictly positive.",
+    "why_this_matters": "the previous manifest wrote the probability gate as strictly positive. A strict gate is a different gate: delta_P exactly 1/16 is representable in binary64 and the two rules disagree there. These are R6l's own gates, taken verbatim.",
+    "arithmetic": "IEEE-754 binary64 throughout, unrounded. 1/16 is exact; 0.02 is the nearest double and is used exactly as R6l uses it. Neither side is rounded before comparison.",
+    "constants_in_code": {
+      "PROBABILITY_GATE": 0.0625,
+      "INFORMATION_GATE": 0.02
+    }
+  },
+
+  "bracket_rule": {
+    "definition": "the crossing is localised to (previous grid depth, first passing depth); when the first pass is 0.15 the lower edge is R6l's own 0.1, the nearest measured depth below it",
+    "trichotomy": {
+      "inside": "every point of the bracket is admissible -> SUPPORTING",
+      "straddling": "an admissible-interval endpoint falls within the bracket, so the grid cannot say which side the crossing is on -> INCONCLUSIVE, and it may not be resolved by adding depths after seeing the data",
+      "outside": "no point of the bracket is admissible, so the crossing is inadmissible wherever in it it falls -> REFUTED, not INCONCLUSIVE"
+    },
+    "the_brackets_this_grid_produces": {
+      "(0.10, 0.15)": "straddling  -- contains 0.126548",
+      "(0.15, 0.20)": "inside",
+      "(0.20, 0.25)": "inside",
+      "(0.25, 0.30)": "straddling  -- contains 0.296392",
+      "(0.30, 0.40)": "outside     -- entirely above 0.296392; J_psi >= 0.2036 throughout"
+    }
+  },
+
+  "expected_classification_by_first_passing_depth": {
+    "0.15": "INCONCLUSIVE",
+    "0.20": "SUPPORTING",
+    "0.25": "SUPPORTING",
+    "0.30": "INCONCLUSIVE",
+    "0.40": "REFUTED",
+    "none through 0.40": "REFUTED",
+    "non-monotone": "INVALID",
+    "B3 failure at any depth": "REFUTED",
+    "K9 slice disagreement": "INVALID",
+    "note": "asserted as a parametrised test against the function, so the table and the code cannot drift apart the way the prose and the lookup did"
+  },
+
+  "measurement_inputs_that_must_be_frozen_before_execution": {
+    "r6l_source_commit": "PENDING -- the R6l C_exec commit SHA, recorded here before part B runs",
+    "r6l_c_env_commit": "PENDING -- the R6l C_env commit SHA, recorded here before part B runs",
+    "r6l_result_digest": "PENDING -- sha256 of the R6l result artifact at C_env",
+    "r6l_envelope_digest": "PENDING -- sha256 of the R6l envelope at C_env",
+    "source_ring_inputs": "PENDING -- the exact winding-ring source points R6l uses, by digest",
+    "receiver_construction": "the pooled map-blind PGM rebuilt at each held-out depth from R6l's recipe, uniform priors, ambient dimension 16. Reusing a receiver fitted at an original depth is forbidden; that measures transfer, not the crossing.",
+    "noise_slice": "the CLEAN slice only -- state-noise 0.0 and receiver-label-noise 0.0. The other fifteen coordinates are recorded and reported, never used to decide.",
+    "aggregation": "none. One margin per (depth, noise coordinate) cell, as R6l emits.",
+    "rule": "part B MAY NOT EXECUTE while any field above reads PENDING. Filling them requires the R6l C_env artifacts, which is why the precondition is C_env and not C_raw."
+  },
+
+  "preregistration_ordering_binding": {
+    "note": "the previous protocol manifest was classified UNBOUND by aionq.self_audit.preregistration_ordering because it declared no implementation paths. It is now bound.",
+    "committed_before_any_implementation": true
+  },
+  "files_expected_to_change": [
+    "src/aionq/part_b_outcome.py",
+    "tests/test_part_b_outcome.py"
+  ],
+
+  "typed_remainder": [
+    {
+      "kind": "method_remainder",
+      "carrier": "a table restated in two places",
+      "comparison": "the prose table and the lookup table disagreed about rho = 0.40 while sitting in one document. Two copies of a rule drift; one copy quoted from executable code cannot. That is why this manifest points at a function instead of describing one."
+    },
+    {
+      "kind": "scope_remainder",
+      "carrier": "PENDING fields",
+      "comparison": "five measurement inputs are unfrozen because the artifacts that would fix them are not on origin. Part B is blocked on those, not merely waiting for them, and the block is mechanical: the fields read PENDING and the protocol forbids execution while they do."
+    },
+    {
+      "kind": "scope_remainder",
+      "carrier": "one ring, one slice, one grid",
+      "comparison": "a SUPPORTING outcome would be a numerical coincidence of two curves at a single winding ring, in a single noise slice, on a five-point grid with two brackets INCONCLUSIVE by construction. Held-out rings are the next thing it would need."
+    }
+  ]
+}

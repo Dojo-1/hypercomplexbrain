@@ -51,7 +51,8 @@ def _verdict(a, b, events=None, **kw):
     # when the population was added.
     ev = events or {"row_count_equal": True, "key_order_equal": True,
                     "sequence_equal": True, "sequences_contiguous": True,
-                    "semantic_fields_compared": 7, "semantic_value_mismatch_count": 0}
+                    "semantic_fields_compared": 7, "semantic_value_mismatch_count": 0,
+                    "malformed_identity_values": 0}
     return reproduction_verdict(compare_results(a, b, TOL),
                                 structural_checks(a, b), ev, **kw)
 
@@ -563,3 +564,99 @@ def test_the_manifests_are_mechanically_bound_not_merely_quoted():
                  "qsigma_r6k_w1_partb_effective_protocol.json"):
         assert f"manifests/{name}" in bound, name
     assert "rules_bound_to" not in env.observed_result
+
+
+# ------------------------------------------------- True == 1, and other types
+
+def test_true_is_not_one_in_the_event_comparison(tmp_path):
+    """Substituting the boolean true for the integer 1 gave zero mismatches.
+
+    An external audit did it on the real trace, at `sequence` and at
+    `metadata.source_index`, and obtained CONFIRMED -- because the event path
+    fell through to `x != y` and `True == 1` in Python. `compare_results` was
+    protected by comparing `leaf_kind` on both sides; the event path had no
+    equivalent. Type class is now required to match before any value comparison,
+    on both paths.
+    """
+    from aionq.semantic_reproduction import compare_event_traces, type_class
+    assert type_class(True) == "bool" and type_class(1) == "int"
+    assert True == 1                                   # the trap, stated
+    (tmp_path / "a").mkdir(); (tmp_path / "b").mkdir()
+    b_rows = _rows()
+    b_rows[1]["sequence"] = True                       # was int 1
+    b_rows[1]["metadata"]["source_index"] = True       # was int 1
+    r = compare_event_traces(_trace(tmp_path / "a", _rows()),
+                             _trace(tmp_path / "b", b_rows))
+    assert r["semantic_value_mismatch_count"] == 2
+    notes = {m.get("note", "") for m in r["semantic_value_mismatches"]}
+    assert any("type changed" in n for n in notes)
+
+
+def test_a_malformed_digest_is_not_exempted_by_wearing_the_prefix(tmp_path):
+    """`leaf_kind` exempts anything starting sha256: from comparison.
+
+    So an ill-formed value buys exemption by carrying the prefix. The prefix is
+    now validated against ^sha256:[0-9a-f]{64}$ and violations are counted.
+    """
+    from aionq.semantic_reproduction import compare_event_traces
+    (tmp_path / "a").mkdir(); (tmp_path / "b").mkdir()
+    b_rows = _rows()
+    b_rows[0]["state_digest"] = "sha256:notavaliddigest"
+    r = compare_event_traces(_trace(tmp_path / "a", _rows()),
+                             _trace(tmp_path / "b", b_rows))
+    assert r["malformed_identity_values"] == 1
+
+
+def test_the_result_comparison_also_requires_matching_types():
+    a = _doc(count=1)
+    b = _doc(count=True)
+    r = compare_results(a, b, TOL)
+    assert any("type changed" in m.get("note", "") for m in r["discrete_mismatches"])
+
+
+def test_a_declared_producer_only_leaf_going_missing_contradicts():
+    """42 observed against 43 declared returned CONFIRMED.
+
+    The verdict asked only whether every OBSERVED producer-only leaf was inside
+    the declared set, so a leaf the producer STOPPED emitting was accepted. The
+    exact-set control existed in the runner and never reached the verdict -- the
+    runner exited 1 while the report said CONFIRMED. Set equality, both ways.
+    """
+    a = _doc(**{"checks": {"one": True, "two": True}})
+    b = _doc()
+    both = _verdict(a, b, minimum_fraction=0.0, backstop=1,
+                    allowed_only_in_produced=[".checks.one", ".checks.two"])
+    assert both["verdict"] == "CONFIRMED"
+    missing = _verdict(a, b, minimum_fraction=0.0, backstop=1,
+                       allowed_only_in_produced=[".checks.one", ".checks.two",
+                                                 ".checks.three"])
+    assert missing["verdict"] == "CONTRADICTED"
+    assert "declared_producer_only_leaves_absent" in missing["contradiction_reasons"]
+    assert missing["declared_but_absent_only_in_produced"] == [".checks.three"]
+
+
+def test_the_envelope_phase_refuses_a_report_with_any_false_control(tmp_path):
+    """The runner exited 1; the envelope phase never read the controls.
+
+    So an exit-1 report could be enveloped by invoking the second phase by hand.
+    The gate belongs in the phase, not only in the caller's exit status.
+    """
+    import importlib.util
+    import shutil
+    spec = importlib.util.spec_from_file_location(
+        "w1gate", repo_root() / "experiments" / "run_r6k_semantic_reproduction.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    real = mod.OUT / "comparison.json"
+    if not real.is_file():
+        pytest.skip("run the `run` phase first")
+    report = json.loads(real.read_text(encoding="utf-8"))
+    backup = tmp_path / "comparison.json"
+    shutil.copy2(real, backup)
+    try:
+        report["controls"]["C1_perturbed_copy_is_contradicted"] = False
+        real.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n",
+                        encoding="utf-8")
+        assert mod.phase_envelope() == 1
+    finally:
+        shutil.copy2(backup, real)

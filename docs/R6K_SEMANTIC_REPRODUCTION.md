@@ -290,3 +290,66 @@ grid, stated rather than absorbed.
 
 The ledger is **20/20 bound, 12 self-caught / 8 external**. I reported the
 external transition as 3 → 9; it is **3 → 8**.
+
+
+## Third external audit — the wall moved to typed decision semantics
+
+Five findings. Four repaired, one accepted as queued.
+
+**`True == 1`.** The event comparison never compared *types*. Substituting the
+boolean `true` for the integer `1` at `sequence` and at `metadata.source_index`
+in the real trace gave **zero mismatches and CONFIRMED** — reproduced here before
+repair. `compare_results` was protected by comparing `leaf_kind` on both sides;
+the event path had no equivalent and fell through to `x != y`. Type class is now
+required to match before any value comparison, **on both paths**. And an
+ill-formed digest was exempted from comparison by *wearing the prefix* — `sha256:`
+values are now validated against `^sha256:[0-9a-f]{64}$` and violations counted.
+
+**The exact-43 control never reached the verdict.** It asked only whether every
+*observed* producer-only leaf was inside the declared set, so **42 observed
+against 43 declared returned CONFIRMED** — a leaf the producer stopped emitting
+was accepted. The runner exited 1 and the envelope phase never read the controls,
+so an exit-1 report could be enveloped by invoking the second phase by hand. Now:
+set equality in both directions inside the verdict, and `phase_envelope` **refuses
+to write** if any control is false or the verdict is not CONFIRMED.
+
+**`verify()` still accepts a forged `commit_sha`.** Accepted, not repaired —
+canonical layer, queued behind your `C_env`.
+
+**The part B outcome table contradicted itself four ways.** All four confirmed:
+0.296392 does *not* lie inside (0.30, 0.40); the prose made a first pass at 0.40
+INCONCLUSIVE while the lookup table in the same document made it REFUTED; a B3
+information-margin failure had no outcome; K9 had no outcome. A table decided by
+whoever reads it is an unfrozen threshold wearing a schema — so the table is now
+**a function**, `src/aionq/part_b_outcome.py`, total over its inputs, and the
+manifest quotes it instead of restating it. Restating is how the two copies came
+to disagree.
+
+The bracket rule is now a trichotomy, which is what fixes 0.40:
+
+| bracket | position | outcome |
+|---|---|---|
+| (0.10, 0.15) | straddling — contains 0.126548 | INCONCLUSIVE |
+| (0.15, 0.20) | inside | SUPPORTING |
+| (0.20, 0.25) | inside | SUPPORTING |
+| (0.25, 0.30) | straddling — contains 0.296392 | INCONCLUSIVE |
+| (0.30, 0.40) | **outside** — entirely above 0.296392 | **REFUTED** |
+
+A bracket wholly above the interval places the crossing at `J_psi ≥ 0.2036` with
+certainty, so it refutes rather than being inconclusive. That reproduces your
+conservative classification on all six branches, plus REFUTED for a B3 failure
+and INVALID for K9.
+
+**The margins are now frozen, and inclusive.** `m_P = ΔP − 1/16 ≥ 0`,
+`m_I = ΔI − 0.02 ≥ 0`, IEEE-754 binary64, unrounded, taken verbatim from R6l. The
+previous manifest wrote the probability gate as strictly positive — a *different*
+gate, and the difference is reachable, since 1/16 is exact in binary64 and
+`ΔP == 1/16` lands on the boundary. A test pins that boundary case.
+
+**Part B's precondition is now a verified R6l `C_env`, not `C_exec`/`C_raw`.**
+Raw artifacts without their envelope have no commit binding, no digest binding
+and no declared verifier — part B may not consume upstream evidence weaker than
+the evidence it intends to produce. Five measurement inputs read `PENDING` and
+the protocol forbids execution while they do, so the block is mechanical rather
+than a promise. The protocol manifest now declares `files_expected_to_change`, so
+`preregistration_ordering` classifies it as bound rather than flag-only.

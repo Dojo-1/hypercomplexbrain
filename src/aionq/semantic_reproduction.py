@@ -47,7 +47,8 @@ import re
 from pathlib import Path
 
 __all__ = [
-    "DIGEST_PATH_PATTERN", "ENVIRONMENT_METADATA_LEAVES", "flatten", "leaf_kind",
+    "DIGEST_PATH_PATTERN", "ENVIRONMENT_METADATA_LEAVES", "SHA256_VALUE",
+    "type_class", "flatten", "leaf_kind",
     "compare_results", "reproduction_verdict", "perturb_leaf",
     "structural_checks", "compare_event_traces",
 ]
@@ -70,6 +71,34 @@ DIGEST_PATH_PATTERN = re.compile(
 ENVIRONMENT_METADATA_LEAVES = frozenset({
     ".resource_ledger.compiler_proxy.qiskit_version",
 })
+
+#: A well-formed SHA-256 identity value.  ``leaf_kind`` classifies anything
+#: starting ``sha256:`` as IDENTITY and therefore exempt from comparison, so an
+#: ill-formed value would be exempted by wearing the prefix.  Validated instead.
+SHA256_VALUE = re.compile(r"^sha256:[0-9a-f]{64}$")
+
+
+def type_class(value) -> str:
+    """The comparison type of a JSON scalar, with ``bool`` split from ``int``.
+
+    ``True == 1`` in Python.  An external audit substituted ``true`` for ``1`` at
+    ``sequence`` and at ``metadata.source_index`` in the real trace and obtained
+    zero mismatches and CONFIRMED, because the event comparison fell through to
+    ``x != y``.  :func:`compare_results` was protected -- it compares
+    ``leaf_kind`` on both sides first -- and the event path was not.  Type
+    equality is now required before any value comparison, on both paths.
+    """
+    if isinstance(value, bool):
+        return "bool"
+    if value is None:
+        return "null"
+    if isinstance(value, int):
+        return "int"
+    if isinstance(value, float):
+        return "float"
+    if isinstance(value, str):
+        return "str"
+    return type(value).__name__
 
 
 def flatten(obj, prefix: str = "") -> dict:
@@ -133,6 +162,15 @@ def compare_results(produced, reproduced, tolerance: float) -> dict:
 
     for path in shared:
         a, b = left[path], right[path]
+        # Type equality first, on this path too. leaf_kind already separates
+        # bool from int here, so this is belt as well as braces -- but the event
+        # path was unprotected for exactly this reason and cost a round.
+        if type_class(a) != type_class(b):
+            discrete_mismatches.append(
+                {"path": path, "produced": repr(a)[:120],
+                 "reproduced": repr(b)[:120],
+                 "note": f"type changed: {type_class(a)} -> {type_class(b)}"})
+            continue
         kind = leaf_kind(path, a)
         if leaf_kind(path, b) != kind:
             discrete_mismatches.append(
@@ -249,6 +287,7 @@ def compare_event_traces(produced_path, reproduced_path,
     seq_b = [r.get("sequence") for r in b]
 
     value_mismatches: list = []
+    malformed_identity: list = []
     identity_differences = 0
     compared = 0
     worst = {"delta": 0.0, "path": None}
@@ -260,8 +299,22 @@ def compare_event_traces(produced_path, reproduced_path,
                     {"row": index, "path": path, "note": "field present on one side only"})
                 continue
             x, y = left[path], right[path]
+            if type_class(x) != type_class(y):
+                value_mismatches.append(
+                    {"row": index, "path": path, "produced": repr(x)[:80],
+                     "reproduced": repr(y)[:80],
+                     "note": f"type changed: {type_class(x)} -> {type_class(y)}"})
+                continue
             kind = leaf_kind(path, x)
             if kind == "identity":
+                # An ill-formed digest is exempted from comparison by wearing the
+                # prefix, so the prefix alone cannot be the licence.
+                for side, value in (("produced", x), ("reproduced", y)):
+                    if isinstance(value, str) and value.startswith("sha256:") \
+                            and not SHA256_VALUE.match(value):
+                        malformed_identity.append(
+                            {"row": index, "path": path, "side": side,
+                             "value": repr(value)[:80]})
                 identity_differences += (x != y)
                 continue
             compared += 1
@@ -292,6 +345,8 @@ def compare_event_traces(produced_path, reproduced_path,
         "semantic_value_mismatches": value_mismatches[:20],
         "semantic_value_mismatch_count": len(value_mismatches),
         "identity_fields_differing": identity_differences,
+        "malformed_identity_values": len(malformed_identity),
+        "malformed_identity_examples": malformed_identity[:10],
         "worst_absolute_difference": worst["delta"],
         "worst_difference_path": worst["path"],
     }
@@ -375,9 +430,17 @@ def reproduction_verdict(comparison: dict, structural: dict, events: dict,
     evidence that the population agrees.  `allowed_only_in_produced` must now be
     declared by the caller; anything outside it contradicts.
     """
+    # SET EQUALITY, both directions. The previous rule asked only whether every
+    # observed producer-only leaf was inside the declared set, so 42 observed
+    # against 43 declared passed: a leaf the producer STOPPED emitting was
+    # silently accepted. An external audit demonstrated it on the real
+    # documents. The exact-set control existed in the runner and never reached
+    # the verdict, which meant the runner exited 1 while the report said
+    # CONFIRMED -- and the envelope phase did not read the controls.
     allowed = frozenset(allowed_only_in_produced or ())
-    undeclared_produced = [p for p in comparison["only_in_produced"]
-                           if p not in allowed]
+    observed = frozenset(comparison["only_in_produced"])
+    undeclared_produced = sorted(observed - allowed)
+    missing_declared = sorted(allowed - observed)
 
     compared = comparison["scientific_leaves_compared"]
     comparable = comparison["shared_leaves"] - comparison["identity_leaves"]
@@ -399,8 +462,10 @@ def reproduction_verdict(comparison: dict, structural: dict, events: dict,
             bool(events.get("semantic_value_mismatch_count", 1)),
         "no_event_field_was_compared":
             not events.get("semantic_fields_compared", 0),
+        "malformed_identity_values": bool(events.get("malformed_identity_values", 1)),
         "leaves_only_in_reproduced": bool(comparison["only_in_reproduced"]),
         "undeclared_leaves_only_in_produced": bool(undeclared_produced),
+        "declared_producer_only_leaves_absent": bool(missing_declared),
     }
     # identity_mismatches and environment_mismatches are the two populations
     # the preregistration and its amendment EXCLUDE by name. Listing them here
@@ -445,5 +510,6 @@ def reproduction_verdict(comparison: dict, structural: dict, events: dict,
             len(comparison["environment_mismatches"]),
         "declared_only_in_produced": sorted(allowed),
         "undeclared_only_in_produced": undeclared_produced,
+        "declared_but_absent_only_in_produced": missing_declared,
         "contradiction_reasons": {k: v for k, v in reasons.items() if v},
     }
