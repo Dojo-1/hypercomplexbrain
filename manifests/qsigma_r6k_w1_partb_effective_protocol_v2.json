@@ -7,15 +7,12 @@
     "manifests/qsigma_r6k_w1_partb_effective_protocol.json",
     "manifests/qsigma_r6k_w1_partb_interval_correction.json"
   ],
-
   "reason": "The previous effective protocol wrote its outcome table as English and the English contradicted itself in four ways, all found externally. A table decided by whoever reads it is an unfrozen threshold wearing a schema. The table is now a FUNCTION -- src/aionq/part_b_outcome.py -- total over its declared inputs, and this manifest quotes it rather than restating it. Restating it is how the two copies came to disagree.",
-
   "execution_precondition": {
     "requirement": "R6l C_env must be SEALED AND VERIFIED on origin. C_exec and C_raw reaching origin is not sufficient.",
     "why_the_previous_wording_was_wrong": "the earlier manifests said part B becomes executable when C_exec and C_raw reach origin. Raw artifacts without their envelope are numbers with no commit binding, no digest binding and no declared verifier -- exactly the state this whole round was opened to repair in R6k. Part B may not consume upstream evidence weaker than the evidence it intends to produce.",
     "checkable": "the R6l C_env commit must exist on origin, its envelope must verify, and its declared raw artifacts must resolve at its recorded commit with matching bytes"
   },
-
   "the_outcome_table_is_code": {
     "module": "src/aionq/part_b_outcome.py",
     "entry_point": "part_b_outcome(rows, clean_slice_rows=None)",
@@ -28,7 +25,6 @@
       "K9 -- clean and noisy slices disagreeing about the crossing -- had no typed outcome either."
     ]
   },
-
   "frozen_margins": {
     "probability": "m_P = delta_P - 1/16",
     "information": "m_I = delta_I - 0.02",
@@ -40,7 +36,6 @@
       "INFORMATION_GATE": 0.02
     }
   },
-
   "bracket_rule": {
     "definition": "the crossing is localised to (previous grid depth, first passing depth); when the first pass is 0.15 the lower edge is R6l's own 0.1, the nearest measured depth below it",
     "trichotomy": {
@@ -56,7 +51,6 @@
       "(0.30, 0.40)": "outside     -- entirely above 0.296392; J_psi >= 0.2036 throughout"
     }
   },
-
   "expected_classification_by_first_passing_depth": {
     "0.15": "INCONCLUSIVE",
     "0.20": "SUPPORTING",
@@ -69,7 +63,6 @@
     "K9 slice disagreement": "INVALID",
     "note": "asserted as a parametrised test against the function, so the table and the code cannot drift apart the way the prose and the lookup did"
   },
-
   "measurement_inputs_that_must_be_frozen_before_execution": {
     "r6l_source_commit": "PENDING -- the R6l C_exec commit SHA, recorded here before part B runs",
     "r6l_c_env_commit": "PENDING -- the R6l C_env commit SHA, recorded here before part B runs",
@@ -81,16 +74,20 @@
     "aggregation": "none. One margin per (depth, noise coordinate) cell, as R6l emits.",
     "rule": "part B MAY NOT EXECUTE while any field above reads PENDING. Filling them requires the R6l C_env artifacts, which is why the precondition is C_env and not C_raw."
   },
-
   "preregistration_ordering_binding": {
-    "note": "the previous protocol manifest was classified UNBOUND by aionq.self_audit.preregistration_ordering because it declared no implementation paths. It is now bound.",
-    "committed_before_any_implementation": true
+    "committed_before_any_implementation": false,
+    "committed_before_any_result": true,
+    "note": "the outcome FUNCTION src/aionq/part_b_outcome.py is co-committed with this manifest and is deliberately NOT claimed as preregistered by it -- the manifest quotes the function, so the function must exist for the manifest to be checkable at all. What this manifest preregisters is the part B EXECUTION, which has never run: files_expected_to_change names that surface, none of it exists, and aionq.self_audit.preregistration_ordering therefore reports status 'pending' rather than 'holds' or 'violated'.",
+    "co_committed_and_not_preregistered_by_this_manifest": [
+      "src/aionq/part_b_outcome.py",
+      "tests/test_part_b_outcome.py"
+    ]
   },
   "files_expected_to_change": [
-    "src/aionq/part_b_outcome.py",
-    "tests/test_part_b_outcome.py"
+    "experiments/run_part_b_crossing.py",
+    "artifacts/r6k_w1_part_b/crossing.json",
+    "artifacts/r6k_w1_part_b/crossing.envelope.json"
   ],
-
   "typed_remainder": [
     {
       "kind": "method_remainder",

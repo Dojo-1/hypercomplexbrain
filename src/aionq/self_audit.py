@@ -399,6 +399,19 @@ CORRECTIONS = (
         "tests/test_part_b_outcome.py::test_the_manifest_requires_c_env_not_c_raw",
         False,
     ),
+    Correction(
+        "SELF",
+        "preregistration_ordering conflated 'not yet implemented' with "
+        "'implemented first': it demanded at least one file created after the "
+        "manifest, so a preregistration whose experiment has not run scored "
+        "identically to one whose implementation predated it. Found by running "
+        "the rule against a manifest of this round that legitimately has no "
+        "implementation yet. Three states now -- holds, pending, violated -- and "
+        "a first draft of the split was ALSO wrong, scoring pre-existing "
+        "modification targets as violations and turning R4 and R5 red",
+        "tests/test_self_audit.py::test_ordering_distinguishes_pending_from_violated",
+        True,
+    ),
 )
 
 
@@ -725,6 +738,38 @@ def preregistration_ordering(root=None) -> dict:
         # way; the test is on files the round CREATED after the manifest. Files
         # added in the SAME commit as the manifest are counted separately: that
         # is not "preregistered before implementation", it is simultaneous.
+        # THREE states, not two. The rule previously demanded at least one file
+        # created after the manifest, so a preregistration whose experiment has
+        # not run yet was scored identically to one whose implementation
+        # PREDATED it. "Not yet" and "violated" are different facts and the
+        # audit was reporting them as the same one -- found by running the rule
+        # against a manifest of this round that legitimately has no
+        # implementation yet.
+        # Three states, and the boundaries between them took two attempts.
+        #
+        # `files_expected_to_change` says CHANGE, not create, so a declared file
+        # that already existed is a modification target. Scoring those as
+        # violations was the first draft and it turned R4 and R5 red for naming
+        # modules they went on to edit -- 4 and 5 of their declared files were
+        # created after their manifests, which is the round doing exactly what
+        # it preregistered.
+        #
+        # What IS a violation:
+        #   * a file created in the manifest's OWN commit -- simultaneous is not
+        #     before; or
+        #   * a manifest that CLAIMS committed_before_any_implementation while
+        #     its entire declared surface predates it and nothing was created
+        #     after. There the flag has no support at all.
+        #
+        # And "pending" is neither: a manifest whose experiment has not run yet
+        # has not failed, it has not been tested. Conflating that with a
+        # violation was the defect this three-state rule was written to remove.
+        if same or (flag and earlier and not later):
+            status = "violated"
+        elif later:
+            status = "holds"
+        else:
+            status = "pending"
         checkable.append({
             "manifest": name,
             "self_reported_flag": flag,
@@ -733,16 +778,23 @@ def preregistration_ordering(root=None) -> dict:
             "files_created_after_manifest": len(later),
             "files_predating_manifest": len(earlier),
             "files_in_the_manifest_commit": len(same),
-            "ordering_holds": bool(later) and not same,
+            "ordering_status": status,
+            "ordering_holds": status == "holds",
         })
-    holds = sum(1 for c in checkable if c["ordering_holds"])
+    holds = sum(1 for c in checkable if c["ordering_status"] == "holds")
+    pending = sum(1 for c in checkable if c["ordering_status"] == "pending")
+    violated = sum(1 for c in checkable if c["ordering_status"] == "violated")
     return {
         "preregistrations": len(checkable) + len(unbound),
         "checkable": len(checkable),
         "ordering_holds": holds,
+        "ordering_pending": pending,
+        "ordering_violated": violated,
         "unbound_flag_only": len(unbound),
         "schemaless_by_filename_only": len(schemaless),
-        "all_checkable_hold": holds == len(checkable) and bool(checkable),
+        # The claim is that NOTHING is violated. A pending preregistration has
+        # not failed; it has not yet been tested.
+        "all_checkable_hold": violated == 0 and bool(checkable),
         "rows": checkable,
         "unbound": unbound,
         "schemaless": schemaless,

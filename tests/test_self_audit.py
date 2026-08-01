@@ -527,3 +527,54 @@ def test_event_ledgers_are_pinned_to_lf():
     """
     attrs = (repo_root() / ".gitattributes").read_text(encoding="utf-8")
     assert "*.jsonl text eol=lf" in attrs
+
+
+def test_ordering_distinguishes_pending_from_violated(tmp_path):
+    """"Not yet implemented" and "implemented first" are different facts.
+
+    The rule demanded at least one file created after the manifest, so a
+    preregistration whose experiment has not run yet scored identically to one
+    whose implementation predated it. Found by running the rule against a
+    manifest of this round that legitimately has no implementation yet.
+    """
+    run = _git_repo(tmp_path, frozen_clock="2026-01-01T00:00:00 +0000")
+    (tmp_path / "artifacts").mkdir()
+    (tmp_path / "manifests").mkdir()
+    (tmp_path / "manifests" / "future_preregistration.json").write_text(json.dumps({
+        "schema": "hypercomplexbrain.preregistration.v1",
+        "files_expected_to_change": ["not_written_yet.py"],
+    }), encoding="utf-8")
+    run("git", "add", "manifests")
+    run("git", "commit", "-qm", "manifest for work not yet done")
+    r = preregistration_ordering(tmp_path)
+    assert r["rows"][0]["ordering_status"] == "pending"
+    assert r["ordering_violated"] == 0
+    assert r["all_checkable_hold"] is True, "pending is not a failure"
+
+
+def test_a_pre_existing_modification_target_is_not_a_violation(tmp_path):
+    """`files_expected_to_change` says CHANGE, not create.
+
+    A first draft of the three-state rule scored any pre-existing declared file
+    as a violation, which turned R4 and R5 red for naming modules they went on
+    to edit. Only a file created in the manifest's own commit violates.
+    """
+    run = _git_repo(tmp_path, frozen_clock="2026-01-01T00:00:00 +0000")
+    (tmp_path / "artifacts").mkdir()
+    (tmp_path / "manifests").mkdir()
+    (tmp_path / "existing.py").write_text("x = 1\n", encoding="utf-8")
+    run("git", "add", "existing.py")
+    run("git", "commit", "-qm", "a module that already exists")
+    (tmp_path / "manifests" / "m_preregistration.json").write_text(json.dumps({
+        "schema": "hypercomplexbrain.preregistration.v1",
+        "files_expected_to_change": ["existing.py", "new.py"],
+    }), encoding="utf-8")
+    run("git", "add", "manifests")
+    run("git", "commit", "-qm", "manifest")
+    (tmp_path / "new.py").write_text("y = 2\n", encoding="utf-8")
+    run("git", "add", "new.py")
+    run("git", "commit", "-qm", "implementation after the manifest")
+    row = preregistration_ordering(tmp_path)["rows"][0]
+    assert row["files_predating_manifest"] == 1
+    assert row["files_created_after_manifest"] == 1
+    assert row["ordering_status"] == "holds"
