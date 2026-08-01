@@ -309,6 +309,44 @@ CORRECTIONS = (
         "tests/test_semantic_reproduction.py::test_part_b_states_one_interval_not_two",
         False,
     ),
+    Correction(
+        "R6k-W1",
+        "the event comparator compared FIELD NAMES, not values: action, key, "
+        "shard and every value inside metadata were never looked at, and the "
+        "verdict never consumed sequences_contiguous. An external audit altered "
+        "those semantic values and still obtained CONFIRMED -- the module's own "
+        "defect, inside the module written to expose it",
+        "tests/test_semantic_reproduction.py::test_event_values_are_compared_not_only_field_names",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "an outcome-derived allowlist: broad prefixes applied to the OBSERVED "
+        "producer-only paths, so a newly missing .checks.* leaf was excused "
+        "automatically. The rule was 'anything shaped like a runner section' "
+        "rather than 'these forty-three'. Replaced with the frozen 43-path set "
+        "and its canonical digest, compared for equality in both directions",
+        "tests/test_semantic_reproduction.py::test_the_runner_only_set_is_frozen_and_its_digest_matches",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "rules_bound_to was informational: the manifest digests sat in "
+        "observed_result, so replacing one with zeros left verify().ok True. The "
+        "committed hashes happened to be correct and nothing established that. "
+        "Moved into raw_artifacts, which verify() re-reads from disk",
+        "tests/test_semantic_reproduction.py::test_the_manifests_are_mechanically_bound_not_merely_quoted",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "three factual errors in the part B interval amendment: rho = 0.30 was "
+        "called inside [0.126548, 0.296392] and is outside it; the held-out grid "
+        "was called uniformly spaced at 0.05 when the final gap is 0.10; and "
+        "J_psi(0.40) was written 0.302 rather than 0.3032385898",
+        "tests/test_semantic_reproduction.py::test_part_b_protocol_fixes_the_three_arithmetic_errors",
+        False,
+    ),
 )
 
 

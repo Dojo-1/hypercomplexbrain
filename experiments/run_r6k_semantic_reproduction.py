@@ -72,17 +72,81 @@ OUT = ROOT / "artifacts" / "r6k_w1_semantic_reproduction"
 PREREG = ROOT / "manifests" / "qsigma_r6k_w1_semantic_reproduction_preregistration.json"
 CORRECTION = ROOT / "manifests" / "qsigma_r6k_w1_semantic_reproduction_method_correction.json"
 PARTB = ROOT / "manifests" / "qsigma_r6k_w1_partb_interval_correction.json"
+PARTB_PROTOCOL = ROOT / "manifests" / "qsigma_r6k_w1_partb_effective_protocol.json"
 TOLERANCE = 1e-10
 PERTURBATION = 1e-9
 
-#: Amendment: `reproduction_verdict` now demands the caller DECLARE which
-#: producer-only leaves are expected, instead of tolerating them wholesale.
-#: These are the sections `run_equal_resource_reservoir.py` adds and the library
-#: entry point cannot emit; anything outside them contradicts.
-ALLOWED_ONLY_IN_PRODUCED_PREFIXES = (
-    ".checks.", ".execution_binding.", ".preregistration.", ".provenance.",
-    ".method_correction.", ".architecture_or_hardware_claim_authorized",
+#: The EXACT producer-only leaves, frozen as a closed set rather than derived
+#: from the observation.
+#:
+#: The previous version matched broad prefixes -- ``.checks.``,
+#: ``.execution_binding.`` and so on -- against whatever the comparison happened
+#: to report. That is an outcome-derived allowlist: a newly MISSING ``.checks.*``
+#: leaf would have been excused automatically, because the rule was "anything
+#: shaped like a runner section is fine" rather than "these forty-three". An
+#: external audit named it, and it is the same defect as the wholesale tolerance
+#: it replaced, one level more subtle.
+#:
+#: The set below is compared for EQUALITY, and its canonical digest is recorded
+#: in the envelope, so both a missing leaf and an extra one contradict.
+RUNNER_ONLY_LEAVES = (
+    ".architecture_or_hardware_claim_authorized",
+    ".checks.ambient_dimension_matches_module",
+    ".checks.codeword_count_matches_module",
+    ".checks.correction_binds_original_manifest",
+    ".checks.correction_requires_pre_result_status",
+    ".checks.depths_match_module",
+    ".checks.direct_dependency_digests_stable",
+    ".checks.event_keys_unique",
+    ".checks.event_semantic_digest_matches_report",
+    ".checks.event_sequences_contiguous",
+    ".checks.event_state_digests_present",
+    ".checks.event_trace_exists",
+    ".checks.event_trace_line_count_matches",
+    ".checks.exact_primary_grid_revalidated_by_runner",
+    ".checks.input_cells_are_distinct",
+    ".checks.manifest_sha256_matches_frozen_value",
+    ".checks.method_correction_sha256_matches_frozen_value",
+    ".checks.noise_strengths_match_module",
+    ".checks.pre_existing_dirty_files_unchanged_after_run",
+    ".checks.pre_existing_dirty_files_unchanged_before_run",
+    ".checks.sample_cell_count_is_116",
+    ".checks.source_grid_digest_before_after_equal",
+    ".execution_binding.base_head",
+    ".execution_binding.effective_input_count",
+    ".execution_binding.event_rows",
+    ".execution_binding.excluded_dirty_file_digests_before_after_equal",
+    ".execution_binding.json_finite",
+    ".execution_binding.primary_cell_count",
+    ".execution_binding.source_grid_digest_before_after_equal",
+    ".execution_binding.truncation_control_cell_count",
+    ".execution_binding.working_tree_commit_bound",
+    ".method_correction.path",
+    ".method_correction.sha256",
+    ".method_correction.status",
+    ".preregistration.history_witnessed",
+    ".preregistration.note",
+    ".preregistration.outcome_blind",
+    ".preregistration.path",
+    ".preregistration.sha256",
+    ".provenance.commit_binding",
+    ".provenance.commit_sha",
+    ".provenance.independent_witness",
+    ".provenance.producer",
 )
+
+#: sha256 of json.dumps(sorted(RUNNER_ONLY_LEAVES), sort_keys=True,
+#: separators=(",", ":")).encode() -- asserted by a test and recorded in the
+#: envelope, so the frozen set cannot be edited without the digest moving.
+RUNNER_ONLY_LEAVES_DIGEST = (
+    "sha256:71b4cce034cbd858d35f7aa1030f1548c93d382144a0e860aeff5d95e2fd6732")
+
+
+def runner_only_digest() -> str:
+    import hashlib
+    canon = json.dumps(sorted(RUNNER_ONLY_LEAVES), sort_keys=True,
+                       separators=(",", ":")).encode()
+    return "sha256:" + hashlib.sha256(canon).hexdigest()
 
 
 #: Typed remainders for the claim, hoisted to module level so the envelope
@@ -133,7 +197,7 @@ TYPED_REMAINDERS = [
 ]
 
 def _allowed(path: str) -> bool:
-    return path.startswith(ALLOWED_ONLY_IN_PRODUCED_PREFIXES)
+    return path in RUNNER_ONLY_LEAVES
 
 
 def phase_run() -> int:
@@ -155,7 +219,9 @@ def phase_run() -> int:
     comparison = compare_results(produced, reproduced, TOLERANCE)
     structural = structural_checks(produced, reproduced)
     events = compare_event_traces(R6K / "events.jsonl", events_path)
-    allowed = [p for p in comparison["only_in_produced"] if _allowed(p)]
+    # The frozen set, not the observed one. Passing the observation back in as
+    # its own allowance is what made the previous allowlist vacuous.
+    allowed = list(RUNNER_ONLY_LEAVES)
     verdict = reproduction_verdict(comparison, structural, events,
                                    allowed_only_in_produced=allowed)
 
@@ -176,11 +242,18 @@ def phase_run() -> int:
         "C2_enough_scientific_leaves_compared": verdict["enough_compared"],
         "C3_identity_leaves_counted_not_dropped":
             comparison["identity_leaves"] > 0,
-        "every_producer_only_leaf_is_a_declared_runner_section":
-            all(_allowed(p) for p in comparison["only_in_produced"]),
+        "producer_only_leaves_match_the_frozen_set_exactly":
+            sorted(comparison["only_in_produced"]) == sorted(RUNNER_ONLY_LEAVES),
+        "frozen_runner_only_digest_matches":
+            runner_only_digest() == RUNNER_ONLY_LEAVES_DIGEST,
         "reproduction_emitted_no_leaf_the_producer_lacks":
             not comparison["only_in_reproduced"],
         "event_sequences_agree": events["sequence_equal"],
+        "event_sequences_contiguous": events["sequences_contiguous"],
+        "event_semantic_values_agree":
+            events["semantic_value_mismatch_count"] == 0,
+        "event_semantic_fields_actually_compared":
+            events["semantic_fields_compared"] > 0,
         "environment_exclusion_list_is_closed":
             set(ENVIRONMENT_METADATA_LEAVES)
             == {".resource_ledger.compiler_proxy.qiskit_version"},
@@ -266,6 +339,11 @@ def phase_envelope() -> int:
     """
     report = json.loads((OUT / "comparison.json").read_text(encoding="utf-8"))
     commit = current_commit()
+    # The three manifests are in raw_artifacts, NOT in observed_result.
+    # `rules_bound_to` was informational: zeroing a digest there left
+    # verify(...).ok True, so the committed hashes happened to be correct and
+    # nothing established that fact. raw_artifacts digests are re-read from disk
+    # by verify(), which is the mechanical binding the audit asked for.
     raw = {
         "artifacts/r6k_w1_semantic_reproduction/reproduction.json":
             OUT / "reproduction.json",
@@ -273,6 +351,11 @@ def phase_envelope() -> int:
             OUT / "events.jsonl",
         "artifacts/r6k_w1_semantic_reproduction/comparison.json":
             OUT / "comparison.json",
+        "manifests/qsigma_r6k_w1_semantic_reproduction_preregistration.json": PREREG,
+        "manifests/qsigma_r6k_w1_semantic_reproduction_method_correction.json":
+            CORRECTION,
+        "manifests/qsigma_r6k_w1_partb_interval_correction.json": PARTB,
+        "manifests/qsigma_r6k_w1_partb_effective_protocol.json": PARTB_PROTOCOL,
     }
     binding = {}
     for rel, path in raw.items():
@@ -312,11 +395,19 @@ def phase_envelope() -> int:
             "identity_leaves_total": comparison["identity_leaves"],
             "identity_leaves_differing": comparison["identity_mismatches"],
             "runner_only_leaves_uncomparable": len(comparison["only_in_produced"]),
-            "rules_bound_to": {
-                "preregistration": file_digest(PREREG),
-                "method_correction": file_digest(CORRECTION),
-                "part_b_interval_correction": file_digest(PARTB),
-            },
+            "frozen_runner_only_leaves": len(RUNNER_ONLY_LEAVES),
+            "frozen_runner_only_digest": runner_only_digest(),
+            "event_semantic_fields_compared":
+                report["events"]["semantic_fields_compared"],
+            "party_identity_established": False,
+            "party_identity_note": (
+                "the producer names a script, not a party. "
+                "aionq.self_audit.party_kind reports it ambiguous and "
+                "independence_report caps this claim at REVIEWED. "
+                "EvidenceEnvelope.independent still returns True because it "
+                "compares producer and verifier STRINGS; that repair belongs to "
+                "the canonical evidence layer and is queued behind the R6l "
+                "C_env gate"),
             "verdict": report["verdict"],
         },
         commit_sha=commit,

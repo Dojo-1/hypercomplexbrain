@@ -226,3 +226,67 @@ One run against one run. No repeated execution on either platform, so
 run-to-run variation *within* a platform is unmeasured, and the 3.3e-11 cannot be
 attributed to the platform difference rather than to the arithmetic being
 deterministic.
+
+
+## Second external audit — four more, all confirmed
+
+P1-1 (binding) and P1-2 (CRLF) were closed. The other two were only partially
+closed, and the audit found two further P1s plus three arithmetic errors. All
+confirmed here before repair.
+
+**The event comparator compared field *names*, not values.** It matched
+`[tuple(r.keys()) for r in rows]` plus the `sequence` column, and nothing else —
+`action`, `key`, `shard` and every value inside `metadata` were never looked at,
+and the verdict never consumed `sequences_contiguous`. The auditor altered those
+values and still got CONFIRMED. That is this module's own headline defect,
+committed inside the module written to expose it. Events are now compared leaf by
+leaf with the same `leaf_kind` machinery: **2240 semantic fields per run**, 0
+mismatches, 175 `state_digest` differences correctly classified as identity.
+
+**The producer-only allowlist was outcome-derived.** Broad prefixes matched
+against whatever the comparison happened to report, so a newly *missing*
+`.checks.*` leaf would have been excused automatically — the rule was "anything
+shaped like a runner section" rather than "these forty-three". The same defect as
+the wholesale tolerance it replaced, one level subtler. Now a frozen 43-path
+tuple compared for **equality in both directions**, with canonical digest
+`sha256:71b4cce0…` recorded in the envelope and asserted by a test.
+
+**`rules_bound_to` was informational.** Zeroing a manifest digest there left
+`verify(...).ok` True. The committed hashes happened to be correct and nothing
+established that. All four manifests moved into `raw_artifacts`, which `verify()`
+re-reads from disk.
+
+**`EvidenceEnvelope.independent` still returns True for W1** while `self_audit`
+says REVIEWED. Accepted and **not repaired here** — it is a canonical-layer fix
+and the agreed order puts it behind the R6l `C_env` seal. The envelope now
+carries `party_identity_established: false` and states the divergence in its own
+observed_result, so the inconsistency is declared rather than silent.
+
+### Three arithmetic errors in the part B amendment
+
+| written | correct |
+|---|---|
+| "0.15 and 0.30 both sit inside [0.126548, 0.296392]" | **0.30 is outside** — only 0.15, 0.20, 0.25 are inside |
+| "held-out depths spaced 0.05 apart" | spacings are **0.05, 0.05, 0.05, 0.10** |
+| `J_psi(0.40) = 0.302` | **0.3032385898** |
+
+`manifests/qsigma_r6k_w1_partb_effective_protocol.json` supersedes the interval
+amendment and freezes what was still underdetermined: the **clean noise slice**
+named in advance (with K9 — if the clean slice and the fifteen noisy coordinates
+disagree, that disagreement *is* the result and may not be resolved by choosing a
+slice), no aggregation, margins taken verbatim from R6l's committed schema with
+no new thresholds, receiver rebuilt per depth rather than transferred, and an
+**exhaustive outcome table** evaluated in the order INVALID → REFUTED →
+INCONCLUSIVE → SUPPORTING. The conservative first-pass classification is the
+auditor's: `.15` inconclusive, `.20`/`.25` supporting, `.30` inconclusive, `.40`
+refuted, none-through-`.40` refuted, non-monotone invalid.
+
+Two of the five depths classify INCONCLUSIVE **by construction** — the upper
+endpoint 0.296392 falls inside both the (0.25, 0.30) and (0.30, 0.40) brackets,
+so no crossing at or above 0.30 can be resolved against it. That is a cost of the
+grid, stated rather than absorbed.
+
+### Bookkeeping
+
+The ledger is **20/20 bound, 12 self-caught / 8 external**. I reported the
+external transition as 3 → 9; it is **3 → 8**.

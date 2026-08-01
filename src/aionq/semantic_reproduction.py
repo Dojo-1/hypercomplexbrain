@@ -220,12 +220,22 @@ def structural_checks(produced, reproduced) -> dict:
     return {"rows": rows, "all_equal": all(r["equal"] for r in rows.values())}
 
 
-def compare_event_traces(produced_path, reproduced_path) -> dict:
-    """Event count, key sets and key ORDER, without comparing state digests.
+def compare_event_traces(produced_path, reproduced_path,
+                         tolerance: float = 1e-10) -> dict:
+    """Compare the traces by VALUE, row by row, not by field name.
 
-    The trace is the protocol's own record of what it did in what sequence. Two
-    platforms must agree on the sequence exactly; they need not agree on digests
-    of the states visited, for the same reason the result leaves need not.
+    The first version compared ``[tuple(r.keys()) for r in rows]`` -- the field
+    NAMES -- plus the ``sequence`` column, and nothing else.  ``action``, ``key``,
+    ``shard`` and every value inside ``metadata`` were never looked at.  An
+    external audit altered those semantic values and still obtained CONFIRMED,
+    which is the whole class of defect this module was written to expose,
+    committed inside the module itself.
+
+    Every field is now compared with the same :func:`leaf_kind` machinery the
+    result documents use, so ``state_digest`` -- a SHA-256 of a computed state --
+    is classified IDENTITY and counted rather than demanded, while
+    ``metadata.rho`` is scientific and compared under tolerance and ``action``,
+    ``key`` and ``shard`` are discrete and must be exactly equal.
     """
     import json
 
@@ -237,14 +247,53 @@ def compare_event_traces(produced_path, reproduced_path) -> dict:
     key_order_equal = ([tuple(r.keys()) for r in a] == [tuple(r.keys()) for r in b])
     seq_a = [r.get("sequence") for r in a]
     seq_b = [r.get("sequence") for r in b]
+
+    value_mismatches: list = []
+    identity_differences = 0
+    compared = 0
+    worst = {"delta": 0.0, "path": None}
+    for index, (left_row, right_row) in enumerate(zip(a, b)):
+        left, right = flatten(left_row), flatten(right_row)
+        for path in sorted(set(left) | set(right)):
+            if path not in left or path not in right:
+                value_mismatches.append(
+                    {"row": index, "path": path, "note": "field present on one side only"})
+                continue
+            x, y = left[path], right[path]
+            kind = leaf_kind(path, x)
+            if kind == "identity":
+                identity_differences += (x != y)
+                continue
+            compared += 1
+            if kind == "scientific" and leaf_kind(path, y) == "scientific":
+                if not (math.isfinite(x) and math.isfinite(y)):
+                    value_mismatches.append({"row": index, "path": path,
+                                             "note": "non-finite"})
+                    continue
+                delta = abs(float(x) - float(y))
+                if delta > worst["delta"]:
+                    worst = {"delta": delta, "path": f"[{index}]{path}"}
+                if delta > tolerance:
+                    value_mismatches.append(
+                        {"row": index, "path": path, "produced": x, "reproduced": y})
+            elif x != y:
+                value_mismatches.append(
+                    {"row": index, "path": path, "produced": repr(x)[:80],
+                     "reproduced": repr(y)[:80]})
+
     return {
         "produced_rows": len(a),
         "reproduced_rows": len(b),
         "row_count_equal": len(a) == len(b),
         "key_order_equal": key_order_equal,
         "sequence_equal": seq_a == seq_b,
-        "sequences_contiguous": seq_b == list(range(len(seq_b))) or all(
-            s is None for s in seq_b),
+        "sequences_contiguous": seq_b == list(range(len(seq_b))),
+        "semantic_fields_compared": compared,
+        "semantic_value_mismatches": value_mismatches[:20],
+        "semantic_value_mismatch_count": len(value_mismatches),
+        "identity_fields_differing": identity_differences,
+        "worst_absolute_difference": worst["delta"],
+        "worst_difference_path": worst["path"],
     }
 
 
@@ -345,6 +394,11 @@ def reproduction_verdict(comparison: dict, structural: dict, events: dict,
         "event_row_count_differs": not events["row_count_equal"],
         "event_key_order_differs": not events["key_order_equal"],
         "event_sequence_differs": not events.get("sequence_equal", False),
+        "event_sequences_not_contiguous": not events.get("sequences_contiguous", False),
+        "event_semantic_values_differ":
+            bool(events.get("semantic_value_mismatch_count", 1)),
+        "no_event_field_was_compared":
+            not events.get("semantic_fields_compared", 0),
         "leaves_only_in_reproduced": bool(comparison["only_in_reproduced"]),
         "undeclared_leaves_only_in_produced": bool(undeclared_produced),
     }

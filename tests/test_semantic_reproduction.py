@@ -50,7 +50,8 @@ def _verdict(a, b, events=None, **kw):
     # that omits it contradicts everything. Three tests failed exactly that way
     # when the population was added.
     ev = events or {"row_count_equal": True, "key_order_equal": True,
-                    "sequence_equal": True}
+                    "sequence_equal": True, "sequences_contiguous": True,
+                    "semantic_fields_compared": 7, "semantic_value_mismatch_count": 0}
     return reproduction_verdict(compare_results(a, b, TOL),
                                 structural_checks(a, b), ev, **kw)
 
@@ -322,10 +323,8 @@ def test_producer_only_leaves_must_be_declared_not_merely_tolerated():
     assert undeclared["verdict"] == "CONTRADICTED"
     assert "undeclared_leaves_only_in_produced" in undeclared["contradiction_reasons"]
 
-    declared = reproduction_verdict(
-        compare_results(a, b, TOL), structural_checks(a, b),
-        {"row_count_equal": True, "key_order_equal": True, "sequence_equal": True},
-        minimum_fraction=0.0, backstop=1,
+    declared = _verdict(
+        a, b, minimum_fraction=0.0, backstop=1,
         allowed_only_in_produced=[".checks.a_runner_check", ".silently_dropped"])
     assert declared["verdict"] == "CONFIRMED"
 
@@ -410,3 +409,157 @@ def test_part_b_states_one_interval_not_two():
     assert _math.isclose((1 - _math.exp(-2 * hi)) ** 2, 0.20, abs_tol=1e-6)
     # the intervals genuinely differ, which is the whole finding
     assert lo < 0.15 and hi < 0.30
+
+
+# --------------------------------- events compared by value, not by field name
+
+def _trace(tmp, rows):
+    path = tmp / "events.jsonl"
+    path.write_text("".join(json.dumps(r, sort_keys=True) + "\n" for r in rows),
+                    encoding="utf-8")
+    return path
+
+
+def _rows(n=3, **over):
+    out = []
+    for i in range(n):
+        row = {"action": "store", "key": f"R6:rho=0.1:k={i:02d}",
+               "metadata": {"map": "R6", "rho": 0.1, "source_index": i},
+               "sequence": i, "shard": "tension-0",
+               "state_digest": f"sha256:{i:064x}"}
+        row.update(over)
+        out.append(row)
+    return out
+
+
+def test_event_values_are_compared_not_only_field_names(tmp_path):
+    """The P1 an external audit found by altering values and still getting CONFIRMED.
+
+    The comparator matched `[tuple(r.keys()) for r in rows]` -- the field NAMES --
+    plus the sequence column. `action`, `key`, `shard` and everything inside
+    `metadata` were never looked at. Every one of those is now compared.
+    """
+    from aionq.semantic_reproduction import compare_event_traces
+    a = _trace(tmp_path / "a", _rows()) if (tmp_path / "a").mkdir() or True else None
+    b_rows = _rows()
+    b_rows[1]["action"] = "evict"
+    b_rows[2]["shard"] = "tension-9"
+    b_rows[0]["metadata"]["rho"] = 0.2
+    b = _trace(tmp_path / "b", b_rows) if (tmp_path / "b").mkdir() or True else None
+    r = compare_event_traces(a, b)
+    assert r["key_order_equal"] is True          # names still match, as before
+    assert r["semantic_value_mismatch_count"] == 3
+    paths = {m["path"] for m in r["semantic_value_mismatches"]}
+    assert paths == {".action", ".shard", ".metadata.rho"}
+
+
+def test_state_digests_may_differ_without_contradicting(tmp_path):
+    """They are SHA-256 of computed states, and the whole round says so."""
+    from aionq.semantic_reproduction import compare_event_traces
+    (tmp_path / "a").mkdir(); (tmp_path / "b").mkdir()
+    b_rows = _rows()
+    for i, row in enumerate(b_rows):
+        row["state_digest"] = f"sha256:{i + 900:064x}"
+    r = compare_event_traces(_trace(tmp_path / "a", _rows()),
+                             _trace(tmp_path / "b", b_rows))
+    assert r["semantic_value_mismatch_count"] == 0
+    assert r["identity_fields_differing"] == 3
+
+
+def test_a_gapped_sequence_is_not_agreement(tmp_path):
+    """`sequences_contiguous` was computed and never consumed by the verdict."""
+    from aionq.semantic_reproduction import compare_event_traces
+    (tmp_path / "a").mkdir(); (tmp_path / "b").mkdir()
+    rows = _rows()
+    for i, row in enumerate(rows):
+        row["sequence"] = i * 2
+    ev = compare_event_traces(_trace(tmp_path / "a", rows),
+                              _trace(tmp_path / "b", rows))
+    assert ev["sequences_contiguous"] is False
+    v = reproduction_verdict(compare_results(_doc(), _doc(), TOL),
+                             structural_checks(_doc(), _doc()), ev,
+                             minimum_fraction=0.0, backstop=1)
+    assert v["verdict"] == "CONTRADICTED"
+    assert "event_sequences_not_contiguous" in v["contradiction_reasons"]
+
+
+def test_a_trace_where_nothing_was_compared_is_not_agreement(tmp_path):
+    """Vacuity, at the event layer."""
+    ev = {"row_count_equal": True, "key_order_equal": True, "sequence_equal": True,
+          "sequences_contiguous": True, "semantic_fields_compared": 0,
+          "semantic_value_mismatch_count": 0}
+    v = reproduction_verdict(compare_results(_doc(), _doc(), TOL),
+                             structural_checks(_doc(), _doc()), ev,
+                             minimum_fraction=0.0, backstop=1)
+    assert v["verdict"] == "CONTRADICTED"
+    assert "no_event_field_was_compared" in v["contradiction_reasons"]
+
+
+# ------------------------------------- the producer-only allowance is frozen
+
+def test_the_runner_only_set_is_frozen_and_its_digest_matches():
+    """An outcome-derived allowlist excuses whatever it observes.
+
+    Broad prefixes applied to the observed producer-only paths meant a newly
+    MISSING `.checks.*` leaf was legitimised automatically -- the rule was
+    "anything shaped like a runner section" rather than "these forty-three".
+    """
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "w1runner", repo_root() / "experiments" / "run_r6k_semantic_reproduction.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    assert len(mod.RUNNER_ONLY_LEAVES) == 43
+    assert len(set(mod.RUNNER_ONLY_LEAVES)) == 43
+    assert mod.runner_only_digest() == mod.RUNNER_ONLY_LEAVES_DIGEST
+
+
+def test_part_b_protocol_fixes_the_three_arithmetic_errors():
+    """rho=0.30 is outside the interval; the grid is not uniform; J_psi(0.4) is 0.3032385898."""
+    import math as _math
+    doc = json.loads((repo_root() / "manifests"
+                      / "qsigma_r6k_w1_partb_effective_protocol.json").read_text(
+        encoding="utf-8"))
+    assert doc["prediction"]["which_depths_lie_inside_the_admissible_interval"] == [0.15, 0.2, 0.25]
+    assert 0.3 in doc["prediction"]["which_lie_outside"]
+    assert doc["effective_protocol"]["grid_spacings"] == [0.05, 0.05, 0.05, 0.1]
+    assert doc["prediction"]["J_psi_at_the_held_out_depths"]["0.40"] == pytest.approx(
+        (1 - _math.exp(-0.8)) ** 2, abs=1e-10)
+    assert 0.30 > 0.296392
+
+
+def test_part_b_outcome_table_is_exhaustive_and_ordered():
+    doc = json.loads((repo_root() / "manifests"
+                      / "qsigma_r6k_w1_partb_effective_protocol.json").read_text(
+        encoding="utf-8"))
+    table = doc["outcome_table"]
+    assert table["precedence"] == ["INVALID", "REFUTED", "INCONCLUSIVE", "SUPPORTING"]
+    assert {r["outcome"] for r in table["rows"]} == set(table["precedence"])
+    first = table["conservative_first_pass_classification"]
+    assert first["0.15"] == "INCONCLUSIVE" and first["0.20"] == "SUPPORTING"
+    assert first["0.25"] == "SUPPORTING" and first["0.30"] == "INCONCLUSIVE"
+    assert first["0.40"] == "REFUTED" and first["none_through_0.40"] == "REFUTED"
+    assert first["non_monotone"] == "INVALID"
+    assert doc["effective_protocol"]["noise_slice"]["rule"].startswith("the CLEAN slice")
+
+
+def test_the_manifests_are_mechanically_bound_not_merely_quoted():
+    """`rules_bound_to` sat in observed_result and was never verified.
+
+    Replacing a digest there with zeros left `verify(...).ok` True: the committed
+    hashes happened to be correct, and nothing in the machinery established that
+    fact. raw_artifacts digests are re-read from disk by verify(), so a changed
+    manifest now fails the envelope instead of quietly disagreeing with it.
+    """
+    from aionq.evidence import load_envelope
+    path = repo_root() / "artifacts" / "r6k_w1_semantic_reproduction" / "reproduction.envelope.json"
+    if not path.is_file():
+        pytest.skip("run the `envelope` phase first")
+    env = load_envelope(path)
+    bound = set(env.raw_artifacts)
+    for name in ("qsigma_r6k_w1_semantic_reproduction_preregistration.json",
+                 "qsigma_r6k_w1_semantic_reproduction_method_correction.json",
+                 "qsigma_r6k_w1_partb_interval_correction.json",
+                 "qsigma_r6k_w1_partb_effective_protocol.json"):
+        assert f"manifests/{name}" in bound, name
+    assert "rules_bound_to" not in env.observed_result
