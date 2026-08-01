@@ -44,10 +44,15 @@ def _doc(**over):
     return base
 
 
-def _verdict(a, b, **kw):
-    return reproduction_verdict(
-        compare_results(a, b, TOL), structural_checks(a, b),
-        {"row_count_equal": True, "key_order_equal": True}, **kw)
+def _verdict(a, b, events=None, **kw):
+    # sequence_equal is supplied explicitly: the verdict defaults a MISSING
+    # population to "disagrees", which is the fail-closed direction, so a helper
+    # that omits it contradicts everything. Three tests failed exactly that way
+    # when the population was added.
+    ev = events or {"row_count_equal": True, "key_order_equal": True,
+                    "sequence_equal": True}
+    return reproduction_verdict(compare_results(a, b, TOL),
+                                structural_checks(a, b), ev, **kw)
 
 
 # ------------------------------------------------ classification of leaves
@@ -274,3 +279,134 @@ def test_a_contradiction_is_never_filed_as_inconclusive():
     v = _verdict(a, b)
     assert v["enough_compared"] is False        # far below the backstop
     assert v["verdict"] == "CONTRADICTED"       # and still not VACUOUS
+
+
+# ------------------------------- fail closed: every population must be consulted
+
+def test_a_wrong_event_sequence_is_not_agreement():
+    """Found externally on the published branch.
+
+    The verdict read row count and key order and never read `sequence_equal`, so
+    a trace with the right number of rows carrying the right keys in the right
+    order but the WRONG sequence numbers returned CONFIRMED. A comparison that
+    says nothing about a population is not evidence that the population agrees.
+    """
+    a = b = _doc()
+    ev = {"row_count_equal": True, "key_order_equal": True, "sequence_equal": False}
+    v = reproduction_verdict(compare_results(a, b, TOL), structural_checks(a, b),
+                             ev, minimum_fraction=0.0, backstop=1)
+    assert v["verdict"] == "CONTRADICTED"
+    assert "event_sequence_differs" in v["contradiction_reasons"]
+
+
+def test_a_leaf_the_producer_never_had_is_not_agreement():
+    """`only_in_reproduced` was never read either."""
+    a = _doc()
+    b = _doc(invented_by_the_reproduction=1.0)
+    v = _verdict(a, b, minimum_fraction=0.0, backstop=1)
+    assert v["verdict"] == "CONTRADICTED"
+    assert "leaves_only_in_reproduced" in v["contradiction_reasons"]
+
+
+def test_producer_only_leaves_must_be_declared_not_merely_tolerated():
+    """43 uncomparable leaves were accepted wholesale.
+
+    A reproduction that silently stopped emitting an entire section would then
+    have "agreed" with the producer about the part it still emitted. The caller
+    must now declare which producer-only leaves are expected; anything else
+    contradicts.
+    """
+    a = _doc(**{"checks": {"a_runner_check": True}, "silently_dropped": 3.0})
+    b = _doc()
+    undeclared = _verdict(a, b, minimum_fraction=0.0, backstop=1)
+    assert undeclared["verdict"] == "CONTRADICTED"
+    assert "undeclared_leaves_only_in_produced" in undeclared["contradiction_reasons"]
+
+    declared = reproduction_verdict(
+        compare_results(a, b, TOL), structural_checks(a, b),
+        {"row_count_equal": True, "key_order_equal": True, "sequence_equal": True},
+        minimum_fraction=0.0, backstop=1,
+        allowed_only_in_produced=[".checks.a_runner_check", ".silently_dropped"])
+    assert declared["verdict"] == "CONFIRMED"
+
+
+def test_every_mismatch_population_is_consulted_by_the_verdict():
+    """The guard against this defect recurring.
+
+    Adding a population to compare_results without deciding what it means must
+    raise, not default to agreement. This asserts the guard is wired, by naming
+    the same set the verdict checks itself against.
+    """
+    from aionq.semantic_reproduction import _MISMATCH_POPULATIONS
+    assert "only_in_reproduced" in _MISMATCH_POPULATIONS
+    assert "identity_mismatches" in _MISMATCH_POPULATIONS
+    keys = set(compare_results(_doc(), _doc(), TOL))
+    assert _MISMATCH_POPULATIONS <= keys | {"only_in_produced", "only_in_reproduced"}
+
+
+def test_the_recorded_reproduction_reports_total_identity_leaves_not_only_mismatches():
+    """497 identity leaves exist; 493 of them differ. Both are reported."""
+    r = _artifact()
+    assert r["comparison"]["identity_leaves"] == 497
+    assert r["comparison"]["identity_mismatches"] == 493
+
+
+def test_the_envelope_binds_to_a_commit_that_contains_its_artifacts():
+    """The P1 an external audit found on the published branch.
+
+    Every raw artifact an envelope declares must exist at the commit the
+    envelope names, with those exact bytes. The first W1 envelope named a commit
+    at which all three resolved to None, and `verify` still returned ok, because
+    a missing blob is read as "cannot check" rather than as a failure.
+    """
+    import json as _json
+    from pathlib import Path
+    from aionq.evidence import _committed_file_digest, load_envelope
+    root = repo_root()
+    path = root / "artifacts" / "r6k_w1_semantic_reproduction" / "reproduction.envelope.json"
+    if not path.is_file():
+        pytest.skip("run the `envelope` phase first")
+    env = load_envelope(path)
+    assert len(env.commit_sha) >= 7
+    for rel, declared in env.raw_artifacts.items():
+        at_commit = _committed_file_digest(rel, env.commit_sha, root)
+        assert at_commit is not None, f"{rel} does not exist at {env.commit_sha[:8]}"
+        assert at_commit == declared, rel
+
+
+def test_the_envelope_declares_a_paired_sample_of_one():
+    """3555 leaves are measurements of ONE paired comparison, not observations.
+
+    The published version declared 4, counting the two manifests that fixed the
+    rules as if they were samples. Manifests are provenance.
+    """
+    from aionq.evidence import load_envelope
+    path = repo_root() / "artifacts" / "r6k_w1_semantic_reproduction" / "reproduction.envelope.json"
+    if not path.is_file():
+        pytest.skip("run the `envelope` phase first")
+    env = load_envelope(path)
+    assert env.observed_result["sample_size"] == 1
+    assert "paired" in env.observed_result["design"]
+
+
+def test_part_b_states_one_interval_not_two():
+    """B1 and B2 were joined by 'equivalently' and are not equivalent.
+
+    rho in (0.15, 0.30)  ->  J_psi in (0.067175, 0.203571)
+    J_psi in [0.05, 0.20] ->  rho  in [0.126548, 0.296392]
+
+    A crossing at rho = 0.13 satisfies one and fails the other, so 'the
+    prediction held' could be decided after seeing the result. The amendment
+    supersedes B1 and keeps J_psi as the sole primary statement.
+    """
+    import json as _json
+    import math as _math
+    path = (repo_root() / "manifests"
+            / "qsigma_r6k_w1_partb_interval_correction.json")
+    doc = _json.loads(path.read_text(encoding="utf-8"))
+    assert doc["corrected_prediction"]["B1"].startswith("SUPERSEDED")
+    lo, hi = 0.126548, 0.296392
+    assert _math.isclose((1 - _math.exp(-2 * lo)) ** 2, 0.05, abs_tol=1e-6)
+    assert _math.isclose((1 - _math.exp(-2 * hi)) ** 2, 0.20, abs_tol=1e-6)
+    # the intervals genuinely differ, which is the whole finding
+    assert lo < 0.15 and hi < 0.30

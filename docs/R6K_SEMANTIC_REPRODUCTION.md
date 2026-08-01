@@ -5,8 +5,16 @@ uncommitted working tree. R6l seals it byte-for-byte as upstream. Until now
 nobody else had run it.
 
 ```bash
-PYTHONPATH=src python3 experiments/run_r6k_semantic_reproduction.py
+PYTHONPATH=src python3 experiments/run_r6k_semantic_reproduction.py run
+git add artifacts/r6k_w1_semantic_reproduction && git commit      # C_raw
+PYTHONPATH=src python3 experiments/run_r6k_semantic_reproduction.py envelope
+git add artifacts/r6k_w1_semantic_reproduction && git commit      # C_env
 ```
+
+Two phases, and the split is not cosmetic — see *What an external audit found*
+below. An envelope must bind to a commit that **contains** what it binds, and the
+`envelope` phase refuses to write one unless every raw artifact resolves at HEAD
+with those exact bytes.
 
 **Verdict: CONFIRMED.** 3555 scientific leaves compared across two platforms,
 worst absolute difference **3.311e-11** against a tolerance of **1e-10** frozen
@@ -18,7 +26,7 @@ keys, same order, contiguous.
 |---|---|
 | shared leaves | 4672 |
 | scientific, compared under tolerance | **3555** (0.8515 of non-digest leaves) |
-| identity digests, excluded and counted | 493 |
+| identity digests present / differing | **497 / 493** |
 | environment metadata, excluded by amendment | 1 |
 | runner-only leaves, uncomparable | 43 |
 | worst difference | `truncation_stress_control.retrieval_rows[0].receiver.completeness_residual` |
@@ -105,18 +113,68 @@ before fix   out 1  in 1  mutual True      <- wrong
 after  fix   out 1  in 0  ambiguous 1  mutual False
 ```
 
+## What an external audit found on the published branch
+
+Four P1s, all confirmed here, all repaired. Three of them are the same defect in
+different clothes: **a check that says nothing about a population, read as
+evidence that the population agrees.**
+
+**1. The envelope's SHA bound nothing.** The run wrote artifacts and envelope in
+one pass, so `current_commit()` returned the *correction* commit — the last thing
+committed before the run. All three raw artifacts resolve to `None` at that SHA,
+and `verify()` still returned ok, because a missing blob is treated as "cannot
+check". I had reported this as "full resolvable SHA, not the empty-field path".
+It resolves, to a commit where the evidence does not exist, which is **worse**
+than the empty field: the empty field declares itself. Fixed by the two-phase
+discipline above, with a hard refusal if any artifact is unbound.
+
+**2. `*.jsonl` had no eol rule.** It inherited `text=auto`, so a Windows checkout
+receives CRLF and every committed-blob digest binding an event ledger fails on
+that platform only. Measured there, not here. An evidence chain that holds on one
+operating system is not an evidence chain. `*.jsonl text eol=lf` added.
+
+**3. The verdict consulted five of seven mismatch populations.** `sequence_equal`
+was never read — a trace with the right row count and the right keys in the right
+order but the *wrong sequence numbers* returned CONFIRMED. `only_in_reproduced`
+was never read. And `only_in_produced` was tolerated wholesale rather than checked
+against a declared allowance, so a reproduction that silently stopped emitting an
+entire section would have "agreed" about the part it still emitted. The caller
+must now **declare** which producer-only leaves are expected, and the verdict
+raises if a population is added without a decision attached to it.
+
+**4. An ambiguous party was promoted to independent.** The same act was excluded
+from the recognition counts *as ambiguous* and simultaneously counted as raising
+the independent total 1 → 2. Two positions at once: refusing to say who performed
+it, while treating it as proof that somebody else checked the claim. Independence
+requires two **identified** parties; a recomputation with an unidentified one is
+now capped at REVIEWED.
+
+Two further corrections, both accepted:
+
+- **`sample_size` 4 → 1.** The design is paired: one produced execution against
+  one reproduced execution. The two manifests are provenance, not observations.
+- **497 identity leaves exist; 493 differ.** The table above previously printed
+  the mismatch count under the total's label.
+
+**And the observation is descriptive, not prospective.** The 3.311e-11 was seen
+before the 1e-10 tolerance was frozen — the preregistration says so in
+`outcome_blind: false`, and the honest reading of part A is *cross-platform
+reproduction observed*, not *a prediction confirmed*. Part B is the prospective
+one.
+
 ## The corpus after this round
 
 | | before | after |
 |---|---|---|
 | envelopes | 28 | **29** |
-| independently witnessed | 1 | **2** |
+| independently witnessed | 1 | **1** (W1 capped at REVIEWED) |
 | recomputations performed / received | 1 / 0 | 1 / 0, +1 ambiguous |
 | tests | 1889 | **1916** |
 
-`mutual` is still `false`. The second independent claim is one this party
-performed, not one it received. That number has not moved and cannot be moved
-from inside.
+`mutual` is still `false`, and the independent count is still **1**. I reported
+2; an external audit showed the second one was an act whose producer the envelope
+does not identify, and this repository does not get to certify independence from
+a party it cannot name. The number has not moved.
 
 ## A withdrawal
 
@@ -136,10 +194,18 @@ frozen in R6l's preregistration.
 The replacement candidate is frozen, outcome-blind, in
 `manifests/qsigma_r6k_w1_semantic_reproduction_preregistration.json` part B: if
 the projective margin is set by the *weaker* angular direction, the threshold is
-a `J_psi = (1 − e^{−2ρ})²` threshold, and the fail→pass crossing should sit
-strictly inside `ρ ∈ [0.15, 0.30]`. Held-out depths 0.15/0.2/0.25/0.3/0.4, none
-in the R6k or R6l grids. Three kill conditions, including that a pass at ρ=0.15
-or a failure at ρ=0.40 refutes it outright.
+a `J_psi = (1 − e^{−2ρ})²` threshold, and the fail→pass crossing should sit where
+`J_psi ∈ [0.05, 0.20]`, i.e. `ρ ∈ [0.126548, 0.296392]`.
+
+That statement was originally written as **two** predictions joined by the word
+"equivalently", and they are not equivalent: `ρ ∈ (0.15, 0.30)` induces
+`J_psi ∈ (0.067175, 0.203571)`, while `J_psi ∈ [0.05, 0.20]` induces
+`ρ ∈ [0.126548, 0.296392]`. A crossing at ρ = 0.13 satisfies one and fails the
+other, so "the prediction held" could have been decided *after* seeing the
+result. `manifests/qsigma_r6k_w1_partb_interval_correction.json` supersedes B1,
+keeps `J_psi` as the sole primary statement, and adds K8: the held-out depths are
+spaced 0.05 apart, so a bracketing pair straddling an endpoint is **INCONCLUSIVE**
+and may not be resolved by adding depths after the fact.
 
 **It is not executable at this commit** — R6l's `C_exec` and `C_raw` are local to
 the other party and unpushed. It is recorded now so that it precedes their

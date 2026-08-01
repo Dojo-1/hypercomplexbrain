@@ -11,6 +11,10 @@
 *.lean text eol=lf
 *.txt  text eol=lf
 *.csv  text eol=lf
+# Event ledgers are envelope-bound line by line. Without this rule a
+# Windows checkout receives CRLF and every committed-blob digest that
+# binds a .jsonl fails on that platform only -- measured on W1.
+*.jsonl text eol=lf
 
 # The R6k event ledger is envelope-bound and was emitted as canonical LF JSONL.
 artifacts/r6k_equal_resource_reservoir/events.jsonl text eol=lf

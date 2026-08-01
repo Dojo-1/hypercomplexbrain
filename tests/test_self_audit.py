@@ -491,3 +491,39 @@ def test_mutual_still_reachable_when_both_parties_are_named(fake_root):
               verifier="other-agent", verification_mode="recomputed")
     r = recognition_asymmetry(fake_root)
     assert r["mutual"] is True
+
+
+def test_an_ambiguous_party_cannot_reach_independent(fake_root):
+    """Found externally on the published W1 branch.
+
+    The same act was excluded from the recognition counts as ambiguous AND
+    counted as raising the independent total 1 -> 2. That is two positions at
+    once: refusing to say who performed it, while treating it as proof that
+    somebody else checked the claim. Independence needs two IDENTIFIED parties;
+    a recomputation with an unidentified one is capped at REVIEWED, because the
+    second computation genuinely happened and its author is unestablished.
+    """
+    _envelope(fake_root, "scriptclaim", producer="experiments/run_thing.py",
+              verifier="claude-code-linux", verification_mode="recomputed")
+    r = independence_report(fake_root)
+    assert r["by_rank"]["INDEPENDENT"] == 0
+    assert r["by_rank"]["REVIEWED"] == 1
+
+
+def test_two_named_parties_still_reach_independent(fake_root):
+    """Or the cap above is just a way of never certifying anything."""
+    _envelope(fake_root, "namedclaim", producer="gpt/some-branch",
+              verifier="claude-code", verification_mode="recomputed")
+    assert independence_report(fake_root)["by_rank"]["INDEPENDENT"] == 1
+
+
+def test_event_ledgers_are_pinned_to_lf():
+    """A CRLF checkout breaks every committed-blob digest binding a .jsonl.
+
+    Measured on Windows against the published W1 branch: `*.jsonl` had no rule,
+    inherited `text=auto`, and the event ledger's digest failed on that platform
+    only. An evidence chain that holds on one operating system is not an
+    evidence chain.
+    """
+    attrs = (repo_root() / ".gitattributes").read_text(encoding="utf-8")
+    assert "*.jsonl text eol=lf" in attrs

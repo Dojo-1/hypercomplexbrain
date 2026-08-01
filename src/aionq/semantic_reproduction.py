@@ -283,26 +283,84 @@ MINIMUM_SCIENTIFIC_FRACTION = 0.75
 MINIMUM_SCIENTIFIC_BACKSTOP = 1000
 
 
+#: Every mismatch population :func:`compare_results` can produce.  The verdict
+#: function asserts it has consulted all of them, so adding a population without
+#: deciding what it means raises instead of defaulting to "agreement".
+_MISMATCH_POPULATIONS = frozenset({
+    "scientific_leaves_exceeding_tolerance",
+    "discrete_mismatches",
+    "non_finite_leaves",
+    "identity_mismatches",
+    "environment_mismatches",
+    "only_in_produced",
+    "only_in_reproduced",
+})
+
+
 def reproduction_verdict(comparison: dict, structural: dict, events: dict,
                          minimum_fraction: float = MINIMUM_SCIENTIFIC_FRACTION,
-                         backstop: int = MINIMUM_SCIENTIFIC_BACKSTOP) -> dict:
+                         backstop: int = MINIMUM_SCIENTIFIC_BACKSTOP,
+                         allowed_only_in_produced=None) -> dict:
     """CONFIRMED, CONTRADICTED, or VACUOUS.
 
     VACUOUS is a distinct outcome and not a flavour of failure. A comparison
     that agreed on nothing measurable has not disagreed; it has established
     nothing, and calling that CONFIRMED is the defect this whole round exists to
     avoid reproducing.
+
+    FAIL CLOSED.  The first version of this consulted five of the seven mismatch
+    populations :func:`compare_results` produces, and defaulted to agreement on
+    the other two:
+
+    * ``events["sequence_equal"]`` was never read, so a trace with the right row
+      count and the right keys in the right ORDER but the wrong sequence numbers
+      returned CONFIRMED.
+    * ``only_in_reproduced`` was never read, so a reproduction emitting leaves
+      the producer never had returned CONFIRMED, and ``only_in_produced`` was
+      tolerated wholesale rather than checked against a declared allowance --
+      which means a reproduction that silently stopped emitting a whole section
+      would have agreed with the producer about the part it still emitted.
+
+    Both were found by an external audit of the published branch, and both are
+    the same defect: a comparison that says nothing about a population is not
+    evidence that the population agrees.  `allowed_only_in_produced` must now be
+    declared by the caller; anything outside it contradicts.
     """
+    allowed = frozenset(allowed_only_in_produced or ())
+    undeclared_produced = [p for p in comparison["only_in_produced"]
+                           if p not in allowed]
+
     compared = comparison["scientific_leaves_compared"]
     comparable = comparison["shared_leaves"] - comparison["identity_leaves"]
     fraction = (compared / comparable) if comparable else 0.0
     enough = fraction >= minimum_fraction and compared >= backstop
-    contradicted = bool(comparison["scientific_leaves_exceeding_tolerance"]
-                        or comparison["discrete_mismatches"]
-                        or comparison["non_finite_leaves"]
-                        or not structural["all_equal"]
-                        or not events["row_count_equal"]
-                        or not events["key_order_equal"])
+
+    # Named, so that every population is visibly consulted rather than implied.
+    reasons = {
+        "scientific_leaves_exceeding_tolerance":
+            bool(comparison["scientific_leaves_exceeding_tolerance"]),
+        "discrete_mismatches": bool(comparison["discrete_mismatches"]),
+        "non_finite_leaves": bool(comparison["non_finite_leaves"]),
+        "structural_fields_differ": not structural["all_equal"],
+        "event_row_count_differs": not events["row_count_equal"],
+        "event_key_order_differs": not events["key_order_equal"],
+        "event_sequence_differs": not events.get("sequence_equal", False),
+        "leaves_only_in_reproduced": bool(comparison["only_in_reproduced"]),
+        "undeclared_leaves_only_in_produced": bool(undeclared_produced),
+    }
+    # identity_mismatches and environment_mismatches are the two populations
+    # the preregistration and its amendment EXCLUDE by name. Listing them here
+    # is what makes that a decision rather than an omission.
+    consulted = {"identity_mismatches", "environment_mismatches",
+                 "only_in_produced", "only_in_reproduced",
+                 "scientific_leaves_exceeding_tolerance", "discrete_mismatches",
+                 "non_finite_leaves"}
+    missing = _MISMATCH_POPULATIONS - consulted
+    if missing:
+        raise AssertionError(
+            "mismatch populations not consulted by the verdict: " + repr(sorted(missing)))
+
+    contradicted = any(reasons.values())
     # CONTRADICTED outranks VACUOUS, and the order is the claim. A comparison
     # that compared too little to confirm anything may still have found a real
     # disagreement in what it did compare; reporting VACUOUS there would file a
@@ -326,8 +384,12 @@ def reproduction_verdict(comparison: dict, structural: dict, events: dict,
         "backstop": backstop,
         "enough_compared": enough,
         "worst_absolute_difference": comparison["worst_absolute_difference"],
+        "identity_leaves_total": comparison["identity_leaves"],
         "identity_mismatches_excluded_by_preregistration":
             comparison["identity_mismatches"],
         "environment_mismatches_excluded_by_amendment":
             len(comparison["environment_mismatches"]),
+        "declared_only_in_produced": sorted(allowed),
+        "undeclared_only_in_produced": undeclared_produced,
+        "contradiction_reasons": {k: v for k, v in reasons.items() if v},
     }

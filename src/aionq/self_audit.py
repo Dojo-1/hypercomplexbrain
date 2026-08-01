@@ -258,6 +258,57 @@ CORRECTIONS = (
         "tests/test_self_audit.py::test_a_script_path_is_not_a_party_identity",
         True,
     ),
+    Correction(
+        "R6k-W1",
+        "an envelope SHA that bound nothing: the run wrote its artifacts and its "
+        "envelope in one pass, so current_commit() returned the last commit "
+        "BEFORE the run and all three raw artifacts resolved to None at that "
+        "SHA. verify() reported ok because a missing blob is treated as 'cannot "
+        "check'. A SHA that binds nothing reads as provenance and is worse than "
+        "the empty-commit_sha path it was written to avoid",
+        "tests/test_semantic_reproduction.py::test_the_envelope_binds_to_a_commit_that_contains_its_artifacts",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "the reproduction verdict consulted five of seven mismatch populations "
+        "and defaulted to agreement on the other two: a trace with the wrong "
+        "event SEQUENCE returned CONFIRMED, and producer-only leaves were "
+        "tolerated wholesale rather than checked against a declared allowance, "
+        "so a reproduction that silently stopped emitting a whole section would "
+        "have agreed about the part it still emitted",
+        "tests/test_semantic_reproduction.py::test_a_wrong_event_sequence_is_not_agreement",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "two positions held at once: the same act was excluded from the "
+        "recognition counts as an ambiguous party AND counted as raising the "
+        "independent total from 1 to 2. Independence requires two identified "
+        "parties; a recomputation with an unidentified one is capped at REVIEWED",
+        "tests/test_self_audit.py::test_an_ambiguous_party_cannot_reach_independent",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "*.jsonl had no eol rule, so a Windows checkout received CRLF and every "
+        "committed-blob digest binding an event ledger failed on that platform "
+        "only. An evidence chain that holds on one operating system is not an "
+        "evidence chain",
+        "tests/test_self_audit.py::test_event_ledgers_are_pinned_to_lf",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "part B stated B1 and B2 as equivalent and they are not: rho in "
+        "(0.15, 0.30) gives J_psi in (0.067175, 0.203571), while J_psi in "
+        "[0.05, 0.20] gives rho in [0.126548, 0.296392]. Two non-equivalent "
+        "predictions joined by 'equivalently' is one prediction that cannot "
+        "fail cleanly, because whichever endpoint the measurement misses the "
+        "other reading remains available afterwards",
+        "tests/test_semantic_reproduction.py::test_part_b_states_one_interval_not_two",
+        False,
+    ),
 )
 
 
@@ -341,6 +392,21 @@ def witness_graph(root=None) -> WitnessGraph:
         if mode not in ("declined", "pending", "not_requested", "contradicted",
                         "attested", "reviewed", "recomputed"):
             mode = "not_requested"
+        # INDEPENDENCE REQUIRES TWO IDENTIFIED PARTIES.  `party_kind` already
+        # says a script path names no party; promoting such an act to
+        # INDEPENDENT anyway would be holding two positions at once -- refusing
+        # to assign it a direction in `recognition_asymmetry` while counting it
+        # as proof that a DIFFERENT party checked the claim.
+        #
+        # An external audit found exactly that inconsistency in the published
+        # W1 branch: the reproduction was excluded from the recognition counts
+        # as ambiguous and simultaneously raised the independent count 1 -> 2.
+        # A recomputation whose parties are not both identified is capped at
+        # REVIEWED: a second computation genuinely happened, and who performed
+        # it is unestablished.
+        if mode == "recomputed" and "ambiguous" in (party_kind(producer),
+                                                    party_kind(verifier)):
+            mode = "reviewed"
         graph.add(WitnessAct(env.get("claim_id", "?"), producer, verifier, mode))
     return graph
 
