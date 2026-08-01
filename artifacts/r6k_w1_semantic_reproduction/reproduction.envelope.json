@@ -1,7 +1,7 @@
 {
   "claim_id": "WITNESS-R6K-SEMANTIC_REPRODUCTION",
   "command": "PYTHONPATH=src python3 experiments/run_r6k_semantic_reproduction.py run  (then: envelope)",
-  "commit_sha": "6d45c6d270d03bab9b2e1ae1f24d3ab5efd644ee",
+  "commit_sha": "b8ff886180ef651aed5d0a1bad8b57a68fc577ce",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -39,10 +39,11 @@
   "platform": "",
   "producer": "experiments/run_equal_resource_reservoir.py",
   "raw_artifacts": {
-    "artifacts/r6k_w1_semantic_reproduction/comparison.json": "sha256:9b42463cf1199267b081c4165e00c8f0cb20cc6ccbd5a328da3f43a754ebb299",
+    "artifacts/r6k_w1_semantic_reproduction/comparison.json": "sha256:962bad160feedfba6544d7b6abaedc03b952448fc7422c11dd82326b6544fbcf",
     "artifacts/r6k_w1_semantic_reproduction/events.jsonl": "sha256:9479edab1c298f4ccd5388d7fe3c02947157c936f98655f682a7ebf26b6dc9bb",
     "artifacts/r6k_w1_semantic_reproduction/reproduction.json": "sha256:c491466400998d78634c0e3ec59aba37451356fd0ba943b367b24e63f87124e8",
     "manifests/qsigma_r6k_w1_partb_effective_protocol.json": "sha256:8d6b33352e4722a52efca820b429059e303b74c525050d7bece2444bc4cbeaee",
+    "manifests/qsigma_r6k_w1_partb_effective_protocol_v2.json": "sha256:8d7167abe70019e7e39b7d2a86a54f5c02bfe07d1824cb611d09abd530d80169",
     "manifests/qsigma_r6k_w1_partb_interval_correction.json": "sha256:09b42a1d99ff562eacab9628c6743b55e4d75bb0a042e0b5f435699e52ed45d8",
     "manifests/qsigma_r6k_w1_semantic_reproduction_method_correction.json": "sha256:33d0bf1bd54a1ca6893189b11cf242dd42a502478c1f393ebc652b43c3fe1f51",
     "manifests/qsigma_r6k_w1_semantic_reproduction_preregistration.json": "sha256:337fd4c2fcc039377a9c6e18d77d9a9d6d829953af0b565e4a13423b99a8962e"
@@ -50,7 +51,7 @@
   "schema_version": "hypercomplexbrain.evidence.v1",
   "seeds": [],
   "signature_status": "unsigned",
-  "timestamp": "2026-08-01T08:15:56Z",
+  "timestamp": "2026-08-01T10:49:16Z",
   "typed_remainders": [
     {
       "carrier": "what agreement here establishes",
