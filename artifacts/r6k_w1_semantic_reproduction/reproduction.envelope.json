@@ -1,0 +1,84 @@
+{
+  "claim_id": "WITNESS-R6K-SEMANTIC_REPRODUCTION",
+  "command": "PYTHONPATH=src python3 experiments/run_r6k_semantic_reproduction.py run  (then: envelope)",
+  "commit_sha": "585e89c0cee1bf9b01955bbdd4af08932f48105a",
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [],
+  "evidence_tag": "M",
+  "input_hashes": [
+    "sha256:ae49b8eaab8a3050ece0d4fa1466726a93d5d15b9813463aeaa657be8bcef938",
+    "sha256:8fe0da03ba4fc5549ef6f258d6ccca5896624a66915948fba8b6119cb52ffe24"
+  ],
+  "observed_result": {
+    "design": "paired: one produced execution against one reproduced execution",
+    "discrete_verdict_matches": true,
+    "event_rows": 320,
+    "identity_leaves_differing": 493,
+    "identity_leaves_total": 497,
+    "rules_bound_to": {
+      "method_correction": "sha256:33d0bf1bd54a1ca6893189b11cf242dd42a502478c1f393ebc652b43c3fe1f51",
+      "part_b_interval_correction": "sha256:09b42a1d99ff562eacab9628c6743b55e4d75bb0a042e0b5f435699e52ed45d8",
+      "preregistration": "sha256:337fd4c2fcc039377a9c6e18d77d9a9d6d829953af0b565e4a13423b99a8962e"
+    },
+    "runner_only_leaves_uncomparable": 43,
+    "sample_size": 1,
+    "scientific_leaves_compared": 3555,
+    "tolerance": 1e-10,
+    "verdict": "CONFIRMED",
+    "worst_absolute_difference": 3.3113392159116226e-11,
+    "worst_difference_path": ".truncation_stress_control.retrieval_rows[0].receiver.completeness_residual"
+  },
+  "platform": "",
+  "producer": "experiments/run_equal_resource_reservoir.py",
+  "raw_artifacts": {
+    "artifacts/r6k_w1_semantic_reproduction/comparison.json": "sha256:3daa5de6eb2e598761759fd76d10ded027ff42cd5cbeb8b5bdbea4e7ff2393cd",
+    "artifacts/r6k_w1_semantic_reproduction/events.jsonl": "sha256:9479edab1c298f4ccd5388d7fe3c02947157c936f98655f682a7ebf26b6dc9bb",
+    "artifacts/r6k_w1_semantic_reproduction/reproduction.json": "sha256:c491466400998d78634c0e3ec59aba37451356fd0ba943b367b24e63f87124e8"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v1",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "timestamp": "2026-08-01T07:28:47Z",
+  "typed_remainders": [
+    {
+      "carrier": "what agreement here establishes",
+      "comparison": "semantic agreement of one protocol across two platforms, computed by a second party in an environment the first did not prepare. NOT that the protocol is correct, NOT that R6i's differential is real, NOT that R6k's own runner is reproducible",
+      "kind": "witness_remainder"
+    },
+    {
+      "carrier": "the 22 runner checks",
+      "comparison": "R6k's committed result carries 43 leaves this reproduction cannot emit, 22 of them boolean checks about the PRODUCING working tree -- preserved file hashes, manifest freeze, dirty-file stability. A second platform cannot verify those after the fact at all. They are reported as uncomparable and are not counted as agreement",
+      "kind": "method_remainder"
+    },
+    {
+      "carrier": "digest equality",
+      "comparison": "493 identity leaves differ. R6k's input_hashes and per-row digests are SHA-256 of computed float arrays, so a last-bit difference from a different BLAS changes them completely. apply_witness compares exactly this population by digest, which is why it could never have confirmed R6k across platforms -- while the 11 files it WOULD have compared are all tracked repository files a verifier gets by cloning",
+      "kind": "instrument_remainder"
+    },
+    {
+      "carrier": "producer identity",
+      "comparison": "the producer string names a SCRIPT, not a party. The same script produced R6k on Windows and this reproduction on Linux; only the environment digest distinguishes them. aionq.self_audit treats any experiments/ producer as self, so this act will not register in recognition_asymmetry until that is fixed -- deliberately not fixed in this round",
+      "kind": "naming_remainder"
+    },
+    {
+      "carrier": "one execution",
+      "comparison": "one run against one run. No seed sweep, no repeated execution on either platform, so run-to-run variation within a platform is unmeasured and the 3.3e-11 cannot be attributed to the platform difference rather than to the arithmetic being deterministic",
+      "kind": "scope_remainder"
+    }
+  ],
+  "uncertainty": {},
+  "verification_mode": "recomputed",
+  "verifier": "claude-code-linux",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": ""
+}
