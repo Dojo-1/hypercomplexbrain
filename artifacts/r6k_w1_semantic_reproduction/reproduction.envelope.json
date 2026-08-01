@@ -1,7 +1,7 @@
 {
   "claim_id": "WITNESS-R6K-SEMANTIC_REPRODUCTION",
   "command": "PYTHONPATH=src python3 experiments/run_r6k_semantic_reproduction.py run  (then: envelope)",
-  "commit_sha": "585e89c0cee1bf9b01955bbdd4af08932f48105a",
+  "commit_sha": "6d45c6d270d03bab9b2e1ae1f24d3ab5efd644ee",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -21,13 +21,13 @@
     "design": "paired: one produced execution against one reproduced execution",
     "discrete_verdict_matches": true,
     "event_rows": 320,
+    "event_semantic_fields_compared": 2240,
+    "frozen_runner_only_digest": "sha256:71b4cce034cbd858d35f7aa1030f1548c93d382144a0e860aeff5d95e2fd6732",
+    "frozen_runner_only_leaves": 43,
     "identity_leaves_differing": 493,
     "identity_leaves_total": 497,
-    "rules_bound_to": {
-      "method_correction": "sha256:33d0bf1bd54a1ca6893189b11cf242dd42a502478c1f393ebc652b43c3fe1f51",
-      "part_b_interval_correction": "sha256:09b42a1d99ff562eacab9628c6743b55e4d75bb0a042e0b5f435699e52ed45d8",
-      "preregistration": "sha256:337fd4c2fcc039377a9c6e18d77d9a9d6d829953af0b565e4a13423b99a8962e"
-    },
+    "party_identity_established": false,
+    "party_identity_note": "the producer names a script, not a party. aionq.self_audit.party_kind reports it ambiguous and independence_report caps this claim at REVIEWED. EvidenceEnvelope.independent still returns True because it compares producer and verifier STRINGS; that repair belongs to the canonical evidence layer and is queued behind the R6l C_env gate",
     "runner_only_leaves_uncomparable": 43,
     "sample_size": 1,
     "scientific_leaves_compared": 3555,
@@ -39,14 +39,18 @@
   "platform": "",
   "producer": "experiments/run_equal_resource_reservoir.py",
   "raw_artifacts": {
-    "artifacts/r6k_w1_semantic_reproduction/comparison.json": "sha256:3daa5de6eb2e598761759fd76d10ded027ff42cd5cbeb8b5bdbea4e7ff2393cd",
+    "artifacts/r6k_w1_semantic_reproduction/comparison.json": "sha256:9b42463cf1199267b081c4165e00c8f0cb20cc6ccbd5a328da3f43a754ebb299",
     "artifacts/r6k_w1_semantic_reproduction/events.jsonl": "sha256:9479edab1c298f4ccd5388d7fe3c02947157c936f98655f682a7ebf26b6dc9bb",
-    "artifacts/r6k_w1_semantic_reproduction/reproduction.json": "sha256:c491466400998d78634c0e3ec59aba37451356fd0ba943b367b24e63f87124e8"
+    "artifacts/r6k_w1_semantic_reproduction/reproduction.json": "sha256:c491466400998d78634c0e3ec59aba37451356fd0ba943b367b24e63f87124e8",
+    "manifests/qsigma_r6k_w1_partb_effective_protocol.json": "sha256:8d6b33352e4722a52efca820b429059e303b74c525050d7bece2444bc4cbeaee",
+    "manifests/qsigma_r6k_w1_partb_interval_correction.json": "sha256:09b42a1d99ff562eacab9628c6743b55e4d75bb0a042e0b5f435699e52ed45d8",
+    "manifests/qsigma_r6k_w1_semantic_reproduction_method_correction.json": "sha256:33d0bf1bd54a1ca6893189b11cf242dd42a502478c1f393ebc652b43c3fe1f51",
+    "manifests/qsigma_r6k_w1_semantic_reproduction_preregistration.json": "sha256:337fd4c2fcc039377a9c6e18d77d9a9d6d829953af0b565e4a13423b99a8962e"
   },
   "schema_version": "hypercomplexbrain.evidence.v1",
   "seeds": [],
   "signature_status": "unsigned",
-  "timestamp": "2026-08-01T07:28:47Z",
+  "timestamp": "2026-08-01T08:15:56Z",
   "typed_remainders": [
     {
       "carrier": "what agreement here establishes",
