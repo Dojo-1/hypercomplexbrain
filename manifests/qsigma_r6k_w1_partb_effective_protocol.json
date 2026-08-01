@@ -1,0 +1,134 @@
+{
+  "schema": "hypercomplexbrain.preregistration.amendment.v1",
+  "round": "QSigma-R6k-W1",
+  "part": "B",
+  "status": "pre-execution. Part B has never been run and cannot be until R6l's C_exec and C_raw reach origin. This supersedes qsigma_r6k_w1_partb_interval_correction.json in every clause where the two differ.",
+  "supersedes": "manifests/qsigma_r6k_w1_partb_interval_correction.json",
+
+  "reason": "The previous amendment corrected the interval and left the protocol underdetermined: it named no noise slice, no aggregation, no margin definitions, no receiver reconstruction, no precedence between outcomes and no exhaustive outcome table. A prediction whose measurement procedure is unfixed is decidable after the fact by choosing the procedure, which is the same defect the interval correction was written to remove, one level up. It also carried three factual errors, corrected below.",
+
+  "factual_corrections_to_the_previous_amendment": [
+    {
+      "id": "F1",
+      "wrong": "'0.15 and 0.30 both now sit INSIDE the corrected admissible interval'",
+      "right": "rho = 0.30 is OUTSIDE [0.126548, 0.296392]. The upper endpoint is 0.296392 and 0.30 exceeds it. Only 0.15, 0.20 and 0.25 lie inside.",
+      "consequence": "the previous note would have let a crossing measured at 0.30 read as consistent. It is not."
+    },
+    {
+      "id": "F2",
+      "wrong": "'the held-out depths are spaced 0.05 apart'",
+      "right": "the spacings are 0.05, 0.05, 0.05, 0.10. The final gap 0.25 -> 0.30 -> 0.40 is not uniform: 0.30 to 0.40 is 0.10.",
+      "consequence": "the bracketing resolution is 0.05 in the lower grid and 0.10 in the last interval, so a crossing bracketed by (0.30, 0.40) is localised only to within 0.10 and can never be resolved against an endpoint at 0.296392."
+    },
+    {
+      "id": "F3",
+      "wrong": "'at rho = 0.40, where J_psi = 0.302'",
+      "right": "J_psi(0.40) = (1 - e^{-0.8})^2 = 0.3032385898",
+      "consequence": "arithmetic only; it does not move any threshold, and it is corrected because a manifest that rounds its own constants invites rounding elsewhere."
+    }
+  ],
+
+  "effective_protocol": {
+    "quantity_under_test": "the R6l PROJECTIVE probability margin, as R6l defines it, at held-out source depths",
+    "held_out_depths": [0.15, 0.2, 0.25, 0.3, 0.4],
+    "held_out_depths_are_disjoint_from": "the R6k and R6l grids, which are (0.1, 0.5, 1.0, 2.0, 4.0)",
+    "grid_spacings": [0.05, 0.05, 0.05, 0.1],
+    "noise_slice": {
+      "rule": "the CLEAN slice only: state-noise strength 0.0 and receiver-label-noise strength 0.0",
+      "reason": "R6l reports 16 noise coordinates. Selecting the slice after seeing which one crosses where would be choosing the answer. The clean slice is named now, before any run, and it is the slice in which the J_psi mechanism -- a statement about source Fisher information, not about a noise channel -- is least confounded.",
+      "the_other_15_coordinates": "recorded and reported, never used to decide the verdict. If the clean slice and the noisy coordinates disagree about the crossing, that disagreement is the result and must be reported as such rather than resolved by preference."
+    },
+    "aggregation": {
+      "rule": "no aggregation across depths, rings or noise coordinates. One margin per (depth, noise coordinate) cell, as R6l already emits.",
+      "reason": "any mean over depths destroys the crossing this round is about."
+    },
+    "margins": {
+      "probability_margin": "as defined by R6l's own decision record for the projective task, taken verbatim from its committed schema. This round does not redefine it.",
+      "information_margin": "likewise verbatim from R6l.",
+      "pass_rule": "a depth PASSES when the projective probability margin is strictly greater than 0 under R6l's own thresholding, using R6l's threshold unchanged.",
+      "no_new_thresholds": "this round introduces no threshold of its own on either margin. If R6l's committed schema does not supply one, part B is INVALID at execution time and must be reported so rather than supplied with a threshold chosen here."
+    },
+    "receiver_reconstruction": {
+      "rule": "the pooled, map-blind PGM receiver exactly as R6l constructs it, rebuilt at each held-out depth from the same recipe, with priors uniform and ambient dimension 16",
+      "forbidden": "reusing a receiver fitted at one of R6l's original depths and evaluating it at a held-out depth. That would measure transfer, not the crossing.",
+      "codebook": "the same codebook family and size per depth that R6l uses; no re-tuning at held-out depths"
+    },
+    "one_winding_ring": "the single ring R6l uses. Held-out rings are OUT of scope for part B and are named in the remainder as the thing a confirmed crossing would still need."
+  },
+
+  "prediction": {
+    "B2": "PRIMARY AND SOLE. The projective probability-margin crossing rho_star satisfies J_psi(rho_star) = (1 - e^{-2 rho_star})^2 in [0.05, 0.20], equivalently rho_star in [0.126548, 0.296392].",
+    "B3": "the INFORMATION margin remains positive at every held-out depth, including depths below rho_star, as it already does at rho = 0.1",
+    "J_psi_at_the_held_out_depths": {
+      "0.15": 0.0671751947,
+      "0.20": 0.1086888720,
+      "0.25": 0.1548181217,
+      "0.30": 0.2035709397,
+      "0.40": 0.3032385898
+    },
+    "which_depths_lie_inside_the_admissible_interval": [0.15, 0.2, 0.25],
+    "which_lie_outside": [0.3, 0.4]
+  },
+
+  "outcome_table": {
+    "note": "exhaustive and evaluated in the precedence order below. The first row whose condition holds decides. Nothing is left to judgement at read time.",
+    "precedence": ["INVALID", "REFUTED", "INCONCLUSIVE", "SUPPORTING"],
+    "rows": [
+      {
+        "outcome": "INVALID",
+        "condition": "the projective margin is non-monotone in depth across the held-out set, or R6l's committed schema supplies no threshold for the projective probability margin",
+        "meaning": "no single crossing exists, or the pass rule is undefined. Report and stop; do not pick the first crossing."
+      },
+      {
+        "outcome": "REFUTED",
+        "condition": "the margin passes at rho = 0.15 with J_psi = 0.0672 while ALSO passing at some depth with J_psi < 0.05, i.e. below rho = 0.126548; or the margin still fails at rho = 0.40 where J_psi = 0.3032385898; or the margin fails at every held-out depth through 0.40",
+        "meaning": "the crossing precedes the information level said to cause it, or never occurs where the mechanism requires. Withdraw the mechanism; do not rescale it."
+      },
+      {
+        "outcome": "INCONCLUSIVE",
+        "condition": "the bracketing pair straddles an endpoint of [0.126548, 0.296392] -- specifically a first pass at 0.15 (bracketed by 0.10 and 0.15, straddling nothing measurable below), or a first pass at 0.30 or later (bracketed by (0.25, 0.30) or (0.30, 0.40), the upper endpoint 0.296392 lying inside the bracket)",
+        "meaning": "the grid cannot localise the crossing against the interval endpoint. It may NOT be resolved by adding depths after seeing the data."
+      },
+      {
+        "outcome": "SUPPORTING",
+        "condition": "the first passing depth is 0.20 or 0.25, so the crossing is bracketed by (0.15, 0.20) or (0.20, 0.25), both intervals lying strictly inside [0.126548, 0.296392]; AND B3 holds at every held-out depth",
+        "meaning": "consistent with the J_psi mechanism at one ring, in one noise slice, on one grid. Not a theorem."
+      }
+    ],
+    "conservative_first_pass_classification": {
+      "0.15": "INCONCLUSIVE",
+      "0.20": "SUPPORTING",
+      "0.25": "SUPPORTING",
+      "0.30": "INCONCLUSIVE",
+      "0.40": "REFUTED",
+      "none_through_0.40": "REFUTED",
+      "non_monotone": "INVALID"
+    }
+  },
+
+  "kill_conditions_restated_in_full": {
+    "K5b": "a pass at any depth with J_psi < 0.05 refutes the mechanism, because the crossing then precedes the information level said to cause it",
+    "K6": "a failure still standing at rho = 0.40, J_psi = 0.3032385898, refutes it",
+    "K7": "non-monotonicity in depth makes 'the crossing' undefined and the round INVALID",
+    "K8": "a bracketing pair straddling 0.126548 or 0.296392 is INCONCLUSIVE and may not be resolved by adding depths after the fact",
+    "K9": "if the clean slice and the fifteen noisy coordinates disagree about the crossing location, that disagreement is the reported result. It may not be resolved by selecting a slice."
+  },
+
+  "typed_remainder": [
+    {
+      "kind": "scope_remainder",
+      "carrier": "one ring, one slice, one grid",
+      "comparison": "a SUPPORTING outcome would be a numerical coincidence of two curves at a single winding ring in a single noise slice on a five-point grid. Held-out rings are the next thing it would need and are not in scope here."
+    },
+    {
+      "kind": "method_remainder",
+      "carrier": "grid resolution",
+      "comparison": "0.05 in the lower grid and 0.10 in the last interval. The upper endpoint 0.296392 falls inside the (0.25, 0.30) and (0.30, 0.40) brackets, so no crossing at or above 0.30 can be resolved against it. That is why two of the five depths classify INCONCLUSIVE by construction rather than by outcome."
+    },
+    {
+      "kind": "witness_remainder",
+      "carrier": "executability",
+      "comparison": "part B depends on R6l artifacts that are not on origin. This manifest fixes the procedure in advance of their arrival and is worth exactly what an unexecuted prediction is worth."
+    }
+  ]
+}

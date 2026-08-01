@@ -1,0 +1,57 @@
+{
+  "schema": "hypercomplexbrain.preregistration.amendment.v1",
+  "round": "QSigma-R6k-W1",
+  "status": "pre-execution correction: part B has never been run, and cannot be until R6l's C_raw reaches origin",
+  "amends": "manifests/qsigma_r6k_w1_semantic_reproduction_preregistration.json, part_b.frozen_prediction",
+
+  "reason": "An external audit of the published branch found that B1 and B2 were written as equivalent statements and are not. The word 'equivalently' asserted a bijection between a depth interval and a J_psi interval that the closed form does not provide. Two non-equivalent predictions joined by 'equivalently' are one prediction that cannot fail cleanly: whichever endpoint the measurement misses, the other reading is available afterwards. That is the shape of an unfalsifiable claim and it is corrected before execution rather than after.",
+
+  "the_arithmetic": {
+    "map": "J_psi(rho) = (1 - e^{-2 rho})^2, strictly increasing on rho > 0",
+    "B1_as_written_implies": {
+      "rho_interval": "(0.15, 0.30)",
+      "induced_J_psi_interval": "(0.067175, 0.203571)"
+    },
+    "B2_as_written_implies": {
+      "J_psi_interval": "[0.05, 0.20]",
+      "induced_rho_interval": "[0.126548, 0.296392]"
+    },
+    "overlap": "the two rho intervals differ at both ends: B2 admits crossings down to 0.126548, which B1 excludes, and B1 admits crossings up to 0.30, which B2 excludes above 0.296392",
+    "consequence_if_left_alone": "a crossing measured at rho = 0.13 would satisfy B2 and fail B1; a crossing at 0.298 would satisfy B1 and fail B2. Reporting either as 'the prediction held' would be choosing the reading after seeing the result."
+  },
+
+  "corrected_prediction": {
+    "B1": "SUPERSEDED. The depth interval is no longer stated independently.",
+    "B2": "PRIMARY AND SOLE. The projective probability-margin crossing rho_star satisfies J_psi(rho_star) = (1 - e^{-2 rho_star})^2 in [0.05, 0.20], equivalently rho_star in [0.126548, 0.296392]. This is now one statement with one derived reading, not two statements joined by a word.",
+    "B3": "unchanged: the information margin remains positive at every held-out depth, including those below rho_star",
+    "held_out_depths": [0.15, 0.2, 0.25, 0.3, 0.4],
+    "held_out_depths_note": "unchanged, and none appears in the R6k or R6l grids. Note that 0.15 and 0.30 both now sit INSIDE the corrected admissible interval, so neither is an automatic refutation point; the kill conditions below are restated accordingly."
+  },
+
+  "corrected_kill_conditions": {
+    "K5": "SUPERSEDED. 'a pass at rho = 0.15 refutes the mechanism' was derived from the old B1 endpoint, and 0.15 lies inside the corrected interval, so a pass there is consistent rather than fatal.",
+    "K5b": "if the projective margin already passes at a depth with J_psi < 0.05 -- below rho = 0.126548 -- the J_psi mechanism is REFUTED, because the crossing then precedes the information level said to cause it",
+    "K6": "unchanged in force, restated exactly: if the projective margin still fails at rho = 0.40, where J_psi = 0.302, the mechanism is REFUTED",
+    "K7": "unchanged: if the margin is non-monotone in depth across the held-out set, no single crossing exists and the prediction is meaningless as stated. Report that rather than picking the first crossing.",
+    "K8": "new, and it is the one that makes the round cost something: the held-out depths are spaced 0.05 apart, so a measured crossing localises rho_star only to within one interval. If the bracketing pair straddles an endpoint of [0.126548, 0.296392] the result is INCONCLUSIVE, not a pass. It may not be resolved by adding depths after seeing the data."
+  },
+
+  "what_is_unchanged": [
+    "part B remains outcome-blind: it has not been executed and cannot be until R6l's C_exec and C_raw reach origin",
+    "part A is untouched by this amendment",
+    "the mechanism remains a candidate, not a theorem. A confirmed crossing would be a numerical coincidence of two curves at one winding ring and would need held-out rings before it is a mechanism."
+  ],
+
+  "typed_remainder": [
+    {
+      "kind": "method_remainder",
+      "carrier": "the word 'equivalently'",
+      "comparison": "it asserted a bijection that the closed form does not supply. The failure was not arithmetic -- both intervals were computed correctly -- but a claim of equivalence between them that was never checked. Found externally, not here."
+    },
+    {
+      "kind": "scope_remainder",
+      "carrier": "resolution",
+      "comparison": "five depths at spacing 0.05 cannot localise a crossing more finely than 0.05. K8 makes that a declared INCONCLUSIVE outcome rather than a silent rounding of the answer toward the prediction."
+    }
+  ]
+}

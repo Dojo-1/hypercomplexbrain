@@ -58,7 +58,8 @@ from aionq.witness_nerve import (EvidenceRank, WitnessAct, WitnessGraph,
 
 __all__ = [
     "Correction", "CORRECTIONS", "SELF_PARTIES", "ENVELOPE_SCHEMA_PREFIX",
-    "repo_root", "iter_envelopes", "envelope_census", "witness_graph",
+    "party_kind", "repo_root", "iter_envelopes", "envelope_census",
+    "witness_graph",
     "independence_report", "recognition_asymmetry", "typed_remainder_census",
     "corrections_are_bound", "preregistration_ordering", "godelian_gap",
     "self_audit",
@@ -69,14 +70,42 @@ __all__ = [
 #: list would have to be updated by the same party it audits.
 ENVELOPE_SCHEMA_PREFIX = "hypercomplexbrain.evidence."
 
-#: Parties that are this agent.  Producer strings in the corpus are a mix of
-#: agent names and the experiment script that emitted the row; a script in this
-#: tree ran here, so both forms are self.
+#: Parties that are this agent.  Matched by PREFIX, because the same agent
+#: reports itself with a platform suffix in different rounds.
 SELF_PARTIES = ("claude-code",)
 
 
+def party_kind(party: str) -> str:
+    """``self`` | ``other`` | ``ambiguous``.
+
+    A SCRIPT PATH IS NOT A PARTY, and treating it as one was a real defect.  The
+    original rule read ``party in SELF_PARTIES or party.startswith("experiments/")``
+    -- any experiments/ producer was self, on the reasoning that a script in this
+    tree ran here.  R6k falsified that: the identical script produced R6k on one
+    machine and its reproduction on another, so the same string names two
+    different parties.
+
+    The damage was not that the act went uncounted.  It counted, in the WRONG
+    DIRECTION: producer read as self, verifier ``claude-code-linux`` read as
+    other, so a recomputation this agent PERFORMED was recorded as one it
+    RECEIVED, and :func:`recognition_asymmetry` flipped ``mutual`` to True on a
+    one-way relation.  An audit built to refuse inflated evidence inflated its
+    own headline number.
+
+    So a script path resolves to ``ambiguous`` and is counted in its own bucket,
+    never assigned a direction and never contributing to ``mutual``.  Recovering
+    the real party would need the two environment digests, which live in two
+    different envelopes; that is named as a remainder rather than guessed at.
+    """
+    if not party:
+        return "ambiguous"
+    if party.startswith("experiments/") or party.endswith(".py"):
+        return "ambiguous"
+    return "self" if any(party.startswith(p) for p in SELF_PARTIES) else "other"
+
+
 def _is_self(party: str) -> bool:
-    return party in SELF_PARTIES or party.startswith("experiments/")
+    return party_kind(party) == "self"
 
 
 # --------------------------------------------------------------------------
@@ -217,6 +246,172 @@ CORRECTIONS = (
         "tests/test_self_audit.py::test_ordering_uses_commit_topology_not_the_clock",
         True,
     ),
+    Correction(
+        "R6k-W1",
+        "a script path treated as a party identity: _is_self returned True for "
+        "any producer starting with 'experiments/', so when the same script "
+        "produced R6k on one machine and its reproduction on another, an act "
+        "this agent PERFORMED was filed as one it RECEIVED and mutual flipped "
+        "to True on a one-way relation. The audit built to refuse inflated "
+        "evidence inflated its own headline number, using an artifact this "
+        "round had just written",
+        "tests/test_self_audit.py::test_a_script_path_is_not_a_party_identity",
+        True,
+    ),
+    Correction(
+        "R6k-W1",
+        "an envelope SHA that bound nothing: the run wrote its artifacts and its "
+        "envelope in one pass, so current_commit() returned the last commit "
+        "BEFORE the run and all three raw artifacts resolved to None at that "
+        "SHA. verify() reported ok because a missing blob is treated as 'cannot "
+        "check'. A SHA that binds nothing reads as provenance and is worse than "
+        "the empty-commit_sha path it was written to avoid",
+        "tests/test_semantic_reproduction.py::test_the_envelope_binds_to_a_commit_that_contains_its_artifacts",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "the reproduction verdict consulted five of seven mismatch populations "
+        "and defaulted to agreement on the other two: a trace with the wrong "
+        "event SEQUENCE returned CONFIRMED, and producer-only leaves were "
+        "tolerated wholesale rather than checked against a declared allowance, "
+        "so a reproduction that silently stopped emitting a whole section would "
+        "have agreed about the part it still emitted",
+        "tests/test_semantic_reproduction.py::test_a_wrong_event_sequence_is_not_agreement",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "two positions held at once: the same act was excluded from the "
+        "recognition counts as an ambiguous party AND counted as raising the "
+        "independent total from 1 to 2. Independence requires two identified "
+        "parties; a recomputation with an unidentified one is capped at REVIEWED",
+        "tests/test_self_audit.py::test_an_ambiguous_party_cannot_reach_independent",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "*.jsonl had no eol rule, so a Windows checkout received CRLF and every "
+        "committed-blob digest binding an event ledger failed on that platform "
+        "only. An evidence chain that holds on one operating system is not an "
+        "evidence chain",
+        "tests/test_self_audit.py::test_event_ledgers_are_pinned_to_lf",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "part B stated B1 and B2 as equivalent and they are not: rho in "
+        "(0.15, 0.30) gives J_psi in (0.067175, 0.203571), while J_psi in "
+        "[0.05, 0.20] gives rho in [0.126548, 0.296392]. Two non-equivalent "
+        "predictions joined by 'equivalently' is one prediction that cannot "
+        "fail cleanly, because whichever endpoint the measurement misses the "
+        "other reading remains available afterwards",
+        "tests/test_semantic_reproduction.py::test_part_b_states_one_interval_not_two",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "the event comparator compared FIELD NAMES, not values: action, key, "
+        "shard and every value inside metadata were never looked at, and the "
+        "verdict never consumed sequences_contiguous. An external audit altered "
+        "those semantic values and still obtained CONFIRMED -- the module's own "
+        "defect, inside the module written to expose it",
+        "tests/test_semantic_reproduction.py::test_event_values_are_compared_not_only_field_names",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "an outcome-derived allowlist: broad prefixes applied to the OBSERVED "
+        "producer-only paths, so a newly missing .checks.* leaf was excused "
+        "automatically. The rule was 'anything shaped like a runner section' "
+        "rather than 'these forty-three'. Replaced with the frozen 43-path set "
+        "and its canonical digest, compared for equality in both directions",
+        "tests/test_semantic_reproduction.py::test_the_runner_only_set_is_frozen_and_its_digest_matches",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "rules_bound_to was informational: the manifest digests sat in "
+        "observed_result, so replacing one with zeros left verify().ok True. The "
+        "committed hashes happened to be correct and nothing established that. "
+        "Moved into raw_artifacts, which verify() re-reads from disk",
+        "tests/test_semantic_reproduction.py::test_the_manifests_are_mechanically_bound_not_merely_quoted",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "three factual errors in the part B interval amendment: rho = 0.30 was "
+        "called inside [0.126548, 0.296392] and is outside it; the held-out grid "
+        "was called uniformly spaced at 0.05 when the final gap is 0.10; and "
+        "J_psi(0.40) was written 0.302 rather than 0.3032385898",
+        "tests/test_semantic_reproduction.py::test_part_b_protocol_fixes_the_three_arithmetic_errors",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "True == 1 in the event comparison: type classes were never compared, so "
+        "substituting the boolean true for the integer 1 at sequence and at "
+        "metadata.source_index in the real trace gave zero mismatches and "
+        "CONFIRMED. compare_results was protected by its leaf-kind guard; the "
+        "event path was not. An ill-formed sha256 value was also exempted from "
+        "comparison by wearing the prefix, without the prefix ever being validated",
+        "tests/test_semantic_reproduction.py::test_true_is_not_one_in_the_event_comparison",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "the exact 43-path control lived only in the runner: the verdict asked "
+        "whether every OBSERVED producer-only leaf was inside the declared set, "
+        "so 42 observed against 43 declared returned CONFIRMED. The runner exited "
+        "1 and the envelope phase never read the controls, so an exit-1 report "
+        "could still be enveloped by invoking the second phase by hand",
+        "tests/test_semantic_reproduction.py::test_a_declared_producer_only_leaf_going_missing_contradicts",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "the part B outcome table contradicted itself four ways in one document: "
+        "0.296392 was said to lie inside (0.30, 0.40) and does not; the prose "
+        "made a first pass at 0.40 INCONCLUSIVE while the lookup table made it "
+        "REFUTED; a B3 information-margin failure had no outcome; and K9 slice "
+        "disagreement had no outcome. A table decided by whoever reads it is an "
+        "unfrozen threshold wearing a schema",
+        "tests/test_part_b_outcome.py::test_the_upper_endpoint_is_not_inside_the_last_bracket",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "part B's margins were referenced rather than frozen, and the "
+        "probability gate was written strictly positive where R6l gates "
+        "inclusively on m_P = delta_P - 1/16 >= 0 and m_I = delta_I - 0.02 >= 0. "
+        "A strict gate is a different gate and the difference is reachable, "
+        "because 1/16 is exact in binary64",
+        "tests/test_part_b_outcome.py::test_the_gates_are_r6ls_and_inclusive",
+        False,
+    ),
+    Correction(
+        "R6k-W1",
+        "part B's execution precondition named C_exec and C_raw on origin. Raw "
+        "artifacts without their envelope have no commit binding, no digest "
+        "binding and no declared verifier -- part B may not consume upstream "
+        "evidence weaker than the evidence it intends to produce. The "
+        "precondition is now a verified R6l C_env",
+        "tests/test_part_b_outcome.py::test_the_manifest_requires_c_env_not_c_raw",
+        False,
+    ),
+    Correction(
+        "SELF",
+        "preregistration_ordering conflated 'not yet implemented' with "
+        "'implemented first': it demanded at least one file created after the "
+        "manifest, so a preregistration whose experiment has not run scored "
+        "identically to one whose implementation predated it. Found by running "
+        "the rule against a manifest of this round that legitimately has no "
+        "implementation yet. Three states now -- holds, pending, violated -- and "
+        "a first draft of the split was ALSO wrong, scoring pre-existing "
+        "modification targets as violations and turning R4 and R5 red",
+        "tests/test_self_audit.py::test_ordering_distinguishes_pending_from_violated",
+        True,
+    ),
 )
 
 
@@ -300,6 +495,21 @@ def witness_graph(root=None) -> WitnessGraph:
         if mode not in ("declined", "pending", "not_requested", "contradicted",
                         "attested", "reviewed", "recomputed"):
             mode = "not_requested"
+        # INDEPENDENCE REQUIRES TWO IDENTIFIED PARTIES.  `party_kind` already
+        # says a script path names no party; promoting such an act to
+        # INDEPENDENT anyway would be holding two positions at once -- refusing
+        # to assign it a direction in `recognition_asymmetry` while counting it
+        # as proof that a DIFFERENT party checked the claim.
+        #
+        # An external audit found exactly that inconsistency in the published
+        # W1 branch: the reproduction was excluded from the recognition counts
+        # as ambiguous and simultaneously raised the independent count 1 -> 2.
+        # A recomputation whose parties are not both identified is capped at
+        # REVIEWED: a second computation genuinely happened, and who performed
+        # it is unestablished.
+        if mode == "recomputed" and "ambiguous" in (party_kind(producer),
+                                                    party_kind(verifier)):
+            mode = "reviewed"
         graph.add(WitnessAct(env.get("claim_id", "?"), producer, verifier, mode))
     return graph
 
@@ -347,6 +557,7 @@ def recognition_asymmetry(root=None) -> dict:
     """
     out_acts: list = []
     in_acts: list = []
+    ambiguous_acts: list = []
     for _path, env in iter_envelopes(root):
         if env is None:
             continue
@@ -358,15 +569,22 @@ def recognition_asymmetry(root=None) -> dict:
             continue
         row = {"claim_id": env.get("claim_id", "?"),
                "producer": producer, "verifier": verifier}
-        if _is_self(verifier) and not _is_self(producer):
+        pk, vk = party_kind(producer), party_kind(verifier)
+        if "ambiguous" in (pk, vk):
+            # Neither direction can be assigned. Counted, never directed, and
+            # never allowed to reach `mutual` -- see party_kind.
+            ambiguous_acts.append(dict(row, producer_kind=pk, verifier_kind=vk))
+        elif vk == "self" and pk == "other":
             out_acts.append(row)
-        elif _is_self(producer) and not _is_self(verifier):
+        elif pk == "self" and vk == "other":
             in_acts.append(row)
     return {
         "recomputations_performed_on_others": len(out_acts),
         "recomputations_received_from_others": len(in_acts),
+        "recomputations_of_ambiguous_party": len(ambiguous_acts),
         "outward": out_acts,
         "inward": in_acts,
+        "ambiguous": ambiguous_acts,
         "mutual": bool(out_acts) and bool(in_acts),
     }
 
@@ -520,6 +738,38 @@ def preregistration_ordering(root=None) -> dict:
         # way; the test is on files the round CREATED after the manifest. Files
         # added in the SAME commit as the manifest are counted separately: that
         # is not "preregistered before implementation", it is simultaneous.
+        # THREE states, not two. The rule previously demanded at least one file
+        # created after the manifest, so a preregistration whose experiment has
+        # not run yet was scored identically to one whose implementation
+        # PREDATED it. "Not yet" and "violated" are different facts and the
+        # audit was reporting them as the same one -- found by running the rule
+        # against a manifest of this round that legitimately has no
+        # implementation yet.
+        # Three states, and the boundaries between them took two attempts.
+        #
+        # `files_expected_to_change` says CHANGE, not create, so a declared file
+        # that already existed is a modification target. Scoring those as
+        # violations was the first draft and it turned R4 and R5 red for naming
+        # modules they went on to edit -- 4 and 5 of their declared files were
+        # created after their manifests, which is the round doing exactly what
+        # it preregistered.
+        #
+        # What IS a violation:
+        #   * a file created in the manifest's OWN commit -- simultaneous is not
+        #     before; or
+        #   * a manifest that CLAIMS committed_before_any_implementation while
+        #     its entire declared surface predates it and nothing was created
+        #     after. There the flag has no support at all.
+        #
+        # And "pending" is neither: a manifest whose experiment has not run yet
+        # has not failed, it has not been tested. Conflating that with a
+        # violation was the defect this three-state rule was written to remove.
+        if same or (flag and earlier and not later):
+            status = "violated"
+        elif later:
+            status = "holds"
+        else:
+            status = "pending"
         checkable.append({
             "manifest": name,
             "self_reported_flag": flag,
@@ -528,16 +778,23 @@ def preregistration_ordering(root=None) -> dict:
             "files_created_after_manifest": len(later),
             "files_predating_manifest": len(earlier),
             "files_in_the_manifest_commit": len(same),
-            "ordering_holds": bool(later) and not same,
+            "ordering_status": status,
+            "ordering_holds": status == "holds",
         })
-    holds = sum(1 for c in checkable if c["ordering_holds"])
+    holds = sum(1 for c in checkable if c["ordering_status"] == "holds")
+    pending = sum(1 for c in checkable if c["ordering_status"] == "pending")
+    violated = sum(1 for c in checkable if c["ordering_status"] == "violated")
     return {
         "preregistrations": len(checkable) + len(unbound),
         "checkable": len(checkable),
         "ordering_holds": holds,
+        "ordering_pending": pending,
+        "ordering_violated": violated,
         "unbound_flag_only": len(unbound),
         "schemaless_by_filename_only": len(schemaless),
-        "all_checkable_hold": holds == len(checkable) and bool(checkable),
+        # The claim is that NOTHING is violated. A pending preregistration has
+        # not failed; it has not yet been tested.
+        "all_checkable_hold": violated == 0 and bool(checkable),
         "rows": checkable,
         "unbound": unbound,
         "schemaless": schemaless,

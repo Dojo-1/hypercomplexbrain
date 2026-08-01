@@ -1,0 +1,51 @@
+{
+  "schema": "hypercomplexbrain.preregistration.amendment.v1",
+  "round": "QSigma-R6k-W1",
+  "status": "pre-result correction: committed before any reproduction artifact or envelope exists",
+  "amends": "manifests/qsigma_r6k_w1_semantic_reproduction_preregistration.json",
+  "amends_sha256_at_time_of_correction": "recorded in the runner's bound inputs, not restated here",
+
+  "reason": "Two rules frozen in part_a.comparison_rules_frozen_now fired against this platform's own reproduction during comparator development, before any artifact was written. Both are corrected here, in a separate pre-result manifest, rather than edited into the frozen file. Editing the frozen file would make the rules look as though they had always said this, which is the precise dishonesty the freeze exists to prevent. Neither correction is applied because it makes this run pass; each is applied because the original rule was measuring the wrong thing, and each is stated so that it can still fail.",
+
+  "corrections": [
+    {
+      "id": "W1-C1",
+      "component": "part_a.comparison_rules_frozen_now.control_flags_must_be_equal and the discrete-leaf population",
+      "what_fired": "resource_ledger.compiler_proxy.qiskit_version differs: '2.3.0' on the producing platform, '2.5.1' on this one.",
+      "original_rule": "any discrete-leaf mismatch makes the comparison CONTRADICTED",
+      "why_the_original_rule_was_wrong": "The frozen rule named 'resource ledger INTEGERS' as the quantity that must match. A library version string is not an integer and not an output of the compiler cost proxy -- it is provenance FOR that proxy, the same kind of fact as the python and numpy versions that environment_digest already records separately and expects to differ. A cross-platform witness that demands identical library versions is not a witness; it is a demand that the second platform be the first one.",
+      "corrected_rule": "An explicitly enumerated environment-metadata exclusion list is removed from the discrete population and reported in its own count. The list is closed and is exactly: ['.resource_ledger.compiler_proxy.qiskit_version']. Nothing may be added to it after the reproduction artifact exists.",
+      "honesty_test_applied": "would this exclusion be accepted if the comparison had gone the other way -- if the versions matched and a scientific float had failed? Yes: the version would still be provenance and the float would still be the result. The exclusion does not depend on which side it helps.",
+      "what_it_costs": "this round can no longer detect a result difference caused solely by a qiskit version change. That is stated as a typed remainder rather than absorbed."
+    },
+    {
+      "id": "W1-C2",
+      "component": "part_a.controls.C2, the minimum number of scientific leaves required before CONFIRMED is reachable",
+      "what_fired": "the frozen floor was 4000 scientific leaves. Measured on the actual documents: 4672 shared leaves, of which 493 are identity digests, 1 is environment metadata, and 3555 are scientific. The floor was unreachable by construction.",
+      "why_the_original_rule_was_wrong": "4000 was taken from the TOTAL leaf count before a comparator existed that could separate scientific leaves from digests. It was a number guessed from the wrong denominator, not a threshold derived from what 'vacuous' means.",
+      "corrected_rule": "The floor is made RELATIVE and derived rather than absolute and guessed: scientific_leaves_compared must be at least 0.75 of (shared_leaves - identity_leaves), with an absolute backstop of 1000 against a truncated document. 'Not vacuous' means most of what is not a digest is a compared number, which is a statement about the comparison rather than about this particular pair of files.",
+      "why_not_simply_lower_4000_to_3000": "Choosing a number after seeing 3555 is fitting the threshold to the result. The relative rule was chosen because it can be stated without knowing the answer, and this run could fail it: the measured ratio is 3555/4179 = 0.8507, and a document in which a quarter of the non-digest leaves stopped being compared would be rejected.",
+      "what_it_costs": "the absolute floor no longer protects against a document that shrinks proportionally in every population at once. The backstop of 1000 is the only guard against that and it is weak; stated rather than hidden."
+    }
+  ],
+
+  "unchanged_primary_items": [
+    "float tolerance stays at 1e-10, above the 3.31e-11 already observed and never widened",
+    "the discrete verdict must still be exactly equal",
+    "event row count, key set and key order must still be exactly equal",
+    "structural fields -- schema, round, ambient dimension, cell counts, depths, noise strengths -- must still be exactly equal",
+    "digests are still excluded and still counted",
+    "all four kill conditions K1-K4 stand unchanged",
+    "control C1, the 1e-9 perturbation that must come back CONTRADICTED, stands unchanged",
+    "part_b remains frozen, outcome-blind, and unexecuted"
+  ],
+
+  "runner_only_leaves": {
+    "count": 43,
+    "measured_populations": "22 boolean runner checks, 8 execution_binding fields, 4 preregistration fields, 4 provenance fields, 3 method_correction fields, 1 architecture_or_hardware_claim_authorized flag",
+    "ruling": "these are emitted by experiments/run_equal_resource_reservoir.py, not by the library entry point this round calls, so they are absent from the reproduction by construction and cannot be compared. They are reported as only_in_produced with their full paths and are NOT counted as agreement. None of them is a scientific value; every one is ceremony recording how the run was bound.",
+    "residual": "the 22 runner checks are therefore unverified by this round. They assert things about the producing working tree -- preserved file hashes, manifest freeze, dirty-file stability -- which a second platform cannot check after the fact at all."
+  },
+
+  "execution_rule": "This correction must be committed before experiments/run_r6k_semantic_reproduction.py writes anything. If a reproduction artifact already exists at the time this file is committed, the round is void."
+}
