@@ -1,0 +1,84 @@
+{
+  "schema": "hypercomplexbrain.preregistration.amendment.v1",
+  "round": "QSigma-R6k-W1",
+  "part": "B",
+  "status": "INPUT FREEZE. The execution precondition is now SATISFIED and VERIFIED. Part B has still not been executed. This manifest fills the five PENDING fields and does nothing else.",
+  "amends": "manifests/qsigma_r6k_w1_partb_effective_protocol_v2.json",
+
+  "precondition_verification": {
+    "requirement_as_frozen": "R6l C_env must be SEALED AND VERIFIED on origin. C_exec and C_raw reaching origin is not sufficient.",
+    "checked_on": "origin/claude/aion-brain-architecture-27f8ji at 8ee8274",
+    "r6l_c_exec_commit": "bedb574ef2540638add55e3d8e87b1b9159064e4",
+    "r6l_c_raw_commit": "1421ec2eb966eaaf9af78d9ffc1ea727429b9a18",
+    "r6l_c_env_commit": "09f4ca21375fe2d93cd85c6b2286bc75360feec0",
+    "envelope": "artifacts/r6l_common_receiver/common_receiver_reservoir.envelope.json",
+    "claim_id": "EXP-R6L-COMMON-RECEIVER",
+    "envelope_verifies": true,
+    "envelope_verify_failures": 0,
+    "declared_raw_artifacts": 27,
+    "raw_artifacts_resolving_at_recorded_commit_with_matching_bytes": 27,
+    "recorded_commit_in_envelope": "1421ec2eb966eaaf9af78d9ffc1ea727429b9a18",
+    "note_on_the_two_commits": "the envelope records C_raw as its commit_sha, which is correct -- that is the commit containing its artifacts. C_env is the commit that added the envelope itself. Both are recorded here because the precondition names C_env and the binding names C_raw, and conflating them is exactly the class of error this round has spent itself correcting."
+  },
+
+  "frozen_measurement_inputs": {
+    "r6l_source_commit": "bedb574ef2540638add55e3d8e87b1b9159064e4",
+    "r6l_c_env_commit": "09f4ca21375fe2d93cd85c6b2286bc75360feec0",
+    "r6l_result_digest": "sha256:613d47b389ccb19dbbd301ec766fb72e541748749ab20b7642a3606e39101a0f",
+    "r6l_envelope_digest": "sha256:4f97a4f3786608c1b1261f0e26a972a596fd4636e8752686c8410190018b2cb7",
+    "r6l_ledger_root": "sha256:d7030e9cb89288720e27cbae4cca7642b95c6c1d60dd5da3d4e8c01f0e3bbd84",
+    "source_ring_inputs": "sha256:ac13a2085a9319066b05e29b193469c430f1f1c205c0b735ce00133b80adbbab",
+    "source_ring_inputs_field": "effective_protocol_digest, carried on every one of the 384 retrieval rows and on the result root",
+    "receiver_module": "src/aionq/common_receiver_reservoir.py at 8ee8274",
+    "r6l_event_count": 716,
+    "r6l_retrieval_rows": 384,
+    "r6l_global_winner": null,
+    "all_five_pending_fields_now_frozen": true
+  },
+
+  "what_the_freeze_revealed": {
+    "finding": "part B is a FRESH EXECUTION, not a re-read of R6l's artifacts.",
+    "measured": "R6l's committed depths are ['0.1','0.5','1.0','2.0','4.0']. The part B held-out set is [0.15, 0.20, 0.25, 0.30, 0.40]. The intersection is EMPTY.",
+    "why_this_is_the_right_outcome": "the held-out design was frozen precisely so that no part B depth could be read off an artifact that already existed. That is now confirmed by measurement rather than by intention: there is no row to look up, so there is nothing to fit.",
+    "what_it_costs": "part B therefore requires running the sealed R6l module at five new depths. It is a one-shot: the outcome table is non-monotone across depths and K8 forbids adding depths after seeing data, so the run cannot be repeated once its result is known.",
+    "clean_slice_confirmed": "24 of 384 rows carry epsilon_index = 0 and eta_index = 0. Of those, 10 are projective_fixed_depth -- 5 depths by 2 maps. The clean slice named in advance exists and is non-empty."
+  },
+
+  "execution_status": {
+    "executed": false,
+    "blocked": false,
+    "state": "UNBLOCKED AND HELD",
+    "why_held": "the collaborating party reported Part B input-guard work in an uncommitted local tree and is out of credits until 2026-08-08. That work is not on origin. Executing the one-shot now would consume the outcome before those guards land, and K8 makes the run unrepeatable. Holding is a judgement about a collaborator's in-flight work, not a gate this manifest imposes.",
+    "what_would_release_it": [
+      "the collaborating party's Part B guards reaching origin, or",
+      "an explicit instruction to execute without them"
+    ],
+    "what_is_NOT_a_reason_to_hold": "nothing in the frozen protocol. Every precondition it names is satisfied and verified above."
+  },
+
+  "unchanged_by_this_freeze": [
+    "the outcome function src/aionq/part_b_outcome.py and every branch of it",
+    "the margins m_P = delta_P - 1/16 >= 0 and m_I = delta_I - 0.02 >= 0, inclusive, binary64, unrounded",
+    "the held-out depths, the clean-slice rule, the no-aggregation rule",
+    "K5b, K6, K7, K8, K9",
+    "the bracket trichotomy and the expected classification table"
+  ],
+
+  "typed_remainder": [
+    {
+      "kind": "witness_remainder",
+      "carrier": "the R6l envelope this round now depends on",
+      "comparison": "EXP-R6L-COMMON-RECEIVER declares verifier '' and mode not_requested. It is bound to a commit and its 27 artifacts resolve there, which is real, and it has been witnessed by nobody. Part B will consume upstream evidence that is commit-bound and unwitnessed; that is a strictly weaker upstream than the round's own output aims to be, and it is recorded rather than resolved."
+    },
+    {
+      "kind": "scope_remainder",
+      "carrier": "one shot",
+      "comparison": "K8 forbids adding depths after seeing the data, so the five held-out depths are the entire budget. A run that returns INCONCLUSIVE on two of five brackets by construction cannot be improved by a second run."
+    },
+    {
+      "kind": "process_remainder",
+      "carrier": "the hold",
+      "comparison": "this is the first time in the round that a gate is held for a reason outside the protocol. It is recorded as such so that a later reader does not mistake collaborator sequencing for a preregistered condition."
+    }
+  ]
+}
