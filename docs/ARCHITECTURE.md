@@ -56,9 +56,19 @@ Fuzzing 150 random cognitive cores across width 4–12, depth 2–8 and T-densit
 
 ```
 Q_naive     : mean 1.0000   min 1.0000   max 1.0000
-q_sim_upper : mean 0.0880   min 0.0000   max 0.7423
+q_sim_upper : mean 0.0825   min 0.0000   max 0.5329
 gap         : mean 0.9175
 ```
+
+> **Correction (QΣ-R1a).** This block read `mean 0.0880  max 0.7423` while the
+> `gap` beside it read `0.9175`. Those cannot both hold: `gap = Q_naive −
+> q_sim_upper` and `Q_naive` is identically 1.00, so a gap of 0.9175 *is* a mean
+> of 0.0825. The document was carrying two numbers from two different runs and
+> asserting both. The figures above are the current measurement; the `gap` was
+> the one that was right. Re-measured on the same seed with the contraction
+> strategy disabled and enabled, these numbers are **identical** — the drift
+> predates it and 0 of the 150 cores move. Nothing on this page is safe merely
+> because the page says every number in it is computed.
 
 `Q_naive` is not merely optimistic. Its minimum equals its maximum. **It is
 constant on all-unitary cores** — every such core scores 1.00, so it cannot rank
@@ -86,6 +96,44 @@ polynomial simulation.
 
 The cause is not calibration. It is that **quantumness is not additive over edges**.
 A sum of locally quantum-looking transitions can be globally classical.
+
+### 0.1 The replacement inherited the defect
+
+`Q_naive` was retired for scoring 1.00 on cores that were exactly classically
+simulable. `q_sim_upper` was built to fix that by pricing what a simulator
+pays — and it does, for the two failure modes above. But it prices magic
+*wherever it sits* and never asks what the magic is connected to. So:
+
+| core (n = 12) | two strategies | three strategies |
+|---|---:|---:|
+| product of single-qubit chains (H,T alternating, **no 2-qubit gate at all**) | **1.0000** | 0.1667 |
+| shallow 1D local, full T-density | 0.4568 | 0.3333 |
+| k disconnected 2-qubit blocks | 0.2284 | 0.2284 |
+| all-to-all magic (control: genuinely hard) | 0.6852 | 0.6852 |
+
+The first row is `Q_naive`'s defect wearing a different coat. A circuit of *n
+independent single-qubit chains* is a product state at every step and is
+simulable in linear time — and the two-strategy portfolio called it **1.00,
+maximally quantum**. Worse, `tests/test_architecture.py` contained a test
+asserting exactly that saturation, so the suite pinned the wrong answer as
+correct. The witness circuit in `test_residency_scales_with_t_count` had no
+entangling gate; it now carries a CX ladder, and the product case is a separate
+test that fails if the metric ever calls it quantum again.
+
+The missing strategy was structural. §2's portfolio was a minimum over
+*compilations*, all priced by the same stabilizer-rank model — not a minimum
+over *strategies*. `aionq.contraction` adds tensor-network contraction in a
+constructed elimination ordering at cost `2^(width+1)`, so a core is charged for
+how its magic is **connected**, not merely for how much of it there is. The
+control row is the point: all-to-all magic has width 28 at n = 12 and is not
+made one bit cheaper.
+
+Two honest limits. This changes **0 of the 150** random cores in the sweep
+above — that generator's T-density is low enough that stabilizer rank always
+wins, so the new strategy is exercised by the K4 family table rather than by the
+random fuzz. And matchgate/free-fermion cores remain uncovered: their
+simulability is not a contraction-width argument, and claiming it without
+implementing it would be the unearned bound this whole section exists to refuse.
 
 ---
 
@@ -836,7 +884,7 @@ capacity as a count of holonomies.
 | QΣ-R0.7 | typed quantities; transport holonomy measured | ✅ 57/57 tests |
 | QΣ-R0.8 | self-review: half-applied fixes completed; cone wired into `promote()` | ✅ 59/59 tests |
 | HB0 universal base | conditioned \(H^n\) atlas, H⁴ default, typed Euclidean base control, live Atlas/HB-0 placement; K13 frozen separately | structurally implemented as `AXIOM-HB0-UNIVERSAL_POINCARE_BASE`; hashed working-tree envelope verifies, while independent witnessing and task benefit remain absent |
-| QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network / matchgate / low-treewidth families not yet covered |
+| QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network and low-treewidth families now covered by `aionq.contraction` and the K4 table; **matchgate/free-fermion still not covered**. Closing them exposed §0.1: the two-strategy portfolio scored a product of single-qubit chains at 1.00, and the suite pinned it |
 | Σ∞-S3 | §16 exp. 1: sheaf obstruction localisation, 8 coordinate systems, 300 trials; plus the QΣ query claim | ✅ 128 tests; sheaf clause survives, hypercomplex clause killed, octonionic clause ill-posed |
 | S4-G100 | Reversible Recognition Chamber: aperture, ordered roles, nest gate, 10 preregistered gates | ✅ 193 tests; 6/10 gates fail, chamber retired, S3 claim superseded as basis-dependent |
 | S5 | moving-frame orbit audit; basis-free Laplacian instrument | ✅ 208 tests; exactly orbit-collapsed AND strongest (0.964 vs 0.776) |
@@ -867,6 +915,16 @@ and nothing here should be read as assuming otherwise.
    simulation strategies implemented here. A better classical algorithm lowers every
    number in this document. This is a feature: the metric is exposed to refutation
    from outside.
+
+   QΣ-R1a is the first time this was collected on rather than merely stated, and
+   the lesson was sharper than expected. Adding one strategy did not shave a few
+   percent off a frontier — it took a family from **1.00 to 0.17**, because the
+   missing strategy was not a better algorithm for a hard problem but the only
+   implemented algorithm that could see *structure* at all. The exposure is
+   therefore not symmetric: a metric missing a strategy is not uniformly
+   optimistic, it is arbitrarily wrong on whatever that strategy was for, and it
+   gives no signal at all about where. Matchgate/free-fermion is the next known
+   hole; the unknown ones are the point.
 2. **Measured-high does not mean thinks-better.** Nothing here connects `Q_cert` to
    any cognitive performance. The architecture is now auditable; it is not yet
    justified.

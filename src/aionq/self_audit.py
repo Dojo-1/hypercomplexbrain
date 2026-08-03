@@ -528,6 +528,35 @@ CORRECTIONS = (
         True,
     ),
     Correction(
+        "QSigma-R1a",
+        "q_sim_upper inherited the defect it was built to retire: it prices magic "
+        "wherever it sits and never asks what the magic is connected to, so a "
+        "product of n independent single-qubit chains -- no two-qubit gate "
+        "anywhere, a product state at every step, linear-time simulable -- scored "
+        "1.00, maximally quantum. The portfolio was a minimum over compilations, "
+        "not over strategies",
+        "tests/test_architecture.py::test_a_product_of_single_qubit_chains_is_not_maximally_quantum",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "test_residency_scales_with_t_count witnessed 'residency scales with T "
+        "count' on a circuit containing no entangling gate at all, so the suite "
+        "asserted the saturation at 1.00 that was the defect; T-count alone does "
+        "not make a core hard and the witness has to entangle",
+        "tests/test_architecture.py::test_residency_scales_with_t_count",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "ARCHITECTURE.md printed q_sim_upper mean 0.0880 beside gap 0.9175, which "
+        "cannot both hold when gap = Q_naive - q_sim_upper and Q_naive is "
+        "identically 1.00; the document carried two numbers from two runs and "
+        "asserted both, on a page declaring that none of its numbers are asserted",
+        "tests/test_contraction.py::test_the_two_strategy_portfolio_does_not_decay_where_the_exponent_is_fixed",
+        True,
+    ),
+    Correction(
         "R6l",
         "the recompute gate applied one 1e-10 tolerance to every stored array, "
         "including the square root, which is a representation on the noise "

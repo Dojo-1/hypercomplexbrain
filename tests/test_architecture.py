@@ -88,6 +88,14 @@ def test_residency_scales_with_t_count():
     the same qubit merge into S, which is Clifford and free -- the compiler
     portfolio spots this and the score correctly *drops*.  That behaviour is the
     metric working, so the test must not accidentally rely on it.
+
+    The CX ladder is load-bearing and was missing.  Without it this circuit has
+    NO two-qubit gates at all: it is n independent single-qubit chains, exactly
+    simulable in linear time, and it used to saturate this assertion at 1.00.
+    T-count alone does not make a core hard -- the magic has to be connected to
+    something -- so a witness for "residency scales with T count" has to
+    entangle, or it witnesses the opposite.  See
+    ``test_a_product_of_single_qubit_chains_is_not_maximally_quantum``.
     """
     n = 8
     prev = -1.0
@@ -97,10 +105,42 @@ def test_residency_scales_with_t_count():
         for _ in range(layers):
             qc.t(range(n))
             qc.h(range(n))
+            for qubit in range(n - 1):
+                qc.cx(qubit, qubit + 1)
         cur = simulation_residency(qc).q_sim_upper
         assert cur >= prev
         prev = cur
     assert prev == pytest.approx(1.0, abs=0.01)
+
+
+def test_a_product_of_single_qubit_chains_is_not_maximally_quantum():
+    """Q_naive's defect, reappearing inside the metric that replaced it.
+
+    Section 0 retired ``Q_naive`` because it scored 1.00 on cores that were
+    exactly classically simulable, and its minimum equalled its maximum.
+    ``q_sim_upper`` was built to fix that by pricing what a simulator pays --
+    but it prices magic wherever it sits and never asks what the magic is
+    connected to.  So a circuit of n independent single-qubit chains, each
+    alternating H and T, scored 1.00: maximally quantum, and a product state
+    throughout.  The repository's own suite pinned that as correct.
+
+    Contraction sees the structure: with no two-qubit gate anywhere, the
+    interaction graph has width 1 and the whole core costs one qubit's worth.
+    """
+    n = 8
+    qc = QuantumCircuit(n)
+    qc.h(range(n))
+    for _ in range(7):
+        qc.t(range(n))
+        qc.h(range(n))
+
+    assert all(len(instruction.qubits) == 1 for instruction in qc.data), (
+        "this witness is only meaningful while the circuit stays a product")
+
+    report = simulation_residency(qc)
+    assert report.t_count > 0                    # it is full of magic
+    assert report.q_naive == pytest.approx(1.0)  # and the retired metric loves it
+    assert report.q_sim_upper < 0.30             # and it is still trivial to simulate
 
 
 def test_merged_t_gates_are_correctly_recognised_as_clifford():

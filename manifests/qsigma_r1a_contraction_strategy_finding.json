@@ -1,0 +1,71 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "QSIGMA-R1A-CONTRACTION-001",
+  "status": "implemented and measured. The QSigma-R1a gate's tensor-network and low-treewidth families are covered; matchgate/free-fermion is not, and is left open rather than claimed.",
+  "subject": "src/aionq/residency.py::simulation_residency, the q_sim_upper simulation-cost portfolio",
+  "statement": "q_sim_upper inherited the defect it was built to retire. It prices non-Clifford content wherever it sits and never asks what that content is connected to, so a product of n independent single-qubit chains -- no two-qubit gate anywhere, a product state at every step, linear-time simulable -- scored 1.00, maximally quantum. The repository's own test suite asserted that saturation as correct.",
+  "why_it_happened": {
+    "structural": "section 2's 'compiler portfolio' is a minimum over four COMPILATIONS, all priced by the same stabilizer-rank cost model. It was never a minimum over STRATEGIES. Two strategies existed -- stabilizer rank at 2^(alpha*T) and basis permutation at 2^0 -- and both are blind to connectivity.",
+    "the_retired_metric_made_the_same_mistake": "Q_naive was retired in section 0 for scoring 1.00 on exactly classically simulable cores. q_sim_upper fixed the two failure modes that section names -- permutation embedding and Gottesman-Knill -- and reproduced the pattern on a third the section does not name: magic that is real but unconnected.",
+    "why_the_suite_did_not_catch_it": "tests/test_architecture.py::test_residency_scales_with_t_count witnessed the claim 'residency scales with T count' on a circuit built from h() and t() alone, containing no entangling gate at all, and asserted that it saturates at 1.00. The witness was degenerate, so the test pinned the defect as the specification. Adding a CX ladder preserves the test's intent exactly: the entangled version still saturates at 1.00."
+  },
+  "the_measurement": {
+    "families_at_n_12": [
+      {"family": "product of single-qubit chains", "width": 1, "two_strategies": 1.0, "three_strategies": 0.1667, "note": "no two-qubit gate anywhere; product state throughout"},
+      {"family": "shallow 1D local, full T-density", "width": 3, "two_strategies": 0.4568, "three_strategies": 0.3333},
+      {"family": "k disconnected 2-qubit blocks", "width": 3, "two_strategies": 0.2284, "three_strategies": 0.2284, "note": "the crossover for this family is n=20; at n=12 stabilizer rank is still cheaper, and the table reports that rather than hiding it"},
+      {"family": "all-to-all magic", "width": 28, "two_strategies": 0.6852, "three_strategies": 0.6852, "note": "CONTROL. A genuinely hard core must not be made one bit cheaper, and is not."}
+    ],
+    "disconnected_block_scaling": {
+      "description": "k independent 2-qubit blocks on n=2k qubits, each carrying two T gates. The cost exponent is 2 for every n, so normalised residency should fall like 2/n.",
+      "two_strategies": {"4": 0.2284, "8": 0.2284, "12": 0.2284, "16": 0.2284, "20": 0.2284, "24": 0.2284, "32": 0.2284},
+      "three_strategies": {"4": 0.2284, "8": 0.2284, "12": 0.2284, "16": 0.2284, "20": 0.2, "24": 0.1667, "32": 0.125},
+      "exponent_only_truth": {"4": 0.5, "8": 0.25, "12": 0.1667, "16": 0.125, "20": 0.1, "24": 0.0833, "32": 0.0625},
+      "reading": "the old column does not move, because alpha*T/n is constant when T grows in step with n. A metric that does not decay on a family whose cost exponent is fixed is not measuring structure. The new column decays like 4/n, above the truth 2/n as an upper bound must."
+    },
+    "effect_on_the_existing_random_sweep": {
+      "cores_lowered": 0,
+      "cores_raised": 0,
+      "total": 150,
+      "reading": "ZERO. The ACAF generator's T-density is low enough that stabilizer rank is always the cheapest strategy, so the contraction path never wins there. This is reported rather than omitted: a new strategy that changes nothing on the existing fuzz corpus is a fact about the corpus, and stating only the constructed families would have implied a general tightening that was not measured."
+    }
+  },
+  "the_strategy": {
+    "module": "src/aionq/contraction.py",
+    "method": "build the circuit's tensor-network interaction graph -- one vertex per wire segment, a clique per gate over its 2k incident bonds -- then eliminate by minimum degree and charge 2^(induced width + 1)",
+    "soundness": "this does not estimate treewidth and hope. It constructs a concrete elimination ordering and reports the width that ordering actually incurs, so the charge is the cost of an algorithm written down in the module. A better ordering lowers the number; a worse one cannot make it invalid.",
+    "convention": "exponent only, matching the strategies already present: dense is charged n, stabilizer rank alpha*T, basis permutation 0, none carrying polynomial prefactors. Comparing a prefactor-carrying figure against these would be comparing two conventions.",
+    "fail_closed": "an instruction whose unitary cannot be obtained invalidates the whole path rather than being skipped. Contraction cost is fixed by connectivity, which is available even when the matrix is not, so pricing structure alone would let a circuit be made to look cheap by adding something whose behaviour was never checked. Measurement, reset and classical control are refused outright.",
+    "determinism": "ties in the elimination order are broken by vertex index. An ordering that depended on set iteration order would be one more computed quantity inside a reported number, which is the defect this repository has recorded five times."
+  },
+  "document_correction": {
+    "what": "docs/ARCHITECTURE.md section 0 printed 'q_sim_upper: mean 0.0880 max 0.7423' beside 'gap: mean 0.9175'",
+    "why_those_cannot_both_hold": "gap is defined as Q_naive - q_sim_upper and Q_naive is identically 1.0000 on this corpus, so a gap of 0.9175 IS a q_sim_upper mean of 0.0825. The page was carrying two numbers from two different runs and asserting both, while stating that every number in it is computed and none is asserted.",
+    "current_measurement": {"mean": 0.0825, "min": 0.0, "max": 0.5329, "gap_mean": 0.9175},
+    "attribution": "re-measured on the same seed with the contraction strategy disabled and enabled, these figures are IDENTICAL. The drift predates this work and is NOT caused by the new strategy. An earlier draft of this finding attributed the change to the strategy; that attribution was wrong and is withdrawn here."
+  },
+  "what_is_not_claimed": [
+    "that the contraction bound is tight. It is the cost of one constructed ordering, and a better ordering or a better contraction scheme lowers it further.",
+    "that matchgate or free-fermion cores are covered. They are not. Their simulability argument is not a contraction-width argument, and asserting the family without implementing the strategy would be exactly the unearned bound this work exists to refuse.",
+    "that the metric is now correct. It is less wrong on one identified family. The lesson of this round is that a missing strategy is not uniformly optimistic -- it is arbitrarily wrong on whatever that strategy was for, with no signal about where.",
+    "any cognitive claim. Nothing here connects q_sim_upper to task performance; remainder point 2 is untouched."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "instrument_remainder",
+      "statement": "The frontier this metric is 'exposed to refutation from' turned out not to be a frontier of better algorithms for hard problems. The missing strategy was the only implemented one that could see structure at all, and its absence cost a full 1.00-to-0.17 on the affected family. A portfolio missing a strategy does not degrade gracefully."
+    },
+    {
+      "kind": "test_remainder",
+      "statement": "A test whose witness is degenerate pins the defect as the specification. test_residency_scales_with_t_count asserted saturation at 1.00 on a circuit with no entangling gate, so the suite actively defended the wrong answer. The suite's size was never the issue: 137 architecture tests passed while this one held the metric's central claim upside down."
+    },
+    {
+      "kind": "coverage_remainder",
+      "statement": "The new strategy changes 0 of the 150 random cores. Everything demonstrated here rests on four constructed families, chosen because they exhibit the defect. That is a legitimate adversarial method and it is not a random sample: no claim is made about how often real cognitive cores fall in the low-treewidth regime."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Implemented, measured and reviewed by one party in one session. The defect it corrects was found by that same party reading its own metric, and no second party has recomputed any figure here."
+    }
+  ]
+}

@@ -540,10 +540,23 @@ def simulation_residency(
     # computational basis, in which case a basis input stays a phased basis
     # state and computational-basis readout is a point mass.
     log2_basis = 0.0 if basis_confined else math.inf
+    # Strategy C: tensor-network contraction in a constructed elimination
+    # ordering, cost 2^(induced width + 1).  A and B are both blind to
+    # STRUCTURE: stabilizer rank charges for magic wherever it sits, so k
+    # disconnected 2-qubit blocks each carrying a T gate are charged alpha*T,
+    # which does not move when T grows in step with n, while the true cost
+    # exponent of k independent 4x4 problems is fixed at 2.  Measured before
+    # this strategy existed, that family sat at q_sim_upper = 0.2284 for every n
+    # from 4 to 32 -- a metric that does not decay where the exponent is
+    # constant is not measuring structure.  With this strategy it decays as 4/n,
+    # staying above the exponent-only truth 2/n as an upper bound must.
+    from .contraction import contraction_plan
+    plan = contraction_plan(circuit)
+    log2_tensor = plan.log2_cost if plan.valid else math.inf
     # A classical simulator picks whichever strategy is cheaper.
-    log2_cost = min(float(n), log2_stabrank, log2_basis)
+    log2_cost = min(float(n), log2_stabrank, log2_basis, log2_tensor)
 
-    raw = 0.0 if n == 0 else min(log2_stabrank, log2_basis) / n
+    raw = 0.0 if n == 0 else min(log2_stabrank, log2_basis, log2_tensor) / n
     q_upper = 0.0 if n == 0 else max(0.0, min(1.0, log2_cost / n))
     q_naive = 0.0 if total_edges == 0 else quantum_edges / total_edges
 
@@ -568,6 +581,17 @@ def simulation_residency(
     if q_upper >= 1.0:
         notes.append("no implemented strategy simulates this core below dense cost; "
                      "this is an upper bound, not a hardness certificate.")
+    if plan.valid and log2_tensor < min(log2_stabrank, log2_basis, float(n)):
+        notes.append(
+            f"tensor-network contraction is the cheapest strategy here: induced "
+            f"width {plan.width} over {plan.vertices} bonds charges "
+            f"{log2_tensor:.2f} bits where stabilizer rank charges "
+            f"{log2_stabrank:.2f} and dense charges {n}. The core is structurally "
+            "local; its non-Clifford content is not connected enough to be "
+            "expensive.")
+    elif not plan.valid:
+        notes.append(f"tensor-network path excluded from the minimum: "
+                     f"{plan.reason}. An excluded path cannot lower the bound.")
     if portfolio_counts and len(set(portfolio_counts.values())) > 1:
         notes.append(f"T-count is compiler-dependent across the portfolio: "
                      f"{portfolio_counts}. The reported figure is the minimum.")

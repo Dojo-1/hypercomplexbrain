@@ -125,16 +125,100 @@ def main() -> int:
           f"   raw range [{np.nanmin(raws):.3f}, {np.nanmax(raws):.3f}] (pre-clip)")
 
     k3_fail = _equivalence_attacks()
+    k4_fail = _structure_families()
 
     zero_cert = sum(1 for s in samples if s.q_cert < 1e-9)
     print(f"\n  {zero_cert}/{len(samples)} cores scored Q_naive = 1.00 but q_sim_upper = 0.00")
     print("  (fully stabilizer-simulable cores wearing full quantum notation)")
-    print("\n  NOTE: this generator emits only H/S/T/CX and no measurements, resets,")
-    print("  classical control or low-treewidth families. Q_naive = 1 is therefore")
-    print("  largely guaranteed by the generator rather than discovered by it.")
-    print("  The honest claim is that Q_naive is constant on all-unitary cores.")
+    print("\n  NOTE: this generator emits only H/S/T/CX and no measurements, resets")
+    print("  or classical control. Q_naive = 1 is therefore largely guaranteed by")
+    print("  the generator rather than discovered by it. The honest claim is that")
+    print("  Q_naive is constant on all-unitary cores.")
+    print("  Its T-density is also low enough that stabilizer rank is always the")
+    print("  cheapest strategy, so the contraction strategy changes 0 of these 150")
+    print("  cores. Low-treewidth families are exercised by K4 above, not here.")
 
-    return 1 if (k1_fail or k2_fail or k3_fail) else 0
+    return 1 if (k1_fail or k2_fail or k3_fail or k4_fail) else 0
+
+
+def _structure_families() -> bool:
+    """K4: cores whose magic is real but whose connectivity is not.
+
+    The random generator above cannot reach this regime.  Its T-density is low,
+    so stabilizer rank is always the cheapest strategy and the structural one
+    never fires -- measured, the contraction strategy changes 0 of its 150
+    cores.  That is not evidence the strategy is idle; it is evidence the
+    generator emits no low-treewidth families, which its own note already says.
+
+    These families are the QSigma-R1a gate's "low-treewidth" case made
+    explicit: high magic, low connectivity.  Each row reports what the metric
+    charges with and without the contraction strategy, so the difference is
+    visible rather than folded into one number.  A row FAILS when a core that
+    is provably easy still scores as though no strategy could simulate it.
+    """
+    from aionq import contraction
+
+    def disconnected_blocks(n: int) -> QuantumCircuit:
+        qc = QuantumCircuit(n)
+        for base in range(0, n, 2):
+            qc.h(base); qc.cx(base, base + 1)
+            qc.t(base); qc.t(base + 1)
+            qc.cx(base, base + 1); qc.h(base)
+        return qc
+
+    def single_qubit_chains(n: int) -> QuantumCircuit:
+        qc = QuantumCircuit(n)
+        qc.h(range(n))
+        for _ in range(7):
+            qc.t(range(n)); qc.h(range(n))
+        return qc
+
+    def shallow_local_magic(n: int) -> QuantumCircuit:
+        qc = QuantumCircuit(n)
+        for _ in range(2):
+            qc.h(range(n)); qc.t(range(n))
+            for q in range(0, n - 1, 2):
+                qc.cx(q, q + 1)
+        return qc
+
+    def all_to_all_magic(n: int) -> QuantumCircuit:
+        qc = QuantumCircuit(n)
+        for _ in range(3):
+            qc.h(range(n)); qc.t(range(n))
+            for a in range(n):
+                for b in range(a + 1, n):
+                    qc.cx(a, b)
+        return qc
+
+    families = [
+        ("k disconnected 2-qubit blocks", disconnected_blocks, True),
+        ("product of single-qubit chains", single_qubit_chains, True),
+        ("shallow 1D local, full T-density", shallow_local_magic, True),
+        ("all-to-all magic (control: hard)", all_to_all_magic, False),
+    ]
+
+    real_plan = contraction.contraction_plan
+    print("\n  K4 structure families (magic that is not connected to anything)")
+    print(f"    {'family':<34}{'n':>4}{'width':>7}{'2-strat':>10}{'3-strat':>10}  verdict")
+    failed = False
+    for name, build, should_be_easy in families:
+        n = 12
+        qc = build(n)
+        contraction.contraction_plan = lambda c: contraction.ContractionPlan(
+            valid=False, reason="disabled to measure the two-strategy baseline")
+        try:
+            before = simulation_residency(qc).q_sim_upper
+        finally:
+            contraction.contraction_plan = real_plan
+        after = simulation_residency(qc).q_sim_upper
+        width = real_plan(qc).width
+        # An easy family must end up materially cheaper than dense; a hard
+        # control must NOT be made cheap by a strategy that cannot help it.
+        bad = (should_be_easy and after > 0.35) or (not should_be_easy and after < before - 1e-12)
+        failed = failed or bad
+        print(f"    {name:<34}{n:>4}{width:>7}{before:>10.4f}{after:>10.4f}"
+              f"  {'FAILED' if bad else 'ok'}")
+    return failed
 
 
 def _equivalence_attacks() -> bool:
