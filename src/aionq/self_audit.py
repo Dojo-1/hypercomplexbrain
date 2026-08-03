@@ -508,6 +508,35 @@ CORRECTIONS = (
         "tests/test_self_audit.py::test_two_parties_with_nothing_comparable_are_not_independent",
         False,
     ),
+    Correction(
+        "R6l",
+        "a 1e-10 tolerance was placed on a matrix square root whose "
+        "cross-platform conditioning is 1e-8: sqrt of an eigenvalue known only "
+        "to absolute precision eps is known only to sqrt(eps), and every R6l "
+        "effect is rank deficient, so the sealed module fails its own recompute "
+        "gate on a second platform at 7.5e-9. All 258 over-tolerance "
+        "reconstructions are square roots; the worst of the other 13142 is 2.79e-14",
+        "tests/test_common_receiver_reservoir.py::test_the_psd_square_root_is_not_stable_under_a_machine_epsilon_perturbation",
+        True,
+    ),
+    Correction(
+        "R6l",
+        "the support cutoff 64*eps*16*max_eigenvalue was computed and then used "
+        "only to report a rank, one line after the square root it should have "
+        "gated had already been taken over every noise eigenvalue",
+        "tests/test_common_receiver_reservoir.py::test_every_r6l_effect_is_rank_deficient_so_the_deficient_case_is_the_normal_one",
+        True,
+    ),
+    Correction(
+        "R6l",
+        "the recompute gate applied one 1e-10 tolerance to every stored array, "
+        "including the square root, which is a representation on the noise "
+        "subspace and not an observable; it therefore reported a reproduction in "
+        "which all 10603 scientific leaves agree to 7.62e-14 as a failure. The "
+        "root difference is suppressed 5.2e6-fold by squaring back to the effect",
+        "tests/test_common_receiver_reservoir.py::test_the_square_root_divergence_is_quadratically_suppressed_in_the_effect",
+        True,
+    ),
 )
 
 

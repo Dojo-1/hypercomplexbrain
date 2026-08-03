@@ -1,0 +1,127 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R6L-SQRT-PORTABILITY-001",
+  "status": "measured and recorded. No R6l result is withdrawn. No sealed byte is edited. The remedy belongs to the R6l producer, not to this round.",
+  "subject": "src/aionq/common_receiver_reservoir.py::_principal_psd_sqrt and the recompute gate that compares its output",
+  "statement": "R6l's SCIENCE reproduces on a second platform to 7.62e-14, with zero of 10603 scientific leaves exceeding 1e-9. What does not reproduce is a non-observable intermediate -- the matrix square root -- and 3136 identity digests taken over computed binary64. The recompute gate refuses on the intermediate, so a run whose every scientific number agrees is reported as a reproduction failure.",
+  "supersedes_within_this_document": {
+    "superseded_claim": "the first version of this manifest said the downstream impact was 'unknown, not zero' and framed R6l as 'verifiable but not reproducible'",
+    "why_it_was_wrong": "the recompute gate refuses before reaching the retrieval rows, so the gate alone cannot see downstream. The rows were then obtained directly by calling the sealed plan_protocol/execute_protocol pair, which needs no gate, and compared with the repository's own R6k-W1 semantic comparator. The impact is not unknown. It is measured, and it is 7.62e-14.",
+    "correction": "R6l reproduces scientifically. The reproduction failure is confined to a quantity no observable depends on, plus digests of computed floats. That is a materially different finding from the one first recorded here, and it was corrected before the document was acted on."
+  },
+  "how_it_was_found": {
+    "command": "PYTHONPATH=src python3 experiments/run_common_receiver_reservoir.py recompute --reference-dir artifacts/r6l_common_receiver",
+    "where": "a detached git worktree at the R6l C_env commit 09f4ca21375fe2d93cd85c6b2286bc75360feec0, clean, HEAD^ = C_raw 1421ec2",
+    "producer_environment": "windows, CPython 3.13.14, numpy 2.4.5, AMD64",
+    "recompute_environment": "linux, CPython 3.11.15, numpy 2.4.6, x86_64",
+    "result": "ValueError: numerical reconstruction differs for r00 square root 0: 7.517570850794207e-09, against the module's frozen tolerance of 1e-10",
+    "note": "this is the module's OWN preregistered recompute gate, run unmodified. Nothing was adapted to make it fail."
+  },
+  "measurement_1_the_reconstruction_surface": {
+    "instrument": "a scratch copy of the runner outside the repository, with the comparator changed to record every delta instead of raising on the first. Used to measure only; no artifact, result or envelope was produced from it, and the copy was deleted.",
+    "matrix_comparisons": 13479,
+    "bit_identical": 11180,
+    "over_tolerance": 258,
+    "tolerance": 1e-10,
+    "by_category": {
+      "matrix square root": {"n": 337, "bit_identical": 57, "over_tolerance": 258, "max_delta": 2.281e-08},
+      "effect": {"n": 337, "over_tolerance": 0, "max_delta": 2.79e-14},
+      "clean templates and queries": {"n": 1300, "over_tolerance": 0, "max_delta": 8.009e-16},
+      "label probabilities": {"n": 768, "over_tolerance": 0, "max_delta": 3.442e-16},
+      "Naimark blocks": {"n": 337, "over_tolerance": 0, "max_delta": 0.0},
+      "state noised queries": {"n": 10400, "over_tolerance": 0, "max_delta": 0.0}
+    },
+    "the_separation": "every one of the 258 over-tolerance comparisons is a matrix square root. The worst non-square-root comparison in the entire run is 2.79e-14, six orders of magnitude below the failures and four below the tolerance. This is not accumulated drift; it is one operation."
+  },
+  "measurement_2_the_scientific_surface": {
+    "method": "the sealed module's own plan_protocol() and execute_protocol() called directly in the live tree, whose common_receiver_reservoir.py bytes are bound to the sealed commit by the Part B scientific-dependency gate. 4.2 seconds. The resulting report compared with the committed artifact using aionq.semantic_reproduction.compare_results at tolerance 1e-9.",
+    "shared_leaves": 23707,
+    "scientific_leaves_compared": 10603,
+    "worst_absolute_difference": 7.623200052257513e-14,
+    "worst_difference_path": ".receiver_summaries[0].residuals.isometry_spectral",
+    "scientific_leaves_exceeding_tolerance": 0,
+    "discrete_mismatches": 0,
+    "non_finite_leaves": 0,
+    "identity_leaves": 6686,
+    "identity_mismatches": 3136,
+    "identity_mismatch_kinds": [
+      "common_receiver_digest",
+      "pooled_template_digest",
+      "clean_map_template_digests.R6",
+      "clean_map_template_digests.R6i",
+      "structural_receiver_cost_digest",
+      "ledger_root",
+      "event_validation.ledger_root"
+    ],
+    "reading": "the scientific content agrees to 7.6e-14. Every identity mismatch is a SHA-256 taken over a computed binary64 array, or the hash chain rooted in such digests. This is the same defect the repository has now recorded four times, appearing a fifth time inside R6l's identity surface."
+  },
+  "measurement_3_why_the_science_survives_the_square_root": {
+    "question": "how can the square root differ by 2.28e-08 while every observable agrees to 7.62e-14",
+    "quadratic_suppression": {
+      "sqrt_difference_max": 2.281e-08,
+      "sqrt_difference_median": 4.073e-09,
+      "effect_difference_max": 4.392e-15,
+      "effect_difference_median": 2.137e-16,
+      "suppression_factor_at_the_worst_root": 5.194e+06,
+      "consistency_check": "the square of the worst root difference is 5.203e-16, the same order as the observed worst effect difference 4.392e-15. Squaring accounts for the suppression; the remaining gap is ordinary rounding at 1e-15."
+    },
+    "subspace_localisation": {
+      "method": "rotate the root difference into the effect's own eigenbasis and split it by the module's own support cutoff 64*eps*16*lambda_max",
+      "difference_inside_the_supported_subspace": {"max": 2.9212e-15, "median": 2.597e-16},
+      "difference_touching_the_noise_subspace": {"max": 2.2810e-08, "median": 4.073e-09},
+      "ratio_of_maxima": 7.809e+06
+    },
+    "conclusion": "the divergence lives entirely in the eigendirections whose eigenvalue is below the noise floor. There the root contributes O(sqrt(eps)) ~ 1e-8 to itself and O(eps) ~ 1e-16 to the effect. Every R6l observable is a function of the effect, not of its square root, so the divergence cancels in everything that is measured. The square root is a representation choice on the noise subspace, and the gate compares it as though it were an observable."
+  },
+  "the_mechanism": {
+    "code": "root = vectors @ diag(sqrt(clamped)) @ vectors.conj().T, where clamped = max(eigenvalue, 0)",
+    "why_it_cannot_be_portable": "sqrt has derivative 1/(2*sqrt(x)). An eigenvalue known only to absolute precision eps has a square root known only to precision sqrt(eps) ~ 1e-8. Every R6l effect is rank deficient -- measured rank 2 to 14 in a 16-dimensional ambient space -- so every effect carries eigenvalues whose true value is exactly 0 and whose computed value is anything in [-eps, +eps]. Their square roots are then anything in [0, 1e-8]. No platform is at fault; two conforming LAPACK builds are entitled to disagree by this much.",
+    "the_cutoff_already_exists": "_effect_rank computes cutoff = 64 * eps * 16 * max_eigenvalue and counts the eigenvalues above it. It is called one line AFTER the root is built, and its cutoff is never applied to the root. The distance between the defect and its fix is one line, and that line is already in the file.",
+    "controlled_experiment": {
+      "design": "perturb each stored effect by a Hermitian matrix scaled to eps * ||E||_F -- the level a different LAPACK build induces -- and measure the change in the square root, with and without the module's own cutoff",
+      "as_shipped": {"max": 2.0731e-08, "median": 9.604e-09, "over_tolerance": "337/337"},
+      "with_cutoff": {"max": 3.0098e-15, "median": 6.21e-16, "over_tolerance": "0/337"},
+      "corroboration": "the predicted worst case under perturbation, 2.07e-08, matches the OBSERVED worst cross-platform divergence, 2.28e-08. The mechanism accounts for the whole effect, not part of it."
+    },
+    "executable_form": "tests/test_common_receiver_reservoir.py::test_the_psd_square_root_is_not_stable_under_a_machine_epsilon_perturbation, ::test_every_r6l_effect_is_rank_deficient_so_the_deficient_case_is_the_normal_one, and ::test_the_square_root_divergence_is_quadratically_suppressed_in_the_effect. Asserted on synthetic matrices so they hold on any machine and do not depend on the 30 MB artifact."
+  },
+  "what_the_gate_should_have_compared": {
+    "diagnosis": "the recompute gate applies one tolerance, 1e-10, to every stored array. That is correct for observables and wrong for the square root, which is the only stored array that is not one. A gate that compares a representation at observable precision refuses correct reproductions and cannot be satisfied by any second machine.",
+    "options_for_the_producer": [
+      "apply the module's own support cutoff inside _principal_psd_sqrt, which restores epsilon stability (measured: 3.01e-15 worst case) and makes the existing 1e-10 tolerance meetable",
+      "or compare root @ root against the stored effect rather than root against the stored root, which tests the property the root is actually required to have and is already computed as the reconstruction residual",
+      "or declare the square root a non-observable intermediate and exclude it from the reconstruction gate, comparing only quantities the science depends on"
+    ],
+    "not_this_round": "all three change the sealed module's behaviour or its gate, so all three are route A and belong to the R6l producer. Nothing is adopted here."
+  },
+  "consequence_for_part_b": {
+    "the_route_that_was_recommended": "route B of manifests/qsigma_r6k_w1_partb_execution_blocker.json -- a parameterised fork of the sealed module, licensed by an equivalence control that runs the fork at R6l's OWN five depths and requires it to reproduce the committed 384 retrieval rows under the R6k-W1 comparator",
+    "status_after_this_finding": "the control is satisfiable on the scientific surface and unsatisfiable on the identity surface. A fork run here reproduces the committed rows to 7.62e-14, well inside any sane tolerance, but cannot reproduce 3136 identity digests, and the recompute gate would refuse before either was reached.",
+    "what_this_saves": "the fork was not built. Its control was characterised BEFORE the work rather than after, by running the sealed module's own gate first and then measuring past it.",
+    "recommendation": "a two-leg control, run on one machine: sealed module here versus committed rows measures platform drift (now known: 7.62e-14 scientific, 3136 identity digests); fork here versus sealed module here measures fork fidelity with no platform confound and should be bit-exact. The second leg is the one that actually licenses a fork, and unlike the preregistered single comparison it can attribute a failure. Proposed, NOT adopted: changing a preregistered control is not this session's to do unilaterally."
+  },
+  "what_is_not_claimed": [
+    "that the proposed cutoff is the right remedy. It is the remedy the module's own code already implies and it is demonstrated to restore epsilon stability, but adopting it means re-running and re-sealing R6l, which is route A.",
+    "that numpy 2.4.5 versus 2.4.6 is excluded as a contributing cause. The two environments differ in operating system, CPython version and numpy patch version at once, and this finding does not separate them. The conditioning argument does not require them to be separated, because it predicts the observed scale from the algorithm alone.",
+    "that the 7.62e-14 scientific agreement licenses any R6l claim that was not already licensed. It removes a doubt; it does not add evidence.",
+    "that this constitutes independent reproduction. The two platforms are the two agents' own machines and one party ran both comparisons."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "portability_remainder",
+      "statement": "This is the FOURTH and FIFTH occurrence of one defect family in this repository. The fourth is new in kind: a numerical TOLERANCE of 1e-10 placed on an operation whose cross-platform conditioning is 1e-8, which no digest could have caught and which survived three rounds of the same lesson because it could only be found by running the gate on a second machine. The fifth is the familiar kind, 3136 SHA-256 digests over computed binary64 inside R6l's identity surface."
+    },
+    {
+      "kind": "instrument_remainder",
+      "statement": "A gate that cannot distinguish a representation from an observable will report a correct reproduction as a failure. R6l's recompute gate did exactly that, and had this session stopped at the gate's verdict the conclusion recorded would have been that R6l does not reproduce -- which is false. The first version of this manifest recorded precisely that error before the measurement corrected it."
+    },
+    {
+      "kind": "scope_remainder",
+      "statement": "The scientific comparison used the library entry points, not the runner, so 14 leaves the runner adds -- artifact bindings and provenance checks -- are present only on the committed side and were not compared. They are provenance, not science, but they are not evidence of agreement either."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Found and measured by the Claude session on the Linux container, against an artifact produced by another party on Windows. The two environments are the two agents' own machines, so this is a genuine second-platform observation but not an independent one: no third party has recomputed either side."
+    }
+  ]
+}

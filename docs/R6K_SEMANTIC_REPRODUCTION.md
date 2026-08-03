@@ -412,6 +412,8 @@ committed after the first two were documented on this very page.
 | 1 | R6k `input_hashes` | computed float arrays | second platform, digests differed |
 | 2 | `.jsonl` event ledgers | bytes under `text=auto` | Windows checkout, CRLF broke every blob binding |
 | 3 | Part B `ADMISSIBLE_RHO_LOW`, `source_matrix_payload` | `log1p`, `cosh`, `sinh` output | Linux run, one ulp, five failing tests |
+| 4 | R6l `_principal_psd_sqrt` under a 1e-10 tolerance | *nothing* — a numeric tolerance, not a digest | Linux run of R6l's own `recompute`, 7.5e-9 against a 1e-10 bound |
+| 5 | R6l `common_receiver_digest`, `pooled_template_digest`, `ledger_root` | computed binary64 arrays | same Linux run, 3136 of 6686 identity leaves differ |
 
 The third is the sharpest, because the divergence is a **single bit** and the
 consequence was total. `-0.5 * log1p(-sqrt(0.05))` returns
@@ -449,3 +451,120 @@ The corresponding remainder is recorded in
 `manifests/qsigma_r6k_w1_partb_input_freeze.json` under
 `portability_remainder`, including what is **not** claimed: bit-level agreement
 of the SL(2,C) matrices across platforms remains untested and open.
+
+### The fourth one is not a digest
+
+Occurrence 4 was found by running R6l's own `recompute` subcommand, unmodified,
+in a detached worktree at the sealed `C_env` commit. It fails:
+
+```
+ValueError: numerical reconstruction differs for r00 square root 0: 7.517570850794207e-09
+```
+
+against the module's frozen tolerance of `1e-10`. Instrumented to record every
+delta instead of stopping at the first, the run gives a very clean picture:
+
+| category | n | bit-identical | over 1e-10 | max delta |
+|---|---:|---:|---:|---:|
+| **matrix square root** | 337 | 57 | **258** | **2.281e-08** |
+| effect | 337 | 33 | 0 | 2.79e-14 |
+| clean templates / queries | 1300 | 353 | 0 | 8.01e-16 |
+| label probabilities | 768 | 0 | 0 | 3.44e-16 |
+| Naimark blocks | 337 | 337 | 0 | 0 |
+| state-noised queries | 10400 | 10400 | 0 | 0 |
+
+Every one of the 258 failures is a matrix square root. The worst comparison in
+the other 13142 is `2.79e-14` — six orders of magnitude below the failures and
+four below the tolerance. That is not accumulated drift; it is one operation.
+
+The cause is conditioning, not the platform. `sqrt` has derivative
+`1/(2√x)`, so an eigenvalue known to absolute precision `eps` has a square root
+known only to `√eps ≈ 1e-8`. Every R6l effect is rank deficient — measured rank
+2 to 14 in a 16-dimensional ambient space — so every one carries eigenvalues
+whose true value is `0` and whose computed value is anything in `[-eps, +eps]`.
+Their square roots are then anything in `[0, 1e-8]`. Two conforming LAPACK
+builds are *entitled* to disagree by this much.
+
+The module already contains the fix. `_effect_rank` computes
+`cutoff = 64·eps·16·λ_max` and counts the eigenvalues above it — and is called
+one line *after* the root has been built over every eigenvalue including the
+noise. Applying that same cutoff before the square root, and perturbing each
+effect at `eps·‖E‖_F`:
+
+| | max | median | over 1e-10 |
+|---|---:|---:|---:|
+| as shipped | 2.073e-08 | 9.60e-09 | 337/337 |
+| with the module's own cutoff | 3.010e-15 | 6.21e-16 | 0/337 |
+
+The predicted worst case under perturbation (`2.07e-08`) matches the observed
+worst cross-platform divergence (`2.28e-08`), so the mechanism accounts for the
+whole effect rather than part of it.
+
+### But the science reproduces
+
+The gate refuses before reaching the retrieval rows, so the gate alone cannot
+say whether any of this touches a result. The rows were therefore obtained
+directly — `plan_protocol()` then `execute_protocol()`, 4.2 seconds, no gate
+involved — and compared with the committed artifact using this repository's own
+R6k-W1 semantic comparator:
+
+| | |
+|---|---:|
+| shared leaves | 23707 |
+| scientific leaves compared | 10603 |
+| **worst absolute difference** | **7.623e-14** |
+| scientific leaves exceeding 1e-9 | **0** |
+| discrete mismatches | 0 |
+| identity leaves | 6686 |
+| **identity mismatches** | **3136** |
+
+Every scientific number agrees. Every identity mismatch is a SHA-256 taken over
+a computed binary64 array — `common_receiver_digest`, `pooled_template_digest`,
+`clean_map_template_digests`, `structural_receiver_cost_digest` — or the
+`ledger_root` chain built on them. That is occurrence **#5**, the familiar kind.
+
+How can `√E` differ by `2.28e-08` while every observable agrees to `7.62e-14`?
+Because the divergence is confined to the noise subspace and squaring suppresses
+it. Rotating the root difference into the effect's own eigenbasis and splitting
+on the module's own cutoff:
+
+| | max | median |
+|---|---:|---:|
+| inside the supported subspace | 2.921e-15 | 2.60e-16 |
+| touching the noise subspace | 2.281e-08 | 4.07e-09 |
+| ‖√E difference‖ | 2.281e-08 | 4.07e-09 |
+| ‖E difference‖ | 4.392e-15 | 2.14e-16 |
+
+A factor of 7.8×10⁶ by subspace, 5.2×10⁶ by squaring, and `(2.28e-8)² =
+5.20e-16` lands on the observed effect difference. In those directions the root
+contributes `O(√eps) ≈ 1e-8` to itself and `O(eps) ≈ 1e-16` to the effect. Every
+R6l observable is a function of `E`, not of `√E`.
+
+So the honest statement is narrower and more useful than "R6l does not
+reproduce":
+
+> **R6l reproduces scientifically to 7.62e-14. The recompute gate compares a
+> representation at observable precision, and refuses.**
+
+The square root is a representation choice on the noise subspace. A gate that
+cannot tell a representation from an observable will report a correct
+reproduction as a failure — and had this work stopped at the gate's verdict, the
+conclusion recorded would have been false. The first version of
+`manifests/qsigma_r6l_square_root_portability_finding.json` recorded exactly
+that error, and is superseded inside the document itself.
+
+**Route B for Part B.** The preregistered equivalence control runs a
+parameterised fork at R6l's own five depths against the committed 384 rows. It
+is satisfiable on the scientific surface and unsatisfiable on the identity
+surface, and the recompute gate would refuse before reaching either. The fork
+was not built: the control was characterised *before* the work rather than
+after. A two-leg control on one machine — sealed-here vs committed measures
+platform drift, fork-here vs sealed-here measures fork fidelity with no platform
+confound — can attribute a failure where the preregistered single comparison
+cannot. It is *proposed*, not adopted; changing a preregistered control is not a
+session's to do unilaterally.
+
+What is **not** claimed: that the 7.62e-14 agreement licenses any R6l claim that
+was not already licensed. It removes a doubt; it does not add evidence. And it
+is not independent reproduction — both platforms are the two agents' own
+machines, and one party ran both sides.

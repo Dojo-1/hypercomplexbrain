@@ -1070,3 +1070,151 @@ def test_production_entrypoint_is_not_invoked_by_this_contract_suite():
     }
     assert "execute_protocol" not in called_names | called_attributes
     assert "build_map_tasks" not in called_names | called_attributes
+
+
+# ------------------------------------------------------- square-root conditioning
+
+def _cutoff_sqrt(effect: np.ndarray) -> np.ndarray:
+    """``_principal_psd_sqrt`` with the module's OWN support cutoff applied.
+
+    This is not a proposed rewrite of the sealed module. It is the control
+    against which the shipped square root is measured below, and it differs from
+    ``_principal_psd_sqrt`` by exactly one line: the cutoff that
+    ``_effect_rank`` already computes is used to zero the noise eigenvalues
+    before the square root instead of only to report a rank.
+    """
+    hermitian = (effect + effect.conj().T) / 2.0
+    values, vectors = np.linalg.eigh(hermitian)
+    values = np.real(values)
+    clamped = np.where(values < 0.0, 0.0, values)
+    maximum = max(0.0, float(clamped.max()))
+    cutoff = 64.0 * np.finfo(np.float64).eps * AMBIENT_DIM * maximum
+    supported = np.where(clamped > cutoff, clamped, 0.0)
+    return vectors @ np.diag(np.sqrt(supported)) @ vectors.conj().T
+
+
+def _rank_deficient_effect(rng, rank: int) -> np.ndarray:
+    """A PSD effect of exact rank ``rank`` in the D16 ambient space.
+
+    R6l's own effects are rank 2 to 14 of 16 -- every one of them is rank
+    deficient -- so the deficient case is the ordinary case, not a corner.
+    """
+    basis = rng.normal(size=(AMBIENT_DIM, rank)) + 1j * rng.normal(size=(AMBIENT_DIM, rank))
+    effect = basis @ basis.conj().T
+    return effect / float(np.linalg.norm(effect, "fro"))
+
+
+def test_the_psd_square_root_is_not_stable_under_a_machine_epsilon_perturbation():
+    """The operation that makes R6l unreproducible on a second machine.
+
+    Measured, by running the sealed module's own recompute gate on Linux against
+    the artifact produced on Windows: of 13479 matrix comparisons, 11180 are bit
+    identical and 258 exceed the module's 1e-10 tolerance. Every one of the 258
+    is a matrix square root. The next-worst category of comparison differs by at
+    most 2.79e-14, six orders of magnitude below the failures.
+
+    The cause is not the platform, it is the conditioning. sqrt has derivative
+    1/(2*sqrt(x)), so an eigenvalue known only to absolute precision eps has a
+    square root known only to precision sqrt(eps) ~ 1e-8. A rank-deficient
+    effect has eigenvalues whose true value is 0 and whose computed value is
+    anything in [-eps, +eps]; their square roots are then anything in
+    [0, 1e-8]. That is the observed scale, and no platform is at fault for it.
+
+    This test asserts the defect rather than describing it, on synthetic
+    matrices, so it holds on any machine and does not depend on the 30 MB
+    artifact.
+    """
+    rng = np.random.default_rng(20260803)
+    shipped, controlled = [], []
+    for rank in (2, 6, 10, 14):
+        for _ in range(8):
+            effect = _rank_deficient_effect(rng, rank)
+            noise = rng.normal(size=effect.shape) + 1j * rng.normal(size=effect.shape)
+            noise = (noise + noise.conj().T) / 2.0
+            perturbed = effect + noise * (
+                np.finfo(np.float64).eps
+                * np.linalg.norm(effect, "fro")
+                / np.linalg.norm(noise, "fro")
+            )
+            shipped.append(np.linalg.norm(
+                r6l._principal_psd_sqrt(effect)[0]
+                - r6l._principal_psd_sqrt(perturbed)[0], "fro"))
+            controlled.append(np.linalg.norm(
+                _cutoff_sqrt(effect) - _cutoff_sqrt(perturbed), "fro"))
+
+    shipped_worst = max(shipped)
+    controlled_worst = max(controlled)
+
+    # As shipped, a perturbation at the last bit moves the square root by far
+    # more than the tolerance the module then checks it against.
+    assert shipped_worst > 1e-10, shipped_worst
+    assert shipped_worst > 100.0 * r6l.TOL
+
+    # With the cutoff the module already computes, the same perturbation moves
+    # the square root by less than the tolerance, with orders of margin.
+    assert controlled_worst < 1e-12, controlled_worst
+
+    # The separation is the finding: this is not a tolerance that needs
+    # loosening, it is an operation that needs its own support cutoff applied.
+    assert shipped_worst > 1e3 * controlled_worst
+
+
+def test_every_r6l_effect_is_rank_deficient_so_the_deficient_case_is_the_normal_one():
+    """If the effects were full rank the conditioning above would be harmless."""
+    rng = np.random.default_rng(11)
+    templates = np.stack([
+        (lambda m: m @ m.conj().T / float(np.trace(m @ m.conj().T).real))(
+            rng.normal(size=(AMBIENT_DIM, 3)) + 1j * rng.normal(size=(AMBIENT_DIM, 3)))
+        for _ in range(AMBIENT_DIM)
+    ])
+    receiver = r6l.build_pgm_receiver(templates, tol=r6l.TOL)
+    for effect in receiver.effects + (receiver.reject_effect,):
+        values = np.real(np.linalg.eigvalsh((effect + effect.conj().T) / 2.0))
+        assert r6l._effect_rank(np.where(values < 0.0, 0.0, values)) < AMBIENT_DIM
+
+
+def test_the_square_root_divergence_is_quadratically_suppressed_in_the_effect():
+    """Why R6l's science survives an unreproducible square root.
+
+    Measured against the committed Windows artifact from Linux: the square roots
+    differ by up to 2.281e-08, the effects they square back to differ by only
+    4.392e-15, and the scientific leaves of the whole report agree to 7.623e-14
+    with none exceeding 1e-9.
+
+    The reason is that the divergence lives entirely in the eigendirections whose
+    eigenvalue is below the noise floor. Rotating the difference into the
+    effect's own eigenbasis and splitting on the module's support cutoff gives
+    2.921e-15 inside the supported subspace against 2.281e-08 touching the noise
+    subspace -- a factor of 7.8e6. In those directions the root contributes
+    O(sqrt(eps)) to itself and O(eps) to the effect.
+
+    So the square root is a representation choice on the noise subspace, and
+    every R6l observable is a function of the effect rather than of its root.
+    A gate that compares the root as though it were an observable refuses
+    reproductions in which every measured quantity agrees.
+    """
+    rng = np.random.default_rng(4242)
+    root_deltas, effect_deltas = [], []
+    for rank in (2, 6, 10, 14):
+        for _ in range(8):
+            effect = _rank_deficient_effect(rng, rank)
+            noise = rng.normal(size=effect.shape) + 1j * rng.normal(size=effect.shape)
+            noise = (noise + noise.conj().T) / 2.0
+            perturbed = effect + noise * (
+                np.finfo(np.float64).eps
+                * np.linalg.norm(effect, "fro")
+                / np.linalg.norm(noise, "fro"))
+            a = r6l._principal_psd_sqrt(effect)[0]
+            b = r6l._principal_psd_sqrt(perturbed)[0]
+            root_deltas.append(np.linalg.norm(a - b, "fro"))
+            effect_deltas.append(np.linalg.norm(a @ a - b @ b, "fro"))
+
+    worst_root = max(root_deltas)
+    worst_effect = max(effect_deltas)
+
+    # The root is unstable; the effect it squares back to is not.
+    assert worst_root > 1e-10
+    assert worst_effect < 1e-12
+
+    # Squaring is what suppresses it, so the suppression must be large.
+    assert worst_root > 1e3 * worst_effect
