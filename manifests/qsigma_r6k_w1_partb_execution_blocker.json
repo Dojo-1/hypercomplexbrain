@@ -1,0 +1,51 @@
+{
+  "schema": "hypercomplexbrain.preregistration.amendment.v1",
+  "round": "QSigma-R6k-W1",
+  "part": "B",
+  "status": "EXECUTION BLOCKER, discovered while preparing the run. Part B remains unexecuted. This manifest records the blocker rather than routing around it.",
+  "amends": "manifests/qsigma_r6k_w1_partb_effective_protocol_v2.json, measurement_inputs.receiver_construction",
+
+  "the_blocker": {
+    "what_the_protocol_assumed": "'the pooled map-blind PGM rebuilt at each held-out depth from R6l's recipe' -- written as though the recipe were parameterised over depth.",
+    "what_is_measured": "it is not. src/aionq/common_receiver_reservoir.py carries DEPTH_COORDS as a module-level constant fixed at ('0.1','0.5','1.0','2.0','4.0'). plan_protocol accepts only an effective_protocol_digest. DEPTH_COORDS is read at seven sites, three of which are validators that assert identity['rho_decimal'] == DEPTH_COORDS[depth_index][0] and raise otherwise.",
+    "consequence": "the sealed R6l module cannot be evaluated at 0.15, 0.20, 0.25, 0.30 or 0.40 without being edited.",
+    "why_editing_is_not_available": "R6l's envelope EXP-R6L-COMMON-RECEIVER binds 27 artifacts at commit 1421ec2, and the whole chain validates against effective_protocol_digest sha256:ac13a208. Changing DEPTH_COORDS changes the module bytes and the digest, which breaks the seal part B's own precondition required."
+  },
+
+  "the_two_routes_and_what_each_costs": {
+    "A_parameterise_in_place": {
+      "action": "make DEPTH_COORDS injectable in the sealed module",
+      "cost": "changes the bytes R6l's envelope binds. Requires R6l to be re-run and re-sealed, by its producing party, at a new C_exec/C_raw/C_env. Part B then consumes the new seal, not the current one.",
+      "who_can_do_it": "the R6l producer, not this round"
+    },
+    "B_parameterised_fork": {
+      "action": "a new module carrying the identical recipe with a depth grid as an argument",
+      "cost": "the fork's equivalence to the sealed module is then itself a claim requiring evidence. The natural control is to run the fork at R6l's OWN five depths and require it to reproduce the committed 384 retrieval rows under the R6k-W1 comparator -- which this round already has, and which is the only honest way to license a fork as a stand-in.",
+      "who_can_do_it": "this round, but only with that equivalence control run FIRST and passing"
+    },
+    "not_available": "editing the sealed module locally and running it. That produces numbers whose provenance chain has been broken by the act of producing them."
+  },
+
+  "recommended_route": "B, with the equivalence control as a hard precondition. Route A is cleaner but is not this round's to take.",
+
+  "what_this_does_not_change": [
+    "the outcome function and every branch of it",
+    "the frozen margins, inclusive, binary64, unrounded",
+    "the held-out depths and the empty intersection with R6l's grid",
+    "K5b, K6, K7, K8, K9",
+    "the input freeze recorded in qsigma_r6k_w1_partb_input_freeze.json, which stands"
+  ],
+
+  "typed_remainder": [
+    {
+      "kind": "method_remainder",
+      "carrier": "a protocol clause written in the imperative",
+      "comparison": "'rebuilt at each held-out depth from R6l's recipe' described what SHOULD happen without checking that the recipe admitted it. The clause was frozen three amendments ago and no one, including its author, opened the module to see whether depth was an argument. A preregistration can be internally consistent and still assume a capability the implementation does not have."
+    },
+    {
+      "kind": "scope_remainder",
+      "carrier": "the equivalence control",
+      "comparison": "reproducing 384 rows at R6l's own depths licenses a fork as a stand-in for THOSE depths. It does not establish that the fork behaves like the sealed module at depths neither has been run at -- which is precisely where part B measures. That gap is irreducible and is the price of route B."
+    }
+  ]
+}

@@ -463,6 +463,51 @@ CORRECTIONS = (
         "tests/test_evidence.py::test_zero_envelope_corpus_is_a_failure",
         False,
     ),
+    Correction(
+        "R6k-W1-B",
+        "the admissible-rho endpoints were derived from libm at import and then "
+        "sealed, so one ulp of disagreement between two platforms' log1p "
+        "(0x1.032ba5565697cp-3 against 0x1.032ba5565697dp-3) propagated into the "
+        "frozen digests and failed five tests; the second platform disagreed with "
+        "a value the preregistration had already frozen",
+        "tests/test_part_b_outcome.py::test_primary_j_interval_defines_exact_inverse_endpoints",
+        False,
+    ),
+    Correction(
+        "R6k-W1-B",
+        "source_matrix_payload hashed to_sl2(swirl_point(...)) output, making a "
+        "digest of cosh and sinh's last bit a hard gate; the preflight was "
+        "unpassable on a second platform by construction",
+        "tests/test_part_b_preflight.py::test_held_out_source_payloads_rebuild_to_frozen_digests",
+        False,
+    ),
+    Correction(
+        "R6k-W1-B",
+        "the projection freeze test asserted 7 keys where the loader enforced 10, "
+        "so the frozen projection grew scientific_dependencies, "
+        "preregistration_tag and raw_output_paths without the test that exists to "
+        "freeze it noticing",
+        "tests/test_part_b_preflight.py::test_manifest_freezes_the_exact_preflight_projection",
+        True,
+    ),
+    Correction(
+        "R6k-W1-B",
+        "C_pre was anchored to the commit that first ADDED the input-freeze "
+        "manifest, which had no valid instance: the manifest is added once, at a "
+        "commit whose guard surface carried the non-portable seal, so the gate "
+        "accepted only the defective surface and refused every repair of it",
+        "tests/test_part_b_preflight.py::test_live_repository_satisfies_every_non_numerical_preflight_gate",
+        True,
+    ),
+    Correction(
+        "EVIDENCE-V2",
+        "independence was satisfied by two differing party names plus a mode "
+        "string, which certifies who and never what: an envelope recording no "
+        "computed artifact reported agreement over an empty set, and an empty set "
+        "always agrees",
+        "tests/test_self_audit.py::test_two_parties_with_nothing_comparable_are_not_independent",
+        False,
+    ),
 )
 
 

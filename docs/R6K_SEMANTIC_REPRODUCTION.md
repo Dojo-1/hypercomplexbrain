@@ -382,7 +382,11 @@ independent claim.
 
 Part B's previously pending inputs are filled by
 `manifests/qsigma_r6k_w1_partb_input_freeze.json`, whose canonical protocol digest
-is `sha256:b830667cf35ce8d87646ae70b664970ccd420eb454386f672a2076a6520f23c6`.
+is `sha256:c2c4ac86b55c06fc89369335c9ec695c2410259498d93883aaef620b7e58cd47`.
+(This paragraph named `sha256:b830667c…` for two revisions after the object it
+described had changed. A digest quoted in prose is a copy, and a copy of a seal
+is not a seal; the authority is `EFFECTIVE_PROTOCOL_OBJECT` in
+`src/aionq/part_b_preflight.py` and the test that recomputes it.)
 The preflight checks the direct R6l lineage
 `bedb574 -> 1421ec2 -> 09f4ca2`, every R6l raw blob at `C_raw`, the held-out
 coordinate/perturbation/matrix payloads, the sealed rho=0.1 baseline, and the
@@ -390,8 +394,58 @@ frozen outcome-function bytes. The future result surface is closed to exactly
 160 map rows and 80 derived paired cells, with all sixteen noise coordinates
 present and K9 evaluated without aggregation.
 
-No Part B receiver has been built and neither frozen output path exists. The next
-scientifically permitted transition is therefore implementation from this frozen
-source boundary, followed by separate raw-artifact and envelope commits. It is
-not an architecture or hardware claim, and no Part B outcome is implied by the
+No Part B receiver has been built and none of the six frozen output paths exists.
+The next scientifically permitted transition is therefore implementation from this
+frozen source boundary, followed by separate raw-artifact and envelope commits. It
+is not an architecture or hardware claim, and no Part B outcome is implied by the
 passing preflight.
+
+## The same defect, three times
+
+A seal taken over a computed quantity is a seal over the machine that computed it.
+This repository has now made that mistake three times, in three different
+disguises, and it is worth setting them side by side because the third was
+committed after the first two were documented on this very page.
+
+| # | Seal | What it actually hashed | How it surfaced |
+|---|------|------------------------|-----------------|
+| 1 | R6k `input_hashes` | computed float arrays | second platform, digests differed |
+| 2 | `.jsonl` event ledgers | bytes under `text=auto` | Windows checkout, CRLF broke every blob binding |
+| 3 | Part B `ADMISSIBLE_RHO_LOW`, `source_matrix_payload` | `log1p`, `cosh`, `sinh` output | Linux run, one ulp, five failing tests |
+
+The third is the sharpest, because the divergence is a **single bit** and the
+consequence was total. `-0.5 * log1p(-sqrt(0.05))` returns
+`0x1.032ba5565697dp-3` on Windows/CPython 3.13 and `0x1.032ba5565697cp-3` on
+Linux/CPython 3.11 — one ulp, the smallest disagreement two IEEE-754 doubles can
+have. That bit entered the frozen protocol digest, and the digest is
+all-or-nothing, so one ulp failed five tests and made the preflight unpassable on
+the second platform by construction.
+
+Note which value is correct: `0x1.032ba5565697dp-3` is the one the input-freeze
+manifest had **already** declared as `rho_low_binary64_hex`, before either
+platform ran. So the fix is not a choice between two hosts. Pinning the endpoint
+by bit pattern restores the preregistered value and removes the host's vote
+entirely. The high endpoint is bit-identical on both platforms; only the low one
+diverges.
+
+`source_matrix_payload` is the same defect without the redeeming detail: it hashes
+`to_sl2(swirl_point(*point))`, so it is a digest of `cosh` and `sinh`'s last bit,
+and there is no preregistered value to fall back on. It is demoted from a hard
+gate to a reported comparison. This costs nothing that was ever really held: the
+matrices are a deterministic function of the two coordinate payloads under a map
+this repository pins, and those payloads are digests of **declared decimals**,
+agree bit for bit on both platforms, and remain hard gates. What replaces the
+matrix digest is a semantic check — `det(to_sl2(swirl_point(ρ,0,0))) == 1` to
+1e-12 — which binds the same fact without binding the platform.
+
+The rule the three occurrences share, stated so a fourth is harder:
+
+> Hash declarations, not computations. A digest over anything a libm produced is
+> a digest of the libm. Where a computed quantity must be frozen, freeze it as a
+> preregistered bit pattern and check the live computation against it with an
+> explicit ulp tolerance — never the reverse.
+
+The corresponding remainder is recorded in
+`manifests/qsigma_r6k_w1_partb_input_freeze.json` under
+`portability_remainder`, including what is **not** claimed: bit-level agreement
+of the SL(2,C) matrices across platforms remains untested and open.

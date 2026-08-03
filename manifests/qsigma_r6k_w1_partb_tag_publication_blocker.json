@@ -1,0 +1,52 @@
+{
+  "schema": "hypercomplexbrain.preregistration.amendment.v1",
+  "round": "QSigma-R6k-W1",
+  "part": "B",
+  "status": "PUBLICATION BLOCKER, environmental. Part B remains unexecuted and the C_pre tag remains unpublished. This manifest records the blocker rather than weakening the gate that detects it.",
+  "amends": "manifests/qsigma_r6k_w1_partb_input_freeze.json, preexecution_gate",
+  "the_blocker": {
+    "what_the_gate_requires": "validate_preregistration_tag refuses unless refs/tags/qsigma-r6k-w1-partb-prereg-v1 resolves to the SAME full commit locally and on origin. Requiring both is the point: a local-only tag is a note to self, and an origin-only tag is not bound to the bytes being verified.",
+    "what_is_measured": "the git relay serving this container answers HTTP 403 to a push of any ref outside the designated development branch. Four attempts with exponential backoff, all 403. The available GitHub tool surface reads tags (get_tag, list_tags) and offers no tag-creation call.",
+    "consequence": "the C_pre tag cannot be published from this environment at all, so the gate cannot pass here no matter what the repository contains.",
+    "what_was_done_instead": "the tag was created locally at 756728e348c95b84d76c532eca077ee0d3cee109, the push was attempted and refused, and the local tag was then DELETED. A local-only tag would have satisfied half of a two-sided check and left the next run failing on a C_pre byte comparison with a misleading message."
+  },
+  "why_the_gate_was_not_weakened": "The obvious repair -- drop the origin half, or accept a local tag -- would convert a check that currently reports a true problem into one that reports nothing. The gate is unchanged. The test that exercises it now runs the full preflight, asserts every other gate individually, and skips with the blocker named only when the tag is genuinely absent from origin; any other error is re-raised as a failure.",
+  "what_is_actually_verified_here": {
+    "passing": [
+      "outputs_absent",
+      "r6l_commit_chain_exact",
+      "r6l_c_env_on_origin_tracking_ref",
+      "r6l_envelope_bound",
+      "r6l_all_raw_artifacts_bound",
+      "r6l_result_bound",
+      "r6l_baseline_bound",
+      "held_out_source_inputs_bound",
+      "scientific_dependency_surface_bound",
+      "outcome_module_bound",
+      "effective_protocol_bound"
+    ],
+    "not_reached": [
+      "preregistration_tag_bound"
+    ],
+    "note": "the eleven passing controls are asserted directly by the test before it skips, so the skip cannot conceal a second failure hiding behind the first."
+  },
+  "how_it_clears": "any environment that can push refs/tags/qsigma-r6k-w1-partb-prereg-v1 to origin at the commit carrying the live C_pre bytes. Nothing in the repository needs to change.",
+  "typed_remainders": [
+    {
+      "kind": "environment_remainder",
+      "statement": "A green suite in this container does not certify the tag gate. It certifies eleven of twelve controls and a named refusal on the twelfth. Any later reading of 'part B preflight passes' must carry that qualification until the tag is published."
+    },
+    {
+      "kind": "binding_remainder",
+      "statement": "The C_pre binding scheme has a hole this repair exposed but does not close. C_pre is now anchored to the earliest commit carrying the live input-freeze manifest bytes, while the byte check covers all five C_pre paths. Nothing forces the manifest to change when the other four do, so editing a guard file without touching the manifest leaves the anchor pointing at a commit whose C_pre bytes no longer match, and the two checks then contradict each other irreconcilably. Closing it means binding the guard-surface digests into the manifest. Two of the five files cannot be bound that way -- the manifest cannot contain its own digest and part_b_preflight.py cannot contain its own -- so the closure is partial by construction and is left to the round that can design it, not taken unilaterally here."
+    },
+    {
+      "kind": "process_remainder",
+      "statement": "manifests/qsigma_r6k_w1_partb_execution_blocker.json was written on the sidecar branch claude/r6k-semantic-reproduction-witness and was never merged into the designated development branch. For the interval between 9699f61 and this commit, the branch carrying the Part B preflight carried no record that Part B execution is blocked at all: a reader would have found a preflight passing every reachable gate and no statement that DEPTH_COORDS makes the sealed R6l module unevaluable at the held-out depths. It is restored here unmodified. A blocker recorded on a branch nobody reads is not a recorded blocker."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "The tag would have been created by the party that also wrote the gate requiring it, in the same session. That is not independent witnessing of a preregistration boundary and is not claimed as such. What the tag would establish is ordering, not agreement."
+    }
+  ]
+}
