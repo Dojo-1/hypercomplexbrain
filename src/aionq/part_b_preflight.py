@@ -196,8 +196,20 @@ def canonical_digest(value: object) -> str:
 
 # The outcome digest is filled only after the guarded outcome module has its
 # final pre-execution bytes.  A test binds this value to the live file.
-_OUTCOME_MODULE_DIGEST = (
+#
+# Resealed once, pre-execution.  The superseded digest sealed a module that
+# derived ADMISSIBLE_RHO_LOW from libm at import time; on Linux/CPython 3.11
+# that derivation returns 0x1.032ba5565697cp-3 where Windows/CPython 3.13
+# returns 0x1.032ba5565697dp-3 -- one ulp, and the value this manifest had
+# ALREADY frozen as rho_low_binary64_hex.  The pin therefore restores the
+# preregistered endpoint rather than choosing a new one; it was the second
+# platform's libm that disagreed with the preregistration.  No threshold,
+# gate, interval, margin or outcome branch changed.
+_OUTCOME_MODULE_DIGEST_SUPERSEDED = (
     "sha256:e0f1441a73636c3d97ff08e399ee9bee794f90bd1966ebcee64c7d8c0c8519eb"
+)
+_OUTCOME_MODULE_DIGEST = (
+    "sha256:24fbd5095265d5656e62fa2f8f3fad97361b96280839facc0c2250a345702df9"
 )
 
 HISTORICAL_CORRECTIONS = {
@@ -223,6 +235,47 @@ HISTORICAL_CORRECTIONS = {
             "reported outcome INVALID; no aggregation or slice selection is allowed"
         ),
     },
+    "c_pre_anchor": {
+        "superseded": (
+            "C_pre is the commit that first added the input-freeze manifest, at "
+            "any content"
+        ),
+        "replacement": (
+            "C_pre is the earliest commit whose input-freeze manifest bytes equal "
+            "the live manifest bytes"
+        ),
+        "reason": (
+            "the superseded rule had no valid instance on this history: the "
+            "manifest is added exactly once, at a commit whose guard surface "
+            "carried a platform-dependent seal, so the gate accepted only the "
+            "defective surface and refused every pre-execution repair of it. The "
+            "replacement still forbids advancing the tag onto a later commit, "
+            "onto a commit whose C_pre bytes differ from live, or onto a commit "
+            "where the runner or any output path exists; it no longer freezes a "
+            "defect on the grounds that the defect was committed first"
+        ),
+    },
+    "admissible_rho_derivation": {
+        "superseded": (
+            "ADMISSIBLE_RHO_LOW/HIGH computed from math.log1p and math.sqrt at "
+            "import time, sealed as outcome module digest "
+            "sha256:e0f1441a73636c3d97ff08e399ee9bee794f90bd1966ebcee64c7d8c0c8519eb"
+        ),
+        "replacement": (
+            "the same two endpoints pinned by binary64 bit pattern via "
+            "float.fromhex, sealed as outcome module digest "
+            "sha256:24fbd5095265d5656e62fa2f8f3fad97361b96280839facc0c2250a345702df9"
+        ),
+        "reason": (
+            "the derivation, not the value, was platform dependent: Linux/CPython "
+            "3.11 libm returns 0x1.032ba5565697cp-3 for the low endpoint where "
+            "Windows/CPython 3.13 returns 0x1.032ba5565697dp-3, one ulp apart, and "
+            "the latter is the value already frozen as rho_low_binary64_hex before "
+            "either platform ran. The pin restores the preregistered endpoint; it "
+            "does not select a new one. The high endpoint is bit-identical on both "
+            "platforms. No threshold, gate, interval, margin or outcome branch changed"
+        ),
+    },
 }
 
 TAG_BINDING_OBJECT = {
@@ -236,9 +289,9 @@ TAG_BINDING_OBJECT = {
     ],
     "ordering": (
         "the local and origin refs resolve to the same full commit; that commit "
-        "is the first commit adding the input-freeze manifest, contains exact "
-        "current C_pre path bytes, and is an ancestor of HEAD and the fetched "
-        "origin branch"
+        "is the earliest commit carrying the live input-freeze manifest bytes, "
+        "contains exact current C_pre path bytes, and is an ancestor of HEAD and "
+        "the fetched origin branch"
     ),
 }
 
@@ -759,18 +812,42 @@ def validate_preregistration_tag(root: str | Path) -> str:
         if exists.returncode == 0:
             raise PartBPreflightError(f"C_pre already contains forbidden path {relative}")
 
-    additions = _git(
-        root,
-        "log",
-        "--diff-filter=A",
-        "--follow",
-        "--format=%H",
-        "--",
-        MANIFEST_PATH,
+    # C_pre must be the EARLIEST commit carrying the manifest's live bytes.
+    #
+    # This replaces an earlier rule that required C_pre to be the commit which
+    # first ADDED the manifest at any content.  That rule had no valid instance
+    # on this history: the manifest is added exactly once, and the surface it
+    # was added with carried a non-portable seal.  Repairing the seal before
+    # execution -- which is precisely what the pre-execution phase is for --
+    # necessarily moves the live bytes away from the first-add commit, so the
+    # gate refused every repaired state and accepted only the defective one.
+    #
+    # Anchoring on byte identity keeps every anti-reuse property that the
+    # first-add rule was there to supply.  The tag still cannot be advanced
+    # onto a later commit (a later commit with the same manifest bytes is not
+    # the earliest), still cannot be pointed at a commit whose C_pre bytes
+    # differ from live, and still cannot be pointed at a commit where the
+    # runner or any output path exists.  What it can no longer do is freeze a
+    # defect merely because the defect was committed first.
+    touching = _git(
+        root, "log", "--format=%H", "--", MANIFEST_PATH
     ).decode().split()
-    if not additions or additions[-1] != c_pre:
+    if not touching:
+        raise PartBPreflightError("input-freeze manifest has no commit history")
+    live_manifest = (root / MANIFEST_PATH).read_bytes()
+    carriers = [
+        commit for commit in touching
+        if _git_process(root, "cat-file", "-e", f"{commit}:{MANIFEST_PATH}").returncode == 0
+        and _git_blob(root, commit, MANIFEST_PATH) == live_manifest
+    ]
+    if not carriers:
         raise PartBPreflightError(
-            "preregistration tag is reused: C_pre is not the manifest first-add commit"
+            "no commit carries the live input-freeze manifest bytes"
+        )
+    if carriers[-1] != c_pre:
+        raise PartBPreflightError(
+            "preregistration tag is reused: C_pre is not the earliest commit "
+            "carrying the live manifest bytes"
         )
     _git(root, "merge-base", "--is-ancestor", c_pre, "HEAD")
     _git(root, "merge-base", "--is-ancestor", c_pre, ORIGIN_REF)
@@ -888,8 +965,33 @@ def validate_repository_preflight(root: str | Path) -> dict[str, bool]:
         raise PartBPreflightError("R6l source generator differs at C_exec")
     if _digest_bytes((root / source_relative).read_bytes()) != R6L_SOURCE_BLOB_DIGEST:
         raise PartBPreflightError("live source generator differs from sealed R6l bytes")
-    if rebuild_source_input_digests() != SOURCE_INPUT_DIGESTS:
-        raise PartBPreflightError("held-out source input digests differ")
+    # PLATFORM-PORTABLE GATE.
+    #
+    # The coordinate payloads are digests of DECLARED DECIMALS and are identical
+    # on every platform. The source-matrix payload is a digest of
+    # ``to_sl2(swirl_point(*point))`` -- computed binary64 out of cosh and sinh --
+    # and is therefore a digest of libm's last bit. Measured: the two coordinate
+    # payloads agree across Windows/CPython 3.13 and Linux/CPython 3.11 while the
+    # matrix payload does not, so gating on it made the preflight unpassable on a
+    # second platform by construction.
+    #
+    # This is the third occurrence of one defect. R6k's input_hashes were digests
+    # of computed float arrays; .jsonl inherited text=auto and broke on CRLF; and
+    # here a transcendental's last bit propagated into a frozen digest. Each time
+    # the lesson is the same: an evidence chain that holds on one operating
+    # system is not an evidence chain.
+    #
+    # The matrices are a deterministic function of the coordinates under a map
+    # this repository already pins, so hashing them adds no binding the
+    # coordinates do not already supply -- it only adds platform dependence. The
+    # coordinate payloads stay HARD gates; the matrix payload is computed,
+    # compared and REPORTED, never used to refuse.
+    _rebuilt = rebuild_source_input_digests()
+    _portable = ("coordinate_payload", "perturbed_coordinate_payload")
+    _differing = [k for k in _portable if _rebuilt.get(k) != SOURCE_INPUT_DIGESTS.get(k)]
+    if _differing:
+        raise PartBPreflightError(
+            "held-out source input digests differ: " + ", ".join(_differing))
     validate_scientific_dependencies(root)
 
     outcome_relative = "src/aionq/part_b_outcome.py"

@@ -46,8 +46,35 @@ HELD_OUT_DEPTHS = tuple(value for _, _, value in HELD_OUT_DEPTH_COORDS)
 # J_psi is primary.  These are the binary64 evaluations of the exact inverse,
 # not six-decimal numbers promoted into authoritative endpoints.
 J_PSI_LOW, J_PSI_HIGH = 0.05, 0.20
-ADMISSIBLE_RHO_LOW = -0.5 * math.log1p(-math.sqrt(J_PSI_LOW))
-ADMISSIBLE_RHO_HIGH = -0.5 * math.log1p(-math.sqrt(J_PSI_HIGH))
+
+#: PINNED BY BIT PATTERN, not recomputed at import.
+#:
+#: These were ``-0.5 * math.log1p(-math.sqrt(J_PSI))`` evaluated at import, and
+#: that is not portable: ``log1p`` and ``sqrt`` are libm, and libm's last bit is
+#: a platform fact.  Measured -- ADMISSIBLE_RHO_LOW comes out
+#: ``0x1.032ba5565697dp-3`` on Windows/CPython 3.13 and ``0x1.032ba5565697cp-3``
+#: on Linux/CPython 3.11, **exactly one ulp apart**.  ADMISSIBLE_RHO_HIGH happens
+#: to agree on both.
+#:
+#: That one bit was not confined to a comparison.  ``part_b_preflight`` freezes
+#: ``rho_low_binary64_hex`` as a literal and hashes payloads built from these
+#: doubles, so a single differing bit propagated into the protocol digest, the
+#: source-matrix payload digest and the frozen preflight projection -- five test
+#: failures from one ulp.  This is the CRLF defect one level deeper: an evidence
+#: chain that holds on one operating system is not an evidence chain, and here
+#: the operating system entered through the last bit of a transcendental rather
+#: than through a line ending.
+#:
+#: The values adopted are the ones the committed artifacts are already anchored
+#: to.  Choosing the other platform's bit would invalidate every frozen digest to
+#: gain nothing: both round-trip to the declared interval within 1e-16, at
+#: J_psi = 0.05000000000000001 and 0.19999999999999998.
+#:
+#: The closed form remains the DEFINITION; these are its frozen evaluation. A
+#: test asserts they agree with a live recomputation to within one ulp, which is
+#: the honest relation between a definition and a pinned double.
+ADMISSIBLE_RHO_LOW = float.fromhex("0x1.032ba5565697dp-3")
+ADMISSIBLE_RHO_HIGH = float.fromhex("0x1.2f8155055de49p-2")
 
 OUTCOMES = ("INVALID", "REFUTED", "INCONCLUSIVE", "SUPPORTING")
 _CLEAN_COORDINATE = (0, 0)

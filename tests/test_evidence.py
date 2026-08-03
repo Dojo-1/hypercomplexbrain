@@ -487,20 +487,32 @@ def test_the_uncompiled_lean_surface_is_rejected_as_a_proof():
     assert any("never compiled" in f for f in result.failures)
 
 
-def test_a_proof_resting_on_an_axiom_is_flagged_even_when_it_builds():
+def test_a_proof_resting_on_an_axiom_is_flagged_even_when_it_builds(tmp_path):
     """The Wall-Sheaf failure mode, as a check rather than as a memory.
 
     `theorem P_neq_NP := ambrose_singer_bridge ...` with the bridge declared as
     an axiom compiles cleanly and proves nothing about its conclusion.
     """
+    # Every binding field is well formed on purpose. The point of the test is
+    # that an envelope with NOTHING else wrong with it -- real path, canonical
+    # digest, real commit, clean build -- is still not a proof of its own
+    # conclusion when the conclusion is assumed. If the fixture were malformed
+    # the axiom warning could hide behind an unrelated failure, and the test
+    # would pass for the wrong reason.
+    olean = tmp_path / "formal" / "PvsNP.olean"
+    olean.parent.mkdir(parents=True)
+    olean.write_bytes(b"compiled cleanly, assumes its conclusion")
     env = ProofEnvelope(
         claim_id="TEST-R4-AXIOM_PROOF", theorem_name="P_neq_NP",
         prover="lean4", prover_version="4.11.0", build_command="lake build",
-        artifact_digest="sha256:deadbeef", build_status="built",
+        artifact_path="formal/PvsNP.olean",
+        artifact_digest=file_digest(olean),
+        artifact_commit_sha="0" * 40,
+        build_status="built",
         axiom_inventory=["ambrose_singer_bridge"],
         producer="a", verifier="b")
-    result = verify(env)
-    assert result.ok                                     # it does build
+    result = verify(env, repo_root=tmp_path, check_commit=False)
+    assert result.ok, result.failures                    # it does build
     assert any("proves nothing about the conclusion" in w for w in result.warnings)
 
 

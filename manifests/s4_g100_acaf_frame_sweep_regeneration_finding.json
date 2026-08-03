@@ -1,0 +1,91 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "S4-G100-ACAF-REGEN-001",
+  "status": "recorded, not adjudicated; no S4/G100 claim is withdrawn or upheld by this document",
+  "subject": "artifacts/s4_g100/summaries/acaf_frame_sweep.json",
+  "statement": "A file whose commit declared the S4/G100 artifact surface preserved was regenerated, and one leaf changed by a discrete step that floating-point rounding cannot produce.",
+  "why_this_is_recorded": "Only one leaf in the file is not attributable to last-bit noise, and it is a reported robustness statistic that moved in the favourable direction. A regeneration that improves a headline number inside a file declared preserved must be visible whether or not its mechanism turns out to be benign, because the alternative is a repository in which results improve without anyone having claimed an improvement.",
+  "comparison": {
+    "from_commit": "9346527d5f41abedb862d9532e04200bfcbe703d",
+    "from_commit_subject": "S6: ACAF sweep falsifies a P-tagged claim, then fixes the instrument",
+    "to_commit": "a677880083f6aef48209caea6682deb785c705e0",
+    "to_commit_subject": "gpt sync",
+    "method": "leaf-by-leaf comparison of the two committed JSON blobs; identical key sets, no structural change",
+    "total_leaves": 15207,
+    "rows": 950,
+    "changed_leaves": 924,
+    "unchanged_summary_leaves": [
+      "instances",
+      "equivariance_failures",
+      "invariance_breaks",
+      "laplacian_max_deviation",
+      "laplacian_mean_auroc",
+      "sheaf_mean_auroc",
+      "win_rate"
+    ]
+  },
+  "populations": {
+    "floating_point_noise": {
+      "count": 923,
+      "leaf": "rows[*].gap_k",
+      "largest_absolute_change": 3.6415315207705135e-14,
+      "relative_change_note": "relative ratios reach 43x, but only on rows whose gap_k is itself at or below 2.3e-15 -- numerically zero, where a ratio is undefined in substance. Every absolute change is at or below 3.65e-14.",
+      "reading": "continuous last-bit drift from re-running the same linear algebra; not a result change"
+    },
+    "discrete_change": {
+      "count": 1,
+      "leaf": "rows[232].sheaf_maxdev",
+      "row_identity": {
+        "family": "erdos_renyi",
+        "dim": 8,
+        "nodes": 20,
+        "edges": 120,
+        "b1": 101,
+        "density": 0.6,
+        "defects": 1
+      },
+      "old_value": 0.01680672268907568,
+      "new_value": 0.012605042016806789,
+      "old_exact": "2/119 = 4/238",
+      "new_exact": "3/238",
+      "absolute_change": 0.004201680672268893,
+      "relative_change": 0.25,
+      "reading": "both endpoints are exact rationals on the 1/238 grid and the change is exactly one grid unit, so this is a change of one discrete count, not a rounding of a continuous quantity"
+    }
+  },
+  "mechanism": {
+    "definition": "sheaf_maxdev is MovingFrameResult.max_deviation = max(|v - identity_value|) over the admissible frames, where each v is an AUROC on the 1/238 pair grid",
+    "controlling_observation": "rows[232].sheaf_auroc is BIT-IDENTICAL across the regeneration at 235/238, so the identity-frame score ordering did not move at all; only the worst-frame departure did",
+    "implication": "the worst admissible frame's AUROC moved from 231/238 to 232/238 -- exactly one pairwise comparison flipped in one non-identity frame",
+    "most_likely_cause": "a tie or near-tie at the extremal frame resolving the other way under the same last-bit perturbation visible in gap_k. max_deviation is a maximum over a step function of float scores and is therefore discontinuous in its inputs: last-bit noise CAN move it by a full grid unit, which is what distinguishes it from the 923 continuous changes.",
+    "verification_status": "NOT VERIFIED BY RE-EXECUTION. The mechanism above is the reading most consistent with the evidence, not a measured finding. Confirming it requires re-running experiments/run_acaf_frame_sweep.py under both float environments and observing the tie, which has not been done."
+  },
+  "impact_assessment": {
+    "classification_threshold": 1e-09,
+    "old_classification": "RESOLVING",
+    "new_classification": "RESOLVING",
+    "classification_changed": false,
+    "summary_statistics_changed": false,
+    "equivariance_failures": 0,
+    "invariance_breaks": 0,
+    "conclusion": "no reported classification, summary statistic or pass/fail verdict in this file changed. The finding is confined to one row's worst-case robustness number."
+  },
+  "typed_remainders": [
+    {
+      "kind": "preservation_remainder",
+      "statement": "The commit carrying this regeneration described the S4/G100 artifact surface as preserved. 924 leaves in this file changed. 'Preserved' was therefore a statement about intent, not about bytes, and no automated check enforced it -- which is why the discrepancy had to be found by hand-diffing two blobs."
+    },
+    {
+      "kind": "direction_remainder",
+      "statement": "The single discrete change moved the reported worst-case deviation DOWN, from 4/238 to 3/238, making the sheaf invariant look one count more robust after regeneration than before. Nothing in the evidence indicates this direction was chosen; it is recorded because a favourable drift is precisely the kind that goes unquestioned."
+    },
+    {
+      "kind": "reproduction_remainder",
+      "statement": "A statistic defined as a maximum over a step function of floating-point scores is not reproducible in the sense the 923 continuous leaves are. Byte comparison classifies it as a result change; the mechanism suggests noise. Neither reading can be settled without re-execution, and the file offers no way to tell them apart from the artifact alone."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "This finding was recorded by the Claude session, about a change made by the other agent, which became unavailable before it could be asked. It is one party's reading of another party's artifact and carries no independent confirmation."
+    }
+  ]
+}

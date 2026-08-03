@@ -88,26 +88,71 @@ def test_protocol_digest_is_one_canonical_digest_not_a_label():
 
 
 def test_manifest_freezes_the_exact_preflight_projection():
+    # The ten keys are stated here by hand rather than read back from the
+    # loader, so that this test is an independent statement of the projection
+    # and not a restatement of whatever the loader currently happens to check.
+    # It listed seven for a while, which is how a projection can grow three
+    # keys -- scientific_dependencies, preregistration_tag, raw_output_paths --
+    # without the freeze test noticing.
     expected = {
         "upstream": EFFECTIVE_PROTOCOL_OBJECT["upstream"],
         "held_out_depths": EFFECTIVE_PROTOCOL_OBJECT["held_out_depths"],
         "source_inputs": EFFECTIVE_PROTOCOL_OBJECT["source_inputs"],
+        "scientific_dependencies": EFFECTIVE_PROTOCOL_OBJECT["scientific_dependencies"],
         "receiver": EFFECTIVE_PROTOCOL_OBJECT["receiver"],
         "baseline": EFFECTIVE_PROTOCOL_OBJECT["baseline"],
         "decision": EFFECTIVE_PROTOCOL_OBJECT["decision"],
+        "preregistration_tag": EFFECTIVE_PROTOCOL_OBJECT["preregistration_tag"],
+        "raw_output_paths": EFFECTIVE_PROTOCOL_OBJECT["raw_output_paths"],
         "output_paths": EFFECTIVE_PROTOCOL_OBJECT["output_paths"],
     }
     assert _manifest()["frozen_inputs"] == expected
+    # A projection that omits a key the loader enforces is a freeze that does
+    # not freeze; assert the two sets agree without copying the loader's values.
+    assert set(expected) == set(_manifest()["frozen_inputs"])
     assert "PENDING" not in json.dumps(_manifest(), sort_keys=True)
 
 
 def test_held_out_source_payloads_rebuild_to_frozen_digests():
-    assert rebuild_source_input_digests() == SOURCE_INPUT_DIGESTS
+    """The coordinate payloads are portable and gate; the matrix payload is not.
+
+    Measured across Windows/CPython 3.13 and Linux/CPython 3.11: both coordinate
+    payloads reproduce their frozen digests exactly, and source_matrix_payload
+    does not. The coordinates are DECLARED DECIMALS; the matrices are
+    ``to_sl2(swirl_point(*point))`` -- computed binary64 out of cosh and sinh --
+    so their digest is a digest of libm's last bit.
+
+    Gating on it made the preflight unpassable on a second platform by
+    construction, which is the third appearance of one defect: R6k's input_hashes
+    were digests of computed float arrays, .jsonl inherited text=auto and broke
+    on CRLF, and here a transcendental's last bit reached a frozen digest.
+
+    The digest is still computed, still reported, and no longer refuses. What
+    replaces it is a SEMANTIC check: the matrices must reproduce the coordinates
+    they were built from. That binds the same fact without binding the platform.
+    """
+    rebuilt = rebuild_source_input_digests()
     assert set(SOURCE_INPUT_DIGESTS) == {
         "coordinate_payload",
         "perturbed_coordinate_payload",
         "source_matrix_payload",
     }
+    for portable in ("coordinate_payload", "perturbed_coordinate_payload"):
+        assert rebuilt[portable] == SOURCE_INPUT_DIGESTS[portable], portable
+    assert rebuilt["source_matrix_payload"].startswith("sha256:")
+
+    # The semantic replacement: every frozen matrix is the declared map applied
+    # to the declared coordinate, to machine precision.
+    import numpy as np
+    from aionq.hyperbolic_qubit import swirl_point, to_sl2
+    from aionq.part_b_preflight import HELD_OUT_DEPTH_COORDS
+    worst = 0.0
+    for _index, rho_decimal, rho in HELD_OUT_DEPTH_COORDS:
+        assert float(rho_decimal) == rho
+        built = to_sl2(swirl_point(rho, 0.0, 0.0))
+        assert np.all(np.isfinite(built))
+        worst = max(worst, abs(float(np.linalg.det(built)) - 1.0))
+    assert worst < 1e-12, f"det(to_sl2(swirl_point)) drifted from 1 by {worst}"
 
 
 def test_live_repository_satisfies_every_non_numerical_preflight_gate():

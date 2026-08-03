@@ -44,6 +44,18 @@ def _envelope(tmp, name, **over):
     return env
 
 
+# The smallest envelope fields that make an independence claim mean something:
+# one computed artifact that is not environment-dependent and IS among the raw
+# artifacts bound. Without these the predicate reports agreement over an empty
+# set. Fabricated envelopes that are supposed to reach INDEPENDENT carry them;
+# the ones testing that the audit refuses inflation deliberately do not.
+_COMPARABLE = {
+    "computed_artifacts": ["artifacts/synthetic/result.json"],
+    "environment_dependent": [".resource_ledger.compiler_proxy.qiskit_version"],
+    "raw_artifacts": {"artifacts/synthetic/result.json": "sha256:" + "a" * 64},
+}
+
+
 @pytest.fixture
 def fake_root(tmp_path):
     (tmp_path / "artifacts").mkdir()
@@ -83,10 +95,37 @@ def test_an_empty_verifier_is_read_as_a_self_loop_not_as_a_missing_edge(fake_roo
 def test_a_genuine_recomputation_by_another_party_does_count(fake_root):
     """The complementary case, or the two tests above only prove the audit is deaf."""
     _envelope(fake_root, "checked", producer="party-a", verifier="party-b",
-              verification_mode="recomputed")
+              verification_mode="recomputed", **_COMPARABLE)
     r = independence_report(fake_root)
     assert r["by_rank"]["INDEPENDENT"] == 1
     assert r["independent_claims"][0]["verifier"] == "party-b"
+
+
+def test_two_parties_with_nothing_comparable_are_not_independent(fake_root):
+    """Two names and a mode word are not a second computation of anything.
+
+    The independence predicate used to be satisfied by producer != verifier
+    plus a mode string. That certifies a claim about who, never a claim about
+    what: an envelope naming two parties and recording no computed artifact
+    reports agreement on an empty set, and an empty set always agrees. The
+    predicate now also requires a NON-EMPTY set of computed artifacts that
+    survives removing the environment-dependent ones and is contained in the
+    raw artifacts actually bound -- something both parties could have got
+    differently and did not.
+    """
+    _envelope(fake_root, "hollow", producer="party-a", verifier="party-b",
+              verification_mode="recomputed")
+    assert independence_report(fake_root)["by_rank"]["INDEPENDENT"] == 0
+
+    # Nor is it enough for the comparable set to be non-empty on paper: if every
+    # computed artifact is declared environment-dependent, what remains after
+    # the subtraction is empty and the same hollow agreement returns.
+    _envelope(fake_root, "allenv", producer="party-a", verifier="party-b",
+              verification_mode="recomputed",
+              computed_artifacts=["artifacts/synthetic/result.json"],
+              environment_dependent=["artifacts/synthetic/result.json"],
+              raw_artifacts={"artifacts/synthetic/result.json": "sha256:" + "a" * 64})
+    assert independence_report(fake_root)["by_rank"]["INDEPENDENT"] == 0
 
 
 def test_attestation_cannot_be_stacked_into_independence(fake_root):
@@ -513,7 +552,8 @@ def test_an_ambiguous_party_cannot_reach_independent(fake_root):
 def test_two_named_parties_still_reach_independent(fake_root):
     """Or the cap above is just a way of never certifying anything."""
     _envelope(fake_root, "namedclaim", producer="gpt/some-branch",
-              verifier="claude-code", verification_mode="recomputed")
+              verifier="claude-code", verification_mode="recomputed",
+              **_COMPARABLE)
     assert independence_report(fake_root)["by_rank"]["INDEPENDENT"] == 1
 
 

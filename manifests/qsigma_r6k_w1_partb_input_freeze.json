@@ -3,10 +3,35 @@
   "round": "QSigma-R6k-W1",
   "part": "B",
   "status": "input-frozen, pre-implementation, pre-execution; no Part B result exists",
-  "supersedes_pending_inputs_from": "manifests/qsigma_r6k_w1_partb_effective_protocol_v2.json",
+  "supersedes": [
+    "manifests/qsigma_r6k_w1_partb_effective_protocol_v2.json",
+    "manifests/qsigma_r6k_w1_partb_effective_protocol.json"
+  ],
+  "corrections": {
+    "public_api": {
+      "superseded": "part_b_outcome(rows, clean_slice_rows=None)",
+      "replacement": "part_b_outcome(map_rows)",
+      "reason": "the optional second argument could bypass K9 and accepted one unidentified aggregate instead of all fifteen noisy coordinates; the replacement accepts exactly 160 per-map rows and derives all 80 R6i-R6 differences internally"
+    },
+    "noise_decision_wording": {
+      "superseded": "the other fifteen coordinates are recorded and reported, never used to decide the verdict",
+      "replacement": "only the clean slice sets the primary threshold and B3 margin, but all fifteen noisy coordinates are mandatory K9 falsifiers: any crossing disagreement or undefined noisy crossing makes the reported outcome INVALID; no aggregation or slice selection is allowed"
+    },
+    "c_pre_anchor": {
+      "superseded": "C_pre is the commit that first added the input-freeze manifest, at any content",
+      "replacement": "C_pre is the earliest commit whose input-freeze manifest bytes equal the live manifest bytes",
+      "reason": "the superseded rule had no valid instance on this history: the manifest is added exactly once, at a commit whose guard surface carried a platform-dependent seal, so the gate accepted only the defective surface and refused every pre-execution repair of it. The replacement still forbids advancing the tag onto a later commit, onto a commit whose C_pre bytes differ from live, or onto a commit where the runner or any output path exists; it no longer freezes a defect on the grounds that the defect was committed first"
+    },
+    "admissible_rho_derivation": {
+      "superseded": "ADMISSIBLE_RHO_LOW/HIGH computed from math.log1p and math.sqrt at import time, sealed as outcome module digest sha256:e0f1441a73636c3d97ff08e399ee9bee794f90bd1966ebcee64c7d8c0c8519eb",
+      "replacement": "the same two endpoints pinned by binary64 bit pattern via float.fromhex, sealed as outcome module digest sha256:24fbd5095265d5656e62fa2f8f3fad97361b96280839facc0c2250a345702df9",
+      "reason": "the derivation, not the value, was platform dependent: Linux/CPython 3.11 libm returns 0x1.032ba5565697cp-3 for the low endpoint where Windows/CPython 3.13 returns 0x1.032ba5565697dp-3, one ulp apart, and the latter is the value already frozen as rho_low_binary64_hex before either platform ran. The pin restores the preregistered endpoint; it does not select a new one. The high endpoint is bit-identical on both platforms. No threshold, gate, interval, margin or outcome branch changed"
+    }
+  },
   "reason": "R6l C_env is now sealed on the origin-tracking lineage. This receipt fills the previously unavailable upstream bindings, freezes the held-out input payloads before a runner exists, closes the 16-coordinate K9 input type, and changes no scientific threshold or expected outcome.",
+  "manifest_digest_rule": "sha256 over compact sorted-key finite UTF-8 JSON of this object with the manifest_digest field removed; separators (',',':'), ensure_ascii false, allow_nan false",
   "effective_protocol_definition": "EFFECTIVE_PROTOCOL_OBJECT in src/aionq/part_b_preflight.py; canonical bytes are compact sorted-key finite UTF-8 JSON",
-  "effective_protocol_digest": "sha256:b830667cf35ce8d87646ae70b664970ccd420eb454386f672a2076a6520f23c6",
+  "effective_protocol_digest": "sha256:c2c4ac86b55c06fc89369335c9ec695c2410259498d93883aaef620b7e58cd47",
   "frozen_inputs": {
     "upstream": {
       "r6l_c_exec": "bedb574ef2540638add55e3d8e87b1b9159064e4",
@@ -21,11 +46,31 @@
       "origin_ref": "refs/remotes/origin/claude/aion-brain-architecture-27f8ji"
     },
     "held_out_depths": [
-      {"depth_index": 0, "rho_decimal": "0.15", "binary64_hex": "0x1.3333333333333p-3"},
-      {"depth_index": 1, "rho_decimal": "0.20", "binary64_hex": "0x1.999999999999ap-3"},
-      {"depth_index": 2, "rho_decimal": "0.25", "binary64_hex": "0x1.0000000000000p-2"},
-      {"depth_index": 3, "rho_decimal": "0.30", "binary64_hex": "0x1.3333333333333p-2"},
-      {"depth_index": 4, "rho_decimal": "0.40", "binary64_hex": "0x1.999999999999ap-2"}
+      {
+        "depth_index": 0,
+        "rho_decimal": "0.15",
+        "binary64_hex": "0x1.3333333333333p-3"
+      },
+      {
+        "depth_index": 1,
+        "rho_decimal": "0.20",
+        "binary64_hex": "0x1.999999999999ap-3"
+      },
+      {
+        "depth_index": 2,
+        "rho_decimal": "0.25",
+        "binary64_hex": "0x1.0000000000000p-2"
+      },
+      {
+        "depth_index": 3,
+        "rho_decimal": "0.30",
+        "binary64_hex": "0x1.3333333333333p-2"
+      },
+      {
+        "depth_index": 4,
+        "rho_decimal": "0.40",
+        "binary64_hex": "0x1.999999999999ap-2"
+      }
     ],
     "source_inputs": {
       "digests": {
@@ -35,24 +80,69 @@
       },
       "coordinate_payload_schema": {
         "container": "ordered list; depth_index outer, source_index 0..31 inner",
-        "exact_fields": ["rho", "index", "point"],
+        "exact_fields": [
+          "rho",
+          "index",
+          "point"
+        ],
         "point": "[rho,2*pi*k/32,2*pi*((3*k) mod 32)/32] as binary64",
         "rows": 160
       },
       "perturbed_coordinate_payload_schema": {
         "container": "ordered list; depth_index outer, projective_index 0..15 inner",
-        "exact_fields": ["rho", "projective_index", "positive", "negative", "mixture_weights"],
-        "perturbations": [["1/100", "pi/64", "-pi/80"], ["-1/100", "-pi/64", "pi/80"]],
+        "exact_fields": [
+          "rho",
+          "projective_index",
+          "positive",
+          "negative",
+          "mixture_weights"
+        ],
+        "perturbations": [
+          [
+            "1/100",
+            "pi/64",
+            "-pi/80"
+          ],
+          [
+            "-1/100",
+            "-pi/64",
+            "pi/80"
+          ]
+        ],
         "negative_partner": "add pi to both perturbed angles",
-        "mixture_weights": [0.5, 0.5],
+        "mixture_weights": [
+          0.5,
+          0.5
+        ],
         "rows": 80
       },
       "source_matrix_payload_schema": {
         "container": "ordered list; depth_index outer, source_index 0..31 inner",
-        "exact_fields": ["rho", "index", "matrix"],
+        "exact_fields": [
+          "rho",
+          "index",
+          "matrix"
+        ],
         "matrix": "to_sl2(swirl_point(*point)), row-major, each scalar [real,imag] binary64",
         "rows": 160
       }
+    },
+    "scientific_dependencies": {
+      "sealed_commit": "bedb574ef2540638add55e3d8e87b1b9159064e4",
+      "roots": [
+        "aionq.common_receiver_reservoir",
+        "aionq.equal_resource_reservoir"
+      ],
+      "closure_rule": "exact direct/transitive local aionq imports in the two scientific module bodies, excluding package __init__ bootstrap",
+      "files": {
+        "src/aionq/coherent_dilation.py": "sha256:174843edde3447139eff5ceeabba2bfeb29d00ea11753f71a8f41aa60e7b1ab7",
+        "src/aionq/common_receiver_reservoir.py": "sha256:850bd22125b95c52d01e7a456e40cc0a5a31f4141ac3c0c0d6d6107f920abff3",
+        "src/aionq/equal_resource_reservoir.py": "sha256:9978b8051d8b6afc1b7fa454a214bd49b3263efeb83bb7da9222ae6b17c02691",
+        "src/aionq/holevo_sandwich.py": "sha256:5cb89b9f71c329a9ce590db30a1923c2484b1a55a828d247bb0fbe7bf1e9aef0",
+        "src/aionq/hyperbolic_qubit.py": "sha256:f6424cd337fb7dcf987a68a7ed375ca3955be29223d529f33b1cce847376e484",
+        "src/aionq/quantum_channel_geometry.py": "sha256:f6c5498356814ead07ca867e9a8348e5d90c54df4a9ad455b57fee3bfce06f38"
+      },
+      "package_bootstrap_remainder": "Python executes aionq/__init__.py before submodule import; that broad package bootstrap is governance/runtime context rather than the planned scientific calculation surface and remains bound by C_pre, not claimed as sealed R6l scientific code"
     },
     "receiver": {
       "ambient_dimension": 16,
@@ -78,7 +168,10 @@
     },
     "decision": {
       "j_psi": "(-expm1(-2*rho))**2",
-      "j_psi_interval": [0.05, 0.2],
+      "j_psi_interval": [
+        0.05,
+        0.2
+      ],
       "inverse": "rho=-0.5*log1p(-sqrt(J_psi))",
       "rho_low_binary64_hex": "0x1.032ba5565697dp-3",
       "rho_high_binary64_hex": "0x1.2f8155055de49p-2",
@@ -86,21 +179,73 @@
       "information_gate": 0.02,
       "inclusive": true,
       "k9": "all 15 noisy coordinates are mandatory and individually compared with clean; no aggregation",
-      "outcome_module_digest": "sha256:83684300ee956beaf6ea5d25b73fc14a1da2e7a2794f45b3a5ca44b08b5bffcc"
+      "outcome_module_digest": "sha256:24fbd5095265d5656e62fa2f8f3fad97361b96280839facc0c2250a345702df9"
     },
+    "preregistration_tag": {
+      "ref": "refs/tags/qsigma-r6k-w1-partb-prereg-v1",
+      "kind": "lightweight commit tag",
+      "remote": "origin",
+      "c_pre_paths": [
+        "manifests/qsigma_r6k_w1_partb_input_freeze.json",
+        "src/aionq/part_b_preflight.py",
+        "src/aionq/part_b_outcome.py",
+        "tests/test_part_b_preflight.py",
+        "tests/test_part_b_outcome.py"
+      ],
+      "must_be_absent_at_c_pre": [
+        "experiments/run_part_b_crossing.py",
+        "artifacts/r6k_w1_part_b/crossing.json",
+        "artifacts/r6k_w1_part_b/map_rows.json",
+        "artifacts/r6k_w1_part_b/receiver_resource_receipt.json",
+        "artifacts/r6k_w1_part_b/execution_receipt.json",
+        "artifacts/r6k_w1_part_b/events.jsonl",
+        "artifacts/r6k_w1_part_b/crossing.envelope.json"
+      ],
+      "ordering": "the local and origin refs resolve to the same full commit; that commit is the earliest commit carrying the live input-freeze manifest bytes, contains exact current C_pre path bytes, and is an ancestor of HEAD and the fetched origin branch"
+    },
+    "raw_output_paths": [
+      "artifacts/r6k_w1_part_b/crossing.json",
+      "artifacts/r6k_w1_part_b/map_rows.json",
+      "artifacts/r6k_w1_part_b/receiver_resource_receipt.json",
+      "artifacts/r6k_w1_part_b/execution_receipt.json",
+      "artifacts/r6k_w1_part_b/events.jsonl"
+    ],
     "output_paths": [
       "artifacts/r6k_w1_part_b/crossing.json",
+      "artifacts/r6k_w1_part_b/map_rows.json",
+      "artifacts/r6k_w1_part_b/receiver_resource_receipt.json",
+      "artifacts/r6k_w1_part_b/execution_receipt.json",
+      "artifacts/r6k_w1_part_b/events.jsonl",
       "artifacts/r6k_w1_part_b/crossing.envelope.json"
     ]
   },
   "grid_contract": {
-    "maps": ["R6", "R6i"],
+    "maps": [
+      "R6",
+      "R6i"
+    ],
     "held_out_depth_count": 5,
     "noise_levels": [
-      {"index": 0, "decimal": "0", "binary64_hex": "0x0.0p+0"},
-      {"index": 1, "decimal": "0.01", "binary64_hex": "0x1.47ae147ae147bp-7"},
-      {"index": 2, "decimal": "0.03", "binary64_hex": "0x1.eb851eb851eb8p-6"},
-      {"index": 3, "decimal": "0.1", "binary64_hex": "0x1.999999999999ap-4"}
+      {
+        "index": 0,
+        "decimal": "0",
+        "binary64_hex": "0x0.0p+0"
+      },
+      {
+        "index": 1,
+        "decimal": "0.01",
+        "binary64_hex": "0x1.47ae147ae147bp-7"
+      },
+      {
+        "index": 2,
+        "decimal": "0.03",
+        "binary64_hex": "0x1.eb851eb851eb8p-6"
+      },
+      {
+        "index": 3,
+        "decimal": "0.1",
+        "binary64_hex": "0x1.999999999999ap-4"
+      }
     ],
     "noise_coordinates": "the exact eta-outer, epsilon-inner Cartesian product of noise_levels; 16 coordinates including clean (0,0), with all other 15 mandatory",
     "ordering": "map, depth, eta, epsilon",
@@ -114,15 +259,20 @@
   "preexecution_gate": {
     "module": "src/aionq/part_b_preflight.py",
     "entry_point": "validate_repository_preflight(root)",
-    "output_absence": "both frozen output paths must not exist",
+    "output_absence": "none of the 6 frozen output paths may exist",
     "phase_boundary": "this receipt and its guards precede runner implementation; no receiver is constructed and no scientific cell is evaluated here"
   },
   "files_expected_to_change": [
     "experiments/run_part_b_crossing.py",
     "artifacts/r6k_w1_part_b/crossing.json",
+    "artifacts/r6k_w1_part_b/map_rows.json",
+    "artifacts/r6k_w1_part_b/receiver_resource_receipt.json",
+    "artifacts/r6k_w1_part_b/execution_receipt.json",
+    "artifacts/r6k_w1_part_b/events.jsonl",
     "artifacts/r6k_w1_part_b/crossing.envelope.json"
   ],
   "co_committed_guard_surface": [
+    "manifests/qsigma_r6k_w1_partb_input_freeze.json",
     "src/aionq/part_b_preflight.py",
     "src/aionq/part_b_outcome.py",
     "tests/test_part_b_preflight.py",
@@ -140,6 +290,18 @@
     {
       "kind": "scope_remainder",
       "statement": "One ring, one five-depth grid and one clean decision slice remain insufficient for a mechanism; held-out rings remain out of scope."
+    },
+    {
+      "kind": "process_remainder",
+      "carrier": "a manifest regenerated mid-flight",
+      "comparison": "this manifest's frozen_inputs projection and effective_protocol_digest were stale against src/aionq/part_b_preflight.py: output_paths listed 2 entries where the module declares 6, and the digest named an object that no longer existed. The regeneration was in progress when its author became unavailable. Completed here FROM THE MODULE, which is the operative surface and whose tests define the contract -- not the reverse. No threshold, gate, margin or outcome branch was touched."
+    },
+    {
+      "kind": "portability_remainder",
+      "carrier": "a frozen digest over computed binary64",
+      "statement": "Two seals in this receipt were platform dependent by construction and are now corrected pre-execution. (1) The outcome module digest sealed a module that derived ADMISSIBLE_RHO_LOW from libm at import: Linux/CPython 3.11 gives 0x1.032ba5565697cp-3 where Windows/CPython 3.13 gives 0x1.032ba5565697dp-3, one ulp apart, and the latter is the value this manifest froze as rho_low_binary64_hex before either platform ran. The endpoints are now pinned by bit pattern, so the preregistered value governs and the derivation no longer can; the outcome module digest is resealed from sha256:e0f1441a... to sha256:24fbd509..., and effective_protocol_digest moves with it. (2) source_matrix_payload hashes to_sl2(swirl_point(...)) output, is therefore a digest of cosh and sinh's last bit, and does not agree across the two platforms; it is demoted from a hard gate to a reported comparison. The matrices are a deterministic function of the two coordinate payloads under a map this repository already pins, so the demotion removes no binding. The coordinate payloads remain hard gates and agree bit for bit on both platforms. This is the third instance of one defect in this repository -- R6k input_hashes over computed float arrays, .jsonl under text=auto, and now a transcendental's last bit inside a seal. A check that cannot pass on a second operating system is not evidence of reproduction; it is evidence of a single machine.",
+      "residual": "No cross-platform claim is made for source_matrix_payload. Bit-level agreement of the SL(2,C) matrices is untested and remains open; only the semantic invariant det == 1 to 1e-12 is asserted."
     }
-  ]
+  ],
+  "manifest_digest": "sha256:d0363310cdeade5b581e045dee2198c8258bee5b66e8e421e0a54a7b33816152"
 }

@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import json
 import math
+import struct
 
 import pytest
 
@@ -127,9 +128,35 @@ def test_the_boundary_case_is_reachable_and_passes():
     )["outcome"] == "SUPPORTING"
 
 
+def _ulp_distance(left: float, right: float) -> int:
+    """Signed distance in representable binary64 steps.
+
+    Both endpoints here are positive normals, so the monotone integer ordering
+    of the raw bit pattern is the ordering of the values and the subtraction is
+    exactly the number of representable numbers between them.
+    """
+    to_int = lambda value: struct.unpack("<q", struct.pack("<d", value))[0]
+    return to_int(left) - to_int(right)
+
+
 def test_primary_j_interval_defines_exact_inverse_endpoints():
-    assert ADMISSIBLE_RHO_LOW == -0.5 * math.log1p(-math.sqrt(J_PSI_LOW))
-    assert ADMISSIBLE_RHO_HIGH == -0.5 * math.log1p(-math.sqrt(J_PSI_HIGH))
+    # The endpoints are PINNED by bit pattern, not recomputed, so this test
+    # must not assert bit equality with the live libm -- that is the assertion
+    # that made the suite pass on one operating system and fail on the next.
+    #
+    # Measured: Windows/CPython 3.13 libm returns 0x1.032ba5565697dp-3 for the
+    # low endpoint and Linux/CPython 3.11 returns 0x1.032ba5565697cp-3, one ulp
+    # apart. The pinned value is the former, which is also the value the
+    # input-freeze manifest declared as rho_low_binary64_hex before either
+    # platform ran, so the pin follows the preregistration rather than a host.
+    #
+    # What is actually required of the pin is that it is the correctly rounded
+    # inverse to within the error any conforming libm may introduce. One ulp is
+    # the tolerance; two would admit a genuinely wrong endpoint.
+    assert abs(_ulp_distance(
+        ADMISSIBLE_RHO_LOW, -0.5 * math.log1p(-math.sqrt(J_PSI_LOW)))) <= 1
+    assert abs(_ulp_distance(
+        ADMISSIBLE_RHO_HIGH, -0.5 * math.log1p(-math.sqrt(J_PSI_HIGH)))) <= 1
     assert ADMISSIBLE_RHO_LOW.hex() == "0x1.032ba5565697dp-3"
     assert ADMISSIBLE_RHO_HIGH.hex() == "0x1.2f8155055de49p-2"
     assert ADMISSIBLE_RHO_LOW != 0.126548
@@ -299,9 +326,13 @@ def test_input_freeze_supersedes_the_historical_pending_fields():
         ].values()
     )
     frozen = _manifest(FREEZE_MANIFEST)
-    assert frozen["supersedes_pending_inputs_from"].endswith(
-        HISTORICAL_MANIFEST
-    )
+    # The single-string ``supersedes_pending_inputs_from`` became an ordered
+    # ``supersedes`` chain, newest superseded document first, when the second
+    # historical protocol was folded in. The chain must still name the document
+    # carrying the PENDING fields, and must name it as the most recent one it
+    # supersedes -- a chain that merely mentions it somewhere would let a later
+    # document quietly re-open the frozen inputs.
+    assert frozen["supersedes"][0].endswith(HISTORICAL_MANIFEST)
     assert "PENDING" not in json.dumps(frozen, sort_keys=True)
 
 
