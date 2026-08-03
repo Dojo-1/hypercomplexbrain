@@ -1,6 +1,7 @@
 {
   "claim_id": "METHOD-R4-EFFECTIVE_SAMPLE_SIZE",
   "command": "(review only -- the claim is the artifact)",
+  "artifact_commit_sha": "ad9a43f579e0b435a5cc110189617e8ded4c30a7",
   "commit_sha": "ad9a43f579e0b435a5cc110189617e8ded4c30a7",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
@@ -32,7 +33,7 @@
     "src/aionq/evidence.py": "sha256:c076491b94ce7187fe762169c9df186866a2a6231f58b3c4f2b36d2edd137cb2",
     "tests/test_evidence.py": "sha256:64bdbb203a6396f00adb3b84fa3e8e2582066262cc46ab1097574a9ccd9500c4"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [],
   "signature_status": "unsigned",
   "timestamp": "2026-07-27T11:10:17Z",

@@ -1,7 +1,9 @@
 {
   "claim_id": "MATH-R6-DD_CLASS_DEGREE",
   "command": "PYTHONPATH=src python3 experiments/run_dd_class_degree_audit.py",
-  "commit_sha": "586a3f6a2b7814e212572e7595f2da351904fc29",
+  "artifact_commit_sha": "f980e19aab2bac7c2f405333094aabb879363412",
+  "commit_sha": "f980e19aab2bac7c2f405333094aabb879363412",
+  "source_commit_sha": "586a3f6a2b7814e212572e7595f2da351904fc29",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -37,7 +39,7 @@
   "raw_artifacts": {
     "artifacts/dd_class_audit/dd_class_degree_audit.json": "sha256:85f23b3ef62617ff317e3170c5f4cb015b4ff8e6242565e43c6a0d113386354a"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     20260728
   ],

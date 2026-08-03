@@ -550,7 +550,7 @@ def main() -> int:
         verification_mode="not_requested",
     )
     save_envelope(envelope, ENVELOPE)
-    check = verify(envelope, repo_root=ROOT)
+    check = verify(envelope, repo_root=ROOT, check_commit=False)
     if not check.ok:
         raise RuntimeError("envelope verification failed: " + "; ".join(check.failures))
     print(status)

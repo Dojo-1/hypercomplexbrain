@@ -1,7 +1,9 @@
 {
   "claim_id": "EXP-R6-UNITARY_PRICE",
   "command": "PYTHONPATH=src python3 experiments/run_hyperbolic_qubit_cost.py",
-  "commit_sha": "47def35ae42a84143cdac8ac5d7af424a6c0b531",
+  "artifact_commit_sha": "586a3f6a2b7814e212572e7595f2da351904fc29",
+  "commit_sha": "586a3f6a2b7814e212572e7595f2da351904fc29",
+  "source_commit_sha": "47def35ae42a84143cdac8ac5d7af424a6c0b531",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -218,7 +220,7 @@
   "raw_artifacts": {
     "artifacts/r6_unitary_price/unitary_price.json": "sha256:f3ee87912e93b9b11c6ac3e0d8f90582fd2338f9c8be9964730ef9386acf72ad"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     20260728,
     20260729

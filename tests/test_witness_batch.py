@@ -10,7 +10,8 @@ from pathlib import Path
 
 import pytest
 
-from aionq.evidence import EvidenceEnvelope, file_digest, load_envelope, save_envelope
+from aionq.evidence import (SCHEMA_VERSION, EvidenceEnvelope, file_digest,
+                            load_envelope, save_envelope)
 from aionq.witness import VerificationMode, WitnessError
 from aionq.witness_batch import (BatchEvent, append_event, batch_status,
                                  dispatch_batch, fold_journal, ingest_response,
@@ -29,9 +30,11 @@ def _make_envelope(root: Path, claim_id: str, *, environment_dependent=False):
         evidence_tag="M",
         command="python3 deterministic_example.py",
         observed_result={"sample_size": 1, "value": 7},
+        schema_version=SCHEMA_VERSION,
         input_hashes=["input:one"],
         seeds=[1],
         raw_artifacts={str(artifact): file_digest(artifact)},
+        computed_artifacts=[str(artifact)],
         environment_dependent=[str(artifact)] if environment_dependent else [],
         producer=f"producer:{claim_id}",
         verifier="",
@@ -564,6 +567,7 @@ def test_ingested_matching_recomputation_becomes_independent(tmp_path):
         conversation_url="https://chatgpt.com/c/match",
         response={
             "mode": "recomputed",
+            "verifier": "godelian-1",
             "artifacts": {str(artifact): file_digest(artifact)},
             "environment": "independent test sandbox",
             "notes": "ran the command",
@@ -593,6 +597,7 @@ def test_ingested_digest_disagreement_is_preserved_as_contradiction(tmp_path):
         conversation_url="https://chatgpt.com/c/differ",
         response={
             "mode": "recomputed",
+            "verifier": "godelian-1",
             "artifacts": {
                 str(tmp_path / "CLAIM-DIFFER.artifact.json"):
                 "sha256:" + "0" * 64,
@@ -643,6 +648,7 @@ def test_environment_dependent_recompute_degrades_to_reviewed(tmp_path):
         conversation_url="https://chatgpt.com/c/env",
         response={
             "mode": "recomputed",
+            "verifier": "godelian-1",
             "artifacts": {str(artifact): "sha256:" + "1" * 64},
             "environment": "different CPU and BLAS",
             "notes": "timings reproduced in shape, not byte-for-byte",

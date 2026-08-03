@@ -1,6 +1,7 @@
 {
   "claim_id": "MATH-S7-FLAT_HOLONOMY_ON_A_NERVE",
   "command": "(review only -- the claim is the artifact)",
+  "artifact_commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
   "commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
@@ -31,7 +32,7 @@
     "experiments/run_audit_adjudication.py": "sha256:993137171f89aba045f041da94ed36d3cff901a1dc3f916edf71ac292b821dfe",
     "src/aionq/sheaf.py": "sha256:5cc6063e09dee7234c2fbef882a4fc25abc6a4a3e1a1ef6e39dfc6ac2101911f"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [],
   "signature_status": "unsigned",
   "timestamp": "2026-07-27T11:10:17Z",

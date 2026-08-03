@@ -1,7 +1,14 @@
 {
   "claim_id": "WITNESS-R6K-SEMANTIC_REPRODUCTION",
   "command": "PYTHONPATH=src python3 experiments/run_r6k_semantic_reproduction.py run  (then: envelope)",
+  "artifact_commit_sha": "b8ff886180ef651aed5d0a1bad8b57a68fc577ce",
   "commit_sha": "b8ff886180ef651aed5d0a1bad8b57a68fc577ce",
+  "computed_artifacts": [
+    "artifacts/r6k_w1_semantic_reproduction/comparison.json",
+    "artifacts/r6k_w1_semantic_reproduction/events.jsonl",
+    "artifacts/r6k_w1_semantic_reproduction/reproduction.json"
+  ],
+  "source_commit_sha": "b8ff886180ef651aed5d0a1bad8b57a68fc577ce",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -27,7 +34,7 @@
     "identity_leaves_differing": 493,
     "identity_leaves_total": 497,
     "party_identity_established": false,
-    "party_identity_note": "the producer names a script, not a party. aionq.self_audit.party_kind reports it ambiguous and independence_report caps this claim at REVIEWED. EvidenceEnvelope.independent still returns True because it compares producer and verifier STRINGS; that repair belongs to the canonical evidence layer and is queued behind the R6l C_env gate",
+    "party_identity_note": "the producer names a script, not a party. The shared evidence.v2 identity predicate and independence_report both cap this claim below INDEPENDENT.",
     "runner_only_leaves_uncomparable": 43,
     "sample_size": 1,
     "scientific_leaves_compared": 3555,
@@ -48,7 +55,7 @@
     "manifests/qsigma_r6k_w1_semantic_reproduction_method_correction.json": "sha256:33d0bf1bd54a1ca6893189b11cf242dd42a502478c1f393ebc652b43c3fe1f51",
     "manifests/qsigma_r6k_w1_semantic_reproduction_preregistration.json": "sha256:337fd4c2fcc039377a9c6e18d77d9a9d6d829953af0b565e4a13423b99a8962e"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [],
   "signature_status": "unsigned",
   "timestamp": "2026-08-01T10:49:16Z",

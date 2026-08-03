@@ -1,7 +1,9 @@
 {
   "claim_id": "EXP-R6K-EQUAL_RESOURCE_RESERVOIR",
   "command": "python experiments/run_equal_resource_reservoir.py",
-  "commit_sha": "",
+  "artifact_commit_sha": "07e2a7956c0cf25d24515637d54c1233ea8d3dc2",
+  "commit_sha": "07e2a7956c0cf25d24515637d54c1233ea8d3dc2",
+  "source_commit_sha": "07e2a7956c0cf25d24515637d54c1233ea8d3dc2",
   "environment": {
     "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
     "fields": {
@@ -162,7 +164,7 @@
     "tests/test_coherent_dilation.py": "sha256:a556306b845689c4053b5470f7c7c6468557d114b861fd7dd207294e5faa3f5f",
     "tests/test_equal_resource_reservoir.py": "sha256:f1a3de321544f288fdc4bf55faad58d652b72e94c90f018ddd3bc7104ce782a9"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [],
   "signature_status": "unsigned",
   "timestamp": "",
@@ -197,7 +199,7 @@
     },
     {
       "kind": "uncommitted_source_binding",
-      "statement": "The envelope intentionally has an empty commit_sha. Its R6k implementation binding is to live file digests, not to the base Git commit."
+      "statement": "The original producer envelope had an empty commit_sha. Evidence v2 migrates it to publication commit 07e2a795, where all thirteen declared artifact and source blobs match exactly."
     }
   ],
   "uncertainty": {

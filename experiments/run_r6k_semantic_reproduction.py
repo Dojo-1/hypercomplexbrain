@@ -56,7 +56,7 @@ from pathlib import Path
 sys.path.insert(0, "src")
 
 from aionq.equal_resource_reservoir import run_protocol
-from aionq.evidence import (EvidenceEnvelope, current_commit,
+from aionq.evidence import (SCHEMA_VERSION, EvidenceEnvelope, current_commit,
                             environment_digest, file_digest, save_envelope,
                             _committed_file_digest)
 from aionq.semantic_reproduction import (ENVIRONMENT_METADATA_LEAVES,
@@ -394,6 +394,7 @@ def phase_envelope() -> int:
     comparison = report["comparison"]
     verdict = report["verdict_detail"]
     envelope = EvidenceEnvelope(
+        schema_version=SCHEMA_VERSION,
         claim_id="WITNESS-R6K-SEMANTIC_REPRODUCTION",
         evidence_tag="M",
         command=("PYTHONPATH=src python3 experiments/"
@@ -421,15 +422,13 @@ def phase_envelope() -> int:
             "party_identity_established": False,
             "party_identity_note": (
                 "the producer names a script, not a party. "
-                "aionq.self_audit.party_kind reports it ambiguous and "
-                "independence_report caps this claim at REVIEWED. "
-                "EvidenceEnvelope.independent still returns True because it "
-                "compares producer and verifier STRINGS; that repair belongs to "
-                "the canonical evidence layer and is queued behind the R6l "
-                "C_env gate"),
+                "The shared evidence.v2 identity predicate and "
+                "independence_report both cap this claim below INDEPENDENT."),
             "verdict": report["verdict"],
         },
+        artifact_commit_sha=commit,
         commit_sha=commit,
+        source_commit_sha=commit,
         environment=environment_digest(),
         seeds=[],
         # The inputs of a paired comparison are the two documents of the party
@@ -440,6 +439,11 @@ def phase_envelope() -> int:
             file_digest(R6K / "events.jsonl"),
         ],
         raw_artifacts={rel: binding[rel]["on_disk"] for rel in raw},
+        computed_artifacts=[
+            (OUT / "reproduction.json").relative_to(ROOT).as_posix(),
+            (OUT / "comparison.json").relative_to(ROOT).as_posix(),
+            (OUT / "events.jsonl").relative_to(ROOT).as_posix(),
+        ],
         environment_dependent=[],
         producer="experiments/run_equal_resource_reservoir.py",
         verifier="claude-code-linux",

@@ -52,7 +52,8 @@ from aionq.common_receiver_reservoir import (
     validate_event_chain,
     validate_result_grid,
 )
-from aionq.evidence import EvidenceEnvelope, environment_digest, verify
+from aionq.evidence import (SCHEMA_VERSION, EvidenceEnvelope,
+                            environment_digest, verify)
 from aionq.equal_resource_reservoir import build_map_tasks, build_pgm_receiver, depolarize
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -1804,12 +1805,14 @@ def _validate_r6l_envelope_dict(
         f"--prereg-commit {C_PRE_SHA}"
     )
     exact_values = {
-        "schema_version": "hypercomplexbrain.evidence.v1",
+        "schema_version": "hypercomplexbrain.evidence.v2",
         "claim_id": "EXP-R6L-COMMON-RECEIVER",
         "evidence_tag": "M",
         "command": RUN_COMMAND,
         "observed_result": expected_observed,
+        "artifact_commit_sha": raw_commit,
         "commit_sha": raw_commit,
+        "computed_artifacts": [],
         "working_directory": ".",
         "platform": receipt["environment"]["fields"]["platform"],
         "environment": receipt["environment"],
@@ -1923,6 +1926,7 @@ def envelope_command(
     )
     decision = result["decision"]
     envelope = EvidenceEnvelope(
+        schema_version=SCHEMA_VERSION,
         claim_id="EXP-R6L-COMMON-RECEIVER",
         evidence_tag="M",
         command=RUN_COMMAND,
@@ -1940,7 +1944,10 @@ def envelope_command(
             ],
             "ledger_root": result["ledger_root"],
         },
+        artifact_commit_sha=raw_commit,
         commit_sha=raw_commit,
+        source_commit_sha=source_commit,
+        preregistration_commit_sha=prereg_commit,
         working_directory=".",
         platform=run_receipt["environment"]["fields"]["platform"],
         environment=run_receipt["environment"],

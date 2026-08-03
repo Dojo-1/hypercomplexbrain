@@ -1,7 +1,9 @@
 {
   "claim_id": "AUDIT-SELF-WITNESS_DEFICIT",
   "command": "PYTHONPATH=src python3 experiments/run_self_audit.py",
-  "commit_sha": "97f820cc4fe9dada5fb4ffdbae7d62c531606a30",
+  "artifact_commit_sha": "c811ad7cd0d1aad7df7d60a1c81a529d8b85e15d",
+  "commit_sha": "c811ad7cd0d1aad7df7d60a1c81a529d8b85e15d",
+  "source_commit_sha": "97f820cc4fe9dada5fb4ffdbae7d62c531606a30",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -60,7 +62,7 @@
   "raw_artifacts": {
     "artifacts/self_audit/self_audit.json": "sha256:5b14319edf8a660242cf6d799c450b997a9425258f3398bbebac5196116d55c0"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [],
   "signature_status": "unsigned",
   "timestamp": "2026-07-29T14:16:52Z",

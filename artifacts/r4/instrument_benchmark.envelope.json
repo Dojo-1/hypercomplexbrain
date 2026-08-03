@@ -1,7 +1,9 @@
 {
   "claim_id": "METRIC-R4-INSTRUMENT_COST",
   "command": "PYTHONPATH=src python3 experiments/run_instrument_benchmark.py",
-  "commit_sha": "891eeb3b1604a2b2a61761b6dc769e4cb531c393",
+  "artifact_commit_sha": "bbcf4440f78404d4ea436c4783b9ecf6ecb85f38",
+  "commit_sha": "bbcf4440f78404d4ea436c4783b9ecf6ecb85f38",
+  "source_commit_sha": "891eeb3b1604a2b2a61761b6dc769e4cb531c393",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -29,7 +31,7 @@
   "raw_artifacts": {
     "artifacts/r4/instrument_benchmark.json": "sha256:95fbf3e84865b2ef70143e247dd3fe76fe600afa6a3e3235a49c43d313961294"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     0
   ],

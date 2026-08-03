@@ -1384,7 +1384,7 @@ def main() -> int:
         verification_mode="not_requested",
     )
     _write_json(ENVELOPE, envelope.to_dict())
-    check = verify(envelope, repo_root=ROOT)
+    check = verify(envelope, repo_root=ROOT, check_commit=False)
     if not check.ok:
         raise RuntimeError(
             "local EvidenceEnvelope verification failed: "

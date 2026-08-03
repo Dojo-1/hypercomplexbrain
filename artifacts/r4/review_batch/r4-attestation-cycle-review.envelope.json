@@ -1,6 +1,7 @@
 {
   "claim_id": "MATH-R4-ATTESTATION_CYCLE",
   "command": "(review only -- the claim is the artifact)",
+  "artifact_commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
   "commit_sha": "cd3a2ac67a458eda55a2e5314fd020ce40aad0c2",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
@@ -32,7 +33,7 @@
     "src/aionq/witness_nerve.py": "sha256:909cbd19ba426622bed3cd24acf00986184ec2dc5a3d7f6337c3eebb4e05180f",
     "tests/test_evidence.py": "sha256:64bdbb203a6396f00adb3b84fa3e8e2582066262cc46ab1097574a9ccd9500c4"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [],
   "signature_status": "unsigned",
   "timestamp": "2026-07-27T11:10:17Z",

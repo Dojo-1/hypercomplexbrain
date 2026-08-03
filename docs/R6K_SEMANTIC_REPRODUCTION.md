@@ -353,3 +353,45 @@ the evidence it intends to produce. Five measurement inputs read `PENDING` and
 the protocol forbids execution while they do, so the block is mechanical rather
 than a promise. The protocol manifest now declares `files_expected_to_change`, so
 `preregistration_ordering` classifies it as bound rather than flag-only.
+
+
+## Current closure — evidence v2 and the frozen Part B boundary
+
+The two canonical-layer defects left queued above are now repaired in the current
+working tree. Historical paragraphs are retained because they describe the state
+that was audited; this section supersedes their *current-status* statements.
+
+`hypercomplexbrain.evidence.v2` separates three different commits that v1 had
+collapsed into one overloaded field:
+
+- `artifact_commit_sha` is the exact commit that contains every declared raw
+  artifact and is checked unconditionally against immutable Git blobs;
+- `source_commit_sha` records the code snapshot without pretending to contain
+  later outputs;
+- `preregistration_commit_sha` records ordering provenance when available.
+
+All thirty corpus envelopes are migrated to v2 and catalogued in
+`manifests/evidence_envelope_catalog.json`. Missing, extra, duplicated, or
+claim-renamed envelopes now fail the corpus audit, including the zero-envelope
+case. A matching mutable file can no longer hide an absent or different blob at
+the declared commit. Recomputed independence additionally requires two identified
+parties and at least one explicitly declared computed output; cloned source and
+manifest bytes do not count as a second computation. Consequently W1 is
+canonically `REVIEWED`, while the HB0 cross-witness remains the sole accepted
+independent claim.
+
+Part B's previously pending inputs are filled by
+`manifests/qsigma_r6k_w1_partb_input_freeze.json`, whose canonical protocol digest
+is `sha256:b830667cf35ce8d87646ae70b664970ccd420eb454386f672a2076a6520f23c6`.
+The preflight checks the direct R6l lineage
+`bedb574 -> 1421ec2 -> 09f4ca2`, every R6l raw blob at `C_raw`, the held-out
+coordinate/perturbation/matrix payloads, the sealed rho=0.1 baseline, and the
+frozen outcome-function bytes. The future result surface is closed to exactly
+160 map rows and 80 derived paired cells, with all sixteen noise coordinates
+present and K9 evaluated without aggregation.
+
+No Part B receiver has been built and neither frozen output path exists. The next
+scientifically permitted transition is therefore implementation from this frozen
+source boundary, followed by separate raw-artifact and envelope commits. It is
+not an architecture or hardware claim, and no Part B outcome is implied by the
+passing preflight.

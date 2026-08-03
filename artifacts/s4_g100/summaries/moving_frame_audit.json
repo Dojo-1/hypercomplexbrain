@@ -1,7 +1,7 @@
 {
  "trials": 30,
  "frames_per_trial": 30,
- "equivariance_defect": 6.972121039994489e-16,
+ "equivariance_defect": 7.232444765745351e-16,
  "worst_loop_closure": 0.0,
  "instruments": {
   "laplacian": {

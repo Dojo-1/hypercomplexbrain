@@ -103,16 +103,17 @@ class WitnessError(RuntimeError):
 class WitnessRequest:
     """The challenge sent to the external verifier.
 
-    Deliberately carries the *command* and the artifact *digests*, and not the
-    artifact contents.  A verifier handed the answer cannot recompute it; it can
-    only agree.  Sending the question and withholding the answer is the whole
-    protocol.
+    Carries the command and the artifact paths, but withholds the producer's
+    digests and observed result.  Those remain local for comparison after the
+    verifier responds.  A verifier handed the answer can only echo it; sending
+    the question and withholding the answer is the whole protocol.
     """
 
     claim_id: str
     command: str
     commit_sha: str
     expected_artifacts: dict           # path -> digest the producer observed
+    computed_artifacts: list           # outputs a recomputation must produce
     observed_result: dict
     repository: str = "jesusvilela/hypercomplexbrain"
     #: How the verifier is expected to OBTAIN the code.  The first live challenge
@@ -134,10 +135,10 @@ class WitnessRequest:
             "claim_id": self.claim_id,
             "instruction": (
                 "Run the command below in a clean checkout of the stated commit. "
-                "Report the SHA-256 of each artifact you produce. Do NOT copy the "
-                "digests given under expected_artifacts -- they are supplied so "
-                "you can report agreement or disagreement, not so you can echo "
-                "them. If you cannot run the command, answer with mode "
+                "Report the SHA-256 of each declared computed artifact you "
+                "produce. The producer's digests and observed result are "
+                "withheld until after your response. If you cannot run the "
+                "command, answer with mode "
                 "'declined' and say why. Answering 'attested' means you read the "
                 "numbers and agree without having run anything; that is an "
                 "acceptable answer and it will be recorded as non-independent."),
@@ -147,9 +148,9 @@ class WitnessRequest:
                         "answer 'declined' immediately rather than searching -- "
                         "that is a defect in this challenge, not in you."},
             "requires": ["outbound network to the source", "python3", "numpy"],
-            "expected_artifacts": self.expected_artifacts,
+            "artifact_paths": sorted(self.expected_artifacts),
+            "computed_artifacts": self.computed_artifacts,
             "environment_dependent": self.environment_dependent,
-            "producer_observed_result": self.observed_result,
             "reply_schema": {
                 "mode": "recomputed | reviewed | attested | declined",
                 "artifacts": {"<path>": "sha256:<hex>"},
@@ -170,7 +171,7 @@ class WitnessResponse:
     observed_result: dict = field(default_factory=dict)
     environment: str = ""
     notes: str = ""
-    verifier_identity: str = "godelian-1"
+    verifier_identity: str = ""
     raw: dict = field(default_factory=dict)
 
 
@@ -188,6 +189,7 @@ def build_request(envelope: EvidenceEnvelope, repository: str | None = None,
         command=envelope.command,
         commit_sha=envelope.commit_sha,
         expected_artifacts=dict(envelope.raw_artifacts),
+        computed_artifacts=list(envelope.computed_artifacts),
         environment_dependent=list(envelope.environment_dependent),
         observed_result=dict(envelope.observed_result),
         **kwargs)
@@ -286,7 +288,7 @@ def parse_response(body) -> WitnessResponse:
         observed_result=dict(inner.get("observed_result") or {}),
         environment=str(inner.get("environment", "")),
         notes=str(inner.get("notes", "")),
-        verifier_identity=str(inner.get("verifier", "godelian-1")),
+        verifier_identity=str(inner.get("verifier", "")),
         raw=data if isinstance(data, dict) else {})
 
 
@@ -302,18 +304,23 @@ def apply_witness(envelope: EvidenceEnvelope, response: WitnessResponse
 
     if mode == VerificationMode.RECOMPUTED:
         mismatches = []
-        comparable = {k: v for k, v in envelope.raw_artifacts.items()
-                      if k not in set(envelope.environment_dependent)}
+        comparable = {
+            path: envelope.raw_artifacts[path]
+            for path in envelope.computed_artifacts
+            if path in envelope.raw_artifacts
+            and path not in set(envelope.environment_dependent)
+        }
         if not comparable:
-            # Nothing this verifier produced can be compared by digest.  Saying
-            # "independent" here would certify agreement that was never checked.
+            # Static source/manifests arrive with the checkout. Matching those
+            # bytes is not evidence that the command produced any output.
             envelope.verification_mode = VerificationMode.REVIEWED
             envelope.verifier = response.verifier_identity
             envelope.witness_environment = response.environment
             envelope.witness_notes = (
-                "recomputed, but every artifact is environment-dependent so no "
-                "digest comparison was possible: " + response.notes)
-            return envelope, verify(envelope)
+                "recomputed, but no declared computed output was comparable "
+                "(outputs may be absent or environment-dependent): "
+                + response.notes)
+            return envelope, verify(envelope, check_commit=False)
         for path, declared in comparable.items():
             theirs = response.artifacts.get(path)
             if theirs is None:
@@ -340,7 +347,10 @@ def apply_witness(envelope: EvidenceEnvelope, response: WitnessResponse
         envelope.witness_conversation_url = response.conversation_url
     envelope.witness_environment = response.environment
     envelope.witness_notes = response.notes
-    return envelope, verify(envelope)
+    # A witness response mutates an in-memory or worktree envelope before its
+    # next publication commit exists. Commit binding is checked by the corpus
+    # verifier after that evidence lifecycle step.
+    return envelope, verify(envelope, check_commit=False)
 
 
 def witness_envelope(path, endpoint: str = GODELIAN_1_ENDPOINT, transport=None):

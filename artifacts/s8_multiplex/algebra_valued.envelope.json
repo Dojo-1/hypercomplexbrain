@@ -1,7 +1,9 @@
 {
   "claim_id": "EXP-S8-ALGEBRA_VALUED",
   "command": "PYTHONPATH=src python3 experiments/run_fano_algebra_valued.py",
-  "commit_sha": "f980e19aab2bac7c2f405333094aabb879363412",
+  "artifact_commit_sha": "0e20c17571425a25e6766276ff316926ff601964",
+  "commit_sha": "0e20c17571425a25e6766276ff316926ff601964",
+  "source_commit_sha": "f980e19aab2bac7c2f405333094aabb879363412",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -1028,7 +1030,7 @@
   "raw_artifacts": {
     "artifacts/s8_multiplex/algebra_valued.json": "sha256:23cfeec713342dc1292067f927942d960ea0a9df5023bcec153d1f9951d21dd8"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     20260728
   ],

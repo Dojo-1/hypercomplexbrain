@@ -1,7 +1,12 @@
 {
   "claim_id": "EXP-HB0-SMOKE_REPRODUCES",
   "command": "PYTHONPATH=src python3 experiments/run_hb0_smoke.py",
-  "commit_sha": "685044d63de54f6782576f1b84f502b4f8cfdea7",
+  "artifact_commit_sha": "d0f0e231c6f0af9ff3d54731059e00bc06216b19",
+  "commit_sha": "d0f0e231c6f0af9ff3d54731059e00bc06216b19",
+  "computed_artifacts": [
+    "artifacts/r4/cross_witness/hb0_smoke.claude_recomputation.json"
+  ],
+  "source_commit_sha": "685044d63de54f6782576f1b84f502b4f8cfdea7",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -30,7 +35,7 @@
   "raw_artifacts": {
     "artifacts/r4/cross_witness/hb0_smoke.claude_recomputation.json": "sha256:447adf6163e107ae9977d0fbd97826b56e688dcb0ecfce37b9b46c12076a8d7b"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     11
   ],

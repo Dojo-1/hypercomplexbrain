@@ -1,7 +1,9 @@
 {
   "claim_id": "EXP-R6B-OPERATIONAL_INFO",
   "command": "PYTHONPATH=src python3 experiments/run_operational_information.py",
-  "commit_sha": "0e20c17571425a25e6766276ff316926ff601964",
+  "artifact_commit_sha": "5ce39d628d13c4247d4a6a3896e2011ec83f2e52",
+  "commit_sha": "5ce39d628d13c4247d4a6a3896e2011ec83f2e52",
+  "source_commit_sha": "0e20c17571425a25e6766276ff316926ff601964",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -227,7 +229,7 @@
   "raw_artifacts": {
     "artifacts/r6b_operational_information/operational_information.json": "sha256:7e82bbc99f9a13185949c430a01334d10c2def46df1919f9a68998ee87bf4942"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     20260728
   ],

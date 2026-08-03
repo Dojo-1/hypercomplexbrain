@@ -1,7 +1,9 @@
 {
   "claim_id": "QSIGMA-R7-SOURCE-INFORMATION",
   "command": "python experiments/run_qsigma_r7_information.py",
-  "commit_sha": "d7b147850a71368a61376f800d3a630e30ca2c78",
+  "artifact_commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "source_commit_sha": "d7b147850a71368a61376f800d3a630e30ca2c78",
   "environment": {
     "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
     "fields": {
@@ -224,7 +226,7 @@
   "raw_artifacts": {
     "artifacts/r7_source_information/source_information.json": "sha256:3278c0b244532b4113f0e01130b0c4687b0f1b82d3701569d334673fe02d16c6"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [],
   "signature_status": "unsigned",
   "timestamp": "2026-07-29T04:12:31Z",

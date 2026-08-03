@@ -29,7 +29,7 @@ from aionq.witness_nerve import EvidenceRank, WitnessAct, WitnessGraph, evidence
 
 def _envelope(tmp, name, **over):
     env = {
-        "schema_version": "hypercomplexbrain.evidence.v1",
+        "schema_version": "hypercomplexbrain.evidence.v2",
         "claim_id": name.upper(),
         "producer": "party-a",
         "verifier": "",

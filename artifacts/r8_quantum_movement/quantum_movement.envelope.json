@@ -1,7 +1,9 @@
 {
   "claim_id": "QSIGMA-R8-QUANTUM-MOVEMENT",
   "command": "python experiments/run_quantum_movement.py",
-  "commit_sha": "d7b147850a71368a61376f800d3a630e30ca2c78",
+  "artifact_commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "source_commit_sha": "d7b147850a71368a61376f800d3a630e30ca2c78",
   "environment": {
     "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
     "fields": {
@@ -39,7 +41,7 @@
   "raw_artifacts": {
     "artifacts/r8_quantum_movement/quantum_movement.json": "sha256:5c5c1f2a386909fdd0c47e96e01fc6132de10fa3ca6c1f9f5c2d9bc422c6dc57"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [],
   "signature_status": "unsigned",
   "timestamp": "",

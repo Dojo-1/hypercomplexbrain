@@ -1,7 +1,9 @@
 {
   "claim_id": "MATH-R6C-HOPF_CARTAN",
   "command": "PYTHONPATH=src python3 experiments/run_hopf_layer.py",
-  "commit_sha": "5ce39d628d13c4247d4a6a3896e2011ec83f2e52",
+  "artifact_commit_sha": "353122b8ed00bc9fb24ddb0e731c17fd149ac1d2",
+  "commit_sha": "353122b8ed00bc9fb24ddb0e731c17fd149ac1d2",
+  "source_commit_sha": "5ce39d628d13c4247d4a6a3896e2011ec83f2e52",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -428,7 +430,7 @@
   "raw_artifacts": {
     "artifacts/r6c_hopf_layer/hopf_layer.json": "sha256:da2648978df8e0b71b051754b03e6bc9c93bd97d275aeead9c3f9769920f80d7"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     20260728
   ],

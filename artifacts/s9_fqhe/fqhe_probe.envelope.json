@@ -1,7 +1,9 @@
 {
   "claim_id": "FQHE-S9-PROBE_RESULT",
   "command": "python experiments/run_fqhe_probe.py --manifest manifests/s9_fqhe_preregistration.json",
-  "commit_sha": "abc56ba46b2bb66e17025cff171873e70c106041",
+  "artifact_commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "source_commit_sha": "abc56ba46b2bb66e17025cff171873e70c106041",
   "environment": {
     "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
     "fields": {
@@ -34,7 +36,7 @@
   "raw_artifacts": {
     "artifacts/s9_fqhe/fqhe_probe.json": "sha256:c570cb3b1ff41f977a3b6c9cfcc06bec022b47968018476b0f5cef291c396e56"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     2026072801,
     2026072802

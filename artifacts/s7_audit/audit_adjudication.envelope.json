@@ -1,6 +1,7 @@
 {
   "claim_id": "EXP-S7-AUDIT_REPLICATION",
   "command": "PYTHONPATH=src python3 experiments/run_audit_adjudication.py",
+  "artifact_commit_sha": "25beeee8fc1d6f7a746e0b5cf9958109c9951870",
   "commit_sha": "25beeee8fc1d6f7a746e0b5cf9958109c9951870",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
@@ -123,7 +124,7 @@
   "raw_artifacts": {
     "artifacts/s7_audit/audit_adjudication.json": "sha256:4d089c5f2639ab749ab337b22251e702d023ea31e0e4904db1620650e5b47c17"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     11,
     23,

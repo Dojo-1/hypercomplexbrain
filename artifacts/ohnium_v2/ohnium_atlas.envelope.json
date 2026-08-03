@@ -1,7 +1,9 @@
 {
   "claim_id": "ARCH-OHM-V2_OBSERVABLE_ASCENT",
   "command": "PYTHONPATH=src python experiments/run_ohnium_observatory.py",
-  "commit_sha": "d7b147850a71368a61376f800d3a630e30ca2c78",
+  "artifact_commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "source_commit_sha": "d7b147850a71368a61376f800d3a630e30ca2c78",
   "environment": {
     "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
     "fields": {
@@ -38,7 +40,7 @@
   "raw_artifacts": {
     "artifacts/ohnium_v2/ohnium_atlas.json": "sha256:c035b189f6c63eeebb0020ac6e0afa6d417f51b0dee8cd4d3edda2326c9c3186"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     20260728
   ],

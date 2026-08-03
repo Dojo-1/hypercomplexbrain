@@ -1,7 +1,9 @@
 {
   "claim_id": "EXP-R6D-HOLEVO_SANDWICH",
   "command": "PYTHONPATH=src python3 experiments/run_holevo_sandwich.py",
-  "commit_sha": "353122b8ed00bc9fb24ddb0e731c17fd149ac1d2",
+  "artifact_commit_sha": "7d7c73642f5c9e51e8de72646353de2f2ecea1cd",
+  "commit_sha": "7d7c73642f5c9e51e8de72646353de2f2ecea1cd",
+  "source_commit_sha": "353122b8ed00bc9fb24ddb0e731c17fd149ac1d2",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -36,7 +38,7 @@
   "raw_artifacts": {
     "artifacts/r6d_holevo_sandwich/holevo_sandwich.json": "sha256:89e04933fbe5abed8cb114ab775cc6d7f41abbb67bfebffbadd9f55f1128e6ac"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     20260728,
     20260729,

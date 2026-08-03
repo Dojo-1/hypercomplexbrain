@@ -53,6 +53,8 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
+from aionq.evidence import (evidence_independence_established,
+                            party_identity_established)
 from aionq.witness_nerve import (EvidenceRank, WitnessAct, WitnessGraph,
                                  attestation_cycles, evidence_rank)
 
@@ -97,9 +99,7 @@ def party_kind(party: str) -> str:
     the real party would need the two environment digests, which live in two
     different envelopes; that is named as a remainder rather than guessed at.
     """
-    if not party:
-        return "ambiguous"
-    if party.startswith("experiments/") or party.endswith(".py"):
+    if not party_identity_established(party):
         return "ambiguous"
     return "self" if any(party.startswith(p) for p in SELF_PARTIES) else "other"
 
@@ -376,7 +376,7 @@ CORRECTIONS = (
         "REFUTED; a B3 information-margin failure had no outcome; and K9 slice "
         "disagreement had no outcome. A table decided by whoever reads it is an "
         "unfrozen threshold wearing a schema",
-        "tests/test_part_b_outcome.py::test_the_upper_endpoint_is_not_inside_the_last_bracket",
+        "tests/test_part_b_outcome.py::test_bracket_positions_are_decided_in_primary_j_space",
         False,
     ),
     Correction(
@@ -396,7 +396,7 @@ CORRECTIONS = (
         "binding and no declared verifier -- part B may not consume upstream "
         "evidence weaker than the evidence it intends to produce. The "
         "precondition is now a verified R6l C_env",
-        "tests/test_part_b_outcome.py::test_the_manifest_requires_c_env_not_c_raw",
+        "tests/test_part_b_outcome.py::test_input_freeze_supersedes_the_historical_pending_fields",
         False,
     ),
     Correction(
@@ -411,6 +411,57 @@ CORRECTIONS = (
         "modification targets as violations and turning R4 and R5 red",
         "tests/test_self_audit.py::test_ordering_distinguishes_pending_from_violated",
         True,
+    ),
+    Correction(
+        "EVIDENCE-V2",
+        "verify(check_commit=True) consulted the named Git commit only after a "
+        "live artifact went missing or changed. A matching mutable file masked "
+        "an empty, unresolved, absent, or wrong commit blob, so commit_sha read "
+        "as immutable provenance while binding nothing",
+        "tests/test_evidence.py::test_v2_live_match_cannot_mask_artifact_absent_at_commit",
+        False,
+    ),
+    Correction(
+        "EVIDENCE-V2",
+        "EvidenceEnvelope.independent used distinct strings as distinct parties "
+        "while self_audit correctly treated a script path as ambiguous. W1 was "
+        "therefore simultaneously REVIEWED and independent depending on which "
+        "canonical-looking API a caller used",
+        "tests/test_evidence.py::test_a_script_path_is_not_an_independent_party_identity",
+        False,
+    ),
+    Correction(
+        "EVIDENCE-V2",
+        "apply_witness could promote a recomputation after matching only files "
+        "that came with the checkout. It did not require one declared computed "
+        "output, so hashing cloned source and manifests could stand in for "
+        "running the command",
+        "tests/test_evidence.py::test_recomputation_without_a_declared_computed_output_is_review_only",
+        False,
+    ),
+    Correction(
+        "EVIDENCE-V2",
+        "parse_response invented verifier identity godelian-1 when the response "
+        "named no verifier. An unauthenticated omission therefore became a "
+        "distinct party by default",
+        "tests/test_evidence.py::test_a_response_without_a_party_identity_cannot_be_independent",
+        False,
+    ),
+    Correction(
+        "EVIDENCE-V2",
+        "a positive declared sample size with zero recorded input hashes passed "
+        "because the comparison was guarded by truthiness of n_eff; the absence "
+        "of inputs disabled the very check meant to detect it",
+        "tests/test_evidence.py::test_v2_positive_sample_size_requires_recorded_inputs",
+        False,
+    ),
+    Correction(
+        "EVIDENCE-V2",
+        "verify_envelopes returned success when no envelopes existed and had no "
+        "committed denominator, so deleting evidence improved the reported "
+        "fraction instead of failing the audit",
+        "tests/test_evidence.py::test_zero_envelope_corpus_is_a_failure",
+        False,
     ),
 )
 
@@ -507,8 +558,14 @@ def witness_graph(root=None) -> WitnessGraph:
         # A recomputation whose parties are not both identified is capped at
         # REVIEWED: a second computation genuinely happened, and who performed
         # it is unestablished.
-        if mode == "recomputed" and "ambiguous" in (party_kind(producer),
-                                                    party_kind(verifier)):
+        if mode == "recomputed" and not evidence_independence_established(
+                schema_version=env.get("schema_version"),
+                producer=producer,
+                verifier=verifier,
+                verification_mode=mode,
+                computed_artifacts=env.get("computed_artifacts"),
+                environment_dependent=env.get("environment_dependent"),
+                raw_artifacts=env.get("raw_artifacts")):
             mode = "reviewed"
         graph.add(WitnessAct(env.get("claim_id", "?"), producer, verifier, mode))
     return graph

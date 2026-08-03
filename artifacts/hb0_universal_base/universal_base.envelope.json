@@ -1,7 +1,12 @@
 {
   "claim_id": "AXIOM-HB0-UNIVERSAL_POINCARE_BASE",
   "command": "python experiments/run_hb0_universal_base_audit.py --output artifacts/hb0_universal_base/universal_base_audit.json",
-  "commit_sha": "",
+  "artifact_commit_sha": "4607f8fbc81432604f1710247f92f38e71c8bd1c",
+  "commit_sha": "4607f8fbc81432604f1710247f92f38e71c8bd1c",
+  "computed_artifacts": [
+    "artifacts/hb0_universal_base/universal_base_audit.json"
+  ],
+  "source_commit_sha": "4607f8fbc81432604f1710247f92f38e71c8bd1c",
   "environment": {
     "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
     "fields": {
@@ -39,7 +44,7 @@
     "src/aionq/hb0/manifest.py": "sha256:ae42fc3cac93c3a04b4203b3aa6dd330392d9a96f7919b05d3e3f1999899cf89",
     "src/aionq/hyperbolic.py": "sha256:3a7a1036944271e23e049f596ddd3a7f5a0f650498f30d3e5a04076bf0a3d006"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     5
   ],
@@ -52,11 +57,11 @@
     },
     {
       "kind": "empirical_residual",
-      "statement": "The envelope is bound to the current working-tree artifacts but not to a commit and has no independent witness."
+      "statement": "The original run was uncommitted. This migrated envelope now binds the exact historical artifact and source bytes at 4607f8f, but remains a same-party recomputation with no independent witness."
     }
   ],
   "uncertainty": {
-    "commit_bound": false,
+    "commit_bound": true,
     "cognitive_benefit_measured": false,
     "independent_witness": false,
     "negative_curvature_inferred_from_k13": false,

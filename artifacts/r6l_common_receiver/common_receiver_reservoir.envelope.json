@@ -1,6 +1,7 @@
 {
   "claim_id": "EXP-R6L-COMMON-RECEIVER",
   "command": "python experiments/run_common_receiver_reservoir.py run --output-dir artifacts/r6l_common_receiver",
+  "artifact_commit_sha": "1421ec2eb966eaaf9af78d9ffc1ea727429b9a18",
   "commit_sha": "1421ec2eb966eaaf9af78d9ffc1ea727429b9a18",
   "environment": {
     "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
@@ -448,7 +449,7 @@
     "tests/test_equal_resource_reservoir.py": "sha256:f1a3de321544f288fdc4bf55faad58d652b72e94c90f018ddd3bc7104ce782a9"
   },
   "recompute_command": "python experiments/run_common_receiver_reservoir.py recompute --reference-dir artifacts/r6l_common_receiver",
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [],
   "signature_status": "unsigned",
   "source_commit_sha": "bedb574ef2540638add55e3d8e87b1b9159064e4",

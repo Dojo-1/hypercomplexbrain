@@ -8,7 +8,9 @@ what the registry already said would pass none of them.
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 from qiskit import QuantumCircuit
@@ -16,8 +18,9 @@ from qiskit.circuit import Instruction
 
 sys.path.insert(0, "src")
 
-from aionq.evidence import (EvidenceEnvelope, ProofEnvelope, effective_sample_size,
-                            file_digest, save_envelope, verify)
+from aionq.evidence import (SCHEMA_VERSION, EvidenceEnvelope, ProofEnvelope,
+                            effective_sample_size, file_digest, save_envelope,
+                            verify)
 from aionq.governance import EvidenceTag, GovernanceError, Registry, Claim
 from aionq.residency import (PathStatus, TransitionClass, classify_instruction,
                              simulation_residency)
@@ -109,9 +112,49 @@ def _envelope(artifact, **kw) -> EvidenceEnvelope:
         claim_id="TEST-R4-EXAMPLE", evidence_tag="M",
         command="python3 experiments/run_example.py",
         observed_result={"sample_size": 3, "auroc": 0.91},
+        schema_version=SCHEMA_VERSION,
         seeds=[1, 2, 3], input_hashes=["a", "b", "c"],
         raw_artifacts={str(artifact): file_digest(artifact)},
+        computed_artifacts=[str(artifact)],
         producer="runner", verifier="reviewer")
+    base.update(kw)
+    return EvidenceEnvelope(**base)
+
+
+def _git(root, *args) -> str:
+    result = subprocess.run(
+        ["git", *args], cwd=root, capture_output=True, text=True, check=False
+    )
+    assert result.returncode == 0, result.stderr
+    return result.stdout.strip()
+
+
+def _init_git(root) -> None:
+    _git(root, "init")
+    _git(root, "config", "user.email", "evidence-v2@example.invalid")
+    _git(root, "config", "user.name", "Evidence V2 Test")
+
+
+def _commit_all(root, message: str) -> str:
+    _git(root, "add", ".")
+    _git(root, "commit", "-m", message)
+    return _git(root, "rev-parse", "HEAD")
+
+
+def _strict_envelope(relative: str, artifact, commit: str, **kw):
+    base = dict(
+        claim_id="TEST-EVIDENCE-V2-COMMIT",
+        evidence_tag="M",
+        command="python deterministic.py",
+        observed_result={"sample_size": 1},
+        schema_version=SCHEMA_VERSION,
+        artifact_commit_sha=commit,
+        commit_sha=commit,
+        raw_artifacts={relative: file_digest(artifact)},
+        input_hashes=["input:one"],
+        producer="producer-a",
+        verifier="",
+    )
     base.update(kw)
     return EvidenceEnvelope(**base)
 
@@ -145,6 +188,106 @@ def test_commit_bound_history_survives_a_later_worktree_edit(
     result = verify(env, check_commit=False)
     assert result.ok
     assert any("recorded commit" in warning for warning in result.warnings)
+
+
+def test_v2_exact_commit_binding_survives_a_later_head(tmp_path):
+    _init_git(tmp_path)
+    artifact = tmp_path / "raw.json"
+    artifact.write_text('{"value":1}\n', encoding="utf-8")
+    artifact_commit = _commit_all(tmp_path, "raw artifact")
+    (tmp_path / "later.txt").write_text("later\n", encoding="utf-8")
+    _commit_all(tmp_path, "later head")
+
+    result = verify(
+        _strict_envelope("raw.json", artifact, artifact_commit),
+        repo_root=tmp_path,
+        check_commit=True,
+    )
+    assert result.ok
+    assert any("immutable artifact binding" in warning for warning in result.warnings)
+
+
+def test_v2_live_match_cannot_mask_artifact_absent_at_commit(tmp_path):
+    _init_git(tmp_path)
+    (tmp_path / "before.txt").write_text("before\n", encoding="utf-8")
+    before_artifact = _commit_all(tmp_path, "before artifact")
+    artifact = tmp_path / "raw.json"
+    artifact.write_text('{"value":1}\n', encoding="utf-8")
+
+    result = verify(
+        _strict_envelope("raw.json", artifact, before_artifact),
+        repo_root=tmp_path,
+        check_commit=True,
+    )
+    assert not result.ok
+    assert any("absent at recorded commit" in failure for failure in result.failures)
+
+
+def test_v2_live_forgery_cannot_mask_a_different_committed_blob(tmp_path):
+    _init_git(tmp_path)
+    artifact = tmp_path / "raw.json"
+    artifact.write_text('{"value":1}\n', encoding="utf-8")
+    artifact_commit = _commit_all(tmp_path, "original artifact")
+    artifact.write_text('{"value":999}\n', encoding="utf-8")
+
+    result = verify(
+        _strict_envelope("raw.json", artifact, artifact_commit),
+        repo_root=tmp_path,
+        check_commit=True,
+    )
+    assert not result.ok
+    assert any("committed artifact digest mismatch" in failure
+               for failure in result.failures)
+
+
+def test_v2_check_commit_requires_a_full_resolvable_sha(tmp_path):
+    artifact = tmp_path / "raw.json"
+    artifact.write_text('{"value":1}\n', encoding="utf-8")
+    result = verify(
+        _strict_envelope("raw.json", artifact, ""),
+        repo_root=tmp_path,
+        check_commit=True,
+    )
+    assert not result.ok
+    assert any("exactly 40 lowercase" in failure for failure in result.failures)
+
+
+def test_v2_commit_bound_paths_cannot_escape_the_repository(tmp_path):
+    _init_git(tmp_path)
+    inside = tmp_path / "inside.json"
+    inside.write_text('{"value":1}\n', encoding="utf-8")
+    commit = _commit_all(tmp_path, "inside")
+    env = _strict_envelope("../inside.json", inside, commit)
+    result = verify(env, repo_root=tmp_path, check_commit=True)
+    assert not result.ok
+    assert any("escapes repository" in failure for failure in result.failures)
+
+
+def test_zero_envelope_corpus_is_a_failure(tmp_path, capsys):
+    from aionq.verify_envelopes import main
+
+    empty = tmp_path / "artifacts"
+    empty.mkdir()
+    assert main([str(empty)]) == 1
+    assert "denominator is zero" in capsys.readouterr().out
+
+
+def test_evidence_catalog_detects_missing_and_extra_paths(tmp_path):
+    from aionq.verify_envelopes import _catalog_failures
+
+    catalog = tmp_path / "catalog.json"
+    catalog.write_text(json.dumps({
+        "schema": "hypercomplexbrain.evidence_catalog.v1",
+        "root": "artifacts",
+        "envelopes": [
+            {"path": "artifacts/expected.envelope.json", "claim_id": "EXPECTED"}
+        ],
+    }), encoding="utf-8")
+    failures = _catalog_failures(
+        [Path("artifacts/unexpected.envelope.json")], catalog
+    )
+    assert any("missing" in failure for failure in failures)
+    assert any("uncatalogued" in failure for failure in failures)
 
 
 def test_a_missing_artifact_fails_verification(artifact):
@@ -181,6 +324,50 @@ def test_effective_sample_size_refuses_to_guess_when_inputs_are_unrecorded():
     assert effective_sample_size([1, 2, 3], []) == 0
 
 
+def test_v2_positive_sample_size_requires_recorded_inputs(artifact):
+    env = _envelope(
+        artifact,
+        seeds=[1, 2, 3],
+        input_hashes=[],
+        observed_result={"sample_size": 3},
+    )
+    result = verify(env, check_commit=False)
+    assert not result.ok
+    assert any("records no distinct input hashes" in failure
+               for failure in result.failures)
+
+
+def test_v2_malformed_sample_size_fails_without_raising(artifact):
+    env = _envelope(
+        artifact,
+        seeds=[1],
+        input_hashes=["sha256:" + "1" * 64],
+        observed_result={"sample_size": "1"},
+    )
+    result = verify(env, check_commit=False)
+    assert not result.ok
+    assert any("sample_size must be a nonnegative integer" in failure
+               for failure in result.failures)
+
+
+def test_v2_malformed_artifact_collections_fail_closed(artifact):
+    env = _envelope(
+        artifact,
+        producer="producer-a",
+        verifier="verifier-b",
+        verification_mode="recomputed",
+    )
+    env.raw_artifacts = []
+    env.computed_artifacts = {str(artifact): file_digest(artifact)}
+    result = verify(env, check_commit=False)
+    assert not result.ok
+    assert not env.independent
+    assert any("raw_artifacts must be a JSON object" in failure
+               for failure in result.failures)
+    assert any("computed_artifacts must be a list" in failure
+               for failure in result.failures)
+
+
 def test_self_verification_is_recorded_as_such(artifact):
     env = _envelope(artifact, producer="me", verifier="me")
     result = verify(env, check_commit=False)
@@ -210,24 +397,39 @@ def test_promotion_with_a_broken_envelope_is_refused(artifact):
 
 
 def test_promotion_with_a_verified_envelope_succeeds(artifact):
+    _init_git(artifact.parent)
+    artifact_commit = _commit_all(artifact.parent, "measured artifact")
     reg = Registry([Claim("TEST-R4-CANDIDATE", EvidenceTag.HYPOTHESIS, "x",
                           kill_condition="k", sample_size=3,
                           interval=(0.8, 1.0), null="chance")])
     reg.promote("TEST-R4-CANDIDATE", EvidenceTag.MEASURED,
-                envelope=_envelope(artifact, claim_id="TEST-R4-CANDIDATE"))
+                envelope=_strict_envelope(
+                    "raw.json", artifact, artifact_commit,
+                    claim_id="TEST-R4-CANDIDATE",
+                    observed_result={"sample_size": 3, "auroc": 0.91},
+                    input_hashes=["a", "b", "c"],
+                ),
+                repo_root=artifact.parent)
     assert reg["TEST-R4-CANDIDATE"].tag == EvidenceTag.MEASURED
     assert reg.envelopes("TEST-R4-CANDIDATE")
 
 
 def test_verified_envelope_cannot_bypass_destination_tag_invariants(artifact):
+    _init_git(artifact.parent)
+    artifact_commit = _commit_all(artifact.parent, "measured artifact")
     reg = Registry([Claim("TEST-R4-CANDIDATE", EvidenceTag.HYPOTHESIS, "x",
                           kill_condition="k")])
-    envelope = _envelope(artifact, claim_id="TEST-R4-CANDIDATE")
+    envelope = _strict_envelope(
+        "raw.json", artifact, artifact_commit,
+        claim_id="TEST-R4-CANDIDATE",
+        observed_result={"sample_size": 1},
+    )
     with pytest.raises(GovernanceError, match="destination tag M"):
         reg.promote(
             "TEST-R4-CANDIDATE",
             EvidenceTag.MEASURED,
             envelope=envelope,
+            repo_root=artifact.parent,
         )
     assert reg["TEST-R4-CANDIDATE"].tag == EvidenceTag.HYPOTHESIS
 
@@ -335,7 +537,8 @@ def test_a_distinct_party_that_only_agrees_is_not_independent(artifact):
     from aionq.witness import VerificationMode, apply_witness, parse_response
     env = _envelope(artifact, producer="me", verifier="")
     env, result = apply_witness(env, parse_response(json.dumps(
-        {"mode": "attested", "notes": "looks right"})))
+        {"mode": "attested", "verifier": "godelian-1",
+         "notes": "looks right"})))
     assert env.verifier == "godelian-1"          # a genuinely different party
     assert env.verification_mode == VerificationMode.ATTESTED
     assert not result.independent                # and still not independent
@@ -345,11 +548,74 @@ def test_recomputation_with_matching_digests_is_independent(artifact):
     from aionq.witness import VerificationMode, apply_witness, parse_response
     env = _envelope(artifact, producer="me", verifier="")
     reply = {"mode": "recomputed",
+             "verifier": "godelian-1",
              "artifacts": {str(artifact): file_digest(artifact)},
              "environment": "godelian-1 sandbox"}
     env, result = apply_witness(env, parse_response(json.dumps(reply)))
     assert env.verification_mode == VerificationMode.RECOMPUTED
     assert result.ok and result.independent
+
+
+def test_a_script_path_is_not_an_independent_party_identity(artifact):
+    from aionq.witness import VerificationMode
+
+    env = _envelope(
+        artifact,
+        producer="experiments/run_equal_resource_reservoir.py",
+        verifier="claude-code-linux",
+        verification_mode=VerificationMode.RECOMPUTED,
+    )
+    result = verify(env, check_commit=False)
+    assert not env.independent
+    assert not result.independent
+
+
+def test_proof_independence_also_requires_identified_parties():
+    script_producer = ProofEnvelope(
+        claim_id="P-V2-X",
+        theorem_name="x",
+        prover="Lean",
+        prover_version="4",
+        build_command="lake build",
+        artifact_digest="sha256:" + "0" * 64,
+        producer="proofs/build.py",
+        verifier="external-party",
+        build_status="built",
+    )
+    assert not script_producer.independent
+
+
+def test_recomputation_without_a_declared_computed_output_is_review_only(artifact):
+    from aionq.witness import VerificationMode, apply_witness, parse_response
+
+    env = _envelope(
+        artifact,
+        producer="producer-a",
+        verifier="",
+        computed_artifacts=[],
+    )
+    response = parse_response(json.dumps({
+        "mode": "recomputed",
+        "verifier": "verifier-b",
+        "artifacts": {str(artifact): file_digest(artifact)},
+    }))
+    env, result = apply_witness(env, response)
+    assert env.verification_mode == VerificationMode.REVIEWED
+    assert not result.independent
+    assert "no declared computed output" in env.witness_notes
+
+
+def test_a_response_without_a_party_identity_cannot_be_independent(artifact):
+    from aionq.witness import apply_witness, parse_response
+
+    env = _envelope(artifact, producer="producer-a", verifier="")
+    response = parse_response(json.dumps({
+        "mode": "recomputed",
+        "artifacts": {str(artifact): file_digest(artifact)},
+    }))
+    env, result = apply_witness(env, response)
+    assert env.verifier == ""
+    assert not result.independent
 
 
 def test_a_contradicted_recomputation_fails_the_envelope(artifact):
@@ -360,6 +626,7 @@ def test_a_contradicted_recomputation_fails_the_envelope(artifact):
     from aionq.witness import VerificationMode, apply_witness, parse_response
     env = _envelope(artifact, producer="me", verifier="")
     reply = {"mode": "recomputed",
+             "verifier": "godelian-1",
              "artifacts": {str(artifact): "sha256:" + "0" * 64}}
     env, result = apply_witness(env, parse_response(json.dumps(reply)))
     assert env.verification_mode == VerificationMode.CONTRADICTED
@@ -373,7 +640,8 @@ def test_a_verifier_that_reports_no_digest_is_a_contradiction_not_a_pass(artifac
     from aionq.witness import VerificationMode, apply_witness, parse_response
     env = _envelope(artifact, producer="me", verifier="")
     env, result = apply_witness(env, parse_response(
-        json.dumps({"mode": "recomputed", "artifacts": {}})))
+        json.dumps({"mode": "recomputed", "verifier": "godelian-1",
+                    "artifacts": {}})))
     assert env.verification_mode == VerificationMode.CONTRADICTED
     assert not result.ok
 
@@ -393,16 +661,18 @@ def test_the_challenge_withholds_nothing_but_answers_nothing(artifact):
     from aionq.witness import build_request
     prompt = build_request(_envelope(artifact)).to_prompt()
     assert "python3 experiments/run_example.py" in prompt
-    assert "expected_artifacts" in prompt
-    assert "auroc" in prompt                     # the producer's claim, for comparison
-    assert "Do NOT copy the digests" in prompt
+    assert "artifact_paths" in prompt
+    assert file_digest(artifact) not in prompt
+    assert "auroc" not in prompt                  # producer's answer is withheld
+    assert "withheld until after your response" in prompt
 
 
 def test_the_token_is_never_placed_in_an_envelope(artifact, monkeypatch):
     from aionq.witness import apply_witness, build_request, parse_response
     monkeypatch.setenv("GODELIAN_AGENT_TOKEN", "sk-secret-value")
     env = _envelope(artifact, producer="me", verifier="")
-    env, _ = apply_witness(env, parse_response(json.dumps({"mode": "attested"})))
+    env, _ = apply_witness(env, parse_response(json.dumps(
+        {"mode": "attested", "verifier": "godelian-1"})))
     assert "sk-secret-value" not in json.dumps(env.to_dict())
     assert "sk-secret-value" not in build_request(env).to_prompt()
 
@@ -458,6 +728,7 @@ def test_a_reviewer_is_a_real_verifier_and_still_not_independent(artifact):
         _envelope(artifact, producer="me", verifier=""),
         parse_response(json.dumps({
             "mode": "reviewed",
+            "verifier": "godelian-1",
             "notes": "sample_size 1 is correct but the interval conflates two "
                      "conditions rather than bounding one"})))
     assert env.verification_mode == VerificationMode.REVIEWED

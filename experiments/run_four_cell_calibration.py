@@ -593,7 +593,10 @@ def main() -> int:
         verification_mode="not_requested",
     )
     save_envelope(envelope, ENVELOPE)
-    check = verify(envelope, repo_root=ROOT)
+    # The append-once producer runs before an artifact commit exists. This is a
+    # provisional worktree check; evidence.v2 promotion requires a later
+    # envelope phase bound to the raw commit.
+    check = verify(envelope, repo_root=ROOT, check_commit=False)
     if not check.ok:
         raise RuntimeError(
             "local evidence-envelope verification failed: "

@@ -1,7 +1,9 @@
 {
   "claim_id": "EXP-R6E-CARRIER_TELEMETRY",
   "command": "PYTHONPATH=src python3 experiments/run_carrier_telemetry.py",
-  "commit_sha": "35b2277a24be618124b3ed0540dd43ea2b948602",
+  "artifact_commit_sha": "12a188cb7e5fe26a2539db279d249d1e9ef2c20f",
+  "commit_sha": "12a188cb7e5fe26a2539db279d249d1e9ef2c20f",
+  "source_commit_sha": "35b2277a24be618124b3ed0540dd43ea2b948602",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -39,7 +41,7 @@
   "raw_artifacts": {
     "artifacts/r6e_carrier_telemetry/carrier_telemetry.json": "sha256:27cccd7d9795600b4e4ccc94aeabcbd1132adbf53a668c2e9c842aae0a74bf07"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     20260728
   ],

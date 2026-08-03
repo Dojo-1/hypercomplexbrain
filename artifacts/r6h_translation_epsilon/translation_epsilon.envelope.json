@@ -1,7 +1,8 @@
 {
   "claim_id": "EXP-R6H-TRANSLATION_EPS",
   "command": "PYTHONPATH=src python3 experiments/run_translation_epsilon.py",
-  "commit_sha": "867b55f81cef4bf1d7940bfaceb406f7f321e1e9",
+  "artifact_commit_sha": "9ec29f6edaaf1aca4156acc0fbb7b83f823f6aa9",
+  "commit_sha": "9ec29f6edaaf1aca4156acc0fbb7b83f823f6aa9",
   "environment": {
     "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
     "fields": {
@@ -30,7 +31,7 @@
   "raw_artifacts": {
     "artifacts/r6h_translation_epsilon/translation_epsilon.json": "sha256:354875116d3670c566810d80d91b78642efe7cf9b8849e1f7d28f3dc3f9d53bf"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     5
   ],
@@ -51,6 +52,11 @@
       "carrier": "'translation'",
       "comparison": "epsilon measures geometric and information-theoretic defect between an encoding and its source. It does not measure meaning, understanding, or cognition, and no result here licenses that reading",
       "kind": "naming_remainder"
+    },
+    {
+      "carrier": "legacy v1 commit_sha",
+      "comparison": "the original value 867b55f81cef4bf1d7940bfaceb406f7f321e1e9 does not resolve in this repository and is retained here only as an invalid historical declaration; evidence.v2 binds the exact artifact bytes at 9ec29f6edaaf1aca4156acc0fbb7b83f823f6aa9",
+      "kind": "provenance_remainder"
     }
   ],
   "uncertainty": {},

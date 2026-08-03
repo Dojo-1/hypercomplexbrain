@@ -1,7 +1,9 @@
 {
   "claim_id": "QSIGMA-R3B-0-FOUR-CELL-CALIBRATION",
   "command": "python experiments/run_four_cell_calibration.py",
-  "commit_sha": "41e6fdf45730016c040b577a1786b32a6cac30ff",
+  "artifact_commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "commit_sha": "df1e714239263b8a269aad12579b6faa259edad8",
+  "source_commit_sha": "41e6fdf45730016c040b577a1786b32a6cac30ff",
   "environment": {
     "digest": "sha256:5bf57f7a8cf57ad5d555253228be00a350ae685a417410e738f38217097f7572",
     "fields": {
@@ -71,7 +73,7 @@
   "raw_artifacts": {
     "artifacts/r3b_four_cell/four_cell_calibration.json": "sha256:a76c9120f7c67db2c2570105994949b117e90ac22dae9621f6784c7ca367329f"
   },
-  "schema_version": "hypercomplexbrain.evidence.v1",
+  "schema_version": "hypercomplexbrain.evidence.v2",
   "seeds": [
     73001,
     73002,
