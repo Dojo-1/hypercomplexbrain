@@ -87,9 +87,14 @@ def main() -> int:
     )
 
     samples: list[Sample] = []
+    saturated = 0
+    winners: dict[str, int] = {}
     for n, td, d, qc in amb.sweep(samples_per_config=2):
         r = simulation_residency(qc)
         samples.append(Sample(n, td, d, r.q_naive, r.q_sim_upper, r.raw_exponent))
+        winners[r.bounding_strategy] = winners.get(r.bounding_strategy, 0) + 1
+        if not r.informative:
+            saturated += 1
 
     gaps = np.array([s.gap for s in samples])
     certs = np.array([s.q_cert for s in samples])
@@ -99,6 +104,17 @@ def main() -> int:
     print(f"  Q_naive : mean {naives.mean():.4f}  min {naives.min():.4f}  max {naives.max():.4f}")
     print(f"  Q_cert  : mean {certs.mean():.4f}  min {certs.min():.4f}  max {certs.max():.4f}")
     print(f"  gap     : mean {gaps.mean():.4f}  min {gaps.min():.4f}  max {gaps.max():.4f}")
+
+    # A saturated core is one where NO strategy beat brute force, so its 1.00 is
+    # the absence of an applicable strategy rather than a measured hardness.
+    # Averaging those in with real measurements mixes two different things, so
+    # the count is reported beside the mean rather than folded into it.
+    print(f"\n  saturated (no strategy beat dense): {saturated}/{len(samples)}")
+    print(f"  bounding strategy: "
+          + ", ".join(f"{k} {v}" for k, v in sorted(winners.items())))
+    if saturated:
+        print("  WARNING: the mean above averages saturation markers with "
+              "measurements.")
 
     print("\n  Q_cert by T-density (mean over n and depth):")
     for td in amb.t_densities:

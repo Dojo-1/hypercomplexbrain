@@ -571,6 +571,26 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R1a",
+        "q_sim_upper = 1.00 was reported and averaged as though it were a "
+        "measured maximum, when it holds exactly when no strategy beat brute "
+        "force and therefore records the ABSENCE of an applicable strategy. Both "
+        "QSigma-R1a defects sat at 1.00 before discovery, as does a genuinely "
+        "universal circuit; the number cannot tell a poly-time core from a "
+        "universal one, and adding a single SWAP demonstrates it",
+        "tests/test_saturation.py::test_a_universal_circuit_saturates_and_that_is_correct",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "the headline ACAF mean was presented as a portfolio result while every "
+        "one of its 150 cores is bounded by stabilizer rank alone: the other "
+        "three strategies never win on that corpus, so a fifth strategy aimed at "
+        "that regime could move all 150 at once",
+        "tests/test_saturation.py::test_no_random_acaf_core_is_saturated",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
         "ARCHITECTURE.md printed q_sim_upper mean 0.0880 beside gap 0.9175, which "
         "cannot both hold when gap = Q_naive - q_sim_upper and Q_naive is "
         "identically 1.00; the document carried two numbers from two runs and "

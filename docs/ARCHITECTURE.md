@@ -180,6 +180,46 @@ loosely wrong but unrelated to the truth, and the list was written by the same
 people who wrote the portfolio. What the fourth strategy proves is that the
 third one's coverage claim was worth exactly as much as the second's.
 
+### 0.4 `q_sim_upper = 1.00` is a shrug in the units of a measurement
+
+That left a diagnosis with no instrument: a missing strategy is arbitrarily
+wrong on whatever it was for, and gives *no signal about where*. The signal was
+there the whole time.
+
+`q_sim_upper == 1.0` holds exactly when `log2_sim_cost ≥ n`, which holds exactly
+when **nothing in the portfolio simulated the core below brute force**. These are
+upper bounds, so a bound at the ceiling is the *absence* of a bound. 1.00
+therefore never means "measured maximally quantum" — it always means "no
+applicable strategy," and it was being averaged in with real measurements.
+
+Both QΣ-R1a defects sat at exactly 1.00 before they were found. `ResidencyReport`
+now records `bounding_strategy` and `informative`, and the retrodiction is run as
+a test rather than asserted: with the two structural strategies disabled — the
+portfolio's state when both defects were live — both defective families saturate
+and the genuinely hard control does not.
+
+The flag marks **absence of information, not presence of hardness**. A universal
+circuit saturates too, and correctly: the portfolio has nothing to say about it
+either. The free-fermion core scored 1.00 while poly-time; adding one SWAP makes
+it universal and it scores 1.00 again. *The number cannot tell those apart.*
+That is the finding, and no amount of care in reading it would have helped —
+they are the same number.
+
+And one more thing falls out of recording the winner. Across all 150 random
+cores:
+
+```
+saturated (no strategy beat dense): 0/150
+bounding strategy: stabilizer_rank 150
+```
+
+**Every single number in the headline sweep is a stabilizer-rank number.** The
+other three strategies never win there. So `mean 0.0825` is not a portfolio
+result with three strategies corroborating it; it is one algorithm's output with
+three inactive strategies standing next to it, and a fifth strategy aimed at
+that regime could move all 150 at once. The corpus is a monoculture, which is
+precisely the condition under which the two defects above were possible.
+
 ---
 
 ## 0.5 What the peer audit corrected

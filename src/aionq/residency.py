@@ -215,6 +215,34 @@ class ResidencyReport:
     notes: list = field(default_factory=list)
     q_sim_upper_known: bool = True
     typed_remainders: list = field(default_factory=list)
+    # Which strategy achieved the reported minimum.  "dense" means none of them
+    # did: the bound fell back to brute force.
+    bounding_strategy: str = "dense"
+    strategy_costs: dict = field(default_factory=dict)
+
+    @property
+    def informative(self) -> bool:
+        """False when no implemented strategy beat brute-force simulation.
+
+        This is the difference between a measurement and a shrug, and
+        ``q_sim_upper`` cannot express it.  ``q_sim_upper == 1.0`` holds exactly
+        when ``log2_sim_cost >= n``, which holds exactly when nothing in the
+        portfolio simulated the core below dense cost.  So 1.0 NEVER means "this
+        core was measured to be maximally quantum" -- these are upper bounds, and
+        an upper bound at the ceiling is the absence of a bound.  It always means
+        "no applicable strategy", recorded in the same units as a measurement and
+        then averaged with them.
+
+        Both defects found in QSigma-R1a sat at exactly 1.0 before they were
+        found, and 0 of the 150 random cores in the ACAF sweep are saturated, so
+        this flag retrodicts both without firing spuriously on that corpus.
+
+        A saturated core is not thereby easy.  A universal circuit saturates too,
+        and correctly: the portfolio has nothing to say about it either.  The
+        flag marks absence of information, not presence of hardness -- and the
+        two were being reported by the same number.
+        """
+        return self.bounding_strategy != "dense"
 
     @property
     def interval(self) -> tuple[float, float]:
@@ -565,8 +593,21 @@ def simulation_residency(
     from .matchgate import matchgate_plan
     fermion = matchgate_plan(circuit)
     log2_fermion = fermion.log2_cost if fermion.valid else math.inf
-    # A classical simulator picks whichever strategy is cheaper.
-    log2_cost = min(float(n), log2_stabrank, log2_basis, log2_tensor, log2_fermion)
+    # A classical simulator picks whichever strategy is cheaper.  "dense" is not
+    # a strategy, it is the fallback, and recording WHICH one won is what
+    # separates a measurement from a saturation marker.
+    strategy_costs = {
+        "stabilizer_rank": log2_stabrank,
+        "basis_permutation": log2_basis,
+        "contraction": log2_tensor,
+        "free_fermion": log2_fermion,
+    }
+    log2_cost = min(float(n), *strategy_costs.values())
+    bounding_strategy = "dense"
+    for candidate, cost in strategy_costs.items():
+        if cost < float(n) and cost <= log2_cost + 1e-12:
+            bounding_strategy = candidate
+            break
 
     raw = 0.0 if n == 0 else min(
         log2_stabrank, log2_basis, log2_tensor, log2_fermion) / n
@@ -591,9 +632,14 @@ def simulation_residency(
             "core is entirely stabilizer/permutation simulable (Gottesman-Knill): "
             "q_sim_upper = 0 regardless of depth, width or entanglement."
         )
-    if q_upper >= 1.0:
-        notes.append("no implemented strategy simulates this core below dense cost; "
-                     "this is an upper bound, not a hardness certificate.")
+    if bounding_strategy == "dense":
+        notes.append(
+            "SATURATED: no implemented strategy simulates this core below dense "
+            "cost, so q_sim_upper = 1.00 records the ABSENCE of an applicable "
+            "strategy, not the presence of hardness. It is not a measurement and "
+            "must not be averaged with measurements. Both QSigma-R1a defects sat "
+            "here before they were found; so does a genuinely universal circuit. "
+            "The flag cannot tell those apart, and neither can the number.")
     if plan.valid and log2_tensor < min(log2_stabrank, log2_basis, float(n)):
         notes.append(
             f"tensor-network contraction is the cheapest strategy here: induced "
@@ -649,6 +695,8 @@ def simulation_residency(
         notes=notes,
         q_sim_upper_known=known,
         typed_remainders=remainders,
+        bounding_strategy=bounding_strategy,
+        strategy_costs=strategy_costs,
     )
 
 

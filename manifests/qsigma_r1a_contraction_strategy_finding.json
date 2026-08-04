@@ -77,6 +77,24 @@
     "fail_closed": "an instruction whose unitary cannot be obtained invalidates the whole path rather than being skipped. Contraction cost is fixed by connectivity, which is available even when the matrix is not, so pricing structure alone would let a circuit be made to look cheap by adding something whose behaviour was never checked. Measurement, reset and classical control are refused outright.",
     "determinism": "ties in the elimination order are broken by vertex index. An ordering that depended on set iteration order would be one more computed quantity inside a reported number, which is the defect this repository has recorded five times."
   },
+  "amendment_saturation": {
+    "note": "the two amendments above ended with a diagnosis and no instrument: a portfolio missing a strategy is arbitrarily wrong on whatever that strategy was for and gives no signal about where. The signal was already present and unread.",
+    "statement": "q_sim_upper == 1.0 holds exactly when log2_sim_cost >= n, which holds exactly when nothing in the portfolio simulated the core below brute force. These are UPPER bounds, so a bound at the ceiling is the absence of a bound. 1.00 never means 'measured maximally quantum'; it always means 'no applicable strategy', and it was being averaged in with real measurements.",
+    "retrodiction": {
+      "method": "run as a test, not asserted: disable the two structural strategies, which is the portfolio state in which both defects were live, and check which cores saturate",
+      "single_qubit_chains": "saturated -- defect 1 would have been flagged",
+      "free_fermion": "saturated -- defect 2 would have been flagged",
+      "all_to_all_magic": "NOT saturated -- the genuinely hard control is not flagged, so the signal is not simply firing on everything expensive",
+      "random_corpus": "0 of 150 ACAF cores saturated, so the flag has no false positives there"
+    },
+    "what_the_flag_does_not_mean": "saturation marks absence of information, NOT presence of easiness. A universal circuit saturates too, and correctly, because the portfolio has nothing to say about it either. The free-fermion core scored 1.00 while poly-time; one SWAP makes it universal and it scores 1.00 again. The number cannot distinguish them, and no care in reading it would have helped, because it is the same number.",
+    "monoculture_finding": {
+      "measurement": "recording WHICH strategy achieves the minimum shows that all 150 random ACAF cores are bounded by stabilizer_rank; the other three strategies never win on that corpus",
+      "consequence": "the headline mean 0.0825 is not a portfolio result with three strategies corroborating it. It is one algorithm's output with three inactive strategies standing beside it, and a fifth strategy aimed at that regime could move all 150 at once.",
+      "relation_to_the_defects": "a monoculture is precisely the condition under which both QSigma-R1a defects were possible, and the corpus never showed it because the portfolio reported only the minimum and never the argmin."
+    },
+    "implementation": "ResidencyReport gains bounding_strategy and strategy_costs, and an informative property. 'dense' is recorded as the bounding strategy when the fallback wins, because dense is not a strategy -- it is the absence of one."
+  },
   "document_correction": {
     "what": "docs/ARCHITECTURE.md section 0 printed 'q_sim_upper: mean 0.0880 max 0.7423' beside 'gap: mean 0.9175'",
     "why_those_cannot_both_hold": "gap is defined as Q_naive - q_sim_upper and Q_naive is identically 1.0000 on this corpus, so a gap of 0.9175 IS a q_sim_upper mean of 0.0825. The page was carrying two numbers from two different runs and asserting both, while stating that every number in it is computed and none is asserted.",
@@ -98,6 +116,10 @@
     {
       "kind": "adversarial_remainder",
       "statement": "On the free-fermion family the metric was not loosely wrong but controllable: q_sim_upper could be set to any value in [0,1] by padding a poly-time circuit with T gates that the real simulator never pays for. An upper bound an adversary can dial is not a weak bound on hardness; on that family it is not a bound on hardness. Whether any other family admits the same control is untested."
+    },
+    {
+      "kind": "aggregation_remainder",
+      "statement": "Saturation markers and measurements were being averaged together in the same mean, and the sweep's headline figure is a stabilizer-rank monoculture. Both were visible from the portfolio's own internals and neither was reported, because the portfolio published the minimum and never the argmin. The instrument for detecting a missing strategy did not need to be invented; it needed to be printed."
     },
     {
       "kind": "proximity_remainder",
