@@ -582,6 +582,16 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R1a",
+        "the two new strategy modules had a mutation kill rate of 52.2%: 11 of "
+        "23 single-line breakages went unnoticed by the modules' own tests, "
+        "including the cost convention's width + 1, both wrongly-shaped-matrix "
+        "guards, and the 'and' in is_diagonal_matrix. A suite reports whether "
+        "its witnesses fail and never whether they reach",
+        "tests/test_contraction.py::test_the_cost_convention_charges_width_plus_one_exactly",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
         "the saturation flag reported the zero-qubit circuit as saturated, "
         "claiming absence of information about the one circuit whose cost is "
         "exactly known, and contradicting its own definition since q_sim_upper "

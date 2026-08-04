@@ -161,6 +161,39 @@
     ],
     "published_numbers_unaffected": "the ACAF headline (mean 0.0825, max 0.5329, 0/150 saturated, stabilizer_rank 150), the K3 table and the K4 table are bit-identical after both fixes."
   },
+  "amendment_mutation_probe": {
+    "note": "the self-review found two guards of this round's own that could not fail, and closed with the observation that there was no instrument for that class -- the way saturation became one for missing strategies. This is the instrument, built and pointed at this round's own modules first.",
+    "method": "experiments/mutation_probe.py applies one meaning-changing edit to a source line -- flip a comparison, negate a condition, replace a returned constant -- and runs that module's own test file. If the tests still pass, no test distinguishes the mutated code from the real code, and whatever that line does is unguarded.",
+    "validated_against_a_known_defect_before_use": {
+      "why": "an instrument that finds nothing proves nothing until it has been shown able to find something",
+      "how": "the dead operand-swap conjugation removed by the self-review was temporarily restored and the probe run against it",
+      "result": "line 208, 'if first > second:', SURVIVED -- the probe independently rediscovers the defect that had been found by hand"
+    },
+    "instrument_defects_found_and_fixed_before_trusting_its_output": [
+      "the comparison operators matched the arrow of a '-> str:' annotation, producing '->= str:', a SyntaxError. Those die on import for reasons unrelated to any test and inflate the kill rate with mutants no suite could survive. Measured: 4 of the first 7 contraction mutants were annotation arrows.",
+      "mutations landing inside string literals change only the text a human reads, so no test can kill them and they appear as meaningless survivors. Measured: 3 of 13 matchgate survivors were message text, a 23% noise floor in the number the instrument exists to report. Fixed by tokenising and refusing to mutate STRING and COMMENT spans."
+    ],
+    "result": {
+      "before": {"mutants": 23, "killed": 12, "survived": 11, "kill_rate": 0.522},
+      "after": {"mutants": 23, "killed": 22, "survived": 1, "kill_rate": 0.957},
+      "gaps_closed": [
+        "contraction: the width + 1 in the cost charge -- the whole cost convention -- could be changed to width + 0 with every test still passing, because every assertion about it was an inequality loose enough to survive an off-by-one",
+        "contraction and matchgate: summary() untested on both branches",
+        "contraction and matchgate: the refusal REASON was untested, so an 'or' could become an 'and' in the non-unitary guard with no visible effect, both clauses refusing the same instruction by different routes",
+        "contraction: the no-qubit-instruction guard",
+        "matchgate: both wrongly-shaped-matrix guards could return True instead of False, since nothing ever fed either predicate an array of the wrong shape",
+        "matchgate: the 'and' in is_diagonal_matrix could become 'or', since no witness had exactly one non-zero off-diagonal entry",
+        "matchgate: the off-block entry boundary at exactly _ATOL, which IS constructible",
+        "matchgate: the is_diagonal_matrix boundary at exactly _ATOL, also constructible"
+      ]
+    },
+    "the_one_remaining_survivor_is_equivalent_not_a_gap": {
+      "mutant": "matchgate.py:135, '<' to '<=' on |det A - det B| < _ATOL",
+      "why_it_cannot_be_killed": "the two differ only when the difference equals _ATOL exactly, and np.linalg.det never returns that value. Four constructions were tried -- det A = 0 against a det B built to be 1e-9 three different ways, and det A = 1 against det B = 1 + 1e-9 -- and every one lands one ulp above at 1.0000000000000007e-09, because LU with scaling does not reproduce the literal.",
+      "why_this_matters": "the equivalent mutant is mutation testing's known false positive, and distinguishing it from a real gap is the difference between an instrument and a to-do list. The strictness of this comparison is not a behavioural choice; it is unobservable. A test asserts that the boundary remains unreachable, so if a future numpy makes it reachable the mutant stops being equivalent and the test says so."
+    },
+    "scope": "the probe covers two modules with a fixed list of 15 operators, small enough to read in full. It is not a general mutation-testing framework and makes no claim about the rest of the repository, whose kill rate is unmeasured."
+  },
   "document_correction": {
     "what": "docs/ARCHITECTURE.md section 0 printed 'q_sim_upper: mean 0.0880 max 0.7423' beside 'gap: mean 0.9175'",
     "why_those_cannot_both_hold": "gap is defined as Q_naive - q_sim_upper and Q_naive is identically 1.0000 on this corpus, so a gap of 0.9175 IS a q_sim_upper mean of 0.0825. The page was carrying two numbers from two different runs and asserting both, while stating that every number in it is computed and none is asserted.",
@@ -186,6 +219,14 @@
     {
       "kind": "self_review_remainder",
       "statement": "This round documented, four times, a guard whose witness could not reach the case it asserted -- and then shipped two more of its own: a saturation equivalence tested without n = 0, and a matchgate conjugation guarded by two swap-symmetric examples. Both were found by a review of this round's own work rather than by the suite, which passed throughout. The lesson is not that the reviewer was careless; it is that a test suite reports whether its witnesses fail, never whether its witnesses reach."
+    },
+    {
+      "kind": "instrument_coverage_remainder",
+      "statement": "The mutation probe measures two modules and reports 95.7%. The rest of the repository is unmeasured, and the six defects this round found were spread across residency, the architecture tests, the part B preflight and the equivalence attacks -- none of which the probe covers. A kill rate on the two newest modules is the weakest possible evidence about the oldest ones, and it would be an error to read 95.7% as a property of the suite."
+    },
+    {
+      "kind": "instrument_self_remainder",
+      "statement": "The probe had two defects of its own before its first number could be trusted: it mutated type-annotation arrows into SyntaxErrors, which inflate the kill rate, and it mutated string literals, which deflate it. Both were found by reading its output rather than by any check on the probe itself. The instrument built to detect unreached guards has no instrument detecting ITS unreached guards, and that regress is not closed here."
     },
     {
       "kind": "notation_remainder",

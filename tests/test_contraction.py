@@ -213,3 +213,63 @@ def test_a_clifford_core_is_still_free_and_not_made_expensive():
         circuit.cx(qubit, qubit + 1)
     report = simulation_residency(circuit)
     assert report.q_sim_upper == pytest.approx(0.0, abs=1e-12)
+
+
+# --------------------------------------------------- gaps found by mutation_probe
+
+def test_the_cost_convention_charges_width_plus_one_exactly():
+    """mutant: `width + 1` -> `width + 0`, which no test could see.
+
+    The `+ 1` is the whole cost convention: the largest intermediate tensor
+    spans `width + 1` bonds, so it holds `2**(width+1)` amplitudes. Every test
+    here asserted inequalities loose enough to survive an off-by-one in the one
+    constant the strategy's charge is built from.
+
+    A single CX is the smallest circuit with a definite answer: two input bonds
+    and two output bonds forming a 4-clique, so every elimination sees three
+    neighbours and the width is 3.
+    """
+    circuit = QuantumCircuit(2)
+    circuit.cx(0, 1)
+    plan = contraction_plan(circuit)
+    assert plan.width == 3
+    assert plan.log2_cost == 4.0        # exactly width + 1, not width
+
+
+def test_the_plan_summarises_both_outcomes():
+    """mutant: `if not self.valid` -> `if self.valid` in summary()."""
+    good = QuantumCircuit(2)
+    good.cx(0, 1)
+    assert "induced width" in contraction_plan(good).summary()
+
+    bad = QuantumCircuit(2, 2)
+    bad.measure(0, 0)
+    assert contraction_plan(bad).summary().startswith("contraction path invalid:")
+
+
+def test_the_refusal_reason_names_the_clause_that_fired():
+    """mutant: `or` -> `and` in the non-tensor-instruction guard.
+
+    A reset is refused twice over -- by name, and again because it exposes no
+    unitary -- so `valid` is False either way and no test could see which fired.
+    The reason is the part that differs, and it is what tells a reader which
+    property was violated.
+    """
+    reset = QuantumCircuit(2)
+    reset.reset(0)
+    assert contraction_plan(reset).reason == (
+        "instruction 'reset' has no closed tensor form")
+
+
+def test_an_instruction_on_no_qubits_is_skipped_rather_than_crashing():
+    """mutant: `if not indices` -> `if indices`.
+
+    A global-phase-only instruction touches no qubits and contributes no bond.
+    Dropping the guard would make it consume the branch meant for real gates.
+    """
+    circuit = QuantumCircuit(2)
+    circuit.cx(0, 1)
+    circuit.global_phase = 0.5
+    plan = contraction_plan(circuit)
+    assert plan.valid
+    assert plan.width == 3

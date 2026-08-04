@@ -221,3 +221,145 @@ def test_the_strategy_stays_silent_on_ordinary_clifford_t_cores():
         circuit.cx(qubit, qubit + 1)
     circuit.t(range(6))
     assert not matchgate_plan(circuit).valid
+
+
+# --------------------------------------------------- gaps found by mutation_probe
+#
+# Every test below exists because `experiments/mutation_probe.py` showed that
+# breaking a specific line changed nothing any test in this file could see. A
+# surviving mutant is not automatically a defect, but it is a line the suite is
+# silent about -- and all six of QSigma-R1a's defects lived in such lines.
+
+def test_a_wrongly_shaped_matrix_is_refused_by_both_predicates():
+    """mutant: `return False` -> `return True` on the shape guards.
+
+    Nothing fed either predicate an array of the wrong shape, so the guard that
+    rejects one was free to accept instead.
+    """
+    assert not is_diagonal_matrix(np.eye(3))
+    assert not is_diagonal_matrix(np.eye(4))
+    assert not is_matchgate_matrix(np.eye(2))
+    assert not is_matchgate_matrix(np.eye(3))
+
+
+def test_a_single_off_diagonal_entry_is_enough_to_refuse_a_one_qubit_gate():
+    """mutant: `and` -> `or` in is_diagonal_matrix.
+
+    With `or`, a matrix needs only ONE of its two off-diagonal entries to
+    vanish, so a gate that is plainly not diagonal passes. No witness had
+    exactly one non-zero off-diagonal entry.
+    """
+    lower_only = np.array([[1.0, 0.0], [1.0, 1.0]])
+    upper_only = np.array([[1.0, 1.0], [0.0, 1.0]])
+    assert not is_diagonal_matrix(lower_only)
+    assert not is_diagonal_matrix(upper_only)
+    assert is_diagonal_matrix(np.diag([1.0, 1.0]))
+
+
+def test_the_parity_block_test_is_strict_at_exactly_the_tolerance():
+    """mutant: `>` -> `>=` on the off-block entry check.
+
+    The two differ only at |entry| == _ATOL exactly, which is representable, so
+    the boundary is reachable and the strictness is a real choice.
+    """
+    from aionq.matchgate import _ATOL
+
+    at_tolerance = np.eye(4, dtype=complex)
+    at_tolerance[0, 1] = _ATOL
+    assert abs(at_tolerance[0, 1]) == _ATOL      # the boundary is exact
+    # `> _ATOL` does not fire at equality, so this is still block-structured.
+    assert is_matchgate_matrix(at_tolerance)
+
+    beyond = np.eye(4, dtype=complex)
+    beyond[0, 1] = _ATOL * 2
+    assert not is_matchgate_matrix(beyond)
+
+
+def test_the_determinant_boundary_is_unreachable_so_its_strictness_is_unobservable():
+    """mutant: `<` -> `<=` on `|det A - det B| < _ATOL`. It is EQUIVALENT.
+
+    Mutation testing's known false positive is the equivalent mutant: a change
+    no input can reveal, because the two versions agree on every reachable
+    value. This is one, and saying so is the difference between an instrument
+    and a to-do list.
+
+    `<` and `<=` differ only when the difference equals `_ATOL` exactly, and
+    `np.linalg.det` never returns that value. Every construction tried --
+    det A = 0 against a det B built to be 1e-9 four different ways, and
+    det A = 1 against det B = 1 + 1e-9 -- lands one ulp above at
+    1.0000000000000007e-09, because LU with scaling does not reproduce the
+    literal. So the strictness of this comparison is not a behavioural choice;
+    it is unobservable, and the surviving mutant is not a gap in the suite.
+
+    What IS worth pinning is that the condition rejects just outside and
+    accepts just inside, which the parametrised classification test above
+    already does for real gates.
+    """
+    from aionq.matchgate import _ATOL
+
+    constructions = [
+        (np.zeros((2, 2)), np.diag([_ATOL, 1.0])),
+        (np.zeros((2, 2)), np.array([[0.0, _ATOL], [-1.0, 0.0]])),
+        (np.zeros((2, 2)), np.diag([1.0, _ATOL])),
+        (np.eye(2), np.diag([1.0, 1.0 + _ATOL])),
+    ]
+    for even, odd in constructions:
+        difference = abs(np.linalg.det(even) - np.linalg.det(odd))
+        assert difference != _ATOL, (
+            "the boundary became reachable, so the mutant is no longer "
+            "equivalent and this comparison now needs a real boundary test")
+
+    # Just outside is refused; well inside is accepted.
+    outside = np.zeros((4, 4), dtype=complex)
+    outside[1, 1] = 1.0
+    outside[2, 2] = 1.0            # det A = 0, det B = 1: far apart
+    assert not is_matchgate_matrix(outside)
+    assert is_matchgate_matrix(np.eye(4, dtype=complex))
+
+
+def test_the_refusal_reason_names_the_clause_that_fired():
+    """mutant: `or` -> `and` in the non-unitary-instruction guard.
+
+    Both clauses refuse a reset, so `valid` is False either way and no test
+    could see the difference. The REASON differs, and the reason is part of the
+    contract -- it is what tells a reader which property was violated.
+    """
+    reset = QuantumCircuit(2)
+    reset.reset(0)
+    assert matchgate_plan(reset).reason == (
+        "instruction 'reset' is not a unitary gate")
+
+    measured = QuantumCircuit(2, 2)
+    measured.measure(0, 0)
+    assert matchgate_plan(measured).reason == (
+        "instruction 'measure' is not a unitary gate")
+
+
+def test_the_plan_summarises_both_outcomes():
+    """mutant: `if not self.valid` -> `if self.valid` in summary()."""
+    good = QuantumCircuit(2)
+    good.append(XXPlusYYGate(0.4), [0, 1])
+    assert "free-fermion core" in matchgate_plan(good).summary()
+
+    bad = QuantumCircuit(2)
+    bad.h(0)
+    assert matchgate_plan(bad).summary().startswith("matchgate path invalid:")
+
+
+def test_the_diagonal_test_is_strict_at_exactly_the_tolerance():
+    """mutant: `<` -> `<=` on the first off-diagonal check in is_diagonal_matrix.
+
+    Unlike the determinant boundary, this one IS reachable: the entry is
+    compared directly, with no `np.linalg.det` in between to shift it off the
+    literal. So the strictness here is a real behavioural choice and the mutant
+    is a genuine gap rather than an equivalent one.
+    """
+    from aionq.matchgate import _ATOL
+
+    at_tolerance = np.array([[1.0, _ATOL], [0.0, 1.0]])
+    assert abs(at_tolerance[0, 1]) == _ATOL      # the boundary is exact
+    # Strict `<` refuses at equality; `<=` would call this diagonal.
+    assert not is_diagonal_matrix(at_tolerance)
+
+    just_inside = np.array([[1.0, _ATOL / 2], [0.0, 1.0]])
+    assert is_diagonal_matrix(just_inside)

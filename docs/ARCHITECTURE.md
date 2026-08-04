@@ -307,6 +307,56 @@ states confidently. The defect is real and is not fixed here — circuit
 equivalence is intractable in general, and the repository has said so since
 §0.5's first draft. What changed is that it is no longer silent.
 
+### 0.7 A suite reports whether its witnesses fail, never whether they reach
+
+Six defects in this round share one shape: a guard whose witness could not reach
+the case it asserted. `test_residency_scales_with_t_count` witnessed T-scaling
+on a circuit with no entangling gate. The K3 attacks missed a whole class of
+identity. The projection freeze listed seven of ten keys. The saturation
+equivalence was never evaluated at n = 0. And two were in this round's own new
+code, including a matrix conjugation that was a no-op on every input, guarded by
+two examples symmetric under exactly the operation it performed.
+
+The suite passed through all six. It was always going to: it reports whether its
+witnesses *fail*, never whether its witnesses *reach*.
+
+`experiments/mutation_probe.py` is the instrument, and it is the same move §0.4
+made for missing strategies. Break one line — flip a comparison, negate a
+condition, replace a returned constant — and run that module's own tests. If
+they still pass, nothing distinguishes the mutated code from the real code.
+
+It was validated against a known defect before being trusted: with the dead
+conjugation temporarily restored, the probe independently flagged it. Pointed at
+this round's two new modules:
+
+| | mutants | killed | survived | kill rate |
+|---|---:|---:|---:|---:|
+| before | 23 | 12 | 11 | **52.2%** |
+| after | 23 | 22 | 1 | **95.7%** |
+
+Nearly half the lines in the newest, most carefully reviewed modules in the
+repository were unguarded. The most alarming was `width + 1` in the contraction
+charge — the entire cost convention — which could become `width + 0` with every
+test still green, because every assertion about it was an inequality loose
+enough to absorb an off-by-one.
+
+**The one surviving mutant is equivalent, not a gap.** `<` versus `<=` on
+`|det A − det B| < _ATOL` differ only at exact equality, and `np.linalg.det`
+never returns that value: four constructions all land one ulp above at
+`1.0000000000000007e-09`. Distinguishing an equivalent mutant from a real gap is
+the difference between an instrument and a to-do list, and a test now asserts
+the boundary stays unreachable — so if a future numpy makes it reachable, the
+mutant stops being equivalent and the suite says so.
+
+Two limits. The probe covers **two modules**; the rest of the repository is
+unmeasured, and five of the six defects above live in files it does not touch —
+so 95.7% is not a property of the suite. And the probe had two defects of its own
+before its first number meant anything: it mutated type annotations into
+`SyntaxError`s, which inflate the kill rate, and string literals, which deflate
+it. Both were found by reading its output. The instrument built to find unreached
+guards has no instrument finding *its* unreached guards, and that regress is not
+closed here.
+
 ---
 
 ## 0.5 What the peer audit corrected
