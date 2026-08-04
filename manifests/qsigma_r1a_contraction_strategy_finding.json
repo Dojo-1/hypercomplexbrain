@@ -1,7 +1,46 @@
 {
   "schema": "hypercomplexbrain.finding.v1",
   "id": "QSIGMA-R1A-CONTRACTION-001",
-  "status": "implemented and measured. The QSigma-R1a gate's tensor-network and low-treewidth families are covered; matchgate/free-fermion is not, and is left open rather than claimed.",
+  "status": "implemented and measured. All three families the QSigma-R1a gate named are now covered: tensor-network and low-treewidth by src/aionq/contraction.py, matchgate/free-fermion by src/aionq/matchgate.py. The gate is closed; the frontier is not.",
+  "amendment_matchgate": {
+    "note": "an earlier state of this document recorded matchgate/free-fermion as deliberately left open, on the grounds that claiming the family without implementing the strategy would be an unearned bound. That was the right call at the time and the family is now implemented rather than claimed. The finding it produced is worse than the contraction one.",
+    "statement": "T = diag(1, exp(i*pi/4)) is a Z-rotation, and Z_k = -i c_{2k-1} c_{2k} is QUADRATIC in Majorana modes, so T is a free-fermion operation. A nearest-neighbour matchgate circuit can therefore be saturated with magic and remain exactly solvable in polynomial time.",
+    "measurement": {
+      "core": "12 qubits, 10 layers of T on every qubit followed by a brickwork of nearest-neighbour XXPlusYY matchgates",
+      "t_count": 6286,
+      "contraction_width": 14,
+      "q_sim_upper_under_stabilizer_basis_and_contraction": 1.0,
+      "q_sim_upper_with_the_free_fermion_strategy": 0.0,
+      "true_cost": "polynomial time; the evolution acts on a 2n-dimensional space of Majorana operators rather than on the 2**n-dimensional Hilbert space"
+    },
+    "why_all_three_prior_strategies_miss_it": {
+      "stabilizer_rank": "charges alpha*T and sees only the magic, of which there is an enormous amount that costs the real simulator nothing",
+      "contraction": "charges 2**(width+1) and sees only the connectivity; a deep nearest-neighbour circuit has width of order n whatever its gates are",
+      "basis_permutation": "requires the core never to leave the computational basis, which a matchgate circuit does immediately"
+    },
+    "the_severity": "this is not a loose bound. An adversary can set q_sim_upper to any value on this family by padding a poly-time circuit with T gates, so on the free-fermion family the metric has no relationship to the quantity it estimates.",
+    "the_control": {
+      "design": "matchgates on next-nearest neighbours -- equivalently matchgates plus SWAP -- are UNIVERSAL for quantum computation, so the detector sits one gate away from certifying universal circuits as poly-time simulable",
+      "result": "the same 12-qubit core with ONE SWAP appended scores 1.0000 rather than 0.0000, at identical contraction width 14",
+      "reading": "the strategy distinguishes a poly-time core from a universal one differing by a single gate. Without that the addition would be worthless and dangerous."
+    },
+    "what_the_detector_refuses_beyond_the_theorem": [
+      "two-qubit gates must act on ADJACENT indices in the circuit's own qubit ordering, with no relabelling or routing permitted",
+      "two-qubit gates must have parity-block form G(A,B) with det A = det B, which rejects SWAP (+1 against -1), CZ (-1 against +1), CNOT (fails the block structure outright) and RZZ (whose generator Z Z is quartic in Majoranas)",
+      "one-qubit gates must be DIAGONAL. H and X involve Jordan-Wigner string operators; rather than reason about which remain Gaussian, all non-diagonal one-qubit gates are refused. A matchgate circuit written with Hadamards is missed and charged by another strategy -- a weaker bound, never a wrong one",
+      "any measurement, reset, classical bit or control flow refuses the path outright"
+    ],
+    "validation_of_the_criterion": "the predicate was checked against seven gates whose free-fermion status is known independently -- iSWAP, XXPlusYY and RXX accepted; SWAP, CZ, CNOT and RZZ rejected -- before being wired into the portfolio. The two critical negatives are SWAP and CZ.",
+    "k4_table_at_n_12": [
+      {"family": "product of single-qubit chains", "width": 1, "two_strategies": 1.0, "four_strategies": 0.1667},
+      {"family": "shallow 1D local, full T-density", "width": 3, "two_strategies": 0.4568, "four_strategies": 0.3333},
+      {"family": "k disconnected 2-qubit blocks", "width": 3, "two_strategies": 0.2284, "four_strategies": 0.2284},
+      {"family": "free-fermion, T-saturated", "width": 14, "two_strategies": 1.0, "four_strategies": 0.0},
+      {"family": "free-fermion + ONE swap", "width": 14, "two_strategies": 1.0, "four_strategies": 1.0, "role": "CONTROL: must not be certified"},
+      {"family": "all-to-all magic", "width": 28, "two_strategies": 0.6852, "four_strategies": 0.6852, "role": "CONTROL: genuinely hard"}
+    ],
+    "effect_on_the_random_sweep": "still 0 of 150. That generator emits no matchgates at all, so neither structural strategy fires there. Both are exercised by the K4 table and by nothing else in this repository."
+  },
   "subject": "src/aionq/residency.py::simulation_residency, the q_sim_upper simulation-cost portfolio",
   "statement": "q_sim_upper inherited the defect it was built to retire. It prices non-Clifford content wherever it sits and never asks what that content is connected to, so a product of n independent single-qubit chains -- no two-qubit gate anywhere, a product state at every step, linear-time simulable -- scored 1.00, maximally quantum. The repository's own test suite asserted that saturation as correct.",
   "why_it_happened": {
@@ -46,14 +85,23 @@
   },
   "what_is_not_claimed": [
     "that the contraction bound is tight. It is the cost of one constructed ordering, and a better ordering or a better contraction scheme lowers it further.",
-    "that matchgate or free-fermion cores are covered. They are not. Their simulability argument is not a contraction-width argument, and asserting the family without implementing the strategy would be exactly the unearned bound this work exists to refuse.",
+    "that the free-fermion strategy covers the matchgate family. It covers a narrow, provable core of it: nearest-neighbour matchgates with diagonal one-qubit gates. Matchgate circuits written with Hadamards, or on a qubit ordering that would need routing to become adjacent, are missed and charged by another strategy. The under-claim is deliberate and can only raise the reported bound.",
+    "that closing all three named families means the portfolio is now complete. The list of families was written by the same people who wrote the portfolio, so completing it is evidence about the list rather than about the classical frontier.",
     "that the metric is now correct. It is less wrong on one identified family. The lesson of this round is that a missing strategy is not uniformly optimistic -- it is arbitrarily wrong on whatever that strategy was for, with no signal about where.",
     "any cognitive claim. Nothing here connects q_sim_upper to task performance; remainder point 2 is untouched."
   ],
   "typed_remainders": [
     {
       "kind": "instrument_remainder",
-      "statement": "The frontier this metric is 'exposed to refutation from' turned out not to be a frontier of better algorithms for hard problems. The missing strategy was the only implemented one that could see structure at all, and its absence cost a full 1.00-to-0.17 on the affected family. A portfolio missing a strategy does not degrade gracefully."
+      "statement": "The frontier this metric is 'exposed to refutation from' turned out not to be a frontier of better algorithms for hard problems. The missing strategies were the only implemented ones that could see structure at all, and their absence cost a full 1.00-to-0.17 on one family and 1.00-to-0.00 on another. A portfolio missing a strategy does not degrade gracefully."
+    },
+    {
+      "kind": "adversarial_remainder",
+      "statement": "On the free-fermion family the metric was not loosely wrong but controllable: q_sim_upper could be set to any value in [0,1] by padding a poly-time circuit with T gates that the real simulator never pays for. An upper bound an adversary can dial is not a weak bound on hardness; on that family it is not a bound on hardness. Whether any other family admits the same control is untested."
+    },
+    {
+      "kind": "proximity_remainder",
+      "statement": "The free-fermion strategy sits one gate away from unsoundness. Matchgates plus SWAP are universal, and SWAP has clean parity-block structure -- it fails only on det A = +1 against det B = -1. A detector built on the block structure alone, which is the natural first implementation, would certify universal circuits as poly-time simulable and drive the metric to zero on genuinely hard cores. The safety of this addition rests entirely on one determinant comparison and on refusing all non-adjacent gates."
     },
     {
       "kind": "test_remainder",

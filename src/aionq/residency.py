@@ -553,10 +553,23 @@ def simulation_residency(
     from .contraction import contraction_plan
     plan = contraction_plan(circuit)
     log2_tensor = plan.log2_cost if plan.valid else math.inf
+    # Strategy D: free-fermion (matchgate) evolution, poly-time and therefore
+    # exponent 0.  This is the one case none of A, B or C can see.  T is a
+    # Z-rotation, hence a perfectly good free-fermion operation, so a
+    # nearest-neighbour matchgate core can be SATURATED with T gates and remain
+    # poly-time: measured, a 12-qubit 10-layer such core carries T-count 6286,
+    # contraction width 14, and scored q_sim_upper = 1.0000 under A+B+C -- "no
+    # implemented strategy simulates this below dense cost" -- while being
+    # exactly solvable.  Stabilizer rank can be driven arbitrarily wrong here by
+    # adding magic that costs the real simulator nothing.
+    from .matchgate import matchgate_plan
+    fermion = matchgate_plan(circuit)
+    log2_fermion = fermion.log2_cost if fermion.valid else math.inf
     # A classical simulator picks whichever strategy is cheaper.
-    log2_cost = min(float(n), log2_stabrank, log2_basis, log2_tensor)
+    log2_cost = min(float(n), log2_stabrank, log2_basis, log2_tensor, log2_fermion)
 
-    raw = 0.0 if n == 0 else min(log2_stabrank, log2_basis, log2_tensor) / n
+    raw = 0.0 if n == 0 else min(
+        log2_stabrank, log2_basis, log2_tensor, log2_fermion) / n
     q_upper = 0.0 if n == 0 else max(0.0, min(1.0, log2_cost / n))
     q_naive = 0.0 if total_edges == 0 else quantum_edges / total_edges
 
@@ -592,6 +605,15 @@ def simulation_residency(
     elif not plan.valid:
         notes.append(f"tensor-network path excluded from the minimum: "
                      f"{plan.reason}. An excluded path cannot lower the bound.")
+    if fermion.valid:
+        notes.append(
+            f"core is a nearest-neighbour free-fermion (matchgate) evolution: "
+            f"{fermion.two_qubit_gates} matchgate(s) and "
+            f"{fermion.diagonal_gates} diagonal gate(s), simulable in polynomial "
+            f"time regardless of T-count. Stabilizer rank would have charged "
+            f"{log2_stabrank:.2f} bits on a T-count of {t_total:.0f}, and "
+            f"contraction {log2_tensor:.2f}; T is a Z-rotation and therefore free "
+            "to a free-fermion simulator.")
     if portfolio_counts and len(set(portfolio_counts.values())) > 1:
         notes.append(f"T-count is compiler-dependent across the portfolio: "
                      f"{portfolio_counts}. The reported figure is the minimum.")

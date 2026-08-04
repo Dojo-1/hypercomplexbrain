@@ -549,6 +549,28 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R1a",
+        "T is a Z-rotation and Z_k is quadratic in Majorana modes, so a "
+        "nearest-neighbour matchgate core can be saturated with magic and remain "
+        "poly-time solvable. A 12-qubit free-fermion core with T-count 6286 and "
+        "contraction width 14 scored q_sim_upper = 1.0000 under stabilizer rank, "
+        "basis permutation and contraction together: an adversary could set the "
+        "metric to any value on this family by padding it with T gates the real "
+        "simulator never pays for",
+        "tests/test_matchgate.py::test_the_family_is_invisible_to_every_other_strategy",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "matchgates plus SWAP are universal for quantum computation, so a "
+        "free-fermion detector that accepted SWAP -- which has clean parity-block "
+        "structure and fails only on det A = +1 against det B = -1 -- would "
+        "certify universal circuits as poly-time simulable and drive q_sim_upper "
+        "to zero on genuinely hard cores",
+        "tests/test_matchgate.py::test_the_determinant_condition_is_what_rejects_swap",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
         "ARCHITECTURE.md printed q_sim_upper mean 0.0880 beside gap 0.9175, which "
         "cannot both hold when gap = Q_naive - q_sim_upper and Q_naive is "
         "identically 1.00; the document carried two numbers from two runs and "

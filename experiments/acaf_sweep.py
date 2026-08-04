@@ -150,11 +150,18 @@ def _structure_families() -> bool:
     cores.  That is not evidence the strategy is idle; it is evidence the
     generator emits no low-treewidth families, which its own note already says.
 
-    These families are the QSigma-R1a gate's "low-treewidth" case made
-    explicit: high magic, low connectivity.  Each row reports what the metric
-    charges with and without the contraction strategy, so the difference is
-    visible rather than folded into one number.  A row FAILS when a core that
-    is provably easy still scores as though no strategy could simulate it.
+    These families are the QSigma-R1a gate's "low-treewidth" and "matchgate"
+    cases made explicit: high magic, low connectivity, or free-fermion
+    structure.  Each row reports what the metric charges with and without the
+    two structural strategies, so the difference is visible rather than folded
+    into one number.  A row FAILS when a core that is provably easy still
+    scores as though no strategy could simulate it, or when a control that is
+    NOT easy is made cheaper.
+
+    The free-fermion pair is the sharpest row and the most dangerous: the same
+    core scores 0.0000 as a matchgate evolution and 1.0000 with one SWAP
+    appended, because matchgates plus SWAP is universal.  A detector that
+    certified both would be driving the metric to zero on hard cores.
     """
     from aionq import contraction
 
@@ -190,26 +197,58 @@ def _structure_families() -> bool:
                     qc.cx(a, b)
         return qc
 
+    def free_fermion(n: int) -> QuantumCircuit:
+        """Nearest-neighbour matchgates saturated with T. Poly-time simulable.
+
+        T is a Z-rotation, hence a free-fermion operation, so this core carries
+        thousands of T gates AND a wide contraction and is still exactly
+        solvable. It is the one family no other strategy in the portfolio can
+        see.
+        """
+        from qiskit.circuit.library import XXPlusYYGate
+        qc = QuantumCircuit(n)
+        for layer in range(10):
+            for q in range(n):
+                qc.t(q)
+            for q in range(layer % 2, n - 1, 2):
+                qc.append(XXPlusYYGate(0.3 + 0.1 * q), [q, q + 1])
+        return qc
+
+    def free_fermion_plus_one_swap(n: int) -> QuantumCircuit:
+        """The same core with a single SWAP. Matchgates + SWAP is universal, so
+        this must NOT be certified -- the knife edge the detector sits on."""
+        qc = free_fermion(n)
+        qc.swap(0, 1)
+        return qc
+
     families = [
         ("k disconnected 2-qubit blocks", disconnected_blocks, True),
         ("product of single-qubit chains", single_qubit_chains, True),
         ("shallow 1D local, full T-density", shallow_local_magic, True),
+        ("free-fermion, T-saturated", free_fermion, True),
+        ("free-fermion + ONE swap (control)", free_fermion_plus_one_swap, False),
         ("all-to-all magic (control: hard)", all_to_all_magic, False),
     ]
 
+    from aionq import matchgate as mg
+
     real_plan = contraction.contraction_plan
+    real_fermion = mg.matchgate_plan
     print("\n  K4 structure families (magic that is not connected to anything)")
-    print(f"    {'family':<34}{'n':>4}{'width':>7}{'2-strat':>10}{'3-strat':>10}  verdict")
+    print(f"    {'family':<34}{'n':>4}{'width':>7}{'2-strat':>10}{'4-strat':>10}  verdict")
     failed = False
     for name, build, should_be_easy in families:
         n = 12
         qc = build(n)
         contraction.contraction_plan = lambda c: contraction.ContractionPlan(
             valid=False, reason="disabled to measure the two-strategy baseline")
+        mg.matchgate_plan = lambda c: mg.MatchgatePlan(
+            valid=False, reason="disabled to measure the two-strategy baseline")
         try:
             before = simulation_residency(qc).q_sim_upper
         finally:
             contraction.contraction_plan = real_plan
+            mg.matchgate_plan = real_fermion
         after = simulation_residency(qc).q_sim_upper
         width = real_plan(qc).width
         # An easy family must end up materially cheaper than dense; a hard

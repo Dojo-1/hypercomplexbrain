@@ -104,12 +104,14 @@ simulable. `q_sim_upper` was built to fix that by pricing what a simulator
 pays — and it does, for the two failure modes above. But it prices magic
 *wherever it sits* and never asks what the magic is connected to. So:
 
-| core (n = 12) | two strategies | three strategies |
-|---|---:|---:|
-| product of single-qubit chains (H,T alternating, **no 2-qubit gate at all**) | **1.0000** | 0.1667 |
-| shallow 1D local, full T-density | 0.4568 | 0.3333 |
-| k disconnected 2-qubit blocks | 0.2284 | 0.2284 |
-| all-to-all magic (control: genuinely hard) | 0.6852 | 0.6852 |
+| core (n = 12) | width | two strategies | four strategies |
+|---|---:|---:|---:|
+| product of single-qubit chains (H,T alternating, **no 2-qubit gate at all**) | 1 | **1.0000** | 0.1667 |
+| shallow 1D local, full T-density | 3 | 0.4568 | 0.3333 |
+| k disconnected 2-qubit blocks | 3 | 0.2284 | 0.2284 |
+| free-fermion, T-saturated (T-count 6286) | 14 | **1.0000** | **0.0000** |
+| free-fermion + **one** SWAP (control) | 14 | 1.0000 | 1.0000 |
+| all-to-all magic (control: genuinely hard) | 28 | 0.6852 | 0.6852 |
 
 The first row is `Q_naive`'s defect wearing a different coat. A circuit of *n
 independent single-qubit chains* is a product state at every step and is
@@ -128,12 +130,55 @@ how its magic is **connected**, not merely for how much of it there is. The
 control row is the point: all-to-all magic has width 28 at n = 12 and is not
 made one bit cheaper.
 
-Two honest limits. This changes **0 of the 150** random cores in the sweep
-above — that generator's T-density is low enough that stabilizer rank always
-wins, so the new strategy is exercised by the K4 family table rather than by the
-random fuzz. And matchgate/free-fermion cores remain uncovered: their
-simulability is not a contraction-width argument, and claiming it without
-implementing it would be the unearned bound this whole section exists to refuse.
+### 0.2 The free-fermion row is the one that should worry you
+
+The fourth row is worse than the first, and it is the reason this section exists
+rather than a changelog entry.
+
+`T = diag(1, e^{iπ/4})` is a **Z-rotation**, and `Z_k = −i c_{2k−1} c_{2k}` is
+quadratic in Majorana modes. So T is a perfectly good free-fermion operation,
+and a nearest-neighbour matchgate circuit can be *saturated* with magic and
+remain exactly solvable in polynomial time. The measured core carries **T-count
+6286** and **contraction width 14** on 12 qubits. Stabilizer rank sees only the
+magic. Contraction sees only the width. Basis permutation needs the core never
+to leave the computational basis, which it does immediately. All three agree the
+core is maximally hard — `q_sim_upper = 1.0000`, *"no implemented strategy
+simulates this core below dense cost"* — and all three are wrong, because
+free-fermion structure is invisible to every one of them.
+
+Stabilizer rank can therefore be driven **arbitrarily** wrong on this family by
+adding magic that costs the real simulator nothing. That is not a loose bound;
+it is a bound with no relationship to the quantity it estimates.
+
+The control row is what makes the strategy trustworthy rather than merely
+generous. Matchgates on next-nearest neighbours — equivalently, matchgates plus
+SWAP — are **universal for quantum computation**. One SWAP appended to the same
+core takes it from 0.0000 back to 1.0000, at identical contraction width.
+`aionq.matchgate` therefore refuses far more than the theorem requires: gates
+must be on adjacent indices in the circuit's own ordering with no routing
+allowed; two-qubit gates must have the parity-block form `G(A,B)` with
+`det A = det B` (which is exactly what rejects SWAP at `det A = +1, det B = −1`,
+CZ at `−1, +1`, and RZZ, whose generator is quartic in Majoranas); and
+one-qubit gates must be **diagonal**, so H and X are refused outright rather
+than reasoned about through their Jordan–Wigner strings. A matchgate circuit
+written with Hadamards is missed and charged by another strategy — a weaker
+bound, never a wrong one.
+
+### 0.3 Limits of this round
+
+This changes **0 of the 150** random cores in the sweep above — that generator's
+T-density is low enough that stabilizer rank always wins, and it emits no
+matchgates at all. Both structural strategies are exercised by the K4 family
+table, not by the random fuzz. Everything above rests on **constructed**
+families chosen because they exhibit the defect; that is legitimate adversarial
+method and it is not a random sample, so no claim is made about how often real
+cognitive cores land in these regimes.
+
+The QΣ-R1a gate's three named families are now covered. **The lesson is not that
+the list is finished.** Each of the three was a case where the portfolio was not
+loosely wrong but unrelated to the truth, and the list was written by the same
+people who wrote the portfolio. What the fourth strategy proves is that the
+third one's coverage claim was worth exactly as much as the second's.
 
 ---
 
@@ -884,7 +929,7 @@ capacity as a count of holonomies.
 | QΣ-R0.7 | typed quantities; transport holonomy measured | ✅ 57/57 tests |
 | QΣ-R0.8 | self-review: half-applied fixes completed; cone wired into `promote()` | ✅ 59/59 tests |
 | HB0 universal base | conditioned \(H^n\) atlas, H⁴ default, typed Euclidean base control, live Atlas/HB-0 placement; K13 frozen separately | structurally implemented as `AXIOM-HB0-UNIVERSAL_POINCARE_BASE`; hashed working-tree envelope verifies, while independent witnessing and task benefit remain absent |
-| QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | tensor-network and low-treewidth families now covered by `aionq.contraction` and the K4 table; **matchgate/free-fermion still not covered**. Closing them exposed §0.1: the two-strategy portfolio scored a product of single-qubit chains at 1.00, and the suite pinned it |
+| QΣ-R1a | adversarial suite: representation, simulator-portfolio, interface attacks | ✅ all three named families covered — tensor-network and low-treewidth by `aionq.contraction`, matchgate/free-fermion by `aionq.matchgate`, exercised by the K4 table. Closing them exposed §0.1–§0.2: the two-strategy portfolio scored a product of single-qubit chains at 1.00 and a poly-time free-fermion core at 1.00, and the suite pinned the first |
 | Σ∞-S3 | §16 exp. 1: sheaf obstruction localisation, 8 coordinate systems, 300 trials; plus the QΣ query claim | ✅ 128 tests; sheaf clause survives, hypercomplex clause killed, octonionic clause ill-posed |
 | S4-G100 | Reversible Recognition Chamber: aperture, ordered roles, nest gate, 10 preregistered gates | ✅ 193 tests; 6/10 gates fail, chamber retired, S3 claim superseded as basis-dependent |
 | S5 | moving-frame orbit audit; basis-free Laplacian instrument | ✅ 208 tests; exactly orbit-collapsed AND strongest (0.964 vs 0.776) |
@@ -917,14 +962,21 @@ and nothing here should be read as assuming otherwise.
    from outside.
 
    QΣ-R1a is the first time this was collected on rather than merely stated, and
-   the lesson was sharper than expected. Adding one strategy did not shave a few
-   percent off a frontier — it took a family from **1.00 to 0.17**, because the
-   missing strategy was not a better algorithm for a hard problem but the only
-   implemented algorithm that could see *structure* at all. The exposure is
-   therefore not symmetric: a metric missing a strategy is not uniformly
-   optimistic, it is arbitrarily wrong on whatever that strategy was for, and it
-   gives no signal at all about where. Matchgate/free-fermion is the next known
-   hole; the unknown ones are the point.
+   the lesson was sharper than expected. Adding two strategies did not shave a
+   few percent off a frontier — it took one family from **1.00 to 0.17** and
+   another from **1.00 to 0.00**, because what was missing was not a better
+   algorithm for a hard problem but the only implemented algorithms that could
+   see *structure* at all. The exposure is therefore not symmetric: a metric
+   missing a strategy is not uniformly optimistic, it is arbitrarily wrong on
+   whatever that strategy was for, and it gives no signal at all about where.
+
+   The free-fermion case shows how far that goes. `q_sim_upper` can be driven to
+   any value on a matchgate core by padding it with T gates the real simulator
+   never pays for. A number that an adversary can set to 1.00 on a poly-time
+   circuit is not a loose upper bound on hardness; on that family it is not a
+   bound on hardness at all. All three families the gate named are now covered —
+   and the list was written by the same people who wrote the portfolio, so its
+   completion is evidence about the list, not about the frontier.
 2. **Measured-high does not mean thinks-better.** Nothing here connects `Q_cert` to
    any cognitive performance. The architecture is now auditable; it is not yet
    justified.
