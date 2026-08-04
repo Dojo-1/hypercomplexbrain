@@ -1222,3 +1222,74 @@ working tree. Every internal check stayed green — the suite passed, because th
 mutation was one no test could kill. It was caught by `git status`: a tool
 outside the instrument, answerable to nobody in it. That is remainder 3 in
 miniature, and it was not staged.
+
+---
+
+## 8.2 The geometry was already there, unnamed
+
+`witness_nerve.py` is named for the **nerve of a cover**, and behaves like one.
+Parties are the patches; an act between two of them is a 1-simplex; evidence is
+a **connection**, transporting a claim's rank from producer to verifier.
+
+Read that way, the Gödelian gap stops being a limitation and becomes a dimension
+count. The self-audit says every predicate expressible about the repository's own
+artifacts is decidable *here* — every section is locally defined. What is missing
+is a gluing condition, and gluing conditions live on **overlaps**. With one party
+the cover has one patch, and `party_nerve` computes what follows:
+
+```
+parties=1  self_loops=12  edges=0  triangles=0  dimension=0  χ=1
+```
+
+> The obstruction to closing the self is not that H¹ is non-zero.
+> **It is that the complex has no degree-1 part in which an obstruction could
+> live.**
+
+That is why quality cannot help. Quality is a property of the fibre — the mode,
+the care, the number of strategies — and the problem is the **base**. A
+self-loop is not a low-quality edge; it is not an edge. Relabel the same twelve
+acts to distinct parties and an edge appears immediately, so nothing about the
+modelling forces dimension 0.
+
+The attestation-cycle theorem is a **flatness** statement in this reading. A
+cycle of attestations is a loop in the nerve, and its holonomy is zero once any
+attestation exists: transport around the loop returns you to ATTESTED, never
+accumulating. Only `recomputed` edges carry non-trivial transport. The repository
+proved flatness of the evidence connection and recorded it as an inequality. The
+correction it survived — that the *first* attestation is not free, holonomy 1
+from the empty graph — is the statement that an attestation is not nothing, it is
+**bounded**.
+
+### `HOLD` is a stratum, not a refusal
+
+The advantage cone `K` is a region in the 8-dimensional outcome space: a product
+of per-coordinate half-spaces. The R3B-0 effect vector has four finite
+coordinates and four NaN, so it is neither inside `K` nor outside it. It lies on
+a **stratum of codimension 4** where `K`'s inequalities are not evaluable.
+`AdvantageCone.contains` returns False there — correctly, since a point that
+cannot be shown inside must not be treated as inside — but *False* and *outside*
+are different geometric statements, and only one of them is a scientific result.
+
+Because the constraints are per-coordinate and **uncoupled**, `K` is a product,
+so the projection onto the measured coordinates is *exact* rather than an
+approximation. The conditional question is therefore well posed, and answering it
+separates a scientific failure from a missing audit:
+
+| axis | effect | margin | slack |
+|---|---:|---:|---:|
+| accuracy | 0.4956 | 0.20 | **+0.2956** |
+| generalization | 0.5215 | 0.20 | **+0.3215** |
+| robustness | 0.5053 | 0.20 | **+0.3053** |
+| calibration | 0.2500 | 0.10 | **+0.1500** |
+
+The organ's measured cognitive effect is **interior to the projected cone on
+every axis**, by roughly a factor of 2.5. Every one of the four unmeasured axes
+is merely `no_worse` — none demands an improvement. And it is still not
+promotable, because `audit_strength` is `0.0` against a threshold of `1.0`, and
+`promote()` refuses to trade audit against effect size.
+
+So the sharpest form of §8.1 is not an abstraction:
+
+> **The four-cell organ shows a cognitive effect well inside its pre-registered
+> admissible region, and cannot be promoted — because there is no second party
+> to witness it.** Remainder 3 is what holds remainder 2 shut, with numbers.

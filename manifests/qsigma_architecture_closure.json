@@ -72,6 +72,26 @@
     "that R1 is closed by anything here. A second party's bound would weaken it; nothing in this repository can supply one.",
     "that the join is a theorem about architectures in general. It is a computed statement about this repository's current state, and it is designed to stop being true."
   ],
+  "amendment_geometry": {
+    "note": "a second correction from the researcher: the reasoning was flat where the material is not. It was. Both structures below were already in the repository with their geometry unstated, and stating it made three things computable that were not.",
+    "i_the_nerve_is_a_nerve": {
+      "structure": "witness_nerve.py is named for the nerve of a cover and behaves like one. Parties are patches, an act between two of them is a 1-simplex, and evidence is a CONNECTION transporting a claim's rank from producer to verifier.",
+      "computed": {"parties": 1, "self_loops": 12, "edges": 0, "triangles": 0, "dimension": 0, "euler_characteristic": 1},
+      "statement": "the obstruction to closing the self is not that H^1 is non-zero. The complex has no degree-1 part in which an obstruction could live. Quality is a property of the fibre -- the mode, the care, the number of strategies -- and the problem is the base.",
+      "why_a_self_loop_is_not_a_weak_edge": "WitnessAct.rank returning 0 for producer == verifier is exactly this: it is not a low-quality 1-simplex, it is not a 1-simplex. Relabelling the same twelve acts to distinct parties produces an edge immediately, so nothing in the modelling forces dimension 0.",
+      "flatness": "the attestation-cycle theorem is a flatness statement. Holonomy of the evidence connection around an attestation loop is 0 once any attestation exists; only recomputed edges carry non-trivial transport. The correction that theorem survived -- that the FIRST attestation is not free, holonomy 1 from the empty graph -- is the statement that an attestation is not nothing, it is bounded."
+    },
+    "ii_hold_is_a_stratum": {
+      "structure": "the advantage cone K is a product of per-coordinate half-spaces in the 8-dimensional outcome space. The R3B-0 effect vector has 4 finite coordinates and 4 NaN.",
+      "computed": {"coordinates": 8, "measured": 4, "unmeasured": 4, "codimension": 4, "membership_posed": false, "projected_inside": true},
+      "statement": "the effect vector is neither inside K nor outside it. It lies on a stratum of codimension 4 where K's inequalities are not evaluable. AdvantageCone.contains returns False there, correctly, since a point that cannot be shown inside must not be treated as inside -- but False and OUTSIDE are different geometric statements and only one of them is a scientific result.",
+      "why_the_projection_is_exact": "the constraints are per-coordinate and uncoupled, so K is a product and its projection onto the measured coordinates is exact rather than an approximation. The conditional question is therefore well posed.",
+      "slack_on_the_measured_axes": {"accuracy": 0.2956, "generalization": 0.3215, "robustness": 0.3053, "calibration": 0.15},
+      "the_substantive_result": "the organ's measured cognitive effect is INTERIOR to the projected cone on every axis, by roughly a factor of 2.5, and every one of the four unmeasured axes is merely no_worse and demands no improvement. The science is not what blocks promotion.",
+      "and_still_held": "audit_strength 0.0 against threshold 1.0, and promote() refuses to trade audit against effect size. The four-cell organ shows a cognitive effect well inside its pre-registered admissible region and cannot be promoted, because there is no second party to witness it."
+    },
+    "what_this_changes": "section 8.1 said the three remainders are one remainder. This says what that one remainder IS geometrically -- a base with no 1-cells -- and shows that the cost is not hypothetical: a real measured effect, comfortably inside its registered cone, is sitting unpromoted behind it."
+  },
   "typed_remainders": [
     {
       "kind": "scope_remainder",
@@ -84,6 +104,14 @@
     {
       "kind": "authorship_remainder",
       "statement": "Computed by one party about that party. The statement 'no internal act lifts this' is itself an internal act, and it is subject to its own finding: it carries evidence rank NONE until someone else evaluates it."
+    },
+    {
+      "kind": "geometry_remainder",
+      "statement": "The nerve model is a model. It is the repository's own -- witness_nerve.py is named for it and its theorem is a flatness result -- so naming the geometry is recovery rather than imposition. But the theorems proved here are theorems about the model, and the claim that a party is the right notion of patch is a modelling choice no computation in this repository can justify. A finer cover, with the same party's independent runs as distinct patches, would change every dimension count on this page; whether that cover is legitimate is exactly the question of what independence means, and it is not settled here."
+    },
+    {
+      "kind": "unpromoted_effect_remainder",
+      "statement": "The measured interior effect is a calibration-round effect on a positive control designed to be detectable, so its size is not evidence of cognitive advantage in any interesting task. What the projection establishes is narrower and still worth having: promotion is not blocked by the science. It is blocked by four no_worse axes nobody has measured and by an audit nobody has performed."
     }
   ]
 }

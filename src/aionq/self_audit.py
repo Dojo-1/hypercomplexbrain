@@ -581,6 +581,27 @@ CORRECTIONS = (
         True,
     ),
     Correction(
+        "QSigma-R3B-0",
+        "the HOLD was read as though the organ had failed to show an effect. It "
+        "had not: the cone's constraints are per-coordinate and uncoupled, so the "
+        "projection onto the four measured axes is exact, and the measured effect "
+        "is interior to it on every axis by a factor near 2.5. All four "
+        "unmeasured axes are no_worse and demand no improvement. HOLD is a "
+        "stratum of codimension 4 where membership is not posed, not a refusal",
+        "tests/test_witness_geometry.py::test_the_measured_sub_vector_is_interior_to_the_projected_cone",
+        True,
+    ),
+    Correction(
+        "WITNESS-NERVE",
+        "the evidence rank of a one-party graph was read as an obstruction that "
+        "happens to vanish. The nerve of a one-party cover is a POINT -- 12 "
+        "self-loops, 0 edges, dimension 0 -- so there is no degree-1 part in "
+        "which an obstruction could live. Quality lives in the fibre and the "
+        "problem is the base, which is why no internal act of any mode lifts it",
+        "tests/test_witness_geometry.py::test_a_one_party_nerve_is_a_point",
+        True,
+    ),
+    Correction(
         "ARCHITECTURE",
         "section 8 presented three load-bearing remainders as three separate "
         "debts, with the Godelian one as the philosophical outlier. Computed "
