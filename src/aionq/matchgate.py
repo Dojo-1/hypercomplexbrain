@@ -187,17 +187,24 @@ def matchgate_plan(circuit) -> MatchgatePlan:
                 "Matchgates on next-nearest neighbours are universal, so a "
                 "non-adjacent gate cannot be certified by this strategy")
 
-        # find_bit order need not be the operand order; the parity blocks are
-        # symmetric under the swap of the two operands only when the gate itself
-        # is, so normalise by testing the matrix as given and, if the operands
-        # are descending, as conjugated by the operand swap.
-        if first > second:
-            permutation = np.array([[1, 0, 0, 0],
-                                    [0, 0, 1, 0],
-                                    [0, 1, 0, 0],
-                                    [0, 0, 0, 1]], dtype=complex)
-            matrix = permutation @ np.asarray(matrix) @ permutation
-
+        # No operand-order normalisation is applied, and none is needed.
+        #
+        # An earlier version conjugated the matrix by the operand swap when the
+        # operands were descending, under a comment claiming the parity blocks
+        # were not swap-symmetric.  That was wrong, and worse, the test written
+        # to guard it could not fail: `is_matchgate_matrix` is INVARIANT under
+        # the operand swap, so the conjugation was a no-op on every input.
+        #
+        # The invariance is structural.  Conjugating by the swap exchanges basis
+        # indices 1 and 2.  The eight entries required to vanish are
+        # {(0,1),(0,2),(3,1),(3,2),(1,0),(2,0),(1,3),(2,3)}, a set closed under
+        # that exchange; A is read from {0,3}x{0,3}, which the exchange fixes
+        # pointwise; and B is read from {1,2}x{1,2}, which the exchange permutes
+        # within itself, conjugating B and so preserving det B.  Hence both the
+        # block test and the determinant test are unchanged.
+        #
+        # Recorded rather than silently deleted, because a guard that cannot
+        # fail is the same defect this module's own family of findings is about.
         if not is_matchgate_matrix(matrix):
             return MatchgatePlan(
                 False,

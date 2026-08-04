@@ -138,6 +138,29 @@
     },
     "not_fixed": "circuit equivalence is intractable in general and this repository has said so since the compiler portfolio was introduced. Nothing here closes the vector. What changed is that it is no longer silent."
   },
+  "amendment_self_review": {
+    "note": "a review of this round's own work, run against the same standard the round applied to the metric. Two defects were found, both of the class this round has been documenting: a guard whose witness could not reach the case it asserted.",
+    "defect_1_degenerate_saturation": {
+      "what": "the saturation flag reported the zero-qubit circuit as saturated -- bounding_strategy 'dense', informative False -- while q_sim_upper was 0.0",
+      "why_it_is_wrong": "it claimed absence of information about the one circuit whose cost is exactly known, and contradicted the flag's own definition, which is the equivalence between saturation and q_sim_upper == 1.0",
+      "why_it_survived": "test_saturation_is_exactly_the_condition_q_sim_upper_equals_one asserts that equivalence over a list of witnesses that never included n = 0",
+      "fix": "n = 0 reports bounding_strategy 'trivial'. It has no dense ceiling to fail to beat, so saturation is not defined there rather than being defaulted to true. The witness list now includes QuantumCircuit(0) and QuantumCircuit(1)."
+    },
+    "defect_2_a_guard_that_could_not_fail": {
+      "what": "matchgate_plan conjugated the gate matrix by the operand swap when operands were descending, under a comment stating the parity blocks were not swap-symmetric",
+      "why_it_is_wrong": "they are. Conjugating by the swap exchanges basis indices 1 and 2. The eight entries required to vanish form a set closed under that exchange; A is read from {0,3}x{0,3}, fixed pointwise; B is read from {1,2}x{1,2}, conjugated and so determinant-preserving. is_matchgate_matrix is therefore invariant under the operand swap and the conjugation was a no-op on every input.",
+      "why_it_survived": "the test guarding it used SWAP and XXPlusYY, both symmetric under the exchange, so it passed identically whether the conjugation was present, absent or wrong",
+      "measured": "0 disagreements between is_matchgate_matrix(M) and is_matchgate_matrix(swap M swap) over 4000 random and block-structured matrices",
+      "fix": "the conjugation is removed and the invariance it depended on is asserted directly, with an ASYMMETRIC matchgate as the witness -- identity on the even block, a rotation on the odd one -- so the property is not true by accident of the example."
+    },
+    "checked_and_found_sound": [
+      "tie-breaking in bounding_strategy awards ties in declaration order, which could make a winner histogram misleading. Measured: 0 ties in 150 ACAF cores and 0 in 216 disagreement cores, so both published histograms are strict wins and neither claim depends on the rule. The full achiever set is now recorded as bounding_achievers so a future corpus cannot hide ties.",
+      "a suspected memory blow-up from calling to_matrix() on wide gates before rejecting them: not real. to_matrix() either returns an already-stored array or raises, so MCX(11) and a 12-qubit UnitaryGate both resolve in 0.05s at under 0.1 MB.",
+      "contraction's exponent-only charge of width + 1 is the largest intermediate tensor's exponent, which no contraction in that ordering can beat, so it does not understate.",
+      "no code path serialises ResidencyReport, so the infinite entries in strategy_costs cannot reach a JSON envelope."
+    ],
+    "published_numbers_unaffected": "the ACAF headline (mean 0.0825, max 0.5329, 0/150 saturated, stabilizer_rank 150), the K3 table and the K4 table are bit-identical after both fixes."
+  },
   "document_correction": {
     "what": "docs/ARCHITECTURE.md section 0 printed 'q_sim_upper: mean 0.0880 max 0.7423' beside 'gap: mean 0.9175'",
     "why_those_cannot_both_hold": "gap is defined as Q_naive - q_sim_upper and Q_naive is identically 1.0000 on this corpus, so a gap of 0.9175 IS a q_sim_upper mean of 0.0825. The page was carrying two numbers from two different runs and asserting both, while stating that every number in it is computed and none is asserted.",
@@ -159,6 +182,10 @@
     {
       "kind": "adversarial_remainder",
       "statement": "On the free-fermion family the metric was not loosely wrong but controllable: q_sim_upper could be set to any value in [0,1] by padding a poly-time circuit with T gates that the real simulator never pays for. An upper bound an adversary can dial is not a weak bound on hardness; on that family it is not a bound on hardness. Whether any other family admits the same control is untested."
+    },
+    {
+      "kind": "self_review_remainder",
+      "statement": "This round documented, four times, a guard whose witness could not reach the case it asserted -- and then shipped two more of its own: a saturation equivalence tested without n = 0, and a matchgate conjugation guarded by two swap-symmetric examples. Both were found by a review of this round's own work rather than by the suite, which passed throughout. The lesson is not that the reviewer was careless; it is that a test suite reports whether its witnesses fail, never whether its witnesses reach."
     },
     {
       "kind": "notation_remainder",

@@ -61,6 +61,13 @@ def test_saturation_is_exactly_the_condition_q_sim_upper_equals_one():
     circuits = [
         _single_qubit_chains(8), _free_fermion(8), _all_to_all_magic(6),
         QuantumCircuit(4),
+        # The zero-qubit circuit, which this test asserted over and never
+        # reached. It used to report bounding_strategy "dense" and therefore
+        # informative False, while q_sim_upper was 0.0 -- breaking the very
+        # equivalence asserted below. A witness list that cannot reach the
+        # degenerate case is the defect this whole file is about.
+        QuantumCircuit(0),
+        QuantumCircuit(1),
     ]
     swapped = _free_fermion(8)
     swapped.swap(0, 1)
@@ -153,7 +160,11 @@ def test_no_random_acaf_core_is_saturated():
 def test_the_bounding_strategy_names_a_real_strategy_that_achieved_the_minimum():
     for build in (_single_qubit_chains, _free_fermion, _all_to_all_magic):
         report = simulation_residency(build(8))
-        if not report.informative:
+        # "dense" and "trivial" are not strategies -- they are the fallback and
+        # the degenerate case -- so neither appears in strategy_costs. Skipping
+        # only on `not informative` would have missed "trivial", which is
+        # informative and still not a strategy name.
+        if report.bounding_strategy in {"dense", "trivial"}:
             continue
         winner = report.bounding_strategy
         assert winner in report.strategy_costs
@@ -244,3 +255,35 @@ def test_all_four_strategies_fail_on_it_together():
         assert cost >= float(circuit.num_qubits), (name, cost)
 
 
+
+
+def test_the_degenerate_zero_qubit_circuit_is_not_reported_as_saturated():
+    """It has no dense ceiling to fail to beat, and its cost is exactly known.
+
+    Reporting it as saturated claimed absence of information about the one
+    circuit whose cost is certain, and contradicted the definition of the flag,
+    since `q_sim_upper` is 0.0 there.
+    """
+    report = simulation_residency(QuantumCircuit(0))
+    assert report.q_sim_upper == pytest.approx(0.0)
+    assert report.bounding_strategy == "trivial"
+    assert report.informative
+
+
+def test_the_reported_winner_is_one_of_the_recorded_achievers():
+    """A winner label is chosen from ties by declaration order.
+
+    That makes a histogram of winners potentially misleading in a corpus where
+    ties are common, so the full achiever set is recorded alongside it. Measured
+    on ACAF: 0 ties in 150 cores, so the "stabilizer rank 150" result is 150
+    strict wins rather than an artefact of the tie rule.
+    """
+    for build in (_single_qubit_chains, _free_fermion, _all_to_all_magic):
+        report = simulation_residency(build(8))
+        if report.bounding_strategy in {"dense", "trivial"}:
+            assert report.bounding_achievers == ()
+        else:
+            assert report.bounding_strategy in report.bounding_achievers
+            for name in report.bounding_achievers:
+                assert report.strategy_costs[name] == pytest.approx(
+                    report.log2_sim_cost, abs=1e-9)

@@ -582,6 +582,28 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R1a",
+        "the saturation flag reported the zero-qubit circuit as saturated, "
+        "claiming absence of information about the one circuit whose cost is "
+        "exactly known, and contradicting its own definition since q_sim_upper "
+        "is 0.0 there. The test asserting the equivalence never included a "
+        "witness with n = 0",
+        "tests/test_saturation.py::test_the_degenerate_zero_qubit_circuit_is_not_reported_as_saturated",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "matchgate_plan conjugated the gate matrix by the operand swap for "
+        "descending operands, under a comment claiming the parity blocks were "
+        "not swap-symmetric. They are: the required-zero set is closed under the "
+        "exchange, A is read from indices the exchange fixes, and B is conjugated "
+        "so its determinant is preserved. The conjugation was a no-op on every "
+        "input and the test guarding it used two swap-symmetric gates, so it "
+        "could not fail",
+        "tests/test_matchgate.py::test_the_classification_is_invariant_under_the_operand_swap",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
         "q_sim_upper is a function of the NOTATION rather than of the operator: "
         "the identity on six qubits scores 0.0000 written in Clifford+T and "
         "1.0000 written in qiskit's full gate set, on a metric whose stated "

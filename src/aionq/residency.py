@@ -219,6 +219,10 @@ class ResidencyReport:
     # did: the bound fell back to brute force.
     bounding_strategy: str = "dense"
     strategy_costs: dict = field(default_factory=dict)
+    #: Every strategy that achieved the minimum, not just the one named above.
+    #: A winner histogram built from ``bounding_strategy`` alone under-reports a
+    #: strategy that repeatedly ties for first.
+    bounding_achievers: tuple = ()
 
     @property
     def informative(self) -> bool:
@@ -241,6 +245,13 @@ class ResidencyReport:
         and correctly: the portfolio has nothing to say about it either.  The
         flag marks absence of information, not presence of hardness -- and the
         two were being reported by the same number.
+
+        The zero-qubit circuit is reported as ``trivial`` rather than ``dense``.
+        It has no dense ceiling to fail to beat and its cost is exactly known,
+        so calling it saturated would have claimed absence of information about
+        the one circuit whose cost is certain -- and would have broken the
+        equivalence above, since ``q_sim_upper`` is 0.0 there.  That case was
+        asserted by a test whose witnesses never included it.
         """
         return self.bounding_strategy != "dense"
 
@@ -603,11 +614,23 @@ def simulation_residency(
         "free_fermion": log2_fermion,
     }
     log2_cost = min(float(n), *strategy_costs.values())
-    bounding_strategy = "dense"
-    for candidate, cost in strategy_costs.items():
-        if cost < float(n) and cost <= log2_cost + 1e-12:
-            bounding_strategy = candidate
-            break
+    # Ties are awarded in declaration order, so the label is deterministic.  It
+    # is also potentially misleading in aggregate -- a histogram of winners
+    # under-reports a strategy that repeatedly ties for first -- so the full set
+    # of achievers is recorded rather than only the label.  Measured, the ACAF
+    # corpus has 0 ties in 150 cores, so the "stabilizer rank 150" finding is
+    # 150 strict wins and not an artefact of this rule.
+    achievers = [name for name, cost in strategy_costs.items()
+                 if cost < float(n) and cost <= log2_cost + 1e-12]
+    if n == 0:
+        # Degenerate: there is nothing to simulate and no dense ceiling to fail
+        # to beat.  Calling this "saturated" would report absence of information
+        # about a circuit whose cost is exactly known, and would break the
+        # equivalence between saturation and q_sim_upper == 1.0 that the flag
+        # is defined by -- q_sim_upper is 0.0 here.
+        bounding_strategy = "trivial"
+    else:
+        bounding_strategy = achievers[0] if achievers else "dense"
 
     raw = 0.0 if n == 0 else min(
         log2_stabrank, log2_basis, log2_tensor, log2_fermion) / n
@@ -697,6 +720,7 @@ def simulation_residency(
         typed_remainders=remainders,
         bounding_strategy=bounding_strategy,
         strategy_costs=strategy_costs,
+        bounding_achievers=tuple(achievers),
     )
 
 

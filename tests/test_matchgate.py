@@ -130,13 +130,44 @@ def test_a_three_qubit_gate_is_refused():
     assert "qubits" in plan.reason
 
 
-def test_operand_order_does_not_smuggle_a_non_matchgate_through():
-    """A gate applied with descending operands is the same physical gate.
+def test_the_classification_is_invariant_under_the_operand_swap():
+    """Why `matchgate_plan` needs no operand-order normalisation.
 
-    If the module tested the raw matrix without normalising operand order, a
-    SWAP written as (1, 0) could take a different path through the block test
-    than one written as (0, 1).
+    An earlier version conjugated the matrix by the operand swap for descending
+    operands, and the test guarding it used SWAP and XXPlusYY -- both symmetric
+    under that exchange -- so it could not fail whatever the conjugation did.
+    This asserts the property the module actually relies on, and exercises an
+    ASYMMETRIC matchgate so the invariance is not true by accident.
     """
+    swap = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]],
+                    dtype=complex)
+
+    # Identity on the even-parity block, a rotation on the odd one: a matchgate
+    # that genuinely differs from its operand-swapped self.
+    angle = 0.7
+    asymmetric = np.eye(4, dtype=complex)
+    asymmetric[1, 1] = np.cos(angle); asymmetric[1, 2] = -np.sin(angle)
+    asymmetric[2, 1] = np.sin(angle); asymmetric[2, 2] = np.cos(angle)
+    assert not np.allclose(asymmetric, swap @ asymmetric @ swap), (
+        "this witness must not be swap-symmetric or the test proves nothing")
+    assert is_matchgate_matrix(asymmetric)
+    assert is_matchgate_matrix(swap @ asymmetric @ swap)
+
+    # And the invariance holds generally, including on the near-misses that the
+    # determinant condition is there to reject.
+    rng = np.random.default_rng(0)
+    for _ in range(500):
+        matrix = rng.normal(size=(4, 4)) + 1j * rng.normal(size=(4, 4))
+        if rng.random() < 0.7:      # bias towards block-structured near-misses
+            for row, column in ((0, 1), (0, 2), (3, 1), (3, 2),
+                                (1, 0), (2, 0), (1, 3), (2, 3)):
+                matrix[row, column] = 0
+        assert is_matchgate_matrix(matrix) == is_matchgate_matrix(
+            swap @ matrix @ swap)
+
+
+def test_operand_order_does_not_smuggle_a_non_matchgate_through():
+    """The end-to-end consequence of the invariance above."""
     ascending = QuantumCircuit(2)
     ascending.swap(0, 1)
     descending = QuantumCircuit(2)
