@@ -582,6 +582,17 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R3B-0",
+        "neg_energy and neg_latency were recorded as unmeasurable because "
+        "operation counts are not energy and depth is not latency -- correct "
+        "about the QUANTITY, but the cone asks for a DIFFERENCE. With the arms "
+        "at verified resource parity the difference vanishes exactly for every "
+        "cost model that is a function of the resource profile, so two "
+        "coordinates were derivable without naming the quantity at all",
+        "tests/test_parity_derived.py::test_the_derivation_lowers_the_codimension_from_four_to_two",
+        True,
+    ),
+    Correction(
+        "QSigma-R3B-0",
         "the HOLD was read as though the organ had failed to show an effect. It "
         "had not: the cone's constraints are per-coordinate and uncoupled, so the "
         "projection onto the four measured axes is exact, and the measured effect "

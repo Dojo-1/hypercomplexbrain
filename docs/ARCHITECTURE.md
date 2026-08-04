@@ -1293,3 +1293,45 @@ So the sharpest form of §8.1 is not an abstraction:
 > **The four-cell organ shows a cognitive effect well inside its pre-registered
 > admissible region, and cannot be promoted — because there is no second party
 > to witness it.** Remainder 3 is what holds remainder 2 shut, with numbers.
+
+### 8.3 Two of the four coordinates were derivable, not measurable
+
+QΣ-R3B-0 recorded `neg_energy` and `neg_latency` as missing, and gave reasons
+that are refusals rather than absences: *operation counts are parity
+diagnostics, not an energy measurement; protocol depth is a parity diagnostic,
+not a latency measurement.* Both are correct about the **quantity**. But the
+cone does not ask for energy — it asks for a **difference** in energy between
+two arms, and a difference can vanish for reasons that survive every naming of
+the quantity.
+
+> **Theorem (parity-derived vanishing).** Let `P(arm)` be the resource profile.
+> Let `C` be any cost function of the form `C(arm) = f(P(arm))`. If
+> `P(target) = P(control)` then `Δ_C = 0` exactly, for every such `f`.
+> *Proof.* `f` is a function. ∎
+
+All the content is in the premise, so the premise is re-checked rather than
+assumed: `resource_parity` holds on **32 of 32** seed clusters, certifying equal
+trials, copies, memory calls, POVM outcomes and side registers — and a schedule
+and uniform-draw stream that are *shared*, not merely matched. One failing seed
+refuses the whole derivation and returns nothing, not a zero with a caveat.
+
+Codimension **4 → 2**. `sample_efficiency` and `recovery` remain, and neither is
+derivable this way: they are properties of behaviour under conditions the
+protocol never creates — a learning curve it does not run, an interruption it
+does not apply. Closing those needs new protocol, not new reasoning.
+
+Three things this does **not** do. It does not pose the membership question —
+two constrained coordinates are still NaN. It does not measure energy or latency;
+no hardware ran, and the claim is about a difference under a class of models. And
+it excludes, by construction, any cost model that **prices coherence itself** —
+the arms differ in *what* they do while consuming the same amount, so a model
+charging differently for a coherent operation than a dephasing one at equal
+counts is not a function of the profile. That exclusion is why `neg_energy` is
+the weaker of the two; `neg_latency` is stronger, because a latency model
+separating arms that share a schedule would have to depend on something other
+than when operations occur.
+
+A derived zero and a measured zero are not the same object. This one is exact
+and assumption-bearing; a measurement would be uncertain and assumption-free.
+The cone cannot tell them apart, which is a fact about the cone — and the reason
+`cone_stratum` keeps derived coordinates **off by default**.

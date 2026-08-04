@@ -198,8 +198,15 @@ class ConeStratum:
         return self.posed is False and not self.projected_inside
 
 
-def cone_stratum(root) -> ConeStratum:
-    """Locate the R3B-0 effect vector relative to its registered cone."""
+def cone_stratum(root, include_derived: bool = False) -> ConeStratum:
+    """Locate the R3B-0 effect vector relative to its registered cone.
+
+    ``include_derived`` admits the QSigma-R3B-1 parity derivation, which closes
+    ``neg_energy`` and ``neg_latency`` at an exact zero for every cost model
+    that is a function of the resource profile.  It is off by default: a derived
+    coordinate and a measured one are different objects, and the caller should
+    have to ask for them to be mixed.
+    """
     root = Path(root)
     manifest = json.loads((root / R3B_MANIFEST).read_text(encoding="utf-8"))
     artifact = json.loads((root / R3B_ARTIFACT).read_text(encoding="utf-8"))
@@ -211,13 +218,23 @@ def cone_stratum(root) -> ConeStratum:
     margins = cone.get("margins", {})
     tolerance = float(cone["no_worse_tolerance"])
 
+    derived_axes: dict = {}
+    if include_derived:
+        from .parity_derived import derive_parity_axes
+
+        derivation = derive_parity_axes(root)
+        if derivation.premise_holds:
+            derived_axes = {name: entry["delta"]
+                            for name, entry in derivation.derived.items()}
+
     measured, unmeasured = [], []
     for name in order:
-        value = effect.get(name)
+        value = derived_axes.get(name, effect.get(name))
         if value is None or not math.isfinite(float(value)):
             unmeasured.append(name)
         else:
             measured.append(name)
+            effect[name] = float(value)
 
     constrained_unmeasured = [name for name in unmeasured
                               if constraints.get(name, "free") != "free"]
@@ -252,6 +269,7 @@ def cone_stratum(root) -> ConeStratum:
             "unmeasured_are_all_no_worse": all(
                 constraints.get(name) == "no_worse"
                 for name in constrained_unmeasured),
+            "derived_axes": tuple(sorted(derived_axes)),
             "reading": (
                 "the effect vector lies on a stratum of codimension "
                 f"{len(constrained_unmeasured)} where the cone's inequalities "
