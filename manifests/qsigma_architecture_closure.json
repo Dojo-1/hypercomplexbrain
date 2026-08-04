@@ -1,0 +1,89 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "ARCH-CLOSURE-001",
+  "status": "computed against the live repository. Claims the ABSENCE of independent witnessing, not its presence.",
+  "subject": "docs/ARCHITECTURE.md section 8, the three load-bearing parts of [R]",
+  "statement": "The three remainders are one remainder. Each is blocked by the absence of an act performed by a party that is not this repository, and no internal act of any quality or quantity lifts any of them. The architecture is not incomplete in three ways; it is incomplete in one way, three times.",
+  "why_this_round": {
+    "prompt": "a correction from the researcher: the work had been trailing the current blocker and losing the bigger picture. It had. Four consecutive rounds went into q_sim_upper's soundness and then into tooling for that tooling, all of which lives in remainder 1 and none of which moves the architecture.",
+    "the_goal_it_returned_to": "section 8 point 2 -- 'the architecture is now auditable; it is not yet justified'. Everything QSigma-R1a produced makes it more auditable. None of it makes it justified.",
+    "what_changed": "the frontier turned out not to be more measurement. It is a second party, and that is computable rather than assertable."
+  },
+  "computed": {
+    "module": "src/aionq/closure.py::architecture_closure",
+    "r1_classical_frontier": {
+      "blocker": "agreement between simulation strategies is one party checking its own arithmetic",
+      "modelling": "the four strategies as witness acts, every ordered pair granted mode 'recomputed' -- the highest MODE_RANK offers",
+      "acts": 12,
+      "distinct_parties": 1,
+      "evidence_rank": "NONE",
+      "closes_it": "a bound computed by a party that is not this one"
+    },
+    "r2_thinks_better": {
+      "blocker": "promote() requires audit >= audit_threshold and audit is not tradeable against effect size",
+      "cone": "K_R3B0_CALIBRATION",
+      "registered_outcome": "HOLD",
+      "audit_strength": 0.0,
+      "audit_threshold": 1.0,
+      "audit_deficit": 1.0,
+      "coordinates": 8,
+      "observed": ["accuracy", "calibration", "generalization", "robustness"],
+      "missing": ["neg_energy", "neg_latency", "recovery", "sample_efficiency"],
+      "the_important_part": "measuring the four missing coordinates would leave the gate SHUT. The audit deficit is a separate blocker and the code refuses to trade it against effect size, so the step from auditable to justified does not run through more measurement.",
+      "closes_it": "an external audit of the organ, plus the four missing coordinates"
+    },
+    "r3_self_cannot_close": {
+      "blocker": "no internal act rises above ATTESTED",
+      "claims": 30,
+      "independent": 1,
+      "independent_fraction": 0.0333,
+      "mutual": false,
+      "closable_from_inside": false,
+      "closes_it": "a recomputation received from another party"
+    },
+    "join": {
+      "blocked": 3,
+      "all_require_another_party": true
+    }
+  },
+  "the_retired_question": {
+    "what": "QSigma-R1a spent a round building a generator to find cores where two simulation strategies agree, and reported the agreeing region as essentially empty -- 63.4% of cores with no second opinion, median disagreement 3.2 bits where one exists.",
+    "the_prior_question_never_asked": "whether agreement would have COUNTED. It would not. Four strategies are four methods of one party, so producer equals verifier, WitnessAct.rank is 0, and evidence_rank is NONE regardless of how many agree or how closely.",
+    "consequence": "that round's negative result was over-determined. The corroboration it went looking for was worth nothing before it was measured, and knowing this earlier would have saved the round -- or better, redirected it at the thing that does close R1."
+  },
+  "falsifiability": {
+    "why_it_matters": "a statement no future event can move is a slogan with a return value rather than a measurement",
+    "each_item_names_its_closing_event": true,
+    "tested": "relabelling the same twelve portfolio acts to distinct parties lifts the rank from NONE to INDEPENDENT immediately, so it is the shared party that costs the evidence and not the modelling. The audit deficit is computed from the manifest rather than asserted.",
+    "what_would_change_the_verdict": [
+      "a second party recomputing any result here and supplying an envelope: r3 weakens and the independent fraction rises",
+      "a second party computing a simulation bound on a core: r1 weakens",
+      "an external audit of the four-cell organ raising audit_strength to 1.0, together with the four missing coordinates: r2 could reach a real promotion decision rather than HOLD"
+    ]
+  },
+  "the_unstaged_illustration": {
+    "what": "the mutation probe corrupted the module it was measuring, leaving the informative property inverted in the working tree",
+    "why_it_illustrates_r3": "every internal check stayed green -- the suite passed, because the mutation was one no test could kill. It was caught by git status: a tool outside the instrument, answerable to nobody inside it.",
+    "not_staged": "this happened by accident while pursuing remainder 1, and was recorded before its bearing on remainder 3 was noticed."
+  },
+  "what_is_not_claimed": [
+    "that independent witnessing has been achieved. This module computes its ABSENCE, which is the opposite claim, and the round's instruction forbids the other one.",
+    "that the four missing cone coordinates are unmeasurable. sample_efficiency and recovery are runnable in simulation; neg_energy and neg_latency would need a declared cost model and must not be reported as physical measurements. None of that promotes the organ while the audit deficit stands.",
+    "that R1 is closed by anything here. A second party's bound would weaken it; nothing in this repository can supply one.",
+    "that the join is a theorem about architectures in general. It is a computed statement about this repository's current state, and it is designed to stop being true."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "scope_remainder",
+      "statement": "This module computes the closure state; it does not close anything. The one thing a repository cannot do for itself is the one thing all three remainders require, so the honest output of a round spent on this is a sharper description of the debt and not a payment against it."
+    },
+    {
+      "kind": "direction_remainder",
+      "statement": "Four consecutive rounds went into remainder 1 without noticing that remainder 1 is not closable from inside either. The instrumentation was real and the defects it found were real, but the depth of the work was not evidence that it was the right work. A blocker that yields to effort will absorb unlimited effort, and that is not the same as being the frontier."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Computed by one party about that party. The statement 'no internal act lifts this' is itself an internal act, and it is subject to its own finding: it carries evidence rank NONE until someone else evaluates it."
+    }
+  ]
+}

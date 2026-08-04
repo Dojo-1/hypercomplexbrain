@@ -1172,3 +1172,53 @@ and nothing here should be read as assuming otherwise.
 
 Point 3 is the same remainder the draft named Gödelian, now with a sharper reason and
 a copy count attached.
+
+---
+
+## 8.1 The three are one, computed
+
+They read as three debts, and point 3 as the philosophical one. They are one
+debt. `aionq.closure.architecture_closure()` evaluates all three against the
+live repository:
+
+| remainder | blocker | measured |
+|---|---|---|
+| 1. classical frontier | agreement between strategies is one party checking its own arithmetic | evidence rank **NONE** |
+| 2. thinks-better | `promote()` requires `audit ≥ 1.0`; audit strength is `0.0` | **HOLD**, audit deficit 1.0 |
+| 3. self cannot close | no internal act rises above ATTESTED | `closable_from_inside: False` |
+
+> **The architecture is not incomplete in three ways. It is incomplete in one
+> way, three times.**
+
+The sharpest instance is point 1, and it retires a question rather than
+answering it. QΣ-R1a spent a round building a generator to find cores where two
+simulation strategies agree, then reported that the agreeing region is
+essentially empty — 63% of cores have no second opinion at all, and where one
+exists it disagrees by a median factor of 9. **The prior question was never
+asked: would agreement have counted?** Modelled as witness acts, no. The four
+strategies are four *methods* of one party — one author, one repository, one
+process — so `producer == verifier`, `WitnessAct.rank` is 0, and
+`evidence_rank` is `NONE` even when every ordered pair is granted a full
+`recomputed` act, the highest mode `MODE_RANK` offers. The corroboration that
+round went looking for would not have counted had it been found.
+
+Point 2 is the one that matters for the goal, and it is not blocked only by its
+four unmeasured coordinates. `promote()` treats audit as **not tradeable against
+effect size**: measuring `sample_efficiency`, `neg_energy`, `neg_latency` and
+`recovery` would leave the gate shut, because `audit_strength = 0.0` against a
+threshold of `1.0`. So the step from *auditable* to *justified* does not run
+through more measurement. It runs through an external auditor.
+
+This is falsifiable, which is the only reason it is worth stating. Each item
+names the event that closes it — a bound computed elsewhere, an external audit,
+a recomputation received — and every one is an act this repository cannot
+perform for itself. Relabel the same twelve portfolio acts to distinct parties
+and the rank rises to `INDEPENDENT` immediately; it is the shared party that
+costs the evidence, not the modelling.
+
+A small accident of QΣ-R1a is the cleanest illustration. The mutation probe
+corrupted the module it was measuring, leaving `informative` inverted in the
+working tree. Every internal check stayed green — the suite passed, because the
+mutation was one no test could kill. It was caught by `git status`: a tool
+outside the instrument, answerable to nobody in it. That is remainder 3 in
+miniature, and it was not staged.

@@ -581,6 +581,28 @@ CORRECTIONS = (
         True,
     ),
     Correction(
+        "ARCHITECTURE",
+        "section 8 presented three load-bearing remainders as three separate "
+        "debts, with the Godelian one as the philosophical outlier. Computed "
+        "against the live repository they share a single blocker -- an act by a "
+        "party that is not this one -- and the promotion gate makes it explicit: "
+        "audit is not tradeable against effect size, so measuring the four "
+        "missing cone coordinates would leave the gate shut",
+        "tests/test_closure.py::test_all_three_remainders_share_one_blocker",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "the corroboration round measured where two simulation strategies agree "
+        "without first asking whether agreement would count. It would not: four "
+        "strategies are four methods of one party, so producer equals verifier "
+        "and evidence_rank is NONE even granting every ordered pair a full "
+        "recomputed act. The agreeing region that round went looking for was "
+        "worth nothing before it was measured",
+        "tests/test_closure.py::test_the_portfolio_agreement_carries_no_evidence",
+        True,
+    ),
+    Correction(
         "QSigma-R1a",
         "the mutation probe edits the source under test in place and restored it "
         "in a finally, which does not survive SIGKILL. An interrupted run left "
