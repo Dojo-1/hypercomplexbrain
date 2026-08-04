@@ -1,0 +1,68 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R3B-1",
+  "status": "PREREGISTRATION. Written and committed before any implementation exists. No runner has been executed and no value below was chosen from an observed result.",
+  "supersedes_nothing": "R3B-0 stands unaltered. Its registered outcome remains HOLD, its cone, margins and tolerance are untouched, and no threshold is revised here.",
+  "question": "Two of the four unmeasured cone coordinates may be derivable rather than measurable. If the target and control arms consume IDENTICAL resource profiles, then for any cost model that is a function of that profile the difference in cost is exactly zero, without anyone having to declare what the cost model is.",
+  "why_this_is_not_the_refusal_R3B_0_made": {
+    "r3b_0_said": "Protocol operation counts are parity diagnostics, not an energy measurement. Protocol depth is a parity diagnostic, not a latency measurement.",
+    "that_refusal_is_correct_and_is_not_contradicted": "this round does not claim that counts are energy or that depth is latency. It claims something weaker and model-independent: that the DIFFERENCE between two arms with identical profiles vanishes under every profile-based cost model, so the value of the difference does not depend on which model is chosen.",
+    "the_distinction": "R3B-0 refused to name a quantity. This round declines to name it too, and instead quantifies over all admissible namings."
+  },
+  "the_premise_and_where_it_is_verified": {
+    "control": "C4_matched_resource_and_stream_parity, already computed and true in artifacts/r3b_four_cell/four_cell_calibration.json",
+    "what_it_certifies_per_seed": [
+      "target_trials == control_trials == 512",
+      "copies_per_trial equal at 1",
+      "memory_calls_per_trial equal at 1",
+      "povm_outcomes equal at 2",
+      "side_registers equal at 0",
+      "schedule_shared: the two arms present the identical ordered sequence of pair keys",
+      "uniforms_shared: the two arms consume the identical uniform draws"
+    ],
+    "premise_is_not_assumed": "it is read from the sealed artifact and re-checked, and the derivation is refused if any seed's parity record does not hold."
+  },
+  "the_derivation": {
+    "statement": "Let P(arm) be the resource profile: trials, copies per trial, memory calls per trial, POVM outcomes, side registers, and the ordered schedule. Let C be any cost function with C(arm) = f(P(arm)) for some f. C4 establishes P(target) = P(control). Hence C(target) = C(control) and delta_C = 0 exactly, for every such f.",
+    "applies_to": ["neg_energy", "neg_latency"],
+    "why_those_two": "both are declared in R3B-0 as no_worse constraints, and both of the quantities R3B-0 names as their parity diagnostics -- operation counts and protocol depth -- are functions of the resource profile.",
+    "resulting_delta": 0.0,
+    "cone_test": "no_worse with tolerance 0.02 requires delta >= -0.02. Zero satisfies it, with the full tolerance as slack.",
+    "exactness": "the zero is exact and not a measurement with error. It is an identity between two equal numbers, so it carries no uncertainty and no seed variation."
+  },
+  "what_this_explicitly_does_not_cover": {
+    "cost_models_that_price_coherence_itself": "the two arms differ in WHAT they do -- one coherent, one dephased -- while consuming the same amount. A physical cost model that charges differently for a coherent operation than for a dephasing one at equal counts is NOT a function of the resource profile, and this derivation says nothing about it. That is a real exclusion and it is the reason neg_energy is the weaker of the two.",
+    "why_neg_latency_is_stronger": "latency under any schedule-based model depends on the ordered schedule and its depth, and the schedule is not merely equal between arms but SHARED -- the identical sequence of pair keys. A latency model that separated the arms would have to depend on something other than when operations occur.",
+    "physical_measurement": "nothing here is a physical measurement of energy or of time. No hardware ran. The claim is about the difference between two simulated arms under a class of models, and it must never be reported as an energy or latency measurement of anything."
+  },
+  "expected_effect_on_the_stratum": {
+    "before": {"codimension": 4, "unmeasured": ["sample_efficiency", "neg_energy", "neg_latency", "recovery"], "membership_posed": false},
+    "after_if_the_derivation_holds": {"codimension": 2, "unmeasured": ["sample_efficiency", "recovery"], "membership_posed": false},
+    "honest_reading": "this does NOT collapse the stratum and does NOT pose the membership question. It removes two of the four coordinates that were blocking it, and leaves two that require genuinely new protocol work: a learning curve or sample-to-threshold experiment, and an interruption-and-recovery intervention. Neither exists and neither is attempted here."
+  },
+  "what_would_falsify_this_round": [
+    "any seed whose ResourceParity.holds is False, which refuses the derivation outright",
+    "schedule_shared or uniforms_shared being False for any seed",
+    "a demonstration that either coordinate's admissible cost models include one that is not a function of the resource profile, which would reduce the claim from model-independent to model-relative"
+  ],
+  "what_this_round_may_not_conclude": [
+    "that the organ is promotable. The audit deficit is 1.0 and promote() refuses to trade audit against effect size, so no arrangement of cone coordinates promotes anything while audit_strength is 0.0.",
+    "that the cone membership question is posed. Two constrained coordinates remain NaN.",
+    "that the four-cell organ has a cognitive advantage. R3B-0 is a calibration round on a positive control designed to be detectable, and its evidence ceiling remains synthetic-instrument-calibration-only.",
+    "that energy or latency were measured."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "derivation_remainder",
+      "statement": "A derived zero and a measured zero are not the same object. This one is exact and assumption-bearing; a measurement would be uncertain and assumption-free. The cone does not distinguish them, which is a property of the cone worth noticing rather than a licence to conflate them."
+    },
+    {
+      "kind": "scope_remainder",
+      "statement": "sample_efficiency and recovery are not derivable this way. They are not functions of the resource profile; they are properties of behaviour under conditions the protocol never creates -- a learning curve it does not run, and an interruption it does not apply. Closing them needs new protocol, not new reasoning."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Preregistered and to be executed by one party. The derivation's premise is read from an artifact that party produced, and its evidence rank is unchanged by anything in this round."
+    }
+  ]
+}
