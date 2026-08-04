@@ -264,6 +264,49 @@ That is not a hypothetical. It is the mechanism by which both §0.1 and §0.2
 defects survived: each was a core where one strategy was unopposed, and it was
 wrong, and nothing in the portfolio was positioned to notice.
 
+### 0.6 The metric is a function of the notation, not of the operator
+
+§0.5 predicts that a defect in the winning strategy goes unnoticed. Here is one
+that was, found by looking where the saturation flag fires.
+
+Both of these circuits implement **exactly the same operator** — the identity on
+six qubits:
+
+| notation | gates | `q_sim_upper` | `bounding_strategy` |
+|---|---:|---:|---|
+| Clifford+T | 378 | **0.0000** | stabilizer_rank |
+| qiskit's full gate set | 36 | **1.0000** | **dense** |
+
+Written one way the metric says the core is exactly free. Written the other way
+it says no strategy can simulate it below brute force. `q_sim_upper` is
+therefore not a function of the operator; it is a function of how the operator
+is *written* — and resisting exactly that is the metric's stated purpose (§0:
+*"resists gaming by syntax and cannot be inflated by notation"*).
+
+The K3 equivalence attacks pass all three of their cases, because the compiler
+portfolio cancels them. This one it does not see: `U` followed by `U†` for a
+random six-qubit `U`, with no local cancellation at any optimisation level, in
+a gate set the structural strategies also cannot penetrate. All four strategies
+fail together — every one either refuses the core or fails to beat dense — which
+is §0.5's "no second opinion" in its most literal form.
+
+**But the saturation flag fires on it.** That is the one piece of *predictive*
+value the §0.4 instrument has shown: it was derived from two defects already
+known, and it independently marks a third that the adversarial suite passes
+over. So K3 now distinguishes two failures that were being scored the same:
+
+```
+H T Tdg H                                    q_sim_upper=0.0000  ok
+entangle, 4 cancelling T pairs, disentangle  q_sim_upper=0.0000  ok
+H CCX CCX H                                  q_sim_upper=0.0000  ok
+U U-dagger, rich basis (6q)                  q_sim_upper=1.0000  GAMED but SATURATED
+```
+
+A wrong answer the metric flags is not the same failure as a wrong answer it
+states confidently. The defect is real and is not fixed here — circuit
+equivalence is intractable in general, and the repository has said so since
+§0.5's first draft. What changed is that it is no longer silent.
+
 ---
 
 ## 0.5 What the peer audit corrected

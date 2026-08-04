@@ -120,6 +120,24 @@
     "the_sharp_form_of_remainder_1": "a defect in the winning strategy is undetectable from inside the portfolio. For 63% of cores there is nothing else to check against, and where there is, it is an order of magnitude away. This is not hypothetical: it is the mechanism by which both R1a defects survived. Each was a core where one strategy was unopposed, and wrong, and nothing was positioned to notice.",
     "consequence_for_reading_the_metric": "every q_sim_upper should be read as 'the best bound one named algorithm could produce', and bounding_strategy now names it. The word 'portfolio' overstates what the minimum represents."
   },
+  "amendment_notation_dependence": {
+    "note": "the no-redundancy amendment predicts that a defect in the winning strategy goes unnoticed. This is one that was, found by looking where the saturation flag fires.",
+    "statement": "q_sim_upper is not a function of the operator. It is a function of how the operator is written, on a metric whose stated purpose in section 0 is that it 'resists gaming by syntax and cannot be inflated by notation'.",
+    "measurement": {
+      "operator": "the identity on six qubits, verified by Operator(...) against the 64x64 identity at 1e-9",
+      "clifford_t_notation": {"gates": 378, "q_sim_upper": 0.0, "bounding_strategy": "stabilizer_rank"},
+      "rich_basis_notation": {"gates": 36, "q_sim_upper": 1.0, "bounding_strategy": "dense"},
+      "construction": "U followed by U-dagger for a random six-qubit depth-six U, with no local cancellation visible at any optimisation level in the compiler portfolio"
+    },
+    "relation_to_the_k3_suite": "K3 passes all three of its equivalence attacks because the compiler portfolio cancels them. It does not reach this one. The attack is now the fourth K3 row.",
+    "all_four_strategies_fail_together": "every strategy either refuses the core or fails to beat dense, so the reported 1.0000 had no second opinion available. This is the no-redundancy finding in its most literal form: the correlated failure is not hypothetical.",
+    "the_flag_fires": {
+      "claim": "the saturation instrument was derived from two defects already known and independently marks a third that the adversarial suite passes over",
+      "significance": "this is the only PREDICTIVE value the flag has demonstrated, as opposed to retrodiction of the two defects it was built from",
+      "consequence": "K3 now distinguishes a wrong answer the metric flags from a wrong answer it states confidently. Only the latter counts as a kill, and this row is reported as 'GAMED but SATURATED (flagged, not silent)'."
+    },
+    "not_fixed": "circuit equivalence is intractable in general and this repository has said so since the compiler portfolio was introduced. Nothing here closes the vector. What changed is that it is no longer silent."
+  },
   "document_correction": {
     "what": "docs/ARCHITECTURE.md section 0 printed 'q_sim_upper: mean 0.0880 max 0.7423' beside 'gap: mean 0.9175'",
     "why_those_cannot_both_hold": "gap is defined as Q_naive - q_sim_upper and Q_naive is identically 1.0000 on this corpus, so a gap of 0.9175 IS a q_sim_upper mean of 0.0825. The page was carrying two numbers from two different runs and asserting both, while stating that every number in it is computed and none is asserted.",
@@ -141,6 +159,10 @@
     {
       "kind": "adversarial_remainder",
       "statement": "On the free-fermion family the metric was not loosely wrong but controllable: q_sim_upper could be set to any value in [0,1] by padding a poly-time circuit with T gates that the real simulator never pays for. An upper bound an adversary can dial is not a weak bound on hardness; on that family it is not a bound on hardness. Whether any other family admits the same control is untested."
+    },
+    {
+      "kind": "notation_remainder",
+      "statement": "The identity scores 0.0000 or 1.0000 depending on the gate set it is written in, and the vector is not closed. Every q_sim_upper in this repository is a statement about a particular gate sequence, and two sequences for one operator may receive opposite verdicts. Aggregates over cores in mixed notations are therefore aggregates over an uncontrolled variable."
     },
     {
       "kind": "corroboration_remainder",

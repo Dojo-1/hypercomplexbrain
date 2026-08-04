@@ -582,6 +582,17 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R1a",
+        "q_sim_upper is a function of the NOTATION rather than of the operator: "
+        "the identity on six qubits scores 0.0000 written in Clifford+T and "
+        "1.0000 written in qiskit's full gate set, on a metric whose stated "
+        "purpose is to resist gaming by syntax. The K3 suite passes its three "
+        "equivalence attacks and does not reach this one; all four strategies "
+        "fail on it together, so no second opinion was ever available",
+        "tests/test_saturation.py::test_the_same_operator_gets_opposite_verdicts_in_two_notations",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
         "q_sim_upper was read as a portfolio estimate when the portfolio cannot "
         "corroborate it: measured over 216 cores built to make the strategies "
         "compete, 63.4% have exactly one applicable strategy or none, and where a "

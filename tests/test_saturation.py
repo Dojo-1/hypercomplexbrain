@@ -159,3 +159,88 @@ def test_the_bounding_strategy_names_a_real_strategy_that_achieved_the_minimum()
         assert winner in report.strategy_costs
         assert report.strategy_costs[winner] == pytest.approx(
             report.log2_sim_cost, abs=1e-9)
+
+
+# ------------------------------------------- the flag catches a live gaming vector
+
+def test_the_same_operator_gets_opposite_verdicts_in_two_notations():
+    """A representation attack the K3 suite's three attacks do not reach.
+
+    Both circuits below implement EXACTLY the same operator -- the identity on
+    six qubits. Written in Clifford+T it scores 0.0000, because the compiler
+    portfolio cancels it. Written in qiskit's full gate set it scores 1.0000,
+    because no optimisation level in the portfolio sees the cancellation and no
+    structural strategy penetrates the gate set either.
+
+    So `q_sim_upper` is not a function of the operator. It is a function of the
+    notation, and the metric's stated purpose is to resist exactly that.
+    """
+    import numpy as np
+    from qiskit import transpile
+    from qiskit.circuit.random import random_circuit
+    from qiskit.quantum_info import Operator
+
+    dense = random_circuit(6, depth=6, seed=5)
+    rich = QuantumCircuit(6)
+    rich.compose(dense, inplace=True)
+    rich.compose(dense.inverse(), inplace=True)
+
+    clifford_t_source = transpile(
+        random_circuit(6, depth=6, seed=5),
+        basis_gates=["h", "t", "tdg", "s", "sdg", "cx", "x", "z", "rz"],
+        optimization_level=0, seed_transpiler=3)
+    clifford_t = QuantumCircuit(6)
+    clifford_t.compose(clifford_t_source, inplace=True)
+    clifford_t.compose(clifford_t_source.inverse(), inplace=True)
+
+    identity = np.eye(64)
+    assert np.allclose(Operator(rich).data, identity, atol=1e-9)
+    assert np.allclose(Operator(clifford_t).data, identity, atol=1e-9)
+
+    rich_report = simulation_residency(rich)
+    clifford_report = simulation_residency(clifford_t)
+
+    assert clifford_report.q_sim_upper == pytest.approx(0.0, abs=1e-12)
+    assert rich_report.q_sim_upper == pytest.approx(1.0)
+
+
+def test_the_saturation_flag_catches_that_gaming_vector():
+    """The instrument was built as a diagnostic and it fires on a live attack.
+
+    This is the one piece of predictive value the saturation flag has shown:
+    it was derived from two defects already known, and it independently marks a
+    third case -- an identity circuit scored 1.00 -- that the K3 equivalence
+    attacks pass over. A wrong answer the metric flags is not the same failure
+    as a wrong answer it states confidently.
+    """
+    from qiskit.circuit.random import random_circuit
+
+    dense = random_circuit(6, depth=6, seed=5)
+    circuit = QuantumCircuit(6)
+    circuit.compose(dense, inplace=True)
+    circuit.compose(dense.inverse(), inplace=True)
+
+    report = simulation_residency(circuit)
+    assert report.q_sim_upper == pytest.approx(1.0)
+    assert not report.informative
+    assert report.bounding_strategy == "dense"
+
+
+def test_all_four_strategies_fail_on_it_together():
+    """No corroboration was available, which is 0.5's point made concrete.
+
+    Every strategy either refuses the core or fails to beat brute force on it,
+    so there was never a second opinion that could have caught the first.
+    """
+    from qiskit.circuit.random import random_circuit
+
+    dense = random_circuit(6, depth=6, seed=5)
+    circuit = QuantumCircuit(6)
+    circuit.compose(dense, inplace=True)
+    circuit.compose(dense.inverse(), inplace=True)
+
+    report = simulation_residency(circuit)
+    for name, cost in report.strategy_costs.items():
+        assert cost >= float(circuit.num_qubits), (name, cost)
+
+
