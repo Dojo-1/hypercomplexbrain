@@ -581,6 +581,29 @@ CORRECTIONS = (
         True,
     ),
     Correction(
+        "CORPUS",
+        "the round names promise a descent -- unitary price through common "
+        "receiver to quantum movement -- and the artifacts do not compose in "
+        "that shape. 60 local import edges against 4 genuine scientific "
+        "cross-round references, 21 of 26 rounds referencing nothing, and 0 "
+        "artifacts declaring an upstream key, so the graph a defect actually "
+        "travels along is recorded almost nowhere in the evidence",
+        "tests/test_dependency_closure.py::test_the_code_graph_is_an_order_of_magnitude_denser_than_the_evidence_graph",
+        True,
+    ),
+    Correction(
+        "CORPUS",
+        "audit attention was spent on the module with blast radius ZERO while "
+        "the modules with blast radius seven and ten went unexamined. "
+        "_principal_psd_sqrt cost a full round and nothing imports its module, "
+        "so its containment was assumed by never being asked about; "
+        "hyperbolic_qubit reaches ten modules across R6e to R8 and part B, "
+        "carries the HB0 axiom whose witnessing the architecture already "
+        "records as absent, and depends on nothing itself",
+        "tests/test_dependency_closure.py::test_the_load_bearing_modules_are_the_ones_nobody_audited",
+        True,
+    ),
+    Correction(
         "QSigma-R3B-0",
         "neg_energy and neg_latency were recorded as unmeasurable because "
         "operation counts are not energy and depth is not latency -- correct "

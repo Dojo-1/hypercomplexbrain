@@ -1335,3 +1335,63 @@ A derived zero and a measured zero are not the same object. This one is exact
 and assumption-bearing; a measurement would be uncertain and assumption-free.
 The cone cannot tell them apart, which is a fact about the cone — and the reason
 `cone_stratum` keeps derived coordinates **off by default**.
+
+---
+
+## 8.4 The code composes; the evidence does not
+
+Every round here is audited from inside itself. That is the right scale for a
+wrong tolerance and the wrong scale for one question: **if this is wrong, what
+else is wrong?**
+
+The answer travels along the **import** graph, because a result computed by a
+module that imports another inherits that module's correctness. Two graphs,
+measured by `aionq.dependency_closure`:
+
+| | edges |
+|---|---:|
+| code — local `aionq` imports | **60** across 59 modules |
+| evidence — cross-round artifact references | **13**, of which 9 are `self_audit` citing its own subjects |
+| **genuine scientific cross-round edges** | **4** |
+| artifacts declaring an `upstream` key | **0** |
+
+21 of 26 rounds reference nothing at all. The names promise a descent — unitary
+price → operational information → Hopf layer → Holevo sandwich → carrier
+telemetry → capacity ceiling → translation → equal-resource → common receiver →
+source information → movement — and the artifacts do not compose in anything
+like that shape. `r6l` does reference `r6k`, so the mechanism exists and works;
+its absence elsewhere is informative, not accidental.
+
+### The asymmetry this exposes
+
+Blast radius — what would inherit a defect — is computable, and it was never
+computed:
+
+| module | blast radius | depends on |
+|---|---:|---:|
+| `evidence` | 12 | 0 |
+| **`hyperbolic_qubit`** | **10** | **0** |
+| `cayley_dickson` | 7 | 0 |
+| `holevo_sandwich` | 7 | 0 |
+| `quantum_channel_geometry` | 7 | 0 |
+| `common_receiver_reservoir` | **0** | 5 |
+
+Two facts fall out, and neither was known before looking.
+
+**The R6l square-root defect was contained.** `_principal_psd_sqrt` lives in
+`common_receiver_reservoir`, which nothing imports — blast radius **zero**. A
+full round went into that defect, and its containment was never established; it
+was assumed by not being asked about.
+
+**The load sits on modules nobody audited.** `hyperbolic_qubit` reaches ten
+modules across R6e, R6f, R6h, R6k, R6l, R7, R8, ohnium and Part B, and it
+carries the HB0 axiom this document already marks as *structurally implemented,
+independent witnessing absent*. Every module at the top of the ranking has
+`depends_on = 0`: they are **foundations**. They cannot inherit a defect — they
+can only originate one.
+
+So attention had been going to the module with blast radius 0 while the modules
+with blast radius 7 and 10 went unexamined, and no instrument was positioned to
+say so. This one is not a repair — writing `upstream` keys into sealed artifacts
+would be editing results after the fact, which the provenance discipline
+forbids. It makes the omission visible and ranks the surface by leverage.
