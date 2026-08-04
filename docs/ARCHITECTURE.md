@@ -220,6 +220,50 @@ three inactive strategies standing next to it, and a fifth strategy aimed at
 that regime could move all 150 at once. The corpus is a monoculture, which is
 precisely the condition under which the two defects above were possible.
 
+### 0.5 The portfolio has no redundancy
+
+There is no ground truth to check `q_sim_upper` against — computing the true
+simulation cost *is* the problem the metric approximates. So the only available
+evidence that a bound is not an artefact of one algorithm is that a **different**
+algorithm, pricing a different structural property, lands in the same place.
+
+`experiments/strategy_disagreement.py` builds a generator designed to break the
+monoculture, interpolating over magic density, locality and matchgate fraction.
+It works — the winner moves from stabilizer rank to contraction (61%), basis
+permutation (8%) and free-fermion (3%). Then it asks what happens where several
+strategies *can* apply. Over 216 cores:
+
+| | |
+|---|---:|
+| cores with **no** applicable strategy (saturated) | 6 (2.8%) |
+| cores with exactly **one** applicable strategy | 131 (60.6%) |
+| **cores with no second opinion at all** | **137 (63.4%)** |
+| cores with two strategies within 1.0 bit | 2 (0.9%) |
+| cores with two strategies within 2.0 bits | 13 (6.0%) |
+| median margin where a runner-up exists | **3.20 bits** |
+
+Nearly two thirds of cores have a bound with nothing to compare it against.
+Where a runner-up does exist it disagrees by a median of 3.2 bits — a factor of
+**9** in simulation cost. Only one core in 216 has two strategies within half a
+bit of each other.
+
+This is not a fixable shortfall; it follows from the construction. A minimum
+over upper bounds is dominated by whichever bound is best, and two
+differently-motivated bounds have no reason to coincide — the free-fermion path
+is the extreme case, since a single non-matchgate gate deletes it entirely, so
+it can never approach another strategy continuously. Wherever it applies it wins
+by 4 bits; wherever it does not it contributes nothing.
+
+The consequence is the sharp form of remainder 1:
+
+> **A defect in the winning strategy is undetectable from inside the portfolio.**
+> For 63% of cores there is nothing else to check against, and where there is,
+> it is an order of magnitude away.
+
+That is not a hypothetical. It is the mechanism by which both §0.1 and §0.2
+defects survived: each was a core where one strategy was unopposed, and it was
+wrong, and nothing in the portfolio was positioned to notice.
+
 ---
 
 ## 0.5 What the peer audit corrected
@@ -1017,6 +1061,14 @@ and nothing here should be read as assuming otherwise.
    bound on hardness at all. All three families the gate named are now covered —
    and the list was written by the same people who wrote the portfolio, so its
    completion is evidence about the list, not about the frontier.
+
+   §0.5 gives this its final form, and it is worse than "exposed to refutation
+   from outside". **The portfolio cannot refute itself.** 63% of cores have one
+   applicable strategy and no second opinion; where a runner-up exists it
+   disagrees by a median factor of 9. So a wrong strategy is not caught by the
+   others — there are no others, and the two defects above are what that looks
+   like in practice. Every `q_sim_upper` should be read as *"the best bound one
+   named algorithm could produce"*, and `bounding_strategy` now says which.
 2. **Measured-high does not mean thinks-better.** Nothing here connects `Q_cert` to
    any cognitive performance. The architecture is now auditable; it is not yet
    justified.

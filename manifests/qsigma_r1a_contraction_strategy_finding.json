@@ -95,6 +95,31 @@
     },
     "implementation": "ResidencyReport gains bounding_strategy and strategy_costs, and an informative property. 'dense' is recorded as the bounding strategy when the fallback wins, because dense is not a strategy -- it is the absence of one."
   },
+  "amendment_no_redundancy": {
+    "note": "the saturation amendment showed the ACAF corpus is a stabilizer-rank monoculture. The obvious follow-up is a generator that makes the strategies compete, so that agreement between them could corroborate a bound. It was built, it works, and the result is negative.",
+    "why_corroboration_is_the_only_check_available": "there is no ground truth to compare q_sim_upper against, because computing the true simulation cost is the problem the metric exists to approximate. The only evidence that a bound is not an artefact of one algorithm is that a different algorithm, pricing a different structural property, lands in the same place. Two strategies agreeing is weak evidence; one strategy unopposed is none.",
+    "generator": "experiments/strategy_disagreement.py, interpolating over magic density (stabilizer regime), locality (contraction regime) and matchgate fraction (free-fermion regime)",
+    "the_generator_works": {
+      "acaf_corpus": {"stabilizer_rank": 150, "others": 0},
+      "disagreement_corpus": {"contraction": 132, "stabilizer_rank": 53, "basis_permutation": 18, "free_fermion": 7, "dense": 6},
+      "reading": "the monoculture is a property of the ACAF generator, not of the portfolio. Different cores really are bounded by different strategies."
+    },
+    "the_result_is_negative": {
+      "cores": 216,
+      "no_applicable_strategy": 6,
+      "exactly_one_applicable_strategy": 131,
+      "no_second_opinion_at_all": 137,
+      "no_second_opinion_fraction": 0.634,
+      "within_1_bit": 2,
+      "within_2_bits": 13,
+      "median_margin_bits_where_a_runner_up_exists": 3.2,
+      "minimum_margin_observed_bits": 0.11,
+      "reading": "nearly two thirds of cores carry a bound with nothing to compare it against, and where a runner-up exists it disagrees by a median factor of 9 in simulation cost. The corroborated region is a measure-near-zero surface, not a region."
+    },
+    "why_it_is_structural_rather_than_a_shortfall": "a minimum over upper bounds is dominated by whichever bound is best, and two differently-motivated bounds have no reason to coincide. The free-fermion path is the extreme: a single non-matchgate gate deletes it, so it cannot approach another strategy continuously. Measured, wherever it applies it wins by exactly 4 bits, and it is the only applicable strategy in 0 of 7 cases yet is never within 1 bit of the runner-up.",
+    "the_sharp_form_of_remainder_1": "a defect in the winning strategy is undetectable from inside the portfolio. For 63% of cores there is nothing else to check against, and where there is, it is an order of magnitude away. This is not hypothetical: it is the mechanism by which both R1a defects survived. Each was a core where one strategy was unopposed, and wrong, and nothing was positioned to notice.",
+    "consequence_for_reading_the_metric": "every q_sim_upper should be read as 'the best bound one named algorithm could produce', and bounding_strategy now names it. The word 'portfolio' overstates what the minimum represents."
+  },
   "document_correction": {
     "what": "docs/ARCHITECTURE.md section 0 printed 'q_sim_upper: mean 0.0880 max 0.7423' beside 'gap: mean 0.9175'",
     "why_those_cannot_both_hold": "gap is defined as Q_naive - q_sim_upper and Q_naive is identically 1.0000 on this corpus, so a gap of 0.9175 IS a q_sim_upper mean of 0.0825. The page was carrying two numbers from two different runs and asserting both, while stating that every number in it is computed and none is asserted.",
@@ -116,6 +141,14 @@
     {
       "kind": "adversarial_remainder",
       "statement": "On the free-fermion family the metric was not loosely wrong but controllable: q_sim_upper could be set to any value in [0,1] by padding a poly-time circuit with T gates that the real simulator never pays for. An upper bound an adversary can dial is not a weak bound on hardness; on that family it is not a bound on hardness. Whether any other family admits the same control is untested."
+    },
+    {
+      "kind": "corroboration_remainder",
+      "statement": "The portfolio cannot refute itself, and this round did not fix that -- it measured it. Adding a fifth strategy would raise the fraction of cores with a second opinion but would not change the structure: a minimum over upper bounds is still dominated by its best member. Genuine corroboration would need agreement between bounds computed by parties who did not both come from this repository, and no such comparison has been run."
+    },
+    {
+      "kind": "generator_remainder",
+      "statement": "The disagreement corpus is 216 cores from one cube with one seed, built by the same party that wrote the strategies being compared. It demonstrates that the ACAF monoculture is a property of that generator rather than of the portfolio, and it measures margins within its own cube. It is not a random sample of anything, and the 63.4% figure is a property of this cube, not of cognitive cores in general."
     },
     {
       "kind": "aggregation_remainder",

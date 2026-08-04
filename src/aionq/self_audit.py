@@ -582,6 +582,26 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R1a",
+        "q_sim_upper was read as a portfolio estimate when the portfolio cannot "
+        "corroborate it: measured over 216 cores built to make the strategies "
+        "compete, 63.4% have exactly one applicable strategy or none, and where a "
+        "runner-up exists it disagrees by a median 3.20 bits, a factor of 9. A "
+        "defect in the winning strategy is therefore undetectable from inside the "
+        "portfolio, which is the mechanism by which both R1a defects survived",
+        "tests/test_strategy_disagreement.py::test_most_cores_have_no_second_opinion_at_all",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "the free-fermion strategy cannot corroborate or be corroborated: one "
+        "non-matchgate gate deletes it entirely, so it never approaches another "
+        "strategy continuously -- wherever it applies it wins by 4 bits and "
+        "wherever it does not it contributes nothing",
+        "tests/test_strategy_disagreement.py::test_the_free_fermion_path_is_all_or_nothing_and_never_corroborated",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
         "the headline ACAF mean was presented as a portfolio result while every "
         "one of its 150 cores is bounded by stabilizer rank alone: the other "
         "three strategies never win on that corpus, so a fifth strategy aimed at "
