@@ -582,6 +582,18 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R1a",
+        "the mutation probe edits the source under test in place and restored it "
+        "in a finally, which does not survive SIGKILL. An interrupted run left "
+        "residency.py carrying a live mutation -- informative returning "
+        "bounding_strategy == 'dense', the exact inversion of its contract -- "
+        "which no test could kill and which sat in the working tree, one "
+        "'git commit -a' from being published, and would have been adopted as "
+        "the baseline by the next run",
+        "tests/test_mutation_probe.py::test_a_dirty_target_is_refused_before_any_mutation",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
         "the two new strategy modules had a mutation kill rate of 52.2%: 11 of "
         "23 single-line breakages went unnoticed by the modules' own tests, "
         "including the cost convention's width + 1, both wrongly-shaped-matrix "

@@ -39,12 +39,23 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-#: (module, its own test file).  A mutant is "killed" only by the tests written
-#: for the module it damages; borrowing another module's tests would measure the
-#: suite as a whole and hide which file is silent.
+#: (module, the test files that exercise it).  A mutant is "killed" only by the
+#: tests aimed at the module it damages, not by the whole suite -- the question
+#: is whether THOSE tests are silent, and running everything would hide it.
+#:
+#: A module may legitimately be covered by several files: `residency.py` has no
+#: test file of its own and is exercised by the architecture suite plus the
+#: three strategy suites.  Pairing it with only one of them would count kills
+#: that were never available and report a coverage gap that is really a
+#: bookkeeping choice.
 TARGETS = [
-    ("src/aionq/contraction.py", "tests/test_contraction.py"),
-    ("src/aionq/matchgate.py", "tests/test_matchgate.py"),
+    ("src/aionq/contraction.py", ["tests/test_contraction.py"]),
+    ("src/aionq/matchgate.py", ["tests/test_matchgate.py"]),
+    ("src/aionq/residency.py", ["tests/test_architecture.py",
+                                "tests/test_contraction.py",
+                                "tests/test_matchgate.py",
+                                "tests/test_saturation.py"]),
+    ("src/aionq/part_b_outcome.py", ["tests/test_part_b_outcome.py"]),
 ]
 
 #: Each operator is (name, pattern, replacement).  They are chosen to change
@@ -153,6 +164,67 @@ def build_mutants(module: str) -> list:
     return mutants
 
 
+def _install_restore_handlers(path: Path, original: str):
+    """Put the file back if the process is asked to die mid-mutation."""
+    import signal
+
+    def handler(signum, frame):  # pragma: no cover - only runs on a signal
+        try:
+            path.write_text(original, encoding="utf-8")
+        finally:
+            raise SystemExit(f"interrupted; restored {path.name}")
+
+    previous = {}
+    for signum in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+        try:
+            previous[signum] = signal.signal(signum, handler)
+        except (ValueError, OSError):  # pragma: no cover - not main thread
+            pass
+    return previous
+
+
+def _restore_handlers(previous) -> None:
+    import signal
+
+    for signum, old in previous.items():
+        try:
+            signal.signal(signum, old)
+        except (ValueError, OSError):  # pragma: no cover
+            pass
+
+
+def assert_clean(module: str) -> None:
+    """Refuse to mutate a file that git already sees as modified.
+
+    This instrument edits the source under test in place and restores it in a
+    ``finally``.  A ``finally`` does not survive SIGKILL, and it did not: an
+    interrupted run left ``residency.py`` carrying a live mutation --
+    ``informative`` returning ``bounding_strategy == "dense"``, the exact
+    inversion of its contract -- which sat in the working tree until git
+    happened to be consulted.  Nothing failed, because the mutation was one the
+    suite could not kill.
+
+    Two consequences made that worse than a stray edit.  The probe reads the
+    file as ``original`` at mutation time, so a later run would have adopted the
+    corruption as the baseline and restored *to* it.  And a corrupted source is
+    one ``git commit -a`` away from being published.
+
+    So the check is a precondition, not a cleanup: if the target is dirty, the
+    run refuses and says which file, because the tool cannot tell a leftover
+    mutation from deliberate work in progress.
+    """
+    result = subprocess.run(
+        ["git", "status", "--porcelain=v1", "--", module],
+        cwd=ROOT, capture_output=True, text=True, timeout=60)
+    if result.stdout.strip():
+        raise SystemExit(
+            f"refusing to mutate {module}: git reports it as modified.\n"
+            "If this is a leftover mutation from an interrupted run, restore it\n"
+            f"with `git checkout -- {module}` and re-run. If it is work in\n"
+            "progress, commit or stash it first -- this tool cannot tell them\n"
+            "apart, and it rewrites the file in place.")
+
+
 def _apply(module: str, mutant: Mutant) -> str:
     path = ROOT / module
     original = path.read_text(encoding="utf-8")
@@ -164,18 +236,22 @@ def _apply(module: str, mutant: Mutant) -> str:
     return original
 
 
-def run(module: str, tests: str, limit: int | None = None) -> list:
+def run(module: str, tests, limit: int | None = None) -> list:
+    if isinstance(tests, str):
+        tests = [tests]
+    assert_clean(module)
     mutants = build_mutants(module)
     if limit:
         mutants = mutants[:limit]
     path = ROOT / module
-    print(f"\n{module}: {len(mutants)} mutants against {tests}")
+    print(f"\n{module}: {len(mutants)} mutants against {', '.join(tests)}")
     survivors = []
     for position, mutant in enumerate(mutants, start=1):
         original = _apply(module, mutant)
+        previous = _install_restore_handlers(path, original)
         try:
             result = subprocess.run(
-                [sys.executable, "-m", "pytest", tests, "-x", "-q",
+                [sys.executable, "-m", "pytest", *tests, "-x", "-q",
                  "--no-header", "-p", "no:cacheprovider"],
                 cwd=ROOT, capture_output=True, timeout=900,
                 env={**__import__("os").environ,
@@ -183,6 +259,7 @@ def run(module: str, tests: str, limit: int | None = None) -> list:
             )
         finally:
             path.write_text(original, encoding="utf-8")
+            _restore_handlers(previous)
         mutant.survived = result.returncode == 0
         if mutant.survived:
             survivors.append(mutant)

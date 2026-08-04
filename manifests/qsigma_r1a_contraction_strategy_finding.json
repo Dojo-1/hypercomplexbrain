@@ -194,6 +194,40 @@
     },
     "scope": "the probe covers two modules with a fixed list of 15 operators, small enough to read in full. It is not a general mutation-testing framework and makes no claim about the rest of the repository, whose kill rate is unmeasured."
   },
+  "amendment_probe_corrupted_its_subject": {
+    "note": "the probe's own remainder said the instrument built to find unreached guards had no instrument finding its own. The next thing it did was corrupt the module it was measuring.",
+    "what_happened": "the probe rewrites the source under test in place and restores it in a finally. A finally does not survive SIGKILL. An interrupted run left src/aionq/residency.py carrying a live mutation: the informative property returning 'bounding_strategy == \"dense\"', the exact inversion of its contract.",
+    "why_it_was_dangerous": [
+      "no test could kill that mutation -- it is one of the survivors the probe itself had reported -- so the suite stayed green with the contract inverted",
+      "the corrupted file sat in the working tree and was one 'git commit -a' from being published",
+      "the probe reads the file as 'original' at mutation time, so the NEXT run would have adopted the corruption as its baseline and restored to it, making the damage permanent and invisible"
+    ],
+    "how_it_was_caught": "by running 'git status' on the source tree while the probe was running, for an unrelated reason. Nothing in the tooling reported it.",
+    "fixes": [
+      "assert_clean(module) refuses to mutate any file git reports as modified, and refuses BEFORE writing, so a dirty file is never read as a baseline. It cannot distinguish a leftover mutation from deliberate work in progress and refuses both rather than guessing.",
+      "SIGINT, SIGTERM and SIGHUP handlers restore the file, so an interrupted run cleans up. Validated live: the run was stopped with SIGTERM and residency.py came back clean.",
+      "tests/test_mutation_probe.py guards the probe's own safety properties -- dirty targets refused, every mutant restoring byte-identically, no mutant a syntax error, no mutant inside a string literal."
+    ],
+    "a_second_instance_while_fixing_the_first": "the tests written to guard this originally wrote to src/aionq/residency.py and src/aionq/contraction.py -- the same files a concurrently running probe was mutating. Two in-place writers on one file is exactly the hazard being documented. They now use a throwaway module under the repo root instead."
+  },
+  "amendment_older_modules_partial": {
+    "status": "PARTIAL and deliberately interrupted. No kill rate is claimed for residency.py.",
+    "why_partial": "the run was stopped part-way so that the working tree could be committed safely -- the probe holds its target in a mutated state while running, and committing then would have published corrupted source.",
+    "measured_so_far": {
+      "module": "src/aionq/residency.py",
+      "mutants_decided": 13,
+      "of": 66,
+      "survived": 7,
+      "survival_rate_on_the_decided_prefix": 0.54,
+      "comparison": "the two new modules ended at 1 survivor in 23, 4.3%. This is a prefix of one file and not a comparable figure, but the direction matches the prediction made before the run: files written before this scrutiny fare worse."
+    },
+    "what_the_survivors_are": {
+      "dataclass_defaults": "lines 209 and 210, the default values of raw_exponent and q_sim_lower. Every construction site passes an explicit value, so the defaults are effectively dead and mutating them changes nothing reachable. Low severity, arguably equivalent.",
+      "is_permutation": "lines 291, 293, 294 and 295 -- three comparisons and a return inside _is_permutation, the predicate that licenses the basis-permutation strategy's charge of ZERO. An error there would let a non-permutation core be scored as classically free, which is the same direction of wrongness as the two defects this round already found. This is the notable cluster and it is not yet closed.",
+      "display": "line 273, a branch of the report's __str__."
+    },
+    "next": "complete the residency run and the part_b_outcome run, then close whatever the _is_permutation cluster turns out to be. The prefix is a signal, not a result."
+  },
   "document_correction": {
     "what": "docs/ARCHITECTURE.md section 0 printed 'q_sim_upper: mean 0.0880 max 0.7423' beside 'gap: mean 0.9175'",
     "why_those_cannot_both_hold": "gap is defined as Q_naive - q_sim_upper and Q_naive is identically 1.0000 on this corpus, so a gap of 0.9175 IS a q_sim_upper mean of 0.0825. The page was carrying two numbers from two different runs and asserting both, while stating that every number in it is computed and none is asserted.",
@@ -227,6 +261,14 @@
     {
       "kind": "instrument_self_remainder",
       "statement": "The probe had two defects of its own before its first number could be trusted: it mutated type-annotation arrows into SyntaxErrors, which inflate the kill rate, and it mutated string literals, which deflate it. Both were found by reading its output rather than by any check on the probe itself. The instrument built to detect unreached guards has no instrument detecting ITS unreached guards, and that regress is not closed here."
+    },
+    {
+      "kind": "instrument_hazard_remainder",
+      "statement": "The probe's third defect was worse than either: it corrupted the module it was measuring. An interrupted run left residency.py with its informative property inverted, a mutation no test could kill, sitting in the working tree one commit from publication and positioned to become the next run's baseline. It was caught by an unrelated 'git status'. The guards added -- a clean-tree precondition and signal handlers -- close the specific hole; what they do not close is the general shape, which is that this instrument's method IS editing the code under audit, and every future extension of it inherits that."
+    },
+    {
+      "kind": "partial_measurement_remainder",
+      "statement": "The residency and part_b_outcome runs are incomplete: 13 of 66 residency mutants decided, none of part_b_outcome. 7 of those 13 survived, but they are the first 13 lines of one file and not a random sample, so no kill rate is claimed for anything outside the two new modules. The claim that older code fares worse remains a prediction with a suggestive prefix behind it, not a measurement."
     },
     {
       "kind": "notation_remainder",
