@@ -1,0 +1,177 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "LEANMATH-IMPORT-001",
+  "status": "imported, labelled and measured. Nothing in the archive is verified, nothing in it is cited as evidence, and no claim in this repository rests on it. Three findings about the archive's own self-description are recorded below; all three are the archive owner's to act on, not this round's.",
+  "subject": "formal/leanmath/ -- a Lean 4 archive supplied by the repository owner (bf4f719e-leanmathmain.zip), vendored verbatim except for one rename",
+  "evidence_rank": "NONE",
+  "why_evidence_rank_none": "An evidence rank is earned by a verifier acting on an artifact. No verifier has acted on this one. The pinned toolchain is now installed and was used to LEX the files, which is a real measurement, but lexing is not checking: Mathlib is not vendored and 17 of the archive's 20 internal imports cannot be satisfied from the archive, so no theorem in it has been elaborated, let alone accepted by the kernel.",
+  "provenance": {
+    "supplied_by": "the repository owner, in-session, as a zip attachment",
+    "declared_origin": "extracted from a larger Lean project whose modules live under the namespace LambdaSatSolver.VDIS.*",
+    "vendored_at": "formal/leanmath/",
+    "files": 18,
+    "lean_files": 11,
+    "bytes": 380306,
+    "modification_on_import": {
+      "what": "CLAUDE.md -> IMPORTED_CLAUDE.md",
+      "why": "a file named CLAUDE.md anywhere in this tree is loaded as project instructions by the agent working on it. Vendoring an external CLAUDE.md verbatim would have silently injected another project's instructions -- including the sentence 'All theorems are verified (lake build passes)' -- into every future session in this repository. The bytes are unchanged; only the name is, and the rename is recorded here so the archive can be reconstructed exactly.",
+      "bytes_changed": 0
+    },
+    "not_modified": "every other file is byte-identical to the archive. SHA-256 of all 18 is recorded under `digests` and re-derived by the test suite."
+  },
+  "environment": {
+    "lean_toolchain_pinned_by_the_archive": "leanprover/lean4:v4.32.0-rc1",
+    "lean_toolchain_installed_here": "leanprover/lean4:v4.32.0-rc1, commit b4812ae53eea93439ad5dce5a5c26591c31cb697, x86_64-unknown-linux-gnu",
+    "installed_during": "this session, via elan, which was present with no toolchain",
+    "mathlib": "NOT vendored and NOT fetched. Every file imports Mathlib; none can elaborate.",
+    "note_on_the_repository_README": "formal/README.md recorded 'lean, lake and elan are present on PATH' as of 2026-07-30. In this container only elan was present, with an empty toolchain directory, so nothing could run until the pinned toolchain was installed. The README's sentence described a different machine and has been corrected."
+  },
+  "measurement_1_import_resolution": {
+    "instrument": "src/aionq/lean_census.py::resolve_imports, comment- and string-aware, re-run by tests/test_leanmath_vendor.py",
+    "method": "treat the archive root as if it were LambdaSatSolver/VDIS/ -- the most charitable reading, since that is the namespace its own import lines assume -- and ask, for each internal import, whether a file sits at that path, at some other path, or nowhere.",
+    "internal_imports": 20,
+    "resolves": 3,
+    "basename_only": 4,
+    "absent": 13,
+    "buildable": false,
+    "resolves_list": [
+      "LambdaSatSolver.VDIS.Algebra.Basic",
+      "LambdaSatSolver.VDIS.Algebra.CD",
+      "LambdaSatSolver.VDIS.Basic"
+    ],
+    "basename_only_list": {
+      "LambdaSatSolver.VDIS.GyroOps.Basic": [
+        "Algebra/Basic.lean",
+        "Basic.lean"
+      ],
+      "LambdaSatSolver.VDIS.TuringHalting_Hyperdim": [
+        "Computation/TuringHalting_Hyperdim.lean"
+      ],
+      "LambdaSatSolver.VDIS.TuringHalting_LeanLake": [
+        "Computation/TuringHalting_LeanLake.lean"
+      ],
+      "LambdaSatSolver.VDIS.TuringHalting_Master": [
+        "Computation/TuringHalting_Master.lean"
+      ]
+    },
+    "absent_list": [
+      "LambdaSatSolver.HaltingSetSearch",
+      "LambdaSatSolver.VDIS.AcafQuine",
+      "LambdaSatSolver.VDIS.EpistemicVisibility",
+      "LambdaSatSolver.VDIS.FrustrationIrregularity",
+      "LambdaSatSolver.VDIS.IGBundle",
+      "LambdaSatSolver.VDIS.MachineSemantics",
+      "LambdaSatSolver.VDIS.ProtensorHaltingBraid",
+      "LambdaSatSolver.VDIS.QuineFamily",
+      "LambdaSatSolver.VDIS.QuineHalting",
+      "LambdaSatSolver.VDIS.TM",
+      "LambdaSatSolver.VDIS.TangentHolographicScreen",
+      "LambdaSatSolver.VDIS.ValidGlobalBridge",
+      "LambdaSatSolver.VDIS.WeaveShadow"
+    ],
+    "reading": "the archive is a subtree, not a project. `lakefile.toml` declares the package `leanmath`, so even the three modules that resolve under the charitable reading do not sit where a `lake build` of THIS package would look for them. HardnessHolonomy.lean -- the file the five-carrier thesis lives in, and the largest single source at 77 KB -- imports eight internal modules, of which exactly one resolves, five are absent, and two are present at a different path. One of those two is TuringHalting_Master.lean, which does not lex, so even a reading generous enough to forgive every path hands the thesis file a dependency that cannot parse. It cannot be elaborated here under any configuration."
+  },
+  "measurement_2_lexical_verdict": {
+    "instrument": "the archive's own pinned Lean, /root/.elan/bin/lean at v4.32.0-rc1, run per file on a copy with the `import` lines removed so the toolchain reaches the body instead of stopping at an unknown module",
+    "why_this_is_sound": "removing imports can only ADD errors downstream (unknown identifiers); it cannot create or hide a lexical error, because the lexer never consults a dependency. An `unterminated comment` reported this way is therefore a property of the file's bytes.",
+    "files_checked": 11,
+    "timeouts": 0,
+    "lexes": 9,
+    "lex_failures": 2,
+    "failures": {
+      "Computation/TuringHalting_Master.lean": "unterminated comment at 1363:0 (end of file); opener at line 69",
+      "Computation/TuringHalting_Hyperdim.lean": "unterminated comment at 1785:0 (end of file); opener at line 9"
+    },
+    "unlexable_bytes": 148941,
+    "unlexable_fraction_of_archive": 0.392,
+    "independent_agreement": "src/aionq/lean_census.py::comment_balance, a pure-Python nesting counter that knows nothing about Lean beyond the token pair, flags exactly these two files and no others, at exactly these opener lines. Two instruments, one written against the token grammar and one being the actual lexer, agree on 11 of 11 files.",
+    "reading": "these are not files that fail to prove something. They are files that fail to parse. Everything after line 69 of TuringHalting_Master.lean and after line 9 of TuringHalting_Hyperdim.lean -- 33 theorem declarations by a naive count, including `layer_a_no_nonzero_raw_fixed_point` and `layer_b_local_not_globally_captured`, both named as Key Theorems in the archive's README -- is inside a comment that never ends. No dependency could rescue them and no toolchain could accept them."
+  },
+  "measurement_3_placeholder_census": {
+    "instrument": "src/aionq/lean_census.py::code_placeholders, which blanks Lean comments and string literals while preserving every offset, so a hit is in a proof body and not in prose about proof bodies",
+    "grep_count_of_the_token_sorry": 16,
+    "in_a_proof_body": 1,
+    "the_one": "Geometry/ConnectionLaplacian.lean:789, in `gluingDefect_decomposition`",
+    "axiom_declarations": 0,
+    "admit_uses": 0,
+    "why_the_other_15_are_not_placeholders": "13 are prose about placeholders -- including HardnessHolonomy.lean:70, the sentence asserting there are none -- and 2 (TuringHalting_Master.lean:376,407) are inside the unterminated comment measured above, along with the theorems they were meant to stand in for.",
+    "a_second_defect_at_the_one_live_site": "the theorem `gluingDefect_decomposition` states an equality whose right-hand side contains `lambda_cycle * (sum over loop : G.Walk, 0.0)` with the comment 'Holonomy mismatch for each loop'. The holonomy term is the literal constant zero. Closing the `sorry` would therefore prove a decomposition in which the holonomy contribution is identically absent, which is the opposite of what the theorem's name asserts. This is stated from reading the source, not from elaborating it; the file lexes but has never been checked."
+  },
+  "finding_1_the_archives_placeholder_ledger_is_stale_in_both_directions": {
+    "what_the_archive_says": "HardnessHolonomy.lean:70-73 -- 'Zero sorry/admit/axiom in the proof body. ... All legacy placeholders in the repository (CD.lean:363,366; TuringHalting_Master.lean:362,393) remain explicitly isolated.'",
+    "what_is_measured": [
+      "the first sentence is true OF THAT FILE: HardnessHolonomy.lean has zero placeholders in any proof body.",
+      "CD.lean:363,366 are ordinary octonion multiplication code. CD.lean contains no placeholder anywhere, in any proof body, at any line.",
+      "TuringHalting_Master.lean's two `sorry` tokens are at 376 and 407, not 362 and 393 -- and as the file lexes they are inside a comment, so they are not placeholders in proofs at all.",
+      "Geometry/ConnectionLaplacian.lean:789 carries the archive's only live placeholder and the note does not mention it."
+    ],
+    "why_it_matters_here": "the note is the archive's own evidence surface: it is the sentence a reader would rely on to know what is proved. It names two sites that are clean, misses by 14 and 14 lines on two more, and omits the only real one. A ledger maintained by transcription drifts from the artifact it describes. That is precisely the failure mode this repository answers with computed manifests, and it is why the census above is code and not a paragraph.",
+    "whose_to_fix": "the archive owner's. Nothing here edits a vendored byte."
+  },
+  "finding_2_the_verification_claim_does_not_transfer": {
+    "what_the_archive_says": "IMPORTED_CLAUDE.md -- 'All theorems are verified (lake build passes).'",
+    "what_is_measured": "`lake build` cannot pass on this archive. 17 of 20 internal imports are unsatisfiable from it, Mathlib is not vendored, and two of its eleven files do not lex under its own pinned toolchain.",
+    "the_charitable_reading": "the sentence is almost certainly true of the larger LambdaSatSolver tree from which these files were cut, on a machine where that tree and Mathlib are both present. It is a claim about a build that is not this one.",
+    "the_rule_it_falls_under": "CLAUDE.md rule 7 -- do not claim success on a platform without an actual green job on that platform. A verification claim travels with its build, not with its files. Detached from the tree it was made in, it is a claim with no witness attached, and this repository must not re-utter it.",
+    "consequence": "no statement in docs/, no claim in the registry, and no test in this repository may cite formal/leanmath as verified, in whole or in part, until a green build exists here."
+  },
+  "finding_3_a_vendored_instruction_file_is_an_instruction_injection": {
+    "what": "the archive's CLAUDE.md would have been loaded as project instructions for this repository by any agent working under formal/leanmath/, carrying with it a build-status claim this repository has just measured to be inapplicable, plus a style guide for a different project.",
+    "handling": "renamed to IMPORTED_CLAUDE.md on import, bytes unchanged, recorded above and asserted by tests/test_leanmath_vendor.py::test_no_vendored_file_is_loaded_as_project_instructions",
+    "generalisation": "any future vendoring into this repository must rename or quarantine CLAUDE.md, AGENTS.md and .cursorrules for the same reason. Imported material may be read; it may not instruct.",
+    "not_a_security_finding_about_the_owner": "the archive is the owner's own and was supplied deliberately. The hazard is structural, not adversarial: instruction files travel with archives, and an agent that vendors one silently adopts it."
+  },
+  "what_the_archive_offers_the_open_problem": {
+    "the_open_problem": "the strategy portfolio behind `q_sim_upper` is a portfolio of cliffs. `matchgate_plan` charges 0 for a free-fermion circuit and switches off entirely one gate away from one; `contraction_plan` charges by elimination width; the minimum over them is orbit-collapsed on all 240 frames of AGL(1,16). Measured this session: the hardness landscape over the frame group is a STEP, not a saddle. No member of the portfolio emits a graded certificate -- a number that degrades continuously with distance from the tractable class rather than falling off it.",
+    "what_the_five_carriers_would_supply_if_they_were_computable_here": "each carrier in HardnessHolonomy.lean is defined by a RESIDUAL rather than by a predicate: diagonal -> self-identification defect, protensor -> non-reconstructible evidential remainder, hypercomplex -> commutator/associator residue, sectionability -> frustration/irregularity/status shift, semantic -> proof/execution mismatch. A residual is graded by construction. The hypercomplex one is the closest to something this repository could compute: the associator ladder in src/aionq/cayley_dickson.py already measures exactly that quantity over the reals, and already calls its output 'a ladder of controlled failure types'.",
+    "what_is_NOT_claimed": [
+      "that the archive supplies the graded certificate. It supplies a vocabulary and a set of Lean structures, none of which has been checked, two of whose files do not parse, and none of which computes anything about a quantum circuit.",
+      "that `AlgebraicHolonomy` and `matchgate_plan` measure the same thing. They are not even over the same objects: one is over Fin 8 -> R with the octonion product, the other over 4x4 complex matrices with the parity-block condition. Any bridge is a research obligation, and the archive's own header says so first: 'Two holonomies are NOT asserted equal before interpretation.'",
+      "that anything in the archive licenses a hardness claim. It is imported unverified material and it is labelled as such."
+    ],
+    "the_honest_shape_of_the_next_step": "a matchgate detector that returns a DISTANCE to the free-fermion class instead of a boolean is buildable here today, needs no Lean and no import, and would be the first graded member of the portfolio. Whether it deserves to be called a holonomy in the archive's sense is a question that cannot be answered before it is built, and must not be answered by naming it one. Not started this round: CLAUDE.md rule 6 forbids adding another organ, and a new strategy that changes `q_sim_upper` is not a labelling task."
+  },
+  "typed_remainders": [
+    {
+      "kind": "verification_remainder",
+      "statement": "The pinned toolchain is installed and 9 of 11 files lex. That is the entire extent of what has been checked. Elaboration needs Mathlib (not vendored, several GB with its cache) and the 13 absent internal modules (not supplied). Until both exist here, every theorem in formal/leanmath has status UNCHECKED, and the two unlexable files have status UNPARSEABLE, which is strictly worse."
+    },
+    {
+      "kind": "completeness_remainder",
+      "statement": "The archive is a cut of a larger tree. Which cut, and at which commit of that tree, is not recorded in any file it contains -- there is no lake-manifest.json, no git metadata, no version stamp beyond `version = \"0.1.0\"`. The 18 SHA-256 digests here pin what was received; they cannot pin what it was cut from. If the owner supplies the LambdaSatSolver tree or a commit id, that remainder closes."
+    },
+    {
+      "kind": "reading_remainder",
+      "statement": "Every statement in this manifest about what the Lean SAYS -- the five carriers, the split-signature metric, the zero holonomy term in gluingDefect_decomposition -- comes from reading source that has never been elaborated. Lean source can read plausibly and mean something else, and a type error two lines up can change what a later declaration even refers to. These readings are offered as readings."
+    },
+    {
+      "kind": "scope_remainder",
+      "statement": "The two unlexable files carry the archive's halting material, including both 'Key Theorems' its README lists for TuringHalting_Master.lean. So the part of the archive that speaks most directly to hardness is the part that does not parse. This is recorded, not repaired: repairing another project's comment nesting inside a vendored copy would destroy the one property vendoring is for, which is that the bytes are what was received."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Vendored, censused and lex-checked by the Claude session on the Linux container, against an archive supplied by the repository owner. One party performed every step. No independent witness has seen either the archive or these measurements, and the witness-nerve rank of this manifest is therefore 0 by the repository's own rule that verifier == producer yields rank 0."
+    }
+  ],
+  "digests": {
+    "Algebra/Basic.lean": "5583d71eb04777ef98028ed2e655e56bcfe6f4a790569eddc2e9b0917de66682",
+    "Algebra/CD.lean": "c703437f545c4013ad00acfedefd57f6b1c634943720d98659b497bd12b4b7e0",
+    "Basic.lean": "a382f0d9144de148173705b5ae1892fa7cd2ea3ab08df29dc8bd965efa4ada94",
+    "Computation/TuringHalting_Hyperdim.lean": "c20aa0a9146acd3bbd0380c249638b32160616135fd8f3e56678a9e12826d127",
+    "Computation/TuringHalting_LeanLake.lean": "30cba2fa3120a7f5bad22b81162459803d3664587b66f3c7fb427d18bbe52a63",
+    "Computation/TuringHalting_Master.lean": "c82a1a74275abb0ca8b918b44a8875cc609a7c1c90b435b34a382c039c74ff81",
+    "GRD.lean": "733c0def227624a9dc801eee93122fcb4cca3f8c677bbe66d4ed6e0fb49c3bdb",
+    "Geometry/ConnectionLaplacian.lean": "35bdad5bf17e481480488a30960e8d7ea6c276bd8cd84b6fb7a7bcd1e2531962",
+    "Geometry/Dirac.lean": "3964d246abb02e6cbc7ec801a7c8316773326838f56a913384458bf70dd7d0cd",
+    "HardnessHolonomy.lean": "78d30af1321f0c24c71f82be6efcd4630a2506dcb9a4a1fe28ef4dd297065937",
+    "IMPORTED_CLAUDE.md": "28c7493f03651265c8899961aa114094f6d2362f5ba027ae9f59ab9d3c50ca4b",
+    "Mind/HypercomplexMindGames.lean": "aafb0ecb01d6118ba38bc0379e93dded81a142d8312f1065ce0052472b894f1e",
+    "README.md": "73f4539cf6c586593b91ff2ec4f16a78cc69b6638152cdee9e13337cadfadcd5",
+    "lakefile.toml": "001c023a6357e307c075110cb3979092bd7fb94b6cfb869f73901821a235d28c",
+    "lean-toolchain": "72681913b978b3f7c2f48229836771f736f6e97d833917726b2263afbc6108ed",
+    "wiki/Algebra.md": "fff0cf75b940c724c4e35431f532eb83fa8edf5339464408c05f51e82c368408",
+    "wiki/Home.md": "6c655d386080908021898dac897c1f821d93a42a9caf1a580b4b929ea79c6ab3",
+    "wiki/Installation.md": "6a9d8bd141e6f6e97dda5d62ae313f29bc9b16e62207e6be35b256e4ace22492"
+  },
+  "digest_note": "SHA-256 of every vendored file, including the renamed IMPORTED_CLAUDE.md whose bytes are the archive's CLAUDE.md unchanged. Re-derived by tests/test_leanmath_vendor.py::test_the_archive_is_present_and_pinned_by_digest."
+}

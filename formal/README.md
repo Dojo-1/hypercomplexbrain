@@ -2,17 +2,28 @@
 
 ## Status at 2026-07-30: **MIXED**
 
-This checkout tracks exactly two Lean files:
+This checkout tracks two Lean files of its own, plus a vendored archive that is
+not evidence and is documented separately in
+[`LEANMATH_PROVENANCE.md`](LEANMATH_PROVENANCE.md):
 
 | file | dependency surface | observed command | current result |
 |---|---|---|---|
 | `OhniumObservatory.lean` | Lean core/prelude only | `lean formal/OhniumObservatory.lean` | **accepted**, exit `0`, under local unpinned Lean `4.32.2` |
 | `RecognitionChamber.lean` | Mathlib | `lean formal/RecognitionChamber.lean` | **not compiled**, exit `1`: `unknown module prefix 'Mathlib'` |
+| `leanmath/` (11 files, imported) | Mathlib **and** 13 modules that are not in the archive | see `LEANMATH_PROVENANCE.md` | **not built and not buildable**; 9 of 11 lex, 2 do not parse at all |
 
-`lean`, `lake` and `elan` are present on `PATH`. The repository still has no
-`lean-toolchain`, `lakefile.lean`, `lakefile.toml` or `lake-manifest.json`, so
-the successful Ohnium check is a direct local kernel check, not a pinned
-reproducible project build.
+**Correction, 2026-08-05.** The sentence above this table used to read "`lean`,
+`lake` and `elan` are present on `PATH`". In this container only `elan` was
+present, with an empty `toolchains/` directory, so nothing could run at all —
+the claim described a different machine and had been carried forward unchecked.
+The pinned toolchain `leanprover/lean4:v4.32.0-rc1` has since been installed
+here (commit `b4812ae`) and used to lex the vendored archive; it is *not* on
+`PATH` by default and lives at `~/.elan/bin/lean`. The repository still has no
+`lean-toolchain`, `lakefile.lean`, `lakefile.toml` or `lake-manifest.json` **of
+its own**, so the successful Ohnium check is a direct local kernel check, not a
+pinned reproducible project build. (`formal/leanmath/lakefile.toml` and
+`formal/leanmath/lean-toolchain` belong to the imported archive and configure a
+package named `leanmath` that is not this repository's.)
 
 `RecognitionChamber.lean` has not been checked successfully. It also contains
 a `sorry` in the finite-depletion target, so merely resolving Mathlib would not

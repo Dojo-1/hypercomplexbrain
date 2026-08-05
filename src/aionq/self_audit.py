@@ -922,6 +922,47 @@ CORRECTIONS = (
         "tests/test_common_receiver_reservoir.py::test_the_square_root_divergence_is_quadratically_suppressed_in_the_effect",
         True,
     ),
+    Correction(
+        "LeanMath-import",
+        "the first survey of the imported archive reported that HardnessHolonomy "
+        "imports eight LambdaSatSolver.VDIS modules 'none of which are in the "
+        "zip'. Measured against the files: one resolves, two are present at "
+        "another path, five are absent. The overstatement was in the direction "
+        "of the conclusion already drawn, which is the direction that needs a "
+        "measurement rather than a reading",
+        "tests/test_leanmath_vendor.py::test_the_five_carrier_file_is_the_least_satisfiable_of_all",
+        True,
+    ),
+    Correction(
+        "LeanMath-import",
+        "the archive's placeholders were first counted with grep, which returned "
+        "16 and put two of them at TuringHalting_Master.lean:376,407. A "
+        "comment-aware census returns 1: thirteen of the sixteen are prose about "
+        "placeholders, including the sentence claiming there are none, and the "
+        "two at 376 and 407 are inside a block comment that never closes",
+        "tests/test_leanmath_vendor.py::test_grep_would_report_sixteen_times_as_many_placeholders_as_exist",
+        True,
+    ),
+    Correction(
+        "LeanMath-import",
+        "'no lean/lake toolchain in this environment' was recorded as the reason "
+        "nothing in the archive could be checked. elan was in fact installed with "
+        "an empty toolchains directory, and the archive's own pinned "
+        "leanprover/lean4:v4.32.0-rc1 installed in minutes. Accepting the "
+        "unverifiability cost two toolchain-confirmed lex failures covering 39% "
+        "of the archive's bytes, including both of its README's Key Theorems",
+        "tests/test_leanmath_vendor.py::test_the_python_counter_still_agrees_with_the_pinned_lexer",
+        True,
+    ),
+    Correction(
+        "LeanMath-import",
+        "formal/README.md asserted 'lean, lake and elan are present on PATH' and "
+        "the claim was carried forward across sessions unchecked; in this "
+        "container only elan was present and no lean binary existed on PATH at "
+        "all. An environment claim written on one machine does not travel",
+        "tests/test_leanmath_vendor.py::test_the_formal_readme_no_longer_claims_a_toolchain_on_path",
+        True,
+    ),
 )
 
 

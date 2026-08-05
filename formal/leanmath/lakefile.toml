@@ -1,0 +1,11 @@
+[package]
+name = "leanmath"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mathlib = "leanprover-community/mathlib4:lean-toolchain"
+
+[profile]
+# Full optimizations for production builds
+debug = false

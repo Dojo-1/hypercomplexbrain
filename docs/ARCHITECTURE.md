@@ -1647,3 +1647,98 @@ with blast radius 7 and 10 went unexamined, and no instrument was positioned to
 say so. This one is not a repair — writing `upstream` keys into sealed artifacts
 would be editing results after the fact, which the provenance discipline
 forbids. It makes the omission visible and ranks the surface by leverage.
+
+## 8.5 Imported material, and the difference between a label and an instrument
+
+A Lean 4 archive was supplied by the repository owner and vendored at
+`formal/leanmath/`. It formalises the Cayley–Dickson tower, a finite Dirac
+operator, a connection Laplacian, halting statements over the octonions, and a
+five-carrier *hardness holonomy* whose thesis is that hardness is the structured
+failure of return accumulated under transport through representation,
+self-reference, algebraic transformation, relational composition and semantic
+verification.
+
+**It is not evidence, and this section does not soften that.** The full record
+is `manifests/leanmath_import_v1.json`; the reader's summary is
+`formal/LEANMATH_PROVENANCE.md`; the measuring is `src/aionq/lean_census.py`,
+re-run by `tests/test_leanmath_vendor.py` on every suite.
+
+### What could be measured, and what could not
+
+The archive's own pinned toolchain, `leanprover/lean4:v4.32.0-rc1`, **is**
+installed here now. That was the first correction: the import was initially
+recorded as unverifiable because no `lean` was on `PATH`, when in fact `elan`
+was present with an empty toolchain directory and the pinned toolchain installed
+in minutes. Accepting an unverifiability is a decision, and it cost two findings
+that were sitting one command away.
+
+| | |
+|---|---|
+| internal imports / resolving within the archive | 20 / **3** |
+| `lake build` possible here | **no** |
+| files lexing under the pinned toolchain | **9 of 11** |
+| bytes that cannot lex | 148 941 (**39%**) |
+| `sorry` by `grep` / in a proof body | 16 / **1** |
+
+Lexing is not verification. Mathlib is not vendored and thirteen of the
+archive's own modules are missing from it, so no theorem here has been
+elaborated and none has been seen by the Lean kernel. Two files are worse than
+unchecked: `TuringHalting_Master.lean` (opener at line 69) and
+`TuringHalting_Hyperdim.lean` (opener at line 9) carry unterminated block
+comments, reported by Lean itself at end of file and independently by a
+pure-Python nesting counter that agrees on all eleven files. Thirty-three
+theorem declarations sit inside those comments, including both entries the
+archive's README lists as Key Theorems. **The part of the archive that speaks
+most directly about hardness is the part that does not parse.**
+
+### Why this belongs in an architecture document
+
+Three of the archive's own statements about itself are stale, and each is stale
+in a way this repository has met before.
+
+Its placeholder note names two sites in `CD.lean` that hold no placeholder,
+misses by fourteen lines on two more, and omits the only live one — a ledger
+maintained by transcription, drifted from the artifact it describes. Its
+`CLAUDE.md` asserts *"All theorems are verified (lake build passes)"*, which is
+almost certainly true of the larger tree these files were cut from and cannot be
+true here, because here they cannot be built at all: a verification claim
+travels with its build, not with its files. And that `CLAUDE.md` would have been
+loaded as **this** repository's project instructions by any agent working under
+the vendored directory, carrying that build claim in with it. It was renamed to
+`IMPORTED_CLAUDE.md`, bytes untouched. *Imported material may be read; it may
+not instruct.*
+
+None of that is a criticism of the archive's mathematics, which has not been
+evaluated and cannot be from here. It is the same lesson §8.4 reaches from the
+other side: prose about an artifact outlives the artifact. Every number in the
+table above is computed and asserted; the paragraph you are reading is not
+evidence for any of them.
+
+### What it offers the open problem, stated as an obligation and not a result
+
+§2 measures `q_sim_upper` as a minimum over strategies, and this round measured
+the shape of that minimum over the frame group AGL(1,16): a **step, not a
+saddle**. `matchgate_plan` charges 0 on the free-fermion class and switches off
+one gate outside it; `contraction_plan` charges by elimination width; the
+minimum is orbit-collapsed on all 240 affine frames. No member of the portfolio
+emits a **graded** certificate — a number that degrades continuously with
+distance from a tractable class rather than falling off it.
+
+Each of the archive's five carriers is defined by a *residual* rather than by a
+predicate: self-identification defect, non-reconstructible evidential remainder,
+commutator/associator residue, frustration/irregularity/status shift,
+proof/execution mismatch. A residual is graded by construction, and the
+hypercomplex one is nearest to something computable here —
+`src/aionq/cayley_dickson.py` already measures the associator along the doubling
+tower and already calls its output *a ladder of controlled failure types*.
+
+That is a vocabulary, not a bridge. `AlgebraicHolonomy` is over `Fin 8 → ℝ` with
+the octonion product; `matchgate_plan` is over 4×4 complex matrices with a
+parity-block condition. They are not over the same objects, and the archive's
+own header says the obligation before this repository's does: *"Two holonomies
+are NOT asserted equal before interpretation."* A matchgate detector returning a
+**distance** to the free-fermion class is buildable here today, needs no Lean and
+no import, and would be the portfolio's first graded member. Whether it deserves
+the name holonomy is a question that must be answered after building it, not by
+naming it one — and it is not this round's, because a new strategy changes
+`q_sim_upper` and that is not a labelling task.
