@@ -237,6 +237,107 @@ different frames. `ResidencyReport.frame_typed` now records this.
 > and two guards — now a seventh time, in the instrument built to audit the
 > other six.
 
+### 0.36 A frame group you can walk in full: `GF(GF(2,2), GF(2,2))`
+
+§0.35 left a real weakness and said so: the orbit of a 16-qubit circuit under
+relabelling is `S₁₆`, of order 2.1×10¹³, sampled with four to six frames. Zero
+spread over six random points of a group that size is consistent with luck.
+
+Build the tower instead —
+
+```
+GF(2) < GF(4) = GF(2)[x]/(x²+x+1) < GF(16) = GF(4)[y]/(y²+y+ω)
+```
+
+— a degree-2 extension of a degree-2 extension, verified as a field
+exhaustively rather than trusted: every non-zero element invertible,
+associative on all 4096 triples, element orders {1,3,5,15}, 8 generators, GF(4)
+a closed subfield. Label the 16 qubits by GF(16) and field structure becomes
+frame structure: `AGL(1,16) = {x ↦ ax+b}` is a subgroup of `S₁₆` of order **240**
+— small enough to enumerate completely, with a nested ladder of subgroups
+inside it and the Frobenius lift `x↦x²` generating `Gal(GF(16)/GF(2))`.
+
+This is the characteristic-2 analogue of `cayley_dickson.associator_ladder`,
+which measures how badly associativity fails at each rung of the doubling tower
+over ℝ. Here the rungs are frame subgroups and the failure measured is loss of
+invariance: **at which rung does a measurement stop seeing the object?**
+
+| rung | \|G\| | contraction width | matchgate certificate |
+|---|---:|---:|---|
+| T2 (translations by span{1}) | 2 | collapsed | **1/2** |
+| T4 (translations by GF(4)) | 4 | collapsed | 1/4 |
+| T16 (all translations) | 16 | collapsed | 2/16 |
+| M3 = GF(4)\* | 3 | collapsed | 1/3 |
+| M15 = GF(16)\* | 15 | collapsed | 1/15 |
+| Frobenius | 4 | collapsed | 1/4 |
+| **AGL(1,16)** | **240** | **collapsed** | **2/240** |
+
+Two results, and the ladder is what separates them.
+
+**Contraction width is orbit-collapsed on the entire affine group.** Zero spread
+over six random frames was consistent with luck; zero spread over all 240 is a
+fact about the group. That upgrades §0.35's caveat from a suspicion to a
+measurement.
+
+**The free-fermion certificate survives exactly two of 240 frames** — and they
+are the identity and `b = 15`, which is XOR with all-ones, i.e. `x ↦ 15 − x`:
+the **reversal**. So its stabiliser is `Aut(P₁₆)`, the automorphism group of the
+very path graph the gates were laid on, of order 2 and **index 120**. The
+certificate does not merely depend on the labelling; it depends on it maximally,
+surviving only the symmetry of the 1D chain itself. And it already fails on
+**T2** — a two-element group is enough to break it.
+
+`q_sim_upper` inherits this, resolving on the 4-element `T4` rung with spread
+`0.3125`. A review reporting only *"some things are frame-dependent"* would have
+lost the distinction between a quantity that survives 240 relabellings and one
+that dies under a single translation. That distinction is the whole content.
+
+### Lifting to the full spin group, and 3-XOR orthogonality
+
+`AGL(1,16)` is only the *semilinear* frame group. Forgetting the field
+multiplication and keeping the GF(2)-vector-space structure gives the strictly
+larger
+
+```
+AGL(4,2) = GF(2)^4 : GL(4,2),   |G| = 16 x 20160 = 322,560
+```
+
+a factor of **1344** more frames, and the largest linear frame group on 16
+labels short of `S_16`. It cannot be walked — and does not need to be.
+Invariance under a group is invariance under its **generators**, so sixteen
+checks (4 translations, 12 transvections) settle all 322,560 elements *exactly*.
+That is the one exhaustive claim in this session available without an exhaustive
+computation.
+
+| measurement | generators breaking it | verdict on all 322,560 frames |
+|---|---:|---|
+| contraction width | **0 / 16** | **invariant** |
+| free-fermion certificate | **16 / 16** | broken by every elementary move |
+
+Contraction width survives the lift. The certificate is not merely
+small-stabiliser — *every one* of the sixteen elementary moves destroys it,
+which is sharper than the index-120 statement and is maximal fragility.
+
+**3-XOR orthogonality** — triples with `a ⊕ b ⊕ c = 0` on the 15 non-zero labels
+— is the line structure of `PG(3,2)`: **35 lines, 7 through every point**, the
+characteristic-2 orthogonality the Fano plane carries one dimension lower and
+that `fano_algebra` already uses for the octonions. It splits the frame group
+cleanly:
+
+- linear maps **preserve** it — `M(a⊕b⊕c) = Ma ⊕ Mb ⊕ Mc`, so a vanishing sum stays vanishing;
+- translations **destroy** it — `(a⊕t) ⊕ (b⊕t) ⊕ (c⊕t) = a⊕b⊕c⊕t = t ≠ 0`.
+
+So 3-XOR orthogonality is a `GL(4,2)` invariant and **not** an `AGL(4,2)` one:
+the relation is anchored at the origin, and translations move the origin. It is
+exactly the structure that tells the linear half of the frame group from the
+affine half — and the first measurement in this session that distinguishes them.
+
+> A correction made in passing: the first run reported *"every generator
+> preserves the 35 lines: False"* and that read as a finding. It was a
+> mis-grouping — linear maps must preserve the relation, and it is the four
+> translations alone that break it. Separating the parts turns a wrong
+> aggregate into the actual structure.
+
 ### 0.4 `q_sim_upper = 1.00` is a shrug in the units of a measurement
 
 That left a diagnosis with no instrument: a missing strategy is arbitrarily

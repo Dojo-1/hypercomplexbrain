@@ -605,6 +605,51 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R1a",
+        "AGL(1,16) of order 240 is only the SEMILINEAR frame group. The full "
+        "GF(2)-linear one is AGL(4,2) of order 322560, a factor of 1344 larger, "
+        "and invariance on it is decidable exactly from sixteen generators "
+        "rather than by walking it: contraction width is broken by 0 of 16 and "
+        "so is invariant on all 322560 frames, while the free-fermion "
+        "certificate is broken by 16 of 16 -- maximal fragility, sharper than "
+        "the index-120 statement",
+        "tests/test_gf_frames.py::test_the_lift_to_agl42_is_decided_exactly_by_sixteen_generators",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "the first 3-XOR run reported that not every generator preserves the 35 "
+        "lines of PG(3,2) and that read as a finding. It was a mis-grouping: "
+        "linear maps must preserve a^b^c=0 since M(a^b^c)=Ma^Mb^Mc, and it is "
+        "the translations alone that break it, because (a^t)^(b^t)^(c^t)=t. "
+        "3-XOR orthogonality is a GL(4,2) invariant and NOT an AGL(4,2) one -- "
+        "the relation is anchored at the origin and translations move it",
+        "tests/test_gf_frames.py::test_three_xor_orthogonality_separates_the_linear_part_from_the_affine",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "the moving-frame review sampled four to six points of S_16, a group of "
+        "order 2.1e13, and reported orbit-collapse from it. Zero spread over six "
+        "random frames is consistent with luck. Labelling the qubits by GF(16) "
+        "built as GF(4)[y]/(y^2+y+w) gives AGL(1,16) of order 240, which is "
+        "walked in full: contraction width is collapsed on every one of the 240 "
+        "frames, upgrading the sampled suspicion to a fact about the group",
+        "tests/test_gf_frames.py::test_contraction_width_is_collapsed_on_the_whole_affine_group",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "the free-fermion certificate's frame dependence was reported as a "
+        "spread. Enumerated over the whole affine group it is a stabiliser: "
+        "exactly two of 240 frames preserve it, the identity and XOR with "
+        "all-ones, which is x -> 15-x. Its stabiliser is Aut(P_16), the "
+        "automorphism group of the path graph the gates were laid on, of index "
+        "120 -- and it already fails on a two-element subgroup",
+        "tests/test_gf_frames.py::test_the_free_fermion_certificate_survives_exactly_two_of_240_frames",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
         "the first moving-frame measurement sampled 24 uniformly random "
         "permutations of ten qubits and reported orbit spread ZERO for a family "
         "whose true spread is 0.9, because none of the 24 was the identity and "
