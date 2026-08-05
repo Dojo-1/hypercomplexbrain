@@ -215,6 +215,25 @@ class ResidencyReport:
     notes: list = field(default_factory=list)
     q_sim_upper_known: bool = True
     typed_remainders: list = field(default_factory=list)
+    # ORBIT-RESOLVING.  `q_sim_upper` is a property of the pair (circuit, qubit
+    # labelling), not of the circuit.  Measured on a 10-qubit free-fermion core:
+    # 0.0000 in the identity frame, 0.9000 after swapping the names of two wires
+    # -- an orbit spread of 0.9 on a scale of [0, 1], from renaming.
+    #
+    # The cause is the free-fermion path, whose adjacency test reads the
+    # labelling.  Stabilizer T-count and contraction width are both
+    # orbit-collapsed; a minimum over strategies inherits the worst typing of
+    # its members.
+    #
+    # This is not unsoundness.  A classical simulator may relabel before
+    # simulating, so the value in ANY frame is a cost some simulator can really
+    # pay, and every frame gives a valid upper bound.  What it forbids is
+    # calling one frame's value a property of the core, and comparing two cores
+    # whose numbers were taken in arbitrary and different frames.
+    #
+    # See `aionq.frame_orbit`.  The same error retired the S4-G100 headline as
+    # basis-dependent, in the round before the metric this field belongs to.
+    frame_typed: str = "(circuit, qubit labelling)"
     # Which strategy achieved the reported minimum.  "dense" means none of them
     # did: the bound fell back to brute force.
     bounding_strategy: str = "dense"

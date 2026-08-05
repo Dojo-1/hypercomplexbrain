@@ -180,6 +180,63 @@ loosely wrong but unrelated to the truth, and the list was written by the same
 people who wrote the portfolio. What the fourth strategy proves is that the
 third one's coverage claim was worth exactly as much as the second's.
 
+### 0.35 Moving-frame review: `q_sim_upper` sees the wire names
+
+S5 built the instrument for this and S4 is why it exists — the round that
+retired a headline claim as **basis-dependent**. `aionq.movingframe` states the
+distinction: a measurement is *orbit-collapsed* when it is constant on the frame
+orbit and sees the object, *orbit-resolving* when it varies and is reporting
+frame coordinates. An orbit-resolving measurement "is not therefore wrong. It is
+**mistyped**."
+
+For circuits the frame is the **qubit labelling** and the group is `S_n` acting
+by relabelling. Nothing physical moves: the same gates act on the same wires,
+only the names change. Measured on a 10-qubit free-fermion core:
+
+| frame | `q_sim_upper` | bounding |
+|---|---:|---|
+| identity | **0.0000** | free_fermion |
+| swap the names of wires 0 and 1 | **0.9000** | contraction |
+| reversal | **0.0000** | free_fermion |
+
+**Orbit spread 0.9 on a scale of [0, 1], from renaming two wires.** Classifying
+each strategy separately, with loop closure and equivariance both exactly zero
+so the action is sound and nothing carries hidden state:
+
+| quantity | verdict | spread |
+|---|---|---:|
+| stabilizer T-count | orbit-collapsed | 0 |
+| contraction width | orbit-collapsed | 0 |
+| **matchgate validity** | **orbit-resolving** | **1.0** |
+| **`q_sim_upper`** | **orbit-resolving** | **0.625** |
+
+The cause is the free-fermion path, whose adjacency test reads the labelling — a
+minimum over strategies inherits the worst typing of its members. It is *not* a
+defect in that strategy: matchgates on non-adjacent qubits really are universal,
+so refusing them is right. The defect is the **type**.
+
+The reversal row shows this is structure, not noise. Reversal preserves the path
+graph's adjacency, so the free-fermion path survives it and the value does not
+move: `q_sim_upper` is **orbit-collapsed on the stabiliser of the interaction
+structure** and jumps outside it.
+
+What survives: a classical simulator may relabel before simulating, so the value
+in *any* frame is a cost some simulator can really pay — **every frame gives a
+valid upper bound**. What is forbidden is calling one frame's value a property of
+the core, or comparing two cores whose numbers were taken in arbitrary and
+different frames. `ResidencyReport.frame_typed` now records this.
+
+> **The sampling defect, recorded because it nearly buried the finding.** The
+> first attempt drew 24 uniformly random permutations of ten qubits and reported
+> orbit spread **zero** for the family whose true spread is 0.9 — because none of
+> the 24 was the identity, and the identity is the frame where the free-fermion
+> path applies. An orbit sample that cannot reach the frame where the quantity
+> differs measures nothing. `orbit_frames` now always includes the identity and
+> one adjacent transposition. That is the same defect this document records in a
+> residency witness, a K3 attack, a projection freeze, a saturation equivalence
+> and two guards — now a seventh time, in the instrument built to audit the
+> other six.
+
 ### 0.4 `q_sim_upper = 1.00` is a shrug in the units of a measurement
 
 That left a diagnosis with no instrument: a missing strategy is arbitrarily

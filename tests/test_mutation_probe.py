@@ -59,8 +59,27 @@ def scratch_module(tmp_path_factory):
 
 
 def test_a_clean_tracked_target_is_accepted():
-    """Read-only: naming a real module here must not write to it."""
-    probe.assert_clean("src/aionq/residency.py")
+    """The guard must accept a clean file, not merely refuse a dirty one.
+
+    The first version named `src/aionq/residency.py` outright and so asserted a
+    property of the WORKING TREE rather than of `assert_clean`: it failed in any
+    session with uncommitted changes to that file, which is most sessions in
+    which anyone is editing it. The subject is the function, so the file is
+    chosen by asking git which tracked file is currently clean.
+    """
+    import subprocess
+
+    listing = subprocess.run(
+        ["git", "ls-files", "src/aionq"], cwd=ROOT,
+        capture_output=True, text=True, timeout=60).stdout.split()
+    dirty = subprocess.run(
+        ["git", "status", "--porcelain=v1", "--", "src/aionq"], cwd=ROOT,
+        capture_output=True, text=True, timeout=60).stdout
+    clean = [path for path in listing if path not in dirty]
+    if not clean:
+        pytest.skip("no clean tracked module available to exercise the accept path")
+
+    probe.assert_clean(clean[0])
 
 
 def test_a_dirty_target_is_refused_before_any_mutation(scratch_module):

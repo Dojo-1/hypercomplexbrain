@@ -581,6 +581,40 @@ CORRECTIONS = (
         True,
     ),
     Correction(
+        "QSigma-R1a",
+        "q_sim_upper was reported as a property of a core and is ORBIT-RESOLVING: "
+        "0.0000 in the identity frame and 0.9000 after swapping the names of two "
+        "wires, an orbit spread of 0.9 on a scale of [0,1] from relabelling. The "
+        "free-fermion path reads the qubit labelling through its adjacency test, "
+        "and a minimum over strategies inherits the worst typing of its members. "
+        "This is the S4-G100 error -- a headline retired as basis-dependent -- "
+        "reappearing inside the metric built to replace the one S4 killed",
+        "tests/test_frame_orbit.py::test_q_sim_upper_inherits_it_and_is_orbit_resolving",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "test_a_clean_tracked_target_is_accepted named src/aionq/residency.py "
+        "outright, so it asserted a property of the WORKING TREE rather than of "
+        "assert_clean: it failed in any session with uncommitted changes to that "
+        "file, which is most sessions in which anyone is editing it. The subject "
+        "is the function, so the file must be chosen by asking git which tracked "
+        "file is currently clean",
+        "tests/test_mutation_probe.py::test_a_clean_tracked_target_is_accepted",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "the first moving-frame measurement sampled 24 uniformly random "
+        "permutations of ten qubits and reported orbit spread ZERO for a family "
+        "whose true spread is 0.9, because none of the 24 was the identity and "
+        "the identity is the frame in which the free-fermion path applies. An "
+        "orbit sample that cannot reach the frame where the quantity differs "
+        "measures nothing",
+        "tests/test_frame_orbit.py::test_the_orbit_sample_always_reaches_the_identity",
+        True,
+    ),
+    Correction(
         "REGISTRY",
         "every instrument in this repository measures a deficiency and none "
         "reports the positive quantity, so what the programme KNOWS had never "
