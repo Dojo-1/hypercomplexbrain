@@ -2093,3 +2093,82 @@ missing factor of `i` is the whole difference, and the only thing that looked
 wrong was that the zero was *exact* rather than `1e-16`.
 
 Full record: `manifests/qsigma_r1g_majorana_excitation_finding.json`.
+
+## 8.11 Adjacency is the encoding: a remainder withdrawn
+
+§8.10 closed with a **planarity remainder**: that `matchgate_plan`'s
+nearest-neighbour condition is a *one-dimensional* restriction where free-fermion
+tractability — Kasteleyn, FKT — needs only **planarity**, which Euler's formula
+supplies and which is strictly weaker; so the certified path plausibly refuses
+free-fermion circuits on planar but non-linear layouts.
+
+**That remainder is wrong and is withdrawn here.**
+
+| placement | certified | `gaussian_defect` |
+|---|---|---|
+| iSWAP on (0,1) | ✓ | **0.0000** |
+| iSWAP on (1,2) | ✓ | **0.0000** |
+| iSWAP on (0,2) | ✗ | **6.9282** |
+| RXX(0.7) on (0,1) | ✓ | 0.0000 |
+| RXX(0.7) on (0,2) | ✗ | 3.6442 |
+
+The **same matrix** is free-fermion on adjacent qubits and not free-fermion one
+qubit further apart. Nothing about the gate changed — the Jordan–Wigner string of
+the qubit it jumped did. So `matchgate_plan` is not imposing a relaxable layout
+convention; it is **enforcing the encoding**, and its locality condition is
+correct rather than conservative.
+
+The remainder reasoned about the gate *layout* while the constraint lives in the
+*encoding* — and it was written in the same round that introduced the covariant
+defect capable of settling it, and was not settled with it.
+
+### Where the real gap is: arity, not locality
+
+A 3-qubit unitary built from a quadratic Majorana generator has defect
+**2.8e-15** and is refused with *"acts on 3 qubits"*. The certificate is
+**semantic in locality and syntactic in arity**: it recognises presentations, not
+operations. A poly-time-simulable unitary priced as hard for how it was written
+down. Safe direction for a bound, wrong direction for a measurement. Recorded,
+not repaired — accepting multi-qubit gates means deciding Gaussianity inside a
+bound-feeding instrument, which is not a labelling change.
+
+### What adjacency costs, in closed form
+
+A generator `c_j c_k` is directly expressible as a same-or-adjacent-qubit gate
+iff `|j//2 − k//2| ≤ 1`. Counting: `n` same-qubit pairs plus `4(n−1)` adjacent
+pairs.
+
+```
+reachable(n) = 5n − 4          exact, verified for n = 2..19
+fraction     = (5n − 4) / (n(2n − 1))  ~  5/(2n)
+```
+
+`n=2`: 100% · `n=4`: 57.1% · `n=8`: 30.0% · **`n=16`: 15.3%**
+
+The directly expressible slice of `so(2n)` vanishes as `n` grows — **but it
+generates**: the 11 reachable generators at `n=3` Lie-generate all 15 dimensions
+of `so(6)`, the 16 at `n=4` all 28 of `so(8)`, by explicit bracketing (with a
+control: same-qubit generators alone close on strictly less, so the instrument
+can report failure). **Adjacency costs depth, not expressiveness.**
+
+### This is the locality residual, algebraically
+
+§8.6 measured that of four residuals exactly one moves under the frame group, and
+it is `locality`. §8.7 measured that of four strategies exactly one is
+frame-resolving, and it is the one imposing adjacency. Here is why: adjacency
+selects a `5/(2n)` slice of `so(2n)`, and **which** slice depends on the qubit
+labelling. The residual written in indices is frame-dependent because the
+structure it refers to genuinely is.
+
+### Where Euler still belongs
+
+Not at the gate layout — at the **encoding**. Jordan–Wigner is a
+one-dimensional fermion-to-qubit encoding and its strings are what make
+non-adjacent gates non-Gaussian. Encodings with two-dimensional locality
+structure exist, and under one of those the reachable slice would be set by a
+planar mode graph rather than by a line — which is where a Kasteleyn or
+Euler-characteristic argument would actually apply. **H.** None is implemented,
+none was evaluated, and nothing above is evidence about one. That is the
+corrected *location* of the idea, not a result about it.
+
+Full record: `manifests/qsigma_r1h_mode_locality_finding.json`.

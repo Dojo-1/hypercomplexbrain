@@ -161,9 +161,20 @@ def test_the_repositorys_own_collapsed_quantities_are_not_blind():
     variants = [costs(ladder(8, 4, "rxx")), costs(ladder(8, 2, "cx")),
                 costs(ladder(12, 2, "rxx"))]
 
-    for name in ("stabilizer_rank", "contraction", "free_fermion"):
+    for name in ("stabilizer_rank", "basis_permutation", "contraction",
+                 "free_fermion"):
         moved = any(variant[name] != reference[name] for variant in variants)
         assert moved, (
             f"{name} was reported orbit-collapsed and does not move under a "
             f"change of circuit either -- it would be BLIND, and the R1C "
             f"finding would not mean what it was recorded to mean")
+
+    # `basis_permutation` is infinite on everything above, and a control that can
+    # only observe one value is the defect this whole file is about.  The CX
+    # ladder does move it to 0.0 -- so the loop passes -- but that is luck rather
+    # than design, and a circuit built to be basis-confined makes it deliberate.
+    permutation_only = QuantumCircuit(8)
+    for qubit in range(7):
+        permutation_only.append(CXGate(), [qubit, qubit + 1])
+    assert costs(permutation_only)["basis_permutation"] == 0.0
+    assert reference["basis_permutation"] == float("inf")

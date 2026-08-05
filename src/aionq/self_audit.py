@@ -1003,6 +1003,31 @@ CORRECTIONS = (
         "tests/test_fishnet.py::test_the_generator_is_not_identically_zero",
         True,
     ),
+    Correction(
+        "QSigma-R1h",
+        "R1G recorded a planarity remainder claiming matchgate_plan's "
+        "nearest-neighbour condition is a 1D restriction where free-fermion "
+        "tractability needs only planarity, so the certified path plausibly "
+        "refuses free-fermion circuits on planar non-linear layouts. Measured: a "
+        "matchgate matrix on non-adjacent qubits is not a free-fermion operation "
+        "at all -- iSWAP on (0,2) has gaussian_defect 6.93 against 0.0 on (0,1) "
+        "-- because Jordan-Wigner gives it the Z string of the qubit it jumps. "
+        "The refusal is semantically correct. The remainder reasoned about the "
+        "gate layout while the constraint lives in the encoding",
+        "tests/test_mode_locality.py::test_a_matchgate_on_non_adjacent_qubits_is_not_a_free_fermion_operation",
+        True,
+    ),
+    Correction(
+        "QSigma-R1h",
+        "the retroactive not-blind control named three of the four strategies it "
+        "was written to cover, omitting basis_permutation -- the one whose base "
+        "value is infinite and which the chosen variants therefore looked least "
+        "likely to move. It does move, so nothing was hidden, but a control that "
+        "quietly drops the case least likely to pass is the defect the test "
+        "itself exists to detect",
+        "tests/test_connection_frame.py::test_the_repositorys_own_collapsed_quantities_are_not_blind",
+        True,
+    ),
 )
 
 
