@@ -1,0 +1,70 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1F-BLIND-INVARIANCE-001",
+  "status": "measured and recorded. No earlier finding is withdrawn: the control was applied retroactively to R1B/R1C/R1D's collapsed quantities and all of them pass it. What is corrected is the METHOD, which asserted for three rounds that collapse implies content.",
+  "subject": "src/aionq/connection_frame.py, and the classification in src/aionq/movingframe.py that it extends",
+  "the_device_that_was_proposed": {
+    "statement": "on a finite hyperbolic mesh with positive quadrature weights and a finite-dimensional discretised connection Laplacian, any complete collection of spectral eigensections admits a Parseval frame; gauge transformation conjugates the connection Laplacian, so the frame operator conjugates and the Parseval property and frame bounds are gauge-invariant",
+    "offered_as": "the correct formal foothold for a connection-Laplacian to packet-frame to decoupling spine, and marked P in the proposer's own evidence map",
+    "verdict": "TRUE, and EMPTY",
+    "why_empty": "the proof never touches the connection. An orthonormal basis is a Parseval frame with A = B = 1; the spectral theorem supplies one for any Hermitian matrix; unitary conjugation preserves spectra. The conclusion therefore holds verbatim for the zero connection, for a random Hermitian matrix, and for a connection not gauge-equivalent to anything."
+  },
+  "measurement": {
+    "setting": "12-vertex ring with three chords, SU(2) fiber, random Haar transport per edge, non-degenerate spectrum (minimum gap 2.07e-02)",
+    "the_control_the_device_lacked": "a SHUFFLE -- permute which edge carries which transport. It preserves the graph and the multiset of transports and changes the holonomies, so it produces a genuinely different connection rather than a different frame. Verified: cycle traces move by 1.60 under the shuffle and by 8.3e-16 under a gauge change.",
+    "table": {
+      "frame_bounds": {"gauge": 0.0, "shuffle": 0.0, "base_value": [1.0, 1.0], "type": "BLIND"},
+      "spectrum": {"gauge": 3.553e-15, "shuffle": 3.556e-01, "type": "INVARIANT_AND_DISCRIMINATING"},
+      "holonomy_traces": {"gauge": 8.273e-16, "shuffle": 1.596, "type": "INVARIANT_AND_DISCRIMINATING"},
+      "localisation_IPR": {"gauge": 3.469e-16, "shuffle": 5.785e-02, "type": "INVARIANT_AND_DISCRIMINATING"}
+    },
+    "executable_form": "tests/test_connection_frame.py::test_the_device_is_true, ::test_the_device_is_also_empty, ::test_the_shuffle_really_is_a_different_connection, ::test_three_observables_are_invariant_and_discriminating"
+  },
+  "the_type_this_adds": {
+    "existing_classification": "src/aionq/movingframe.py: ORBIT-COLLAPSED (constant on the frame orbit, therefore seeing the object) versus ORBIT-RESOLVING (varying on it, therefore mistyped as a property of the object when it is a property of the pair)",
+    "the_third_case": "BLIND -- collapsed on the frame orbit AND collapsed under a perturbation that is not a frame change. Invariant because it has no content, not because it has found the object.",
+    "the_general_statement": "a claim of invariance is only informative relative to something the invariant is supposed to FAIL on. Without that control, perfect invariance and blindness are the same measurement.",
+    "classification_within_this_repository": "ninth occurrence of the pattern 'a guard whose witness cannot reach the case it asserts', and the first occurrence inside a proposed THEOREM rather than inside code."
+  },
+  "retroactive_application_to_this_repositorys_own_results": {
+    "what_was_asserted": "R1B, R1C and R1D each reported quantities as orbit-collapsed and treated collapse as the good case. R1C's headline -- three of four strategies constant over all 240 frames of AGL(1,16) -- is exactly this shape.",
+    "what_was_never_run": "the control. Nothing in those rounds established that a collapsed strategy moves under anything at all.",
+    "now_measured": "stabilizer_rank, contraction and free_fermion were each evaluated on four circuits differing in depth, entangler and qubit count. All three move.",
+    "outcome": "none of the three is BLIND, so no earlier finding is withdrawn and the R1C attribution stands. The correction is methodological: it was asserted for three rounds and measured only when an outside proposal exhibited the failure mode.",
+    "executable_form": "tests/test_connection_frame.py::test_the_repositorys_own_collapsed_quantities_are_not_blind",
+    "bound_correction": "self_audit CORRECTIONS entry QSigma-R1f"
+  },
+  "what_survives_of_the_device": {
+    "statement": "its conclusion is neither wrong nor useless; it is not about connections. The same gauge-covariance statement becomes a real one on any of the three discriminating observables.",
+    "ranking": [
+      "holonomy conjugacy classes -- the sharpest, because they are the COMPLETE gauge-invariant content of a connection on a graph, and the frame bounds see none of it",
+      "eigensection localisation (IPR) -- the one to build on, because it is the only one of the three that is a step toward a packet: it measures spatial concentration, which is what a packet calculus needs and what a spectral multiplier cannot provide",
+      "spectrum -- discriminating but global, and it is what the device already had access to and did not use"
+    ],
+    "why_localisation_is_gauge_invariant": "a gauge acts as G_i on the fiber over vertex i and preserves ||f_i|| exactly, so the per-vertex weight distribution is untouched. This is a structural reason, not a class-function argument, and it is the only one of the three whose invariance does not follow from conjugation-invariance of a spectrum."
+  },
+  "what_is_not_claimed": [
+    "that the proposer's wider programme is affected. One device was tested. Its Proposition 1 (base/fiber non-collapse) and Theorem 2 (density blindness to the central lift) are separate two-line arguments and were not evaluated here; Theorem 2 is in fact the same lesson from the other side and is worth promoting.",
+    "that a packet frame exists, or that localisation on this mesh is a packet. A packet needs simultaneous localisation in base and in frequency, and an eigensection is a pure frequency object whose spatial concentration is a byproduct of the connection rather than a design.",
+    "that the mesh used is hyperbolic. It is a ring with chords, chosen because it has independent cycles and therefore non-trivial holonomy. On a tree every connection is gauge-equivalent to the identity and every observable here would be vacuous, which would have made the comparison prove nothing.",
+    "any decoupling, incidence or frame-bound estimate for localised packets. None was attempted."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "control_remainder",
+      "statement": "the shuffle is one control. It preserves the multiset of edge transports, so it tests sensitivity to WHICH edge carries WHICH transport and not to the transports themselves. A quantity insensitive to the shuffle but sensitive to replacing the transports would be misclassified as BLIND by this instrument. The right general form is a family of controls, one per structure the invariant is supposed to depend on, and only one member of that family is implemented."
+    },
+    {
+      "kind": "degeneracy_remainder",
+      "statement": "localisation is computed from eigenvectors, which are not unique when eigenvalues coincide. The test asserts a spectral gap of at least 1e-6 before measuring, so the reported invariance is established only for non-degenerate spectra. On a symmetric mesh with degeneracies the quantity would need to be replaced by a projector-based one, and it is not."
+    },
+    {
+      "kind": "method_remainder",
+      "statement": "the retroactive check covers the quantities R1C named. It does not cover every quantity this repository has ever called invariant, and no systematic sweep for BLIND claims across the corpus has been run. The concept is now available and the audit is not done."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container, prompted by the repository owner's instruction not to take the proposed device at face value. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}

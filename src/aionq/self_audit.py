@@ -975,6 +975,34 @@ CORRECTIONS = (
         "tests/test_majorana.py::test_a_max_over_the_basis_is_not_invariant_and_a_sum_of_squares_is",
         True,
     ),
+    Correction(
+        "QSigma-R1f",
+        "three rounds reported quantities as ORBIT-COLLAPSED and treated collapse "
+        "as the good case without ever running the control that distinguishes an "
+        "invariant from a blind quantity. A measurement constant on the frame "
+        "orbit AND constant under a non-frame perturbation is not seeing the "
+        "object, it has no content. Found by testing a proposed gauge-covariance "
+        "device whose frame bounds are (1,1) under a gauge change AND under a "
+        "shuffled connection, while spectrum, holonomy and localisation move by "
+        "3.6e-1, 1.60 and 5.8e-2. Applied retroactively: R1C's three collapsed "
+        "strategies do move under a change of circuit, so they are not blind and "
+        "the findings stand -- but that was asserted for three rounds, not measured",
+        "tests/test_connection_frame.py::test_the_repositorys_own_collapsed_quantities_are_not_blind",
+        True,
+    ),
+    Correction(
+        "QSigma-R1g",
+        "the first QFFO-excitation measurement built its generator as "
+        "sum A_jk c_j c_k and Hermitised. For j != k the Majorana product is "
+        "ANTI-Hermitian, so symmetrising annihilated it exactly: every "
+        "Hamiltonian was zero, every unitary was the identity, and both "
+        "excitation branches reported free-fermion defect 0.000e+00. A clean "
+        "dichotomy was one step from being recorded from a measurement of the "
+        "identity operator. The missing factor of i is the entire difference, "
+        "and the exact zero -- not 1e-16 -- was the only thing that looked wrong",
+        "tests/test_fishnet.py::test_the_generator_is_not_identically_zero",
+        True,
+    ),
 )
 
 

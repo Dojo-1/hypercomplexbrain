@@ -1981,3 +1981,115 @@ measured. No partition, incidence bound or consequence is claimed; an
 anisotropic function on a sphere is raw material.
 
 Full record: `manifests/qsigma_r1d_covariant_certificate_finding.json`.
+
+## 8.9 BLIND: the third thing an invariance claim can be
+
+A device was proposed for this repository as its first formal foothold: on a
+finite mesh with a discretised connection Laplacian, the eigensections form a
+Parseval frame, and a gauge transformation conjugates the frame operator, so the
+frame bounds are gauge-invariant.
+
+It is true. It is also **empty**, and the proof shows why: it never touches the
+connection. An orthonormal basis is a Parseval frame with `A = B = 1`; the
+spectral theorem supplies one for any Hermitian matrix; unitary conjugation
+preserves spectra. So the conclusion holds for the zero connection, for a random
+Hermitian matrix, and for a connection that is not gauge-equivalent to anything
+in sight.
+
+Measured on a 12-vertex ring with three chords and an `SU(2)` fiber, against the
+control the device lacked — a **shuffled** connection, which permutes which edge
+carries which transport and so changes the holonomies:
+
+| observable | gauge change | shuffled connection | |
+|---|---|---|---|
+| frame bounds `(A,B)` | `(1,1)` | `(1,1)` | **BLIND** |
+| spectrum | 3.6e-15 | **3.6e-01** | discriminating |
+| holonomy traces | 8.3e-16 | **1.60** | discriminating |
+| localisation (IPR) | 3.5e-16 | **5.8e-02** | discriminating |
+
+### The type
+
+`movingframe` classifies a measurement as **ORBIT-COLLAPSED** — constant on the
+frame orbit, therefore seeing the object — or **ORBIT-RESOLVING** — varying on
+it, therefore mistyped. This whole programme has treated collapse as the good
+case. It is not sufficient. There is a third:
+
+> **BLIND** — collapsed on the frame orbit *and* collapsed under a perturbation
+> that is not a frame change. Invariant because it has no content, not because
+> it has found the object.
+
+**A claim of invariance is only informative relative to something the invariant
+is supposed to fail on.** Without that control, perfect invariance and blindness
+are the same measurement. This is the recurring pattern of this repository — a
+guard whose witness cannot reach the case it asserts — appearing for the first
+time inside a proposed *theorem* rather than inside code.
+
+### Turned back on this repository
+
+§8.6–8.8 reported quantities as orbit-collapsed and stopped there. The control
+was never run. It has now been, retroactively, on the three strategies §8.7
+called collapsed: `stabilizer_rank`, `contraction` and `free_fermion` all move
+under a change of circuit, so **none of them is blind and those findings stand**.
+That is the outcome, not the point. The point is that it was asserted for three
+rounds and only measured when someone else's theorem exhibited the failure.
+
+### What survives of the device
+
+Its conclusion is not wrong and not useless — it is simply not about
+connections. Replace the frame bounds with the spectrum, the holonomy conjugacy
+classes, or the eigensection localisation and the same gauge-covariance
+statement becomes a real one, because all three can fail. The holonomies are the
+sharpest: they are the *complete* gauge-invariant content of a connection on a
+graph, and the frame bounds see none of it. Localisation is the one to build on,
+because it is the only one of the three that is a step toward a packet.
+
+Full record: `manifests/qsigma_r1f_blind_invariance_finding.json`.
+
+## 8.10 Stirring the network: two places to apply a multiplier, and they are opposite
+
+§8.8 established what a QFFO is — a coefficient multiplier, hence a function of
+the number operator, hence a spectral band weight — and concluded it could supply
+a `P_k` and no set with a dimension. Placed instead **on the Majorana network**
+rather than on the disk, it has two readings that sound alike and are opposite.
+
+A Gaussian unitary is `exp(iH)` with `H = (i/4) Σ A_jk c_j c_k`, `A` real
+antisymmetric.
+
+**Single-particle.** Weight the spectrum of `A`. The result is another real
+antisymmetric matrix, so another Gaussian unitary — *exactly*, for any weights
+whatever. This is transport **along the fiber**, and it is not achieved by
+standing still: displacement up to **0.40** with the free-fermion defect never
+leaving **4e-15**. Checked with adversarial weights (negative, zero, 10³, random)
+because the containment is structural and must survive weights chosen to break it.
+
+**Many-body.** Weight the spectrum of `H` itself. Quadraticity is not preserved;
+the result leaves the class by an amount that grows with the displacement.
+
+| branch | displacement | free-fermion defect |
+|---|---|---|
+| single-particle | 0.1796 | **2.9e-15** |
+| many-body | 0.1986 | **1.02** |
+
+Nearly the same distance travelled; fifteen orders of magnitude apart in whether
+the certificate survives. **The difference is the direction of the excitation,
+not its size** — which is what makes this a fiber/transverse split rather than a
+statement about magnitude. And `q` is a knob on how far off: defect 1.02 at
+`q = 0.5`, 3.27 at `q = 0.9`, monotone.
+
+This is the transverse departure §8.6–8.7 recorded the portfolio as lacking:
+parameterised, generated by an operator carrying a fractal order rather than by a
+random kick, and measured by an invariant. The single-particle branch supplies
+the complement — a way to stir the network hard while staying provably
+simulable, which is what an ablation control needs.
+
+### The correction this earned before the module existed
+
+The first version built the generator as `Σ A_jk c_j c_k` and Hermitised. For
+`j ≠ k` the Majorana product `c_j c_k` is **anti**-Hermitian, so symmetrising
+annihilated it exactly: every Hamiltonian was zero, every unitary was the
+identity, and **both branches reported defect `0.000e+00`**. A clean dichotomy
+was one step from being recorded from a measurement of the identity operator. The
+missing factor of `i` is the whole difference, and the only thing that looked
+wrong was that the zero was *exact* rather than `1e-16`.
+
+Full record: `manifests/qsigma_r1g_majorana_excitation_finding.json`.
