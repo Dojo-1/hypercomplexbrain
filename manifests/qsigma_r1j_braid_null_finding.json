@@ -1,0 +1,76 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1J-BRAID-NULL-001",
+  "status": "measured and recorded. A null result on the hardness axis, with the contrast that makes it informative, plus a third BLIND instrument caught by a control -- and a correction to that control's own first reading. No published number changes.",
+  "subject": "src/aionq/braid.py: Majorana braid generators, their theta-deformations, and Floquet drives of quadratic fishnets, against src/aionq/majorana.py::gaussian_defect",
+  "the_null_result": {
+    "statement": "exchanging two Majorana modes is exp(theta c_k c_{k+1}), which is QUADRATIC in the Majoranas. So every braid generator, every word in them, and the whole one-parameter family lands inside the Gaussian group. Braiding does nothing on the hardness axis.",
+    "measured": {
+      "generators_sigma_k_at_pi_over_4": "gaussian_defect 0.000e+00 for k = 0, 1, 2",
+      "sixty_letter_random_braid_word": "gaussian_defect 5.810e-15",
+      "theta_family_0.1_to_2.5": "gaussian_defect 0.000e+00 at every value tested"
+    },
+    "why_the_topology_is_nonetheless_real": {
+      "braid_relation": "s_k s_{k+1} s_k = s_{k+1} s_k s_{k+1} holds with exact difference 6.28e-16 and phase +1.000000 on all five adjacent triples tested. ON THE NOSE, not projectively -- so the representation is genuine and there is no 2-cocycle to record.",
+      "far_commutation": "[s_j, s_k] = 0.00e+00 exactly for |j - k| >= 2",
+      "nonabelian": "adjacent generators do NOT commute, norm of the commutator above 0.5, so satisfying the braid relation is not a statement about scalars"
+    },
+    "reading": "the braid relations hold exactly, the representation is genuinely nonabelian, the topology is entirely real -- and the whole structure is invisible to gaussian_defect, and by R1I to the level statistic as well, because a Gaussian unitary conjugates a quadratic Hamiltonian to a quadratic Hamiltonian. This is the measured content of the statement that Majorana braiding alone is not universal for quantum computation."
+  },
+  "the_moving_fishnet_is_also_free": {
+    "statement": "a Floquet operator built from quadratic Hamiltonians is a product of Gaussian unitaries, hence Gaussian",
+    "measured": {"one_period": 1.723e-13, "seven_periods": 4.562e-13, "n": 8},
+    "why_seven_as_well_as_one": "'stays free for a while' and 'stays free' are different claims and only the second is true here; a single period could not distinguish them"
+  },
+  "the_contrast_that_makes_the_nulls_informative": {
+    "braid": "stays, defect 0",
+    "theta_deformation": "stays, defect 0 across the family",
+    "floquet_drive": "stays, defect 1.7e-13 and 4.6e-13 after seven periods",
+    "quartic_interaction": "LEAVES, defect 6.4e+01",
+    "reading": "everything that looks like it should matter -- topology, motion, deformation -- leaves the class exactly where it was. The one thing that leaves it is an interaction. Without the quartic row these results would be equally consistent with an instrument that detects nothing."
+  },
+  "third_blind_instrument": {
+    "what_was_attempted": "asking whether a driven system is chaotic by taking the ratio statistic of its quasi-energies",
+    "why_it_fails": "quasi-energies are angles and angles wrap. Folding a spectrum many times onto (-pi, pi] interleaves levels from distant parts of it and destroys the local correlations the statistic reads.",
+    "measured_at_n_8": [
+      {"period": "<= 0.1", "wraps": "<= 0.83", "integrable": 0.3348, "chaotic": 0.5742, "separation": 0.2394},
+      {"period": 0.30, "wraps": 2.50, "integrable": 0.3448, "chaotic": 0.4158, "separation": 0.0710},
+      {"period": 0.70, "wraps": 5.83, "integrable": 0.4349, "chaotic": 0.3842, "separation": -0.0507}
+    ],
+    "the_sharp_form": "the statistic does not merely saturate past the threshold, it INVERTS. At 5.8 wraps the integrable system reads more chaotic than the chaotic one. An instrument that inverts is worse than one that saturates, because its output still looks like a reading.",
+    "the_near_miss": "a first measurement reported 0.43 for a driven free-fermion fishnet, between Poisson 0.386 and GUE 0.600, and was one step from being recorded as partial chaos.",
+    "the_guard": "spectral_slice.quasi_energy_statistic now refuses above one wrap instead of returning a number, and reports the wrap count in the refusal.",
+    "classification": "third instrument this session whose reach was shorter than its claim, after the frame-bounds device of R1F and the max-aggregator of R1D."
+  },
+  "correction_to_the_control_itself": {
+    "what_the_control_first_said": "folding a static integrable spectrum by hand moved it from 0.335 to 0.4385 at one seed, and the first reading was that folding pushes the statistic toward Poisson",
+    "what_eight_seeds_and_three_periods_say": {"mean_shift": -0.0157, "std": 0.0820, "range": [-0.1439, 0.1607], "signs": "16 down, 8 up"},
+    "the_corrected_statement": "folding is a SCRAMBLE, not a bias. The worst artefact is 0.161 against an integrable-to-chaotic signal of 0.212 measured at the same size -- 76% of the signal, in an unpredictable direction. This is a worse defect than a bias would be, because a bias could be subtracted and a scramble cannot.",
+    "why_it_is_recorded": "the control was written to catch an overclaim and its own first reading was one. Two data points supported a directional story; eight seeds did not.",
+    "bound_correction": "self_audit CORRECTIONS entry QSigma-R1j, second of two"
+  },
+  "what_is_not_claimed": [
+    "that braiding is useless. It is measured to be free-fermion, which is exactly why it is robust and exactly why it is not universal alone. Nothing here is a claim about topological protection, error rates, or the value of braiding as an engineering primitive.",
+    "that no braiding scheme can be hard. The measurement is of the braid group generated by Majorana exchanges under Jordan-Wigner. Anyonic models with richer fusion rules -- Fibonacci, for instance -- are not free-fermion and are not tested here.",
+    "any statement about heralded or post-selected operations. Free fermions plus parity measurement with post-selection is a different and strictly larger class, and it was not implemented or measured. It is the obvious next thing and it is not this round's.",
+    "that the quasi-energy statistic is unusable. It is fully discriminating below one wrap, measured. What is established is where its reach ends."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "finite_size_remainder",
+      "statement": "the folding-scramble measurement used n = 8, whose even-parity sector has 128 levels. The unfolded statistic itself varies from 0.326 to 0.485 across eight seeds at that size, which is a large fraction of the 0.21 signal. The scramble magnitude and the sampling noise are not separated, and at n = 8 they cannot be; the qualitative conclusion (both signs, comparable to the signal) is robust, the numbers are not tight."
+    },
+    {
+      "kind": "encoding_remainder",
+      "statement": "everything here is Jordan-Wigner and everything is quadratic-versus-quartic. 'Braiding is free' is a statement about the Majorana exchange representation, not about braiding in general, and R1H already recorded that the encoding is doing more work than it appears to."
+    },
+    {
+      "kind": "scope_remainder",
+      "statement": "the Floquet result is measured on a two-step drive at one seed and one period pair, at n = 8, out to seven periods. The argument that it must hold for any drive and any number of periods is structural -- a product of Gaussians is Gaussian -- and is stronger than the measurement; the measurement confirms the structure rather than establishing the general case."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}

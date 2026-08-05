@@ -80,6 +80,8 @@ __all__ = [
     "free_fermion_spectrum",
     "quartic_perturbation",
     "spectral_axis_report",
+    "wrap_count",
+    "quasi_energy_statistic",
 ]
 
 #: Analytic reference values for the ratio statistic.
@@ -203,3 +205,49 @@ def spectral_axis_report(qubits: int = 10, couplings=(0.05, 0.2, 1.0),
     rows["_quartic_shift"] = abs(rows[f"quartic_g{couplings[-1]}"] - rows["free_fermion"])
     rows["_weights_saturate"] = abs(reading.weight(100) - reading.weight(2048))
     return rows
+
+
+def wrap_count(hamiltonian, period: float) -> float:
+    """``||H|| * T / pi``: how many times the drive folds the spectrum onto the circle.
+
+    The quantity that decides whether a quasi-energy statistic means anything.
+    """
+    spectrum = np.linalg.eigvalsh(np.asarray(hamiltonian))
+    return float(np.abs(spectrum).max() * period / math.pi)
+
+
+def quasi_energy_statistic(hamiltonian, period: float, qubits: int,
+                           even: bool = True) -> float:
+    """``<r>`` of the quasi-energies of ``exp(iHT)``, or a refusal.
+
+    Quasi-energies are angles, and angles wrap.  Folding a spectrum many times
+    onto ``(-pi, pi]`` interleaves levels from distant parts of it, which
+    destroys the local correlations the statistic is built to read.  Measured at
+    ``n = 8`` against an integrable and a chaotic Hamiltonian:
+
+        wraps <= 0.83   separation 0.2394     full discriminating power
+        wraps  2.50     separation 0.0710     two thirds of it gone
+        wraps  5.83     separation -0.0507    SIGN INVERTED
+
+    At 5.8 wraps the integrable system reads more chaotic than the chaotic one.
+    So this function refuses above one wrap instead of returning a number.
+
+    The refusal is the whole point.  A first attempt at this measurement reported
+    0.43 for a driven free-fermion fishnet and was one step from recording it as
+    partial chaos.  Folding a static integrable spectrum by hand, across eight
+    seeds and three periods, shifts the statistic with mean -0.016 and standard
+    deviation 0.082, in both directions, worst magnitude 0.161 -- against an
+    integrable-to-chaotic signal of 0.212.  The artefact is a scramble of 76% of
+    the signal, not a bias that could be subtracted.
+    """
+    wraps = wrap_count(hamiltonian, period)
+    if wraps >= 1.0:
+        raise ValueError(
+            f"quasi-energy statistic refused: the drive folds the spectrum "
+            f"{wraps:.2f} times, and past one wrap this statistic loses its "
+            f"discriminating power and eventually inverts sign. Reduce the "
+            f"period below {math.pi / max(wraps / period, 1e-30):.4g}.")
+    from scipy.linalg import expm
+
+    sector = parity_sector(hamiltonian, qubits, even)
+    return ratio_statistic(np.angle(np.linalg.eigvals(expm(1j * sector * period))))

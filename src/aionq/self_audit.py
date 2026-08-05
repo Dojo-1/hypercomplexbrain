@@ -1053,6 +1053,28 @@ CORRECTIONS = (
         "tests/test_spectral_slice.py::test_the_multiplier_saturates_which_is_the_mechanism",
         True,
     ),
+    Correction(
+        "QSigma-R1j",
+        "a driven free-fermion fishnet was measured at quasi-energy <r> = 0.43, "
+        "between Poisson 0.386 and GUE 0.600, and was one step from being "
+        "recorded as partial chaos. It is a folding artefact: quasi-energies are "
+        "angles, and at 5.8 wraps the statistic does not merely degrade but "
+        "INVERTS -- the integrable system reads more chaotic than the chaotic "
+        "one, separation -0.05 against +0.24 below one wrap",
+        "tests/test_braid.py::test_past_the_threshold_the_statistic_inverts_its_sign",
+        True,
+    ),
+    Correction(
+        "QSigma-R1j",
+        "the control that caught the folding artefact was itself overclaimed: "
+        "from two data points it concluded that folding pushes the statistic "
+        "toward Poisson. Across eight seeds and three periods the shift has mean "
+        "-0.016, std 0.082, sixteen down and eight up. Folding is a SCRAMBLE, not "
+        "a bias, worst magnitude 0.161 against a signal of 0.212 -- which is "
+        "worse than a bias, because a bias could be subtracted",
+        "tests/test_braid.py::test_folding_alone_scrambles_the_statistic_by_as_much_as_the_signal",
+        True,
+    ),
 )
 
 

@@ -2240,3 +2240,70 @@ losing about `ε·T/d` for gaps `d` at height `T`. Harmless for zeta ordinates n
 `10⁶` (gaps of order 1, so ~1e-10); not harmless much higher.
 
 Full record: `manifests/qsigma_r1i_spectral_axis_finding.json`.
+
+## 8.13 The braid is real and does nothing: a moving fishnet is still free
+
+Exchanging two Majorana modes is `σ_k(θ) = exp(θ c_k c_{k+1})` — **quadratic in
+the Majoranas**. So every braid generator, every word in them, and the whole
+θ-family lands inside the Gaussian group.
+
+**The topology is entirely real.** The braid relation
+`s_k s_{k+1} s_k = s_{k+1} s_k s_{k+1}` holds with exact difference `6.28e-16`
+and phase `+1.000000` on all five adjacent triples — *on the nose*, not
+projectively, so the representation is genuine and there is no 2-cocycle to
+record. Far generators commute exactly. Adjacent ones do **not** (commutator norm
+> 0.5), so satisfying the relation is not a statement about scalars.
+
+**And it is invisible to hardness.**
+
+| operation | free-fermion defect |
+|---|---|
+| `σ_k(π/4)`, k = 0,1,2 | **0.000e+00** |
+| 60-letter random braid word | **5.8e-15** |
+| θ ∈ {0.1, π/8, π/4, 1.0, 2.5} | **0.000e+00** |
+| Floquet drive, 1 period | 1.7e-13 |
+| Floquet drive, 7 periods | 4.6e-13 |
+| **quartic interaction** | **6.4e+01** |
+
+A Floquet operator built from quadratic Hamiltonians is a product of Gaussian
+unitaries, hence Gaussian — **the moving fishnet cannot leave the class**, at any
+period, for any number of periods. Checked at seven as well as one, because
+*"stays free for a while"* and *"stays free"* are different claims.
+
+Everything that looks like it should matter — topology, motion, deformation —
+leaves the class exactly where it was. **The one thing that leaves it is an
+interaction.** This is the measured content of the statement that Majorana
+braiding alone is not universal for quantum computation.
+
+### A third blind instrument, and a correction to its own control
+
+The obvious way to ask whether a driven system is chaotic reads its
+quasi-energies. Quasi-energies are **angles**, and angles wrap:
+
+| period | wraps `‖H‖T/π` | integrable | chaotic | separation |
+|---|---|---|---|---|
+| ≤ 0.1 | ≤ 0.83 | 0.3348 | 0.5742 | **+0.2394** |
+| 0.30 | 2.50 | 0.3448 | 0.4158 | +0.0710 |
+| 0.70 | 5.83 | 0.4349 | 0.3842 | **−0.0507** |
+
+Past the threshold the statistic does not saturate — it **inverts**. At 5.8 wraps
+the integrable system reads *more chaotic* than the chaotic one. An instrument
+that inverts is worse than one that goes blind, because its output still looks
+like a reading. A first measurement reported **0.43** for a driven free-fermion
+fishnet and was one step from being recorded as partial chaos.
+`quasi_energy_statistic` now refuses above one wrap.
+
+The control that caught it needed correcting in turn. From two data points it
+concluded folding pushes the statistic toward Poisson. Across eight seeds and
+three periods: mean shift **−0.016**, std **0.082**, sixteen down and eight up,
+worst magnitude **0.161** against a signal of **0.212**. Folding is a
+**scramble, not a bias** — 76% of the signal, in an unpredictable direction,
+which is *worse* than a bias because a bias could be subtracted.
+
+Not claimed: that braiding is useless (it is free-fermion, which is exactly why
+it is robust *and* why it is not universal alone); that no braiding scheme can be
+hard (richer fusion rules are not tested); or anything about heralded
+post-selected operations, which are a strictly larger class and the obvious next
+thing.
+
+Full record: `manifests/qsigma_r1j_braid_null_finding.json`.
