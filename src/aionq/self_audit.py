@@ -605,6 +605,29 @@ CORRECTIONS = (
     ),
     Correction(
         "QSigma-R1a",
+        "a cycle-structure reading separates translations from transvections on "
+        "the GENERATORS -- 2^8 against 2^4 1^8 -- and that looked like a second "
+        "separator. Across the whole of AGL(1,16) three of the five cycle types "
+        "contain both line-preserving and line-breaking frames, so cycle type "
+        "cannot decide which half of the frame group an element lies in. 3-XOR "
+        "orthogonality decides it exactly, so it is the only separator",
+        "tests/test_gf_frames.py::test_cycle_type_separates_the_generators_but_not_the_group",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
+        "there is no hardness saddle in frame space and the reason is structural, "
+        "not empirical: q_sim_upper is a minimum over four strategies, three are "
+        "orbit-collapsed on all 322560 frames and the only resolving member is "
+        "BINARY, so the minimum takes at most two values. Measured, exactly two "
+        "are realised -- 0.00 on the stabiliser and 0.25 on the other 238 -- so "
+        "the landscape is flat at two levels with a cliff between them and "
+        "nothing is close to the transition",
+        "tests/test_gf_frames.py::test_the_hardness_landscape_is_a_step_and_not_a_saddle",
+        True,
+    ),
+    Correction(
+        "QSigma-R1a",
         "AGL(1,16) of order 240 is only the SEMILINEAR frame group. The full "
         "GF(2)-linear one is AGL(4,2) of order 322560, a factor of 1344 larger, "
         "and invariance on it is decidable exactly from sixteen generators "

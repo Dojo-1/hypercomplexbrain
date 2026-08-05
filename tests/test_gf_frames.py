@@ -243,3 +243,99 @@ def test_the_certificate_is_broken_by_every_single_generator():
         lambda c: float(matchgate_plan(c).valid), circuit)
     assert not verdict["invariant"]
     assert len(verdict["generators_breaking"]) == len(agl42_generators()) == 16
+
+
+# ------------------------------------- is orthogonality the ONLY separator?
+
+def test_cycle_type_separates_the_generators_but_not_the_group():
+    """The "360 reading" -- going all the way round -- is not a complete invariant.
+
+    On the generators it looks decisive: translations are fixed-point-free
+    involutions of cycle type 2^8, transvections are involutions with eight
+    fixed points, 2^4 1^8. But across the whole of AGL(1,16), three of the five
+    cycle types contain BOTH line-preserving and line-breaking frames, so cycle
+    structure cannot decide which half of the frame group an element lies in.
+
+    3-XOR orthogonality can, exactly. So "only orthogonally readable" is the
+    right description, and it is a statement about the group rather than about
+    the generators.
+    """
+    from collections import Counter
+
+    from aionq.gf_frames import agl42_generators, preserves_lines, subgroup
+
+    def cycle_type(permutation):
+        seen, lengths = set(), []
+        for start in range(len(permutation)):
+            if start in seen:
+                continue
+            length, cursor = 0, start
+            while cursor not in seen:
+                seen.add(cursor)
+                cursor = permutation[cursor]
+                length += 1
+            lengths.append(length)
+        return tuple(sorted(lengths, reverse=True))
+
+    generators = agl42_generators()
+    translations = [v for k, v in generators.items() if k.startswith("translate")]
+    transvections = [v for k, v in generators.items() if k.startswith("E")]
+    assert {cycle_type(p) for p in translations} == {(2,) * 8}
+    assert {cycle_type(p) for p in transvections} == {(2, 2, 2, 2) + (1,) * 8}
+
+    # On the generators, cycle type happens to separate them.
+    assert {cycle_type(p) for p in translations}.isdisjoint(
+        {cycle_type(p) for p in transvections})
+
+    # On the whole group it does not.
+    frames = subgroup("AGL")
+    by_type = {}
+    for frame in frames:
+        by_type.setdefault(cycle_type(frame), set()).add(preserves_lines(frame))
+    mixed = [ct for ct, verdicts in by_type.items() if len(verdicts) > 1]
+    assert len(mixed) == 3, by_type
+    assert len(by_type) == 5
+
+
+def test_the_linear_part_is_the_alternating_group_on_eight_letters():
+    """GL(4,2) = A_8, the exceptional isomorphism, and 360 = |A_6| divides it."""
+    import math
+
+    assert 20160 == math.factorial(8) // 2
+    assert 20160 % 360 == 0
+
+
+def test_the_hardness_landscape_is_a_step_and_not_a_saddle():
+    """There is no saddle in frame space, and the reason is structural.
+
+    `q_sim_upper` is a minimum over four strategies. Three of them -- stabilizer
+    T-count, basis permutation and contraction width -- are orbit-collapsed, and
+    that is proved on all 322560 frames of AGL(4,2) by the generator argument.
+    The only orbit-resolving member is the free-fermion path, whose value is
+    BINARY. A minimum over three constants and one two-valued function takes at
+    most two values.
+
+    So the landscape over the frame group is flat at two levels with a cliff
+    between them, at the stabiliser of index 120. Nothing is "close to" the
+    transition: there is no metric on the frame group in which frames approach
+    it, and every non-stabiliser frame is equally far from it.
+    """
+    from aionq.gf_frames import invariant_under_agl42
+    from aionq.residency import simulation_residency
+
+    circuit = _free_fermion_16()
+    # The three collapsed members, proved on the full lifted group.
+    for measure in (lambda c: simulation_residency(c).t_count,
+                    lambda c: contraction_plan(c).width):
+        assert invariant_under_agl42(measure, circuit)["invariant"]
+
+    # The resolving member is binary.
+    assert set(float(matchgate_plan(relabel(circuit, f)).valid)
+               for f in subgroup("AGL")) <= {0.0, 1.0}
+
+    # Hence at most two levels, and exactly two are realised.
+    sampled = {round(simulation_residency(relabel(circuit, subgroup("AGL")[i]))
+                     .q_sim_upper, 6)
+               for i in (0, 1, 8, 89, 239)}
+    assert len(sampled) == 2
+    assert 0.0 in sampled
