@@ -1,0 +1,69 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1E-QFFO-IMPORT-001",
+  "status": "implemented and measured. Imported unverified material, treated as such. Two of the source's printed artefacts do not survive checking against its own definitions; a third could not be reproduced and that failure is NOT attributed, because the text available here was damaged in transmission.",
+  "subject": "src/aionq/qffo.py -- the quantum-fractal-fractional operators of Attiya, Ibrahim, Hakami, Cho and Yassen, Axioms 14(1):57, 2025, doi 10.3390/axioms14010057",
+  "why_it_was_implemented": "it was offered as an answer to a gap this repository had just recorded in docs/FALCONER_ASSESSMENT.md: that a dimension-threshold theory has nothing to act on here, because the programme produces no fractal sets and no measure carrying a dimension. An operator family parameterised by a fractal order is a plausible source of such sets. That is a reason to implement and check it. It is not a reason to believe it, and nothing here is cited as evidence.",
+  "provenance": {
+    "form_received": "the article text pasted in-session. Its LaTeX fraction structure did not survive: expressions written as ratios arrive as ambiguous products.",
+    "consequence": "any failure to reproduce a formula-derived number is NOT attributable to the paper. This manifest therefore separates checks that depend on reconstructing a formula from checks that do not, and only the second kind carry findings."
+  },
+  "control_the_convention_is_the_paper_s_own": {
+    "method": "the paper prints Table 1, eleven rows of Gamma_q(2.1), Gamma_q(2.5), Gamma_q(2.9). src/aionq/qffo.py::q_gamma was compared against it directly.",
+    "result": "reproduces to MACHINE PRECISION for q in {0.001, 0.1, 0.2, 0.3, 0.4, 0.5} and to 1.4e-08 through 3.3e-08 at q = 0.6, 0.7",
+    "why_this_matters": "an implementation that matched nowhere would be evidence about the implementation. This one matches eight of eleven rows, so the two rows that do not are a property of those rows."
+  },
+  "finding_1_the_last_two_table_rows_are_above_the_limit": {
+    "the_defining_property": "Gamma_q -> Gamma as q -> 1. Verified here at q = 0.5, 0.7, 0.9, 0.95, 0.99, 0.999 for all three arguments: monotone increasing in q, approaching Gamma(x) strictly from below.",
+    "measured": {
+      "q=0.9": {"paper": [1.0488444513789157, 1.3128314103324294, 1.763713044723999], "computed": [1.043521826065302, 1.303939613392061, 1.748900882065446], "deviation": [5.32e-3, 8.89e-3, 1.48e-2]},
+      "q=0.95": {"paper": [1.1357798101736767, 1.4733614062423337, 2.058688968144806], "computed": [1.045025871568492, 1.316761080191683, 1.788212715859657], "deviation": [9.08e-2, 1.57e-1, 2.70e-1]},
+      "the_limits": {"Gamma(2.1)": 1.046485846853560, "Gamma(2.5)": 1.329340388179138, "Gamma(2.9)": 1.827355080624036}
+    },
+    "the_sharp_form": "FOUR of those six printed values EXCEED Gamma(x). Since Gamma_q rises to Gamma(x) from below, no value of Gamma_q can be larger than it. This is not a precision disagreement; it is on the wrong side of a bound. The printed values also move AWAY from the limit as q rises -- 2.0587 against Gamma(2.9) = 1.8274 -- while the computed ones converge to it.",
+    "likely_cause_stated_as_conjecture": "an infinite product of factors each individually near 1 converges slowly as q -> 1, and a truncation rule that stops when a single factor looks converged will stop far too early there while behaving perfectly at small q. That pattern -- exact at q <= 0.5, degrading from q = 0.6, wrong by 1e-1 at q = 0.95 -- is what such a rule produces. Offered as the shape of the error, not as a diagnosis of anyone's code.",
+    "executable_form": "tests/test_qffo.py::test_the_last_rows_of_the_paper_s_table_exceed_the_limit, ::test_q_gamma_rises_to_the_ordinary_gamma_from_below, ::test_the_q_gamma_here_is_the_paper_s_own"
+  },
+  "finding_2_the_worked_example_s_closed_form_contradicts_its_own_numbers": {
+    "what_is_printed": "for f(z) = z/(1-z) the paper lists the transformed coefficients at sigma = varsigma = 0.5 for q = 0.5 and q = 0.9, then concludes 'R_q Lambda f(z) = z/(1 - mu z), mu > 0'",
+    "the_test": "z/(1 - mu z) has coefficients mu^(n-1), so successive ratios are CONSTANT and equal to mu",
+    "measured_ratios": {
+      "q=0.5": [0.8571, 0.8889, 0.9091, 0.9231, 0.9333, 0.9412, 0.9474, 0.9524],
+      "q=0.9": [0.9677, 0.9756, 0.9804, 0.9836, 0.9859, 0.9877, 0.989, 0.9901]
+    },
+    "reading": "the ratios rise monotonically toward 1 in both cases, spread 0.095 and 0.022. No mu reproduces them, so the closed form does not hold for the paper's own printed numbers. The weaker claim stated alongside it -- that the coefficients are majorised by those of z/(1-z) -- IS consistent with the numbers, and is asserted in the test too. The two claims are not the same and only one survives.",
+    "independent_of_transmission": "this check uses only the printed numbers and the printed conclusion. No formula is reconstructed.",
+    "executable_form": "tests/test_qffo.py::test_the_worked_coefficients_are_not_geometric_so_the_closed_form_fails"
+  },
+  "not_a_finding_the_coefficient_formula_could_not_be_reproduced": {
+    "what_was_tried": "four readings -- both placements of the factorial power in the Riemann-Liouville branch, plus the Caputo and integral branches -- each under both the q-gamma and the ordinary gamma, against the three printed coefficient lists",
+    "best_agreement": "5.25e-2, by the Caputo branch under ordinary gamma at sigma = 0.3, varsigma = 0.4. Every other combination was worse; the shipped reading is off by 4.6e-1 at worst.",
+    "why_this_is_NOT_recorded_against_the_paper": "the text available to this session had its fraction structure destroyed, so a ratio arrives as a product and the intended grouping cannot be recovered from it. A failure to reproduce under those conditions is a failure of the channel at least as much as of the source. Recorded so that a clean copy can settle it later, with this session's disagreement already dated.",
+    "a_second_ambiguity_visible_in_the_received_text": "the printed product form of the q-factorial power, prod_{j=0}^{varsigma-1} (base - j)(1 - q^j), has a j = 0 factor equal to 1 - q^0 = 0, which would make every such product vanish; and its index range is undefined for the non-integer varsigma (0.4, 0.5) used in every worked example. src/aionq/qffo.py therefore uses the Gamma-ratio form that the paper's own Application 1 is consistent with, and says so.",
+    "executable_form": "tests/test_qffo.py::test_no_reading_of_the_coefficient_formula_reproduces_the_printed_numbers, which pins the disagreement rather than a verdict and fails if a future reading agrees"
+  },
+  "what_the_operator_actually_is_structurally": {
+    "statement": "a QFFO acts diagonally on the Taylor basis, so it is a function of the number operator z d/dz -- the generator of rotations, hence a connection Laplacian on a line bundle over the disk. A QFFO is a SPECTRAL MULTIPLIER.",
+    "the_bridge_it_offers": "in the vocabulary of the polycosmic proposal this is exactly a P_k-shaped object: a spectral band weight, and a genuinely fractional one, on a base that is already hyperbolic.",
+    "the_limit_it_carries": "a multiplier is diagonal. The packet calculus the proposal asks for needs operators that are NOT -- localisation in the base and in frequency simultaneously, which no function of the Laplacian can provide. So a QFFO can supply the P_k of the spine and cannot supply the Q_{k,theta}.",
+    "what_it_does_not_supply": "a fractal SET. The operator carries a fractal ORDER, which is a parameter of a weight sequence, not a subset of anything with a Hausdorff dimension. The gap docs/FALCONER_ASSESSMENT.md recorded is not closed by this import, and is not narrowed by it."
+  },
+  "typed_remainders": [
+    {
+      "kind": "source_remainder",
+      "statement": "Everything here was checked against a transmitted copy of the article, not against the published PDF. The two findings above use only printed numbers against printed definitions and are robust to formatting damage; the non-reproduction of the coefficient formula is not, and is labelled accordingly. Obtaining the published PDF would settle the third question and could in principle overturn the transcription of Table 1 itself."
+    },
+    {
+      "kind": "scope_remainder",
+      "statement": "Nothing in the paper's mathematics -- the subordination results, the univalence and convexity criteria, the bounded-turning theorems -- has been evaluated. Only the numerical artefacts were checked. A table that is wrong in two rows says nothing about a theorem, and no statement here should be read as one."
+    },
+    {
+      "kind": "connection_remainder",
+      "statement": "The reason this was implemented -- a fractal order might produce the fractal sets a Falconer theory needs -- is not supported by what was found. A fractal-order multiplier is a weight on frequency bands. Getting a set with a dimension out of it would require, at minimum, a measure on the disk whose interaction with the multiplier concentrates, and no such construction is proposed here or in the source."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Implemented and measured by the Claude session on the Linux container against material supplied by the repository owner. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}

@@ -1901,3 +1901,83 @@ Full record: `manifests/qsigma_r1c_transport_fiber_finding.json`. The related
 plausibility question — whether a Falconer theory over information manifolds
 could attach to any of this — is assessed, and largely answered *no, not yet*, in
 `docs/FALCONER_ASSESSMENT.md`.
+
+## 8.8 The indices were a chart: the certificate stated covariantly
+
+The instruments of §8.6–8.7 work and are written in coordinates. `_OFF_BLOCK` is
+a literal list of eight matrix positions; `is_matchgate_matrix` slices rows
+`{0,3}` and `{1,2}`; the module is hard-wired to `4×4` and cannot be asked about
+three qubits. Those index lists are the chart of two structures that have names.
+
+**The parity blocks are a ℤ₂ grading.** With `P = Z^⊗n`, every operator splits as
+`U± = (U ± PUP)/2`, and the eight forbidden entries are exactly the coordinates
+of `U₋`. So `parity defect = ‖(U − PUP)/2‖_F` — measured equal to the index form
+*exactly*, difference `0.0`.
+
+**The matchgate condition is Majorana covariance.** `U` is free-fermion iff
+`U c_k U† ∈ span{c₁…c_{2n}}`. That one invariant condition subsumes *both* index
+residuals. `CZ` is the case that shows it: `CZ` preserves the grading, so its
+parity defect is 0 and the index version needs a second determinant test to
+reject it — the covariant version rejects it in the one number.
+
+### The number that was never a measurement
+
+§8.7 reported tangent dimension **7 of 16** as a numerical Jacobian rank. In
+Majorana terms the Gaussian algebra is the quadratic monomials `c_j c_k` plus
+the phase, so
+
+```
+dim = C(2n,2) + 1 = n(2n−1) + 1
+```
+
+which is `7` at `n=2` and `16` at `n=3` — both confirmed against the rank, gaps
+`8.7e9` and `4.3e9`. The 7 was `so(4) ⊕ u(1)` seen through a chart. That is a
+*downgrade* of §8.7's claim and it is recorded as one: the prediction is the
+fact, the rank was its shadow, and the Jacobian's real value is that it returns
+the answer the algebra already knows — which licenses trusting it where the
+algebra is silent, a smaller claim than the one §8.7 made.
+
+### The frame group, finally named
+
+Qubit relabelling permutes Majorana **pairs**, so `S_n ⊂ O(2n)`. The frame group
+of the fermionic frame bundle is `O(2n)` — continuous, dimension `n(2n−1)`. At
+`n = 16` that is a **496-dimensional** group in which `S_16` is 2.1e13 isolated
+points, and `AGL(1,16)` is 240 of them. §8.7 said a finite group cannot produce
+a dimension phenomenon; this says which continuous group it is a subgroup *of*,
+which was the missing half.
+
+### The instrument defect this earned
+
+The first covariant version was still coordinate-dependent — not in its formula,
+in its **aggregator**. Taking `max` over the individual mode residuals is a
+maximum over a *basis*, and a maximum over a basis does not survive rotating the
+basis: measured deviation **1.2e-1** under random `O(4)` frames, on a quantity
+presented as invariant. Summing squares is the Hilbert–Schmidt norm of a linear
+map and measures **1.3e-15**.
+
+> Writing a formula without indices does not make it invariant if the reduction
+> that turns it into a number still reads them.
+
+Eighth occurrence of the recurring pattern, and the first inside a module written
+specifically to avoid it.
+
+### The coincidence that is not one
+
+The covariant defect subsumes `parity` and `determinant` but **not** `locality` —
+and that is correct, not a gap. Locality is a statement about which wires a gate
+sits on; it is not a property of the operator at all. So the index-dependence of
+the *code* and the frame-dependence of the *quantity* coincide exactly: the three
+residuals expressible invariantly are the three that are orbit-collapsed, and the
+one expressible only in indices is the one that is orbit-resolving.
+
+### The transverse sphere is not round
+
+At a point of the class (codimension 9, so the direction sphere is `S⁸`), 3000
+sampled unit directions give escape **order** 1 everywhere but escape **rate**
+ranging `[0.466, 1.877]` — a factor of **4.03**. The class does not sit in a
+round cone. The level sets of that rate on `S⁸` are the object a tessellation or
+partitioning argument would act on, and this is the first time they have been
+measured. No partition, incidence bound or consequence is claimed; an
+anisotropic function on a sphere is raw material.
+
+Full record: `manifests/qsigma_r1d_covariant_certificate_finding.json`.

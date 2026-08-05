@@ -963,6 +963,18 @@ CORRECTIONS = (
         "tests/test_leanmath_vendor.py::test_the_formal_readme_no_longer_claims_a_toolchain_on_path",
         True,
     ),
+    Correction(
+        "QSigma-R1d",
+        "the first coordinate-free free-fermion defect was still coordinate "
+        "dependent, and not in its formula but in its AGGREGATOR: it took max "
+        "over the individual Majorana residuals, and a maximum over a basis does "
+        "not survive rotating the basis. Measured deviation 1.2e-1 under random "
+        "O(4) frames on a quantity presented as invariant; summing squares "
+        "instead measures 1.3e-15. Writing a formula without indices does not "
+        "make it invariant if the reduction that turns it into a number reads them",
+        "tests/test_majorana.py::test_a_max_over_the_basis_is_not_invariant_and_a_sum_of_squares_is",
+        True,
+    ),
 )
 
 
