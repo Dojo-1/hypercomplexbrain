@@ -33,10 +33,12 @@ def test_the_code_graph_is_an_order_of_magnitude_denser_than_the_evidence_graph(
     being generous.
     """
     evidence = evidence_edges(repo_root())
-    scientific = evidence["edges"] - len(evidence["by_round"].get("self_audit", []))
-    assert graph.edges >= 50
-    assert scientific <= 10
-    assert graph.edges > 5 * scientific
+    # Strict path-form matching, envelopes included. The first version matched
+    # bare directory names and counted "3-manifold" and "r40_complete" as
+    # references, reporting 4 edges where there are 2.
+    assert evidence["edges"] == 2
+    assert graph.edges >= 100
+    assert graph.edges > 20 * evidence["edges"]
 
 
 def test_no_artifact_declares_an_upstream_dependency(graph):
@@ -67,7 +69,7 @@ def test_the_load_bearing_modules_are_the_ones_nobody_audited(graph):
     relationship, so nothing in the evidence surface would show that it had.
     """
     reach = blast_radius(graph, "hyperbolic_qubit")
-    assert len(reach) >= 8
+    assert len(reach) >= 10
     for module in ("capacity_ceiling", "carrier_telemetry",
                    "common_receiver_reservoir", "equal_resource_reservoir",
                    "qsigma_r7_information", "quantum_movement"):
@@ -76,16 +78,36 @@ def test_the_load_bearing_modules_are_the_ones_nobody_audited(graph):
     assert len(blast_radius(graph, "holevo_sandwich")) >= 6
 
 
-def test_the_highest_leverage_modules_are_foundations_with_no_dependencies(graph):
-    """The repository is layered, and the load sits on unaudited bases.
+def test_the_highest_leverage_modules_split_into_sources_and_transmitters(graph):
+    """A claim I published and this test refuted once the graph was fixed.
 
-    Every module at the top of the leverage ranking depends on nothing itself.
-    They cannot inherit a defect; they can only originate one.
+    The first version asserted that every module at the top of the ranking has
+    `depends_on == 0` -- "they are foundations, they cannot inherit a defect,
+    only originate one". That was measured on a graph missing 24 modules. With
+    the subpackages parsed, the top of the ranking is a MIX:
+
+        sources       depends_on == 0. They can only originate a defect.
+                      evidence (27), hyperbolic_qubit (11), cayley_dickson (10)
+        transmitters  depends_on > 0 with a large radius. They can inherit a
+                      defect AND fan it out, which is the worse position.
+                      governance (21, depends on 1), carriers (11, on 2)
+
+    `governance` moved from sixth place to second when the graph was corrected,
+    so the published ranking was wrong in its ORDER, not only its magnitudes.
     """
-    ranking = leverage_ranking(graph, 5)
-    assert ranking[0]["blast_radius"] >= 8
-    for row in ranking[:4]:
-        assert row["depends_on"] == 0, row["module"]
+    ranking = leverage_ranking(graph, 6)
+    assert ranking[0]["blast_radius"] >= 20
+
+    sources = [row for row in ranking if row["depends_on"] == 0]
+    transmitters = [row for row in ranking if row["depends_on"] > 0]
+    assert sources, "the ranking must contain at least one pure source"
+    assert transmitters, (
+        "and at least one transmitter, or the 'all foundations' claim would "
+        "have been right and this test would be asserting nothing")
+
+    # A transmitter with a large radius is the sharpest audit target: a defect
+    # can reach it and then reach everything above it.
+    assert max(row["blast_radius"] for row in transmitters) >= 10
 
 
 def test_leverage_ranking_is_ordered_and_self_consistent(graph):

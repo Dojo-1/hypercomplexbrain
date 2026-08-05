@@ -88,17 +88,26 @@ def build_module_graph(root) -> ModuleGraph:
     """
     package = Path(root) / "src" / "aionq"
     imports: dict = {}
-    for path in sorted(package.glob("*.py")):
-        if path.name == "__init__.py":
+    # rglob, not glob: the first version scanned only the top level and missed
+    # 24 modules under hb0/ and recognition/, three of which import the very
+    # modules the leverage ranking was built on.  Every blast radius it
+    # reported was therefore an undercount.
+    for path in sorted(package.rglob("*.py")):
+        if path.name == "__init__.py" or "__pycache__" in path.parts:
             continue
         tree = ast.parse(path.read_text(encoding="utf-8"))
         used = set()
         for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom) and node.module:
-                if node.level or "aionq" in node.module:
+            if isinstance(node, ast.ImportFrom):
+                if node.module and (node.level or "aionq" in node.module):
                     tail = node.module.split(".")[-1]
                     if tail:
                         used.add(tail)
+                elif node.level and not node.module:
+                    # ``from . import a, b`` -- the first version dropped this
+                    # entirely, because it tested `node.module` for truth and
+                    # the module is None here.
+                    used.update(alias.name for alias in node.names)
             elif isinstance(node, ast.Import):
                 for alias in node.names:
                     if alias.name.startswith("aionq."):
@@ -141,9 +150,22 @@ def blast_radius(graph: ModuleGraph, module: str) -> set:
 def evidence_edges(root) -> dict:
     """Cross-round references actually present in the artifacts.
 
-    A reference is counted when one round's result mentions another round's
-    artifact directory by name.  Generous on purpose: the point is that even a
-    permissive count finds almost nothing.
+    A reference is counted when one round's artifact contains the PATH FORM
+    ``artifacts/<other round>/``.  The first version matched the bare directory
+    name anywhere in the text and was described as "generous on purpose".  It
+    was not generous, it was wrong: it counted ``3-manifold`` in a sentence
+    about cohomology as a reference to the ``manifold`` round, and ``r40_complete``
+    as a reference to ``r4``.  Two of the four edges it reported did not exist,
+    so the published figure was double the truth -- an error in the direction
+    that made the finding look weaker than it is, which is the only reason it
+    was not noticed sooner.
+
+    Envelopes are INCLUDED.  The first version skipped them, which was the more
+    serious mistake of the two: an envelope is precisely where this repository
+    records provenance binding, so excluding them meant looking for composition
+    everywhere except the file whose job is to record it.  Including them adds
+    exactly one edge, and it is one already visible in the result -- so the
+    conclusion survives, but it survives on measurement rather than on luck.
     """
     artifacts = Path(root) / "artifacts"
     rounds = sorted(entry.name for entry in artifacts.iterdir() if entry.is_dir())
@@ -152,8 +174,6 @@ def evidence_edges(root) -> dict:
     for name in rounds:
         referenced = set()
         for path in sorted((artifacts / name).rglob("*.json")):
-            if path.name.endswith(".envelope.json"):
-                continue
             try:
                 text = path.read_text(encoding="utf-8")
             except (OSError, UnicodeDecodeError):  # pragma: no cover
@@ -161,7 +181,7 @@ def evidence_edges(root) -> dict:
             if '"upstream"' in text:
                 declares_upstream += 1
             referenced |= {other for other in rounds
-                           if other != name and other in text}
+                           if other != name and f"artifacts/{other}/" in text}
         found[name] = sorted(referenced)
     return {
         "rounds": len(rounds),

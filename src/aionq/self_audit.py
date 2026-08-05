@@ -582,6 +582,32 @@ CORRECTIONS = (
     ),
     Correction(
         "CORPUS",
+        "the dependency instrument published three wrong figures before it was "
+        "reviewed: it scanned only the top level of the package and missed 24 "
+        "modules under hb0/ and recognition/, it dropped 'from . import (...)' "
+        "entirely, and it matched bare round names so that '3-manifold' counted "
+        "as a reference to the manifold round and 'r40_complete' as one to r4. "
+        "It also skipped envelopes, which is where this repository records "
+        "provenance binding -- looking for composition everywhere except the "
+        "file whose job is to record it. Corrected: 114 code edges not 60, and "
+        "2 evidence edges not 4",
+        "tests/test_dependency_closure.py::test_the_code_graph_is_an_order_of_magnitude_denser_than_the_evidence_graph",
+        True,
+    ),
+    Correction(
+        "CORPUS",
+        "the leverage ranking was published with the claim that every module at "
+        "its top has depends_on = 0 and is therefore a foundation that can only "
+        "originate a defect. On the corrected graph governance moves from sixth "
+        "to SECOND at radius 21 with depends_on = 1, so the ranking was wrong in "
+        "its order and the foundations reading was wrong outright: the top "
+        "splits into sources, which can only originate, and transmitters, which "
+        "can inherit a defect and then fan it out",
+        "tests/test_dependency_closure.py::test_the_highest_leverage_modules_split_into_sources_and_transmitters",
+        True,
+    ),
+    Correction(
+        "CORPUS",
         "the round names promise a descent -- unitary price through common "
         "receiver to quantum movement -- and the artifacts do not compose in "
         "that shape. 60 local import edges against 4 genuine scientific "

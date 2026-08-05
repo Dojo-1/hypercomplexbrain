@@ -1350,31 +1350,46 @@ measured by `aionq.dependency_closure`:
 
 | | edges |
 |---|---:|
-| code — local `aionq` imports | **60** across 59 modules |
-| evidence — cross-round artifact references | **13**, of which 9 are `self_audit` citing its own subjects |
-| **genuine scientific cross-round edges** | **4** |
+| code — local `aionq` imports | **114** across 77 modules |
+| evidence — cross-round artifact references, envelopes included | **2** |
 | artifacts declaring an `upstream` key | **0** |
 
-21 of 26 rounds reference nothing at all. The names promise a descent — unitary
+**24 of 26** rounds reference nothing at all, and the two that do are
+`r6l → r6k` and `r7 → r6_unitary_price`. The names promise a descent — unitary
 price → operational information → Hopf layer → Holevo sandwich → carrier
 telemetry → capacity ceiling → translation → equal-resource → common receiver →
 source information → movement — and the artifacts do not compose in anything
-like that shape. `r6l` does reference `r6k`, so the mechanism exists and works;
-its absence elsewhere is informative, not accidental.
+like that shape. The mechanism exists and works in those two places; its absence
+elsewhere is informative, not accidental.
+
+> **Correction.** This table first read *60 edges across 59 modules* and *4
+> genuine scientific edges*. Both were wrong, and reviewing the instrument that
+> produced them found three defects. The module graph scanned only the top level
+> and missed **24 modules** under `hb0/` and `recognition/`, and dropped
+> `from . import (…)` entirely. The evidence scan matched bare directory names,
+> so it counted `"3-manifold"` in a sentence about cohomology as a reference to
+> the `manifold` round, and `"r40_complete"` as a reference to `r4` — two of its
+> four edges did not exist. It also *skipped envelopes*, which was the worse
+> mistake: an envelope is precisely where this repository records provenance
+> binding, so the scan looked for composition everywhere except the file whose
+> job is to record it. Including them adds one edge, already visible in the
+> result. Both errors moved the published figures in the direction that made the
+> finding look **weaker**, which is why they survived.
 
 ### The asymmetry this exposes
 
 Blast radius — what would inherit a defect — is computable, and it was never
 computed:
 
-| module | blast radius | depends on |
-|---|---:|---:|
-| `evidence` | 12 | 0 |
-| **`hyperbolic_qubit`** | **10** | **0** |
-| `cayley_dickson` | 7 | 0 |
-| `holevo_sandwich` | 7 | 0 |
-| `quantum_channel_geometry` | 7 | 0 |
-| `common_receiver_reservoir` | **0** | 5 |
+| module | blast radius | depends on | kind |
+|---|---:|---:|---|
+| `evidence` | 27 | 0 | source |
+| **`governance`** | **21** | **1** | **transmitter** |
+| `carriers` | 11 | 2 | transmitter |
+| **`hyperbolic_qubit`** | **11** | **0** | **source** |
+| `cayley_dickson` | 10 | 0 | source |
+| `holevo_sandwich` | 7 | 0 | source |
+| `common_receiver_reservoir` | **0** | 5 | leaf |
 
 Two facts fall out, and neither was known before looking.
 
@@ -1383,12 +1398,25 @@ Two facts fall out, and neither was known before looking.
 full round went into that defect, and its containment was never established; it
 was assumed by not being asked about.
 
-**The load sits on modules nobody audited.** `hyperbolic_qubit` reaches ten
+**The load sits on modules nobody audited.** `hyperbolic_qubit` reaches eleven
 modules across R6e, R6f, R6h, R6k, R6l, R7, R8, ohnium and Part B, and it
 carries the HB0 axiom this document already marks as *structurally implemented,
-independent witnessing absent*. Every module at the top of the ranking has
-`depends_on = 0`: they are **foundations**. They cannot inherit a defect — they
-can only originate one.
+independent witnessing absent*.
+
+The top of the ranking splits in two, and the distinction matters more than the
+order. **Sources** (`depends_on = 0`) can only *originate* a defect.
+**Transmitters** (`depends_on > 0`, large radius) can *inherit* one and then fan
+it out — the worse position, because they are reachable. `governance` is the
+sharpest target on the page: radius 21, and it depends on something.
+
+> **Correction.** The first version of this table asserted that every module at
+> the top has `depends_on = 0` — "they are foundations; they cannot inherit a
+> defect, only originate one." That was measured on the graph missing 24
+> modules. `governance` moved from **sixth to second** when the graph was
+> fixed, so the published ranking was wrong in its **order**, not only its
+> magnitudes, and the "all foundations" reading was wrong outright. The test
+> asserting it failed the moment the graph was corrected, which is the only
+> reason this paragraph exists.
 
 So attention had been going to the module with blast radius 0 while the modules
 with blast radius 7 and 10 went unexamined, and no instrument was positioned to
