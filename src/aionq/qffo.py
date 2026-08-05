@@ -58,12 +58,40 @@ from dataclasses import dataclass
 
 __all__ = [
     "q_gamma",
+    "log_q_gamma",
     "q_pochhammer_ratio",
     "PAPER_TABLE_1",
     "multiplier",
     "apply_to_coefficients",
     "MultiplierReading",
 ]
+
+
+def log_q_gamma(x: float, q: float, tolerance: float = 1e-18,
+                max_terms: int = 2_000_000) -> float:
+    """``log Gamma_q(x)``. The only safe form when ``x`` is large.
+
+    ``Gamma_q`` carries a factor ``(1-q)^(1-x)``, which at ``q = 0.5`` and
+    ``x = 2000`` is ``2^1999`` and overflows a float long before the quantity is
+    unreasonable.  Every use in this module is a RATIO of q-gammas, where those
+    factors cancel exactly -- so the ratio is perfectly well conditioned and only
+    the intermediate is not.  Computing the logarithm and subtracting is the
+    whole fix.
+
+    Found when the multiplier was asked for its 2048th coefficient while
+    weighting a many-body spectrum, which is the first time anything here needed
+    an index above about twenty.
+    """
+    if not 0.0 < q < 1.0:
+        raise ValueError("q_gamma is defined for q in (0, 1)")
+    total, index = 0.0, 0
+    while True:
+        numerator, denominator = q ** (index + 1), q ** (x + index)
+        total += math.log1p(-numerator) - math.log1p(-denominator)
+        index += 1
+        if max(numerator, denominator) < tolerance or index > max_terms:
+            break
+    return (1.0 - x) * math.log(1.0 - q) + total
 
 
 def q_gamma(x: float, q: float, tolerance: float = 1e-18,
@@ -77,16 +105,7 @@ def q_gamma(x: float, q: float, tolerance: float = 1e-18,
     that stops on one factor is exactly how a table of these values acquires
     errors of 1e-1 while looking converged.
     """
-    if not 0.0 < q < 1.0:
-        raise ValueError("q_gamma is defined for q in (0, 1)")
-    total, index = 0.0, 0
-    while True:
-        numerator, denominator = q ** (index + 1), q ** (x + index)
-        total += math.log1p(-numerator) - math.log1p(-denominator)
-        index += 1
-        if max(numerator, denominator) < tolerance or index > max_terms:
-            break
-    return math.exp((1.0 - x) * math.log(1.0 - q) + total)
+    return math.exp(log_q_gamma(x, q, tolerance, max_terms))
 
 
 def q_pochhammer_ratio(base: float, order: float, q: float) -> float:
@@ -99,7 +118,7 @@ def q_pochhammer_ratio(base: float, order: float, q: float) -> float:
     because its index range is undefined for the non-integer ``varsigma`` used
     in every worked example (0.4 and 0.5).
     """
-    return q_gamma(base + order, q) / q_gamma(base, q)
+    return math.exp(log_q_gamma(base + order, q) - log_q_gamma(base, q))
 
 
 #: The paper's Table 1, transcribed: q -> (Gamma_q(2.1), Gamma_q(2.5), Gamma_q(2.9)).
@@ -130,19 +149,21 @@ class MultiplierReading:
 
     def weight(self, n: int) -> float:
         """``(kappa_n)_q``: the factor multiplying the ``n``-th Taylor coefficient."""
-        gamma_q = (lambda value: q_gamma(value, self.q))
+        # Every branch is a ratio, so it is assembled in logs: the (1-q)^(1-x)
+        # factors cancel exactly and the intermediates never overflow.
+        log_g = (lambda value: log_q_gamma(value, self.q))
         sigma, varsigma = self.sigma, self.varsigma
         if self.kind == "riemann_liouville":
-            normalisation = gamma_q(3 - sigma) / q_pochhammer_ratio(2 - sigma,
-                                                                    varsigma, self.q)
-            return normalisation * gamma_q(n + 1) * q_pochhammer_ratio(
-                n + 1 - sigma, varsigma, self.q) / gamma_q(n + 2 - sigma)
+            return math.exp(
+                log_g(3 - sigma) - log_g(2 - sigma + varsigma) + log_g(2 - sigma)
+                + log_g(n + 1) + log_g(n + 1 - sigma + varsigma)
+                - log_g(n + 1 - sigma) - log_g(n + 2 - sigma))
         if self.kind == "caputo":
-            return (gamma_q(3 - sigma - varsigma) * gamma_q(n + 1 - varsigma)
-                    / (gamma_q(2 - varsigma) * gamma_q(n + 2 - sigma - varsigma)))
+            return math.exp(log_g(3 - sigma - varsigma) + log_g(n + 1 - varsigma)
+                            - log_g(2 - varsigma) - log_g(n + 2 - sigma - varsigma))
         if self.kind == "integral":
-            return (gamma_q(1 + 2 * sigma) * gamma_q(n + sigma)
-                    / (gamma_q(1 + sigma) * gamma_q(n + 2 * sigma)))
+            return math.exp(log_g(1 + 2 * sigma) + log_g(n + sigma)
+                            - log_g(1 + sigma) - log_g(n + 2 * sigma))
         raise ValueError(f"unknown QFFO branch {self.kind!r}")
 
 

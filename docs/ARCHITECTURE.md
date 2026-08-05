@@ -2172,3 +2172,71 @@ none was evaluated, and nothing above is evidence about one. That is the
 corrected *location* of the idea, not a result about it.
 
 Full record: `manifests/qsigma_r1h_mode_locality_finding.json`.
+
+## 8.12 The second axis: the departure was algebraic, not dynamical
+
+§8.10 recorded the QFFO many-body excitation as supplying *"the parameterised
+transverse departure the portfolio lacks"* — free-fermion defect rising from
+3e-15 to 1.02. That is true on one axis and empty on the other, and the other is
+the one that bears on hardness.
+
+**A spectral multiplier `f(H)` has the same eigenvectors as `H`.** Same
+eigenvectors means the same conserved quantities, so `f(H)` is exactly as
+integrable as `H` was. It leaves the free-fermion class *algebraically* while
+changing nothing about the dynamics.
+
+The instrument that sees this is the level-spacing **ratio statistic**
+`⟨r⟩ = ⟨min(sₙ,sₙ₊₁)/max(sₙ,sₙ₊₁)⟩` — needs no unfolding, which is what lets a
+many-body spectrum and the ordinates of the Riemann zeta zeros be compared in
+the same units of nothing. Measured at `n = 10`, even-parity sector, 512 levels:
+
+| spectrum | ⟨r⟩ |
+|---|---|
+| free-fermion (quadratic Majorana) | **0.3090** |
+| QFFO-excited `f(H)`, same eigenvectors | **0.3086** ← moves by 4e-4 |
+| quadratic + quartic, `g = 0.05` | 0.4905 |
+| quadratic + quartic, `g = 0.2` | 0.5976 |
+| quadratic + quartic, `g = 1.0` | **0.5955** |
+| Poisson reference | 0.3853 |
+| GUE reference (800×800) | 0.5929 |
+| **Riemann zeta zeros, first 400, measured** | **0.6166** |
+
+A quartic term carries the spectrum from the integrable end to the Wigner–Dyson
+end, landing where the zeta zeros are — Montgomery–Odlyzko, measured here rather
+than cited. The QFFO carries it 0.0004.
+
+### Why it cannot, mechanistically
+
+Two reasons, and the second surfaced by fixing an overflow. A function of `H`
+shares its eigenbasis, so no reweighting of eigenvalues changes what is
+conserved. And **the QFFO weights saturate**: at `σ=0.4, ς=0.3, q=0.5` the Caputo
+branch gives `0.77473093` at `n=10` and `0.77441397` at *both* `n=100` and
+`n=2048` — identical to eight decimals. On a 512-level spectrum the multiplier is
+a constant times a transient in the first twenty, and `⟨r⟩` is scale-invariant by
+construction. The null result is structural, not a matter of parameters.
+
+### Two axes, kept apart
+
+| | what it asks |
+|---|---|
+| `gaussian_defect` | **algebraic** — is the operator quadratic in the Majoranas? |
+| `⟨r⟩` | **dynamical** — do the levels repel? |
+
+QFFO excitation moves the first, not the second. A quartic term moves both.
+§8.10 reported one and generalised to the other.
+
+### The step that makes the measurement valid
+
+A Majorana Hamiltonian commutes with `P = Z^⊗n`, so its spectrum is two
+interleaved sequences. Statistics taken across an unresolved symmetry look
+Poissonian *for any dynamics*, because independent sequences do not repel.
+Measured: a strongly chaotic Hamiltonian reads near-GUE inside one parity sector
+and collapses toward Poisson across both. Skipping the sector split is the
+standard way to measure integrability that is not there.
+
+One numerical caveat, recorded rather than tuned away: `⟨r⟩` is exactly
+affine-invariant in exact arithmetic and only conditionally so in floating point,
+losing about `ε·T/d` for gaps `d` at height `T`. Harmless for zeta ordinates near
+`10⁶` (gaps of order 1, so ~1e-10); not harmless much higher.
+
+Full record: `manifests/qsigma_r1i_spectral_axis_finding.json`.

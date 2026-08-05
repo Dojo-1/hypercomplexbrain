@@ -1028,6 +1028,31 @@ CORRECTIONS = (
         "tests/test_connection_frame.py::test_the_repositorys_own_collapsed_quantities_are_not_blind",
         True,
     ),
+    Correction(
+        "QSigma-R1i",
+        "R1G recorded the QFFO many-body excitation as supplying 'the "
+        "parameterised transverse departure the portfolio lacks'. It supplies an "
+        "ALGEBRAIC departure and no DYNAMICAL one: f(H) shares the eigenbasis of "
+        "H, hence its conserved quantities, so the level-spacing ratio moves by "
+        "4e-4 while a quartic term moves it 0.29 on the same spectrum, from 0.309 "
+        "to 0.596. One axis was measured and the conclusion was drawn about the "
+        "other. The mechanism is that the QFFO weights saturate -- identical to "
+        "eight decimals at n=100 and n=2048 -- so on a 512-level spectrum the "
+        "multiplier is a constant, and the statistic is scale-invariant",
+        "tests/test_spectral_slice.py::test_the_qffo_excitation_does_not_move_the_dynamical_axis",
+        True,
+    ),
+    Correction(
+        "QSigma-R1i",
+        "qffo.q_gamma overflowed for arguments above about 1500: Gamma_q carries "
+        "a factor (1-q)^(1-x), which at q=0.5 and x=2000 is 2^1999. Every use in "
+        "the module is a RATIO in which that factor cancels exactly, so the "
+        "quantity was always well conditioned and only the intermediate was not. "
+        "Unnoticed for a round because nothing had asked the multiplier for a "
+        "coefficient index above about twenty",
+        "tests/test_spectral_slice.py::test_the_multiplier_saturates_which_is_the_mechanism",
+        True,
+    ),
 )
 
 

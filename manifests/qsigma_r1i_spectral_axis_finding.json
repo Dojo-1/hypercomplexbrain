@@ -1,0 +1,81 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1I-SPECTRAL-AXIS-001",
+  "status": "measured and recorded. A claim published one round earlier is NARROWED: R1G's departure is real on the axis it measured and absent on the axis it generalised to. No published number changes and no instrument feeding q_sim_upper is touched.",
+  "subject": "src/aionq/spectral_slice.py, against the many-body excitation of src/aionq/fishnet.py",
+  "the_slicing_method_and_where_it_comes_from": {
+    "technique": "level-spacing ratio statistic, <r> = <min(s_n, s_{n+1}) / max(s_n, s_{n+1})> over consecutive gaps (Oganesyan-Huse)",
+    "why_this_one": "it requires no unfolding, hence no choice of a smoothing for the level density, hence it can be applied to a 512-level many-body spectrum and to 400 Riemann zeta ordinates spanning 14 to 811 without either being reparameterised. Affine invariance is the property that makes the comparison possible.",
+    "references_calibrated_before_use": {"Poisson": 0.3853, "GOE": 0.5307, "GUE_measured_800x800": 0.5929, "GUE_analytic": 0.5996},
+    "honest_note_on_provenance": "this is a standard random-matrix diagnostic, not a technique borrowed from any particular recent result. It is the multiscale-slicing idea in the only form this repository can actually execute: slice the spectrum, take a scale-free statistic on the slices."
+  },
+  "measurement": {
+    "setting": "n = 10 qubits, EVEN-PARITY SECTOR ONLY, 512 levels, random quadratic Majorana Hamiltonian",
+    "table": {
+      "free_fermion_quadratic": 0.3090,
+      "qffo_excited_f_of_H": 0.3086,
+      "quadratic_plus_quartic_g0.05": 0.4905,
+      "quadratic_plus_quartic_g0.2": 0.5976,
+      "quadratic_plus_quartic_g1.0": 0.5955,
+      "riemann_zeta_zeros_first_400": 0.6166
+    },
+    "the_two_shifts": {"qffo": 4.5e-4, "quartic_g1.0": 0.2865, "ratio": 636},
+    "executable_form": "tests/test_spectral_slice.py, twelve tests"
+  },
+  "narrowed_claim": {
+    "where": "manifests/qsigma_r1g_majorana_excitation_finding.json, and docs/ARCHITECTURE.md 8.10",
+    "what_it_said": "the many-body QFFO branch supplies the parameterised transverse departure R1B and R1C recorded the strategy portfolio as lacking",
+    "what_survives": "the ALGEBRAIC departure is real and correctly measured: gaussian_defect rises from 3e-15 to 1.02 and to 3.27 at q = 0.9, monotone, at matched displacement against a branch that stays at 3e-15. Nothing in that measurement is withdrawn.",
+    "what_does_not": "the generalisation to a departure from tractability. f(H) shares the eigenbasis of H, hence its conserved quantities, so it is exactly as integrable as H. The level statistic moves by 4e-4 where a quartic term moves it by 0.29 on the same spectrum.",
+    "the_mechanism": {
+      "eigenbasis": "any function of H commutes with H and has the same eigenvectors, so no reweighting of eigenvalues can change what is conserved",
+      "saturation": "the QFFO weights are asymptotically constant. At sigma = 0.4, varsigma = 0.3, q = 0.5 the Caputo branch gives 0.77473093 at n = 10 and 0.77441397 at BOTH n = 100 and n = 2048, identical to eight decimals. On a 512-level spectrum the multiplier is a constant times a transient in the first twenty levels, and <r> is scale-invariant by construction. The null result is structural rather than a matter of the parameters chosen."
+    },
+    "the_two_axes": {
+      "gaussian_defect": "ALGEBRAIC -- is the operator quadratic in the Majoranas?",
+      "ratio_statistic": "DYNAMICAL -- do the levels repel?",
+      "qffo_excitation": "moves the first, not the second",
+      "quartic_term": "moves both",
+      "lesson": "R1G measured one axis and drew a conclusion about the other. Both are now measured by the same report, together, because either alone supports a conclusion the other refutes."
+    }
+  },
+  "the_zeta_anchor": {
+    "what_was_measured": "the ratio statistic of the imaginary parts of the first 400 nontrivial zeros of the Riemann zeta function: 0.6166, against the GUE reference 0.5996 and a measured 800x800 GUE value of 0.5929",
+    "why_it_was_computed_rather_than_cited": "the Montgomery-Odlyzko correspondence is known; the number used in this comparison is computed, because this repository's discipline is that a quantity entering a comparison is measured. It also anchors the far end of the axis on which everything else is placed.",
+    "artifact": "artifacts/riemann_zeta_zeros_500.json, 500 ordinates from mpmath.zetazero at mp.dps = 25, 87 seconds. Cached because that does not belong in a suite; pinned against a live recomputation of six zeros in tests/test_spectral_slice.py::test_the_cached_zeta_zeros_are_the_real_ones, which skips if mpmath is absent.",
+    "what_is_NOT_claimed": "nothing about the Riemann hypothesis, nothing about why zeta zeros are GUE, and no connection between zeta and any object in this repository beyond the shared statistic. The zeros are used as a calibrated far end of an axis, in the same role as the 800x800 random matrix."
+  },
+  "the_step_that_makes_it_valid": {
+    "statement": "a Majorana Hamiltonian commutes with the parity P = Z^(x)n, so its spectrum is two interleaved independent sequences. Statistics taken across an unresolved symmetry look Poissonian for ANY dynamics, because independent sequences do not repel each other.",
+    "measured": "a strongly chaotic Hamiltonian (quadratic + quartic at g = 1) reads above 0.57 inside one parity sector and collapses by more than 0.05 across both",
+    "why_it_is_recorded": "skipping the sector split is the standard way to measure integrability that is not there. Every number in this manifest is from the even sector alone, and the test asserts that the perturbation actually preserves parity, so the split is a symmetry of what is being measured."
+  },
+  "second_correction_this_round": {
+    "what": "qffo.q_gamma overflowed for arguments above roughly 1500. Gamma_q carries a factor (1-q)^(1-x), which at q = 0.5 and x = 2000 is 2^1999.",
+    "why_it_survived_a_round": "every use in the module is a RATIO of q-gammas in which that factor cancels exactly, so the quantity was always well conditioned and only the intermediate was not -- and nothing had asked the multiplier for a coefficient index above about twenty until a 512-level spectrum did.",
+    "fix": "log_q_gamma, and every branch of MultiplierReading.weight assembled in logs. The Table 1 reproduction and all prior qffo tests pass unchanged.",
+    "bound_correction": "self_audit CORRECTIONS entry QSigma-R1i, second of two"
+  },
+  "typed_remainders": [
+    {
+      "kind": "conditioning_remainder",
+      "statement": "<r> is exactly affine-invariant in exact arithmetic and only conditionally so in floating point: gaps are obtained by differencing, so a spectrum at height T with gaps d loses about eps*T/d of relative precision. Measured at T/d = 1e7 the agreement degrades from 1e-12 to 1e-7. For zeta ordinates near height 1e6 with gaps of order 1 the loss is about 1e-10 and harmless; it would not remain harmless at much greater height, and no zeros above 811 were used."
+    },
+    {
+      "kind": "scale_remainder",
+      "statement": "One system size, n = 10, one disorder realisation, one seed. The transition from 0.309 to 0.596 is measured at three couplings and is monotone in the two smaller ones, but no finite-size scaling was performed and no ensemble average was taken. The qualitative placement is robust; the numbers are one draw."
+    },
+    {
+      "kind": "interpretation_remainder",
+      "statement": "Level repulsion is a diagnostic of non-integrability, not a proof of classical simulation hardness, and this manifest does not claim otherwise. A GUE spectrum does not by itself imply that a circuit is hard to simulate, and nothing here enters q_sim_upper. What is established is that the QFFO excitation is not a departure on this axis, which is a narrower and firmer statement than the one it replaces."
+    },
+    {
+      "kind": "dependency_remainder",
+      "statement": "mpmath was added to requirements.txt for the zeta verification. The cached artifact makes it optional at run time -- the test skips without it -- so a checkout that omits it still runs the suite and simply does not re-verify the cache."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}
