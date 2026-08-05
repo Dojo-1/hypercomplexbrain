@@ -1824,3 +1824,80 @@ the same orbit carries 36 levels the moment something looks at it without a
 threshold. The gap between a distance and a certificate is the open problem, and
 it is exactly as open as it was; what changed is that the distance now exists and
 is measured. Full record: `manifests/qsigma_r1b_graded_matchgate_residual_finding.json`.
+
+## 8.7 The census: one strategy of four sees the wire names
+
+§8.6 gave one predicate a graded decomposition. The template that produced it
+generalises — *decompose a refusal into residuals, then ask which residuals the
+group moves* — and this section runs it across the whole portfolio, exhaustively
+over all 240 affine frames of AGL(1,16).
+
+| strategy | shape | distinct values over 240 frames |
+|---|---|---|
+| `stabilizer_rank` | already graded (`α·T`), never refuses | **1** |
+| `basis_permutation` | boolean; class is monomial unitaries, dim **4** of 16 | **1** |
+| `contraction` | graded width; refuses only categorically | **1** |
+| `free_fermion` | boolean; class is dim **7** of 16 | **2** |
+| `q_sim_upper` | min over the four | **2**, range [0, 0.25] |
+
+**Exactly one strategy is frame-resolving.** `stabilizer_rank` charges a T-count,
+`basis_permutation` reads gate matrices, `contraction` reads a graph invariant —
+none of the three can see a wire name. `free_fermion` alone imposes a condition
+on wire *adjacency*. Attribution, not correlation: freeze `free_fermion` at its
+identity-frame value and the metric is constant across all 240 frames.
+
+Combined with §8.6, where only the `locality` residual moved inside
+`free_fermion`, **the mistyping that started this line is now localised to a
+single scalar, and that scalar is routing.**
+
+One negative result is worth its own line. `contraction`'s elimination width is
+computed by a min-degree heuristic whose tie-break is *by qubit index* — a frame
+coordinate. It could have leaked frame-dependence into a graph invariant.
+Measured over all 240 frames: constant at 4.0. It does not leak, and that was
+checked rather than assumed.
+
+### Why the finite group had to give a step
+
+A relabelling group acts by permutation, so its orbit through a point is a
+finite set of isolated points. There is no direction to transport along, no
+escape rate, and no dimension that can grow — a union of 240 copies of a
+`d`-dimensional variety is `d`-dimensional. **The step measured over AGL(1,16)
+is a fact about finite group actions, not a fact about hardness.** That corrects
+the emphasis of §8.6's headline without touching its arithmetic.
+
+### The continuous group, where the geometry is
+
+Transport a gate along `G(s) = G0·exp(i s H)`. `src/aionq/transport_fiber.py`
+measures what happens, on both threshold classes:
+
+| | matchgate class | monomial class |
+|---|---|---|
+| ambient (`U(4)`) | 16 | 16 |
+| tangent dimension | **7** | **4** |
+| codimension | 9 | 12 |
+| escape order, 216 directions | **1.000** | **1.000** |
+| directions of order ≥ 2 | **0** | **0** |
+
+The 7 is arithmetic, not fitted: block-diagonal in the parity split is
+`U(2)×U(2)` = 8, and `det A = det B` is one real condition. The Jacobian's
+singular spectrum is `{2, √2 ×8, ~1e-16 ×7}` — a gap of nine orders, so the rank
+is a measurement and not a tolerance in costume.
+
+Containment along a fiber is **exact, not osculating**: both classes are groups,
+so `exp(i s H)` stays inside for every `s`, verified out to `s = 10`. A fiber has
+zero transverse thickness and the dichotomy is sharp with nothing in between.
+
+**What this licenses.** The constraint map is a *submersion* at every point
+tested — surjective differential, uniform first-order escape, no direction in
+which the class curves back. That is precisely the non-degeneracy hypothesis
+that Kakeya- and Falconer-type estimates assume; here it is verified rather than
+assumed. **What it does not license** is any incidence, dimension or measure
+estimate: verifying a hypothesis is not proving a theorem that uses it, and none
+is invoked. The defining functions *are* polynomials — 16 linear and 2 quadratic
+— so a partitioning argument has the right raw material. Having the right raw
+material is not having an argument.
+
+Full record: `manifests/qsigma_r1c_transport_fiber_finding.json`. The related
+plausibility question — whether a Falconer theory over information manifolds
+could attach to any of this — is assessed, and largely answered *no, not yet*, in
+`docs/FALCONER_ASSESSMENT.md`.

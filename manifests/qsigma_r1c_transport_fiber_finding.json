@@ -1,0 +1,84 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1C-TRANSPORT-FIBER-001",
+  "status": "measured and recorded. No published number changes; `q_sim_upper` is untouched. Two results: the portfolio-wide frame census is now complete and attributed, and the certified class's local geometry is measured rather than assumed.",
+  "subject": "src/aionq/transport_fiber.py, and the four strategies of src/aionq/residency.py under the frame group",
+  "the_template_being_applied": "take a boolean predicate; decompose its refusal into residuals; ask which residuals the group moves. The ones it moves are frame coordinates, the ones it fixes are the object. Stated after the matchgate case, tested here on the rest of the portfolio.",
+  "measurement_1_the_portfolio_census": {
+    "method": "all 240 frames of AGL(1,16) walked in full on a 16-qubit T-saturated RXX ladder; `simulation_residency(..., portfolio=False)` per frame; distinct values counted per strategy",
+    "result": {
+      "stabilizer_rank": {"distinct_values_over_240_frames": 1, "value": 775.5212815831769},
+      "basis_permutation": {"distinct_values_over_240_frames": 1, "value": "inf"},
+      "contraction": {"distinct_values_over_240_frames": 1, "value": 4.0},
+      "free_fermion": {"distinct_values_over_240_frames": 2, "values": [0.0, "inf"]},
+      "q_sim_upper": {"distinct_values_over_240_frames": 2, "min": 0.0, "max": 0.25}
+    },
+    "attribution_not_correlation": "recomputing the minimum with `free_fermion` frozen at its identity-frame value leaves a constant across all 240 frames. The other three do not merely move less; they contribute nothing.",
+    "reading": "exactly one of four strategies is frame-resolving. `stabilizer_rank` charges a T-count, `basis_permutation` reads gate matrices, `contraction` reads a graph invariant -- none can see a wire name. `free_fermion` alone imposes a condition on wire ADJACENCY, and that condition is the entire frame-dependence of q_sim_upper. Combined with R1B, which showed that within `free_fermion` only the `locality` residual moves, the mistyping that started this line is now localised to a single scalar, and that scalar is routing.",
+    "a_negative_result_worth_recording": "the contraction strategy's elimination width is computed by a min-degree heuristic whose tie-break is by qubit INDEX, which is a frame coordinate. It could have leaked frame-dependence into a graph invariant. Measured over all 240 frames: constant at 4.0. The heuristic does not leak, and this was checked rather than assumed.",
+    "executable_form": "tests/test_transport_fiber.py::test_exactly_one_strategy_of_four_is_frame_resolving, ::test_the_metrics_orbit_spread_is_exactly_the_free_fermion_strategys"
+  },
+  "measurement_2_why_a_finite_group_had_to_give_a_step": {
+    "statement": "A relabelling group acts by permutation, so its orbit through a point is a finite set of isolated points. There is no direction to transport along, no escape rate, and no dimension that can grow -- a union of 240 copies of a d-dimensional variety is d-dimensional.",
+    "consequence": "the STEP measured over AGL(1,16) in the previous round is a fact about finite group actions, not a fact about hardness. Any Kakeya- or Falconer-type phenomenon requires a CONTINUUM of directions, and the finite frame group has none. This corrects the emphasis of the earlier finding without withdrawing its arithmetic.",
+    "executable_form": "tests/test_transport_fiber.py::test_a_finite_frame_group_cannot_produce_this_dichotomy"
+  },
+  "measurement_3_the_local_geometry_of_the_certified_classes": {
+    "method": "transport a gate along the one-parameter subgroups G(s) = G0 exp(i s H); differentiate the smooth defining functions along the group by central differences; read the tangent dimension off the Jacobian rank and the escape rate off a log-log slope",
+    "why_smooth_defining_functions_and_not_the_residuals": "the residuals of R1B are NORMS of these functions. A norm is the right object for reporting a distance and the wrong one for differentiating, since it is not smooth at its zero. Both maps are needed and they are not the same map.",
+    "matchgate_class_inside_U(4)": {
+      "ambient": 16,
+      "jacobian_rank": 9,
+      "tangent": 7,
+      "codimension": 9,
+      "predicted_independently": "block-diagonal in the parity split is U(2) x U(2), dimension 8; det A = det B is one real condition; 7 exactly. The prediction is arithmetic and was made before the rank was computed.",
+      "singular_value_spectrum": "{2, sqrt2 x 8, ~1e-16 x 7}, gap ratio 9.0e+09",
+      "checked_at": "RXX(theta) for theta in {0, 0.3, 0.7, 1.1, pi/2}"
+    },
+    "monomial_class_inside_U(4)": {
+      "ambient": 16,
+      "tangent": 4,
+      "codimension": 12,
+      "interpretation": "a permutation times four free phases -- the class `basis_permutation` certifies",
+      "checked_at": "CNOT, SWAP, and a generic phased identity",
+      "why_it_matters_that_this_number_differs": "the same instrument on a different variety returns a different answer, which is what distinguishes a measurement from a restatement of the instrument"
+    },
+    "escape_orders": {
+      "directions_tested_per_class": 216,
+      "composition": "16 standard Hermitian basis directions plus 200 sampled uniformly",
+      "escaping_directions_order": "1.000 in every one, both classes",
+      "directions_of_order_two_or_more": 0,
+      "tangent_directions_found_in_the_standard_basis": 4,
+      "note_on_the_4": "the tangent space is 7-dimensional but the standard basis is not adapted to it; the 4 are the within-block couplings |00>-|11> and |01>-|10>, and the remaining 3 are combinations of the diagonal generators satisfying a+d = b+c. 4 + 3 = 7, independently consistent with the Jacobian rank."
+    },
+    "containment_is_exact_not_osculating": "both classes are GROUPS, so exp(i s H) for H in the algebra stays in the class for every s, not merely as s -> 0. Verified out to s = 10, four orders beyond the fitting range. A fiber here has zero transverse thickness and the dichotomy is sharp with nothing in between.",
+    "executable_form": "tests/test_transport_fiber.py::test_the_matchgate_class_is_seven_dimensional_inside_sixteen, ::test_the_monomial_class_is_four_dimensional_inside_sixteen, ::test_every_generic_direction_escapes_at_order_exactly_one, ::test_transport_along_a_fiber_is_exact_containment_not_osculation"
+  },
+  "what_this_does_and_does_not_license": {
+    "licensed": "the statement that the constraint map defining each certified class is a SUBMERSION at every point tested: surjective differential, uniform first-order escape, no direction in which the class curves back. That is the non-degeneracy hypothesis Kakeya- and Falconer-type estimates assume, and here it is verified rather than assumed.",
+    "not_licensed": [
+      "any incidence, dimension or measure estimate. Verifying a hypothesis is not proving a theorem that uses it, and no such theorem is invoked, adapted or cited here.",
+      "any cost consequence. The R1B separation stands: nothing graded enters q_sim_upper, and this round adds no cost theorem either.",
+      "any claim about polynomial partitioning. The defining functions ARE polynomials in the matrix entries -- 16 linear and 2 quadratic for the matchgate class -- so a partitioning argument has the right raw material. Having the right raw material is not having an argument, and none was constructed.",
+      "any claim that this repository contains fractal sets of circuits. It does not. Every family here is a finite parameterised sweep, and a dimension-threshold theory has nothing to act on until that changes."
+    ]
+  },
+  "typed_remainders": [
+    {
+      "kind": "scale_remainder",
+      "statement": "All geometry is measured on single 4x4 gates, where the class is 7 of 16 dimensions. The class of full n-qubit free-fermion CIRCUITS sits inside a 4^n-dimensional group with dimension O(n^2), so its codimension grows exponentially while everything measured here is at fixed n=2. Whether the uniform order-1 escape survives that limit is not measured and should not be assumed; a codimension that grows exponentially is exactly the regime where transversality constants degrade."
+    },
+    {
+      "kind": "instrument_remainder",
+      "statement": "Tangent dimension is a numerical rank. It is trustworthy here only because the singular spectrum has a gap of nine orders of magnitude; at a singular point of the variety the gap would close and the same code would report a number with no meaning. No search for singular points was performed, and the five points tested are all generic."
+    },
+    {
+      "kind": "attribution_remainder",
+      "statement": "The census used one circuit family -- an RXX ladder with T saturation, 16 qubits, 2 layers, one seed -- so 'exactly one strategy moves' is established for that family under that group. The mechanism generalises (three of the four strategies read no wire name at all, which is structural) but the count is not a corpus-wide measurement."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}
