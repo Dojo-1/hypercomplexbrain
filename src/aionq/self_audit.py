@@ -581,6 +581,40 @@ CORRECTIONS = (
         True,
     ),
     Correction(
+        "REGISTRY",
+        "every instrument in this repository measures a deficiency and none "
+        "reports the positive quantity, so what the programme KNOWS had never "
+        "been computed. It is: 93 claims, 26 retired -- retirement is the "
+        "largest single category, above 25 proved and 25 measured -- and of 57 "
+        "live evidence-requiring claims exactly ONE carries a verified "
+        "envelope, the AXIOM, whose envelope the architecture already records "
+        "as unsigned and self-recomputed. Zero proved and zero measured claims "
+        "carry one",
+        "tests/test_knowledge_ledger.py::test_exactly_one_evidence_requiring_claim_is_witnessed_and_it_is_the_axiom",
+        True,
+    ),
+    Correction(
+        "REGISTRY",
+        "registry.unwitnessed() returns claims at an EVIDENCE-REQUIRING tag with "
+        "no envelope, so HYPOTHESIS and SEMANTIC claims never appear in it. "
+        "Reading their absence as 'witnessed' inverts the ledger and turns "
+        "1-of-57 coverage into an apparent 11-of-67 -- a sixfold overstatement "
+        "in the one direction that flatters the programme",
+        "tests/test_knowledge_ledger.py::test_hypotheses_and_metaphors_are_not_counted_as_witnessed",
+        True,
+    ),
+    Correction(
+        "REGISTRY",
+        "the evidence deficit was reported as a level and never as a "
+        "derivative. Against the R4 baseline recorded in ARCHITECTURE section 7 "
+        "-- 48 of 81 claims carrying no envelope -- it is now 56 of 93: twelve "
+        "claims added and eight arrived bare, so coverage moved the wrong way "
+        "while the corpus grew. A large deficit that is closing is a programme "
+        "in progress; a smaller deficit that is widening is not",
+        "tests/test_knowledge_ledger.py::test_the_gap_is_widening_not_closing",
+        True,
+    ),
+    Correction(
         "CORPUS",
         "the dependency instrument published three wrong figures before it was "
         "reviewed: it scanned only the top level of the package and missed 24 "

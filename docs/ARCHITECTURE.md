@@ -1338,6 +1338,72 @@ The cone cannot tell them apart, which is a fact about the cone — and the reas
 
 ---
 
+## 8.3b What this programme currently knows
+
+Every instrument here measures a deficiency — unwitnessed claims, unreached
+guards, missing strategies, absent audits. None reports the positive quantity.
+A session can drive the correction count from 41 to 67 and never once ask what
+is *standing*. `aionq.knowledge_ledger` asks.
+
+**93 claims. 26 retired.**
+
+| tag | | count |
+|---|---|---:|
+| **R** | RETIRED | **26** |
+| P | PROVED | 25 |
+| M | MEASURED | 25 |
+| A | AXIOMATIZED | 7 |
+| H | HYPOTHESIS | 5 |
+| S | SEMANTIC | 5 |
+
+Retirement is the **largest single category** — the programme demotes claims at
+very nearly the rate it proves them. Whether that is unusual rigour or claims
+arriving faster than support, the ledger alone cannot say; but it is the
+dominant movement, and no round-level audit can see it.
+
+### Evidence coverage is one claim
+
+Of **57** live claims at an evidence-requiring tag (P/A/M), exactly **one**
+carries a verified envelope:
+
+```
+AXIOM-HB0-UNIVERSAL_POINCARE_BASE
+```
+
+The single evidenced claim in the programme is the **axiom** — the tag whose own
+definition is *"passes via an explicit axiom or a weaker surrogate check"* — and
+§0's HB0 note already records that its envelope is *"unsigned, self-recomputed,
+and neither commit-bound nor independently witnessed."* **Zero PROVED and zero
+MEASURED claims carry an envelope.** Coverage: **1.8%**.
+
+> **A reading error worth recording, because it inverts the ledger.**
+> `registry.unwitnessed()` returns claims *at an evidence-requiring tag* with no
+> envelope, so HYPOTHESIS and SEMANTIC claims never appear in it. Their absence
+> means the question does not apply — a metaphor cannot carry an envelope.
+> Reading it as *witnessed* turns 1-of-57 into an apparent 11-of-67: a sixfold
+> overstatement, in the one direction that flatters the programme. It was caught
+> because the first table produced looked backwards — hypotheses and metaphors
+> at 100%, proofs and measurements at 0%.
+
+### The gap is widening
+
+This is a derivative rather than a level, and it is the one that matters. §7
+records the QΣ-R4 baseline: **48 of 81** claims carrying no envelope. It is now
+**56 of 93**.
+
+> **12 claims added since R4; 8 of them arrived bare.** Two thirds of new claims
+> come with no envelope, so coverage moved the wrong way while the corpus grew.
+
+A large deficit that is closing is a programme in progress. A smaller deficit
+that is widening is not.
+
+And the scale cuts both ways: **one** verified envelope on any PROVED or
+MEASURED claim would *double* the programme's evidence coverage. That is how
+little it would take to register the first real movement — and it is the thing
+no amount of further auditing produces.
+
+---
+
 ## 8.4 The code composes; the evidence does not
 
 Every round here is audited from inside itself. That is the right scale for a
