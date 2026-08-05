@@ -1742,3 +1742,85 @@ no import, and would be the portfolio's first graded member. Whether it deserves
 the name holonomy is a question that must be answered after building it, not by
 naming it one — and it is not this round's, because a new strategy changes
 `q_sim_upper` and that is not a labelling task.
+
+## 8.6 The step had a shape: the portfolio's first graded member
+
+§8.5 closed by naming what the strategy portfolio lacks. This section supplies
+it, as a diagnostic and explicitly not as a certificate.
+
+### The gap, restated as a measurement
+
+Every member of the portfolio behind `q_sim_upper` is all-or-nothing.
+`matchgate_plan` charges 0 on the free-fermion class and switches off one gate
+outside it; `basis_permutation` and `stabilizer_rank` have the same shape; only
+`contraction` varies at all. Walked exhaustively over the 240 affine frames of
+AGL(1,16), the minimum takes at most two values — the hardness landscape over
+the frame group is a **step, not a saddle**. A step has no gradient to read.
+
+`src/aionq/matchgate_defect.py` replaces the free-fermion bit with four
+residuals, one per reason `matchgate_plan` refuses *metrically*: `parity` (the
+off-block part of `U`), `determinant` (`|det A − det B|`), `locality`
+(`max(0, |i−j|−1)`), `diagonal` (the off-diagonal part of a one-qubit gate).
+Anything the plan refuses *categorically* — a measurement, a reset, control flow,
+a three-qubit gate — is marked inapplicable and given no number. A measurement is
+not far from free fermions; it is outside the class the question is about.
+
+### Three measurements
+
+**The cliff is a function.** `RZZ(t)` has `det A = e^{−it}` and `det B = e^{+it}`.
+The certificate holds on exactly the two points `t ∈ {0, π}` of the entire
+continuum; the determinant residual is `2|sin t|` — exact to 1e-12 at all
+seventeen sampled angles, maximal at `t = π/2`. SWAP, the gate that lifts
+matchgates to universality, sits at residual 2, the maximum the constraint
+attains. The boolean was never describing a wall. It was thresholding a function
+that already existed.
+
+**Over the frame orbit, 2 values become 36.** All 240 frames of AGL(1,16),
+walked in full on a 16-qubit T-saturated matchgate ladder:
+
+| | boolean certificate | graded residual |
+|---|---|---|
+| distinct values over the orbit | **2** | **36** |
+| frames in the zero / true set | 2 | 2 (the same two) |
+| stabiliser order | 2 | 2 |
+| range | {false, true} | [0, 212] |
+
+Same stabiliser, same zero set — the identity and the reversal, `Aut` of the path
+graph the gates were laid on, index 120 — and eighteen times the resolution. The
+residual agrees with the bit about which frames are certifiable and additionally
+ranks the 238 that are not.
+
+**All of the frame-dependence is one residual.** `parity`, `determinant` and
+`diagonal` each take exactly **one** value across all 240 frames; `locality`
+carries all 36 levels by itself. This is structural, not a coincidence:
+`relabel` reuses each instruction's operation unchanged, so a relabelling moves
+which wires a gate sits on and never the gate. Any residual computed from a gate
+matrix is constant on the *entire* frame group — checked on the sixteen
+generators of AGL(4,2), which decide all 322 560 of its elements.
+
+So the free-fermion certificate's frame sensitivity is, exactly and only, a
+**routing** quantity. That is a statement about what the certificate measures,
+and it was obtained without touching the bound the certificate feeds.
+
+### What this is not, asserted mechanically
+
+`matchgate_plan` is sound because a theorem says the exactly-free-fermion case is
+poly-time simulable. **There is no theorem here bounding simulation cost by a
+small nonzero defect**, and this round does not supply one. A circuit at defect
+1e-3 is not "almost poly-time simulable"; it is a circuit whose certificate does
+not apply, at a measured distance from one whose does.
+
+`q_sim_upper` therefore does not consult this module and must not — an upper
+bound that read a quantity with no cost theorem behind it would stop being an
+upper bound. That separation is the module's whole safety argument, so it is not
+left to discipline:
+`tests/test_matchgate_defect.py::test_the_bound_does_not_consult_this_module`
+fails if any module under `src/aionq` imports it.
+
+Nor is the step finding superseded. The bound's landscape over the frame group is
+still a step, because nothing was wired in. What is now established is that the
+flatness was a property of the **thresholding**, not of the underlying geometry —
+the same orbit carries 36 levels the moment something looks at it without a
+threshold. The gap between a distance and a certificate is the open problem, and
+it is exactly as open as it was; what changed is that the distance now exists and
+is measured. Full record: `manifests/qsigma_r1b_graded_matchgate_residual_finding.json`.

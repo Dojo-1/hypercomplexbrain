@@ -1,0 +1,86 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1B-GRADED-MATCHGATE-001",
+  "status": "measured and recorded. No published number changes. `q_sim_upper` is untouched, no strategy was added to the portfolio, and the new quantity is asserted by test to have no consumer inside the library.",
+  "subject": "src/aionq/matchgate_defect.py, a graded companion to src/aionq/matchgate.py::matchgate_plan",
+  "the_gap_this_addresses": {
+    "statement": "Every member of the strategy portfolio behind `q_sim_upper` is all-or-nothing. `matchgate_plan` charges 0 on the free-fermion class and switches off one gate outside it; `basis_permutation` and `stabilizer_rank` have the same shape; `contraction` charges by elimination width and is the only one that varies at all.",
+    "measured_consequence": "over the 240 affine frames of AGL(1,16), walked exhaustively in the previous round, the minimum over strategies takes at most two values. The hardness landscape over the frame group is a STEP, not a saddle -- a surface with no gradient to read and no direction to follow.",
+    "prior_statement_this_round_makes_good_on": "the previous round closed with: 'a strategy with a graded certificate -- one that degrades rather than switching off, say a matchgate detector reporting how far a circuit is from free-fermion -- would put real structure on that cliff. The current portfolio has no member that could produce it.'"
+  },
+  "what_was_built": {
+    "instrument": "four residuals, one per reason `matchgate_plan` refuses metrically, each zero exactly when that reason is satisfied and continuous as it fails",
+    "residuals": {
+      "parity": "||off-block part of U||_F -- the eight entries coupling span{|00>,|11>} to span{|01>,|10>}",
+      "determinant": "|det A - det B| on the even- and odd-parity blocks",
+      "locality": "max(0, |i - j| - 1) for a two-qubit gate on wires i, j",
+      "diagonal": "||off-diagonal part of u||_F for a one-qubit gate"
+    },
+    "domain_discipline": "anything `matchgate_plan` refuses CATEGORICALLY rather than metrically -- a measurement, a reset, control flow, a gate on three or more qubits -- is marked inapplicable and given no number. A measurement is not far from free fermions; it is outside the class of objects the question is about, and inventing a residual for it would be this module's own warning committed at the top level."
+  },
+  "measurement_1_the_cliff_is_a_function": {
+    "family": "RZZ(t), whose blocks have det A = exp(-it) and det B = exp(+it)",
+    "certified_set": "exactly t in {0, pi} out of the whole continuum",
+    "residual": "2|sin t|, exact to 1e-12 at all 17 sampled angles, maximal 2 at t = pi/2 where the determinants are antipodal",
+    "reading": "the boolean was never describing a wall. It was thresholding a function that already existed, and the function is analytic and closed-form on this family.",
+    "corroboration": "SWAP has det A = +1, det B = -1, residual 2 -- the maximum the residual attains, equal to RZZ(pi/2). The gate that lifts matchgates to universality is not merely refused; it is placed as far from the class as this constraint can put anything. CNOT fails earlier, on parity, at residual > 1.",
+    "executable_form": "tests/test_matchgate_defect.py::test_the_rzz_family_is_certified_at_two_points_and_graded_everywhere, ::test_swap_and_cz_sit_at_the_far_end_of_the_same_residual"
+  },
+  "measurement_2_the_frame_orbit": {
+    "method": "all 240 frames of AGL(1,16) walked in full -- no sampling -- on a 16-qubit nearest-neighbour matchgate core saturated with T gates, 2 layers",
+    "boolean_certificate": {
+      "distinct_values_over_the_orbit": 2,
+      "frames_certified": 2,
+      "which": "the identity and the reversal, Aut of the path graph the gates were laid on, index 120"
+    },
+    "graded_residual": {
+      "distinct_level_sets_over_the_orbit": 36,
+      "range": [0.0, 212.0],
+      "stabiliser_order": 2,
+      "zero_set": "exactly the 2 certified frames, checked on all 240"
+    },
+    "reading": "same stabiliser, same zero set, 18 times the resolution. The residual agrees with the bit about which frames are certifiable and additionally ranks the 238 that are not. Where the bound sees a step, the companion sees 36 levels.",
+    "executable_form": "tests/test_matchgate_defect.py::test_the_bit_takes_two_values_over_the_orbit_and_the_residual_takes_thirty_six, ::test_the_zero_set_of_the_residual_is_the_certified_set_on_the_whole_orbit"
+  },
+  "measurement_3_the_frame_dependence_is_one_residual": {
+    "result": {
+      "parity": "1 distinct value over all 240 frames",
+      "determinant": "1 distinct value over all 240 frames",
+      "diagonal": "1 distinct value over all 240 frames",
+      "locality": "36 distinct values, carrying the entire orbit spread by itself"
+    },
+    "why_it_is_structural_and_not_a_coincidence": "`frame_orbit.relabel` reuses each instruction's operation object unchanged, so a relabelling moves which wires a gate sits on and never the gate. Any residual computed from a gate matrix is therefore constant on the ENTIRE frame group, not merely on the subgroup walked.",
+    "strengthened_without_a_larger_computation": "checked on the sixteen generators of AGL(4,2), which decide all 322560 of its elements -- a group 1344 times larger than AGL(1,16). Invariance under a generating set is invariance under the group it generates.",
+    "reading": "the free-fermion certificate's notorious frame sensitivity is, exactly and only, a ROUTING quantity. This is the sharpest thing the round produced: it is a statement about what the certificate measures, and it was obtained without touching the bound the certificate feeds.",
+    "executable_form": "tests/test_matchgate_defect.py::test_every_frame_dependent_bit_of_the_certificate_lives_in_one_residual, ::test_the_matrix_residuals_are_invariant_under_the_full_affine_group"
+  },
+  "what_is_explicitly_NOT_claimed": [
+    "that this is a graded CERTIFICATE. `matchgate_plan` is sound because a theorem (Valiant; Terhal-DiVincenzo; Jozsa-Miyake) says the exactly-free-fermion case is poly-time simulable. Nothing here bounds simulation cost by a small nonzero defect and this round does not supply such a bound. A circuit at defect 1e-3 is NOT almost poly-time simulable; it is a circuit whose certificate does not apply, at a measured distance from one whose does.",
+    "that `q_sim_upper` changed, or should. It did not, and a bound that consulted a quantity with no cost theorem behind it would stop being an upper bound. The separation is asserted mechanically by tests/test_matchgate_defect.py::test_the_bound_does_not_consult_this_module, which fails if any module under src/aionq imports this one.",
+    "that the STEP finding is superseded. The bound's landscape over the frame group is still a step, because nothing was wired in. What is now established is that a companion diagnostic on the same orbit resolves 36 levels where the bound resolves 2, so the flatness was a property of the thresholding and not of the underlying geometry.",
+    "that the four residuals are commensurable. Only `parity` is a true distance -- the parity-preserving matrices are a linear subspace, so zeroing the off-block entries is the orthogonal projection and the residual is the Frobenius distance to it, verified against an explicit projection on 50 random complex matrices. `determinant` is a defect in a scalar constraint, not a distance to the variety it cuts out, and when `parity` is large the blocks it reads are a projection rather than the gate's actual blocks. `locality` is an integer count of wires. Summing them is an aggregate and is labelled as one.",
+    "that this connects to the five carriers of formal/leanmath. The archive's hypercomplex carrier is an associator residue over Fin 8 -> R with the octonion product; this is over 4x4 complex matrices with a parity-block condition. They are not over the same objects. The archive's own header states the obligation first: 'Two holonomies are NOT asserted equal before interpretation.'"
+  ],
+  "typed_remainders": [
+    {
+      "kind": "theory_remainder",
+      "statement": "The gap between a distance and a certificate is the whole open problem, and it is not narrowed by this round. What would narrow it is a theorem of the form: a circuit at residual eps from the free-fermion class is simulable at cost f(eps, n) for some explicit f. Perturbative free-fermion and non-Gaussianity results in the literature are the place such an f would come from; none is cited here because none has been read and checked in this round, and citing one unread would be the failure this repository keeps recording."
+    },
+    {
+      "kind": "aggregation_remainder",
+      "statement": "`total` sums four incommensurable quantities and `worst` maxes them. Both are reported and neither is principled. The per-residual breakdown is the honest object, and it is what carried every finding above; the aggregates exist because the orbit measurement needs a scalar to have level sets at all. A weighting derived from a cost theorem would replace them, and there is no cost theorem."
+    },
+    {
+      "kind": "scope_remainder",
+      "statement": "`locality` measures distance in the circuit's own wire ordering, with no routing model behind it. Two gates at |i-j| = 5 cost the same as one at |i-j| = 10 under this residual, which is not what any SWAP-network cost would say. It is adequate for the orbit statement, where all that is needed is a quantity that moves under relabelling, and it should not be read as a routing cost."
+    },
+    {
+      "kind": "coverage_remainder",
+      "statement": "The orbit measurement used one circuit family -- RXX ladders with T saturation, 16 qubits, 2 layers, one seed. The 36 level sets are a property of that family's interaction graph under AGL(1,16), not a universal count. What generalises is the DECOMPOSITION -- three residuals invariant, one carrying everything -- which is structural and holds for any circuit under any relabelling."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. No independent party has run either measurement, so the witness-nerve rank is 0 by the repository's own rule that verifier == producer yields rank 0."
+    }
+  ]
+}
