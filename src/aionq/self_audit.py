@@ -1259,6 +1259,32 @@ CORRECTIONS = (
         "tests/test_self_audit.py::test_supersession_is_recorded_in_both_directions",
         True,
     ),
+    Correction(
+        "QSigma-R1s",
+        "the covariance formalism's vacuum was written with i c_2k c_2k+1 = +1 "
+        "on |0>. In this repository's Jordan-Wigner convention it is -1. The "
+        "preregistered gate reported a defect of exactly 2.0 -- a clean sign "
+        "flip -- on its first run. Nothing downstream would have reported it: "
+        "every later quantity in the formalism is built from the vacuum "
+        "covariance, so a wrong convention there is consistent with itself all "
+        "the way up. It was caught only because the gate compares against the "
+        "old formalism rather than against the new one's own expectations",
+        "tests/test_supercable.py::test_the_vacuum_sign_convention_is_read_off_and_not_assumed",
+        True,
+    ),
+    Correction(
+        "QSigma-R1s",
+        "the covariance entropy took the larger HALF of |Im spectrum| as the "
+        "symplectic values. Each nu_k appears twice, once per conjugate partner, "
+        "so one representative per pair is wanted -- every second entry. The "
+        "wrong rule turned [1, 1, 0.325, 0.325] into [1, 1] and returned entropy "
+        "0.000 against an exact 0.922. Critically it PASSES at split 1, where "
+        "one pair makes the larger half and one representative the same element: "
+        "a check at the smallest case would have gone green and shipped it. The "
+        "gate sweeps every split, which is the only reason it was seen",
+        "tests/test_supercable.py::test_the_entropy_pairing_bug_is_invisible_at_the_smallest_split",
+        True,
+    ),
 )
 
 

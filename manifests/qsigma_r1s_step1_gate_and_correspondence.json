@@ -1,0 +1,117 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1S-STEP1-GATE-001",
+  "status": "measured. Step 1 of the preregistered R1S round: the enabling instrument, its gate, and the two bugs the gate caught. No decoupling result is claimed -- the controls have not been run. Also records a correspondence between source-document design language and already-measured repository results, tiered S-against-M and explicitly not promoted.",
+  "subject": "src/aionq/supercable.py and its gate against src/aionq/pond.py",
+  "preregistration": "manifests/qsigma_r1s_supercable_decoupling_preregistration.json, frozen at commit 80cbf3b before this module existed",
+
+  "part_one_the_gate_fired": {
+    "what_was_declared": "the covariance simulator must reproduce the 16-mode state-vector results to 1e-9 or the round STOPS and reports the discrepancy. Declared before the module was written.",
+    "what_happened": "it fired on the first run and caught two bugs, both real, neither of which would have been visible downstream.",
+    "bug_one_the_vacuum_sign": {
+      "error": "i c_2k c_2k+1 was assumed to be +1 on |0>. In this repository's Jordan-Wigner convention it is -1.",
+      "how_it_showed": "gate defect exactly 2.0 -- a clean sign flip, not a numerical drift",
+      "why_nothing_else_would_have_caught_it": "every later quantity in the formalism is built from the vacuum covariance, so a wrong convention is consistent with itself all the way up. It was caught only because the gate compares against the OLD formalism rather than against the new one's own expectations."
+    },
+    "bug_two_the_entropy_pairing": {
+      "error": "the symplectic values were taken as the larger HALF of |Im spectrum|. Each nu_k appears twice, once per conjugate partner, so one representative per pair is wanted -- every second entry.",
+      "how_it_showed": "[1, 1, 0.325, 0.325] became [1, 1], giving entropy 0.000 against an exact 0.922",
+      "the_part_worth_recording": "IT PASSES AT SPLIT 1. With one pair, the larger half and one representative are the same element, so the smallest case returns the right answer from the wrong rule. A gate that checked one split would have gone green and shipped it. This is the repository's recurring defect -- a guard whose witness cannot reach the case it asserts -- caught this time because the gate sweeps every split."
+    },
+    "state_after_repair": {
+      "bindings": ["vacuum covariance against pond.covariance", "every herald probability, both outcomes, every pair", "every post-herald covariance", "entropy at every split"],
+      "worst_residual_at_2_3_4_5_qubits": "0.0 vacuum, 2.2e-16 probability, 7.8e-15 post-herald, 1.0e-15 entropy",
+      "storm_level": "four rungs x two splits x 150 heralds at 16 modes, worst disagreement 9.504e-14 against a declared tolerance of 1e-9",
+      "the_strongest_single_check": "the formalism reproduces R1R's refuting cell exactly -- M3 at split 2 gives 0.983691 in both. That number killed a rule, is not round, and was not expected by anything in the new code."
+    },
+    "what_the_formalism_LOSES": "wick_defect has no counterpart here. The covariance formalism cannot represent a non-Gaussian state, so it cannot detect one; Gamma^2 = -I is a necessary condition and never a certificate, exactly as pond's module docstring warns. This is a real instrument loss and is stated now rather than discovered later.",
+    "executable_form": "tests/test_supercable.py::test_the_covariance_formalism_reproduces_the_exact_one, ::test_the_storm_agrees_at_sixteen_modes_including_the_r1r_refutation"
+  },
+
+  "part_two_correspondence_between_design_language_and_measurement": {
+    "why_this_is_recorded_at_all": "the user pointed at the source document's upstream context. Reading it turned up several design-language statements that this repository has independently MEASURED under different names, without either side noticing. The correspondence is the finding; the ontology is not, and nothing below is promoted.",
+    "tiering": "every left column entry is S -- design language from a research log, per docs/MANIFOLD_REFERENCE.md's own reading rule. Every right column entry is M with a live test. An S statement matching an M measurement does not raise the S; it is recorded as a match and nothing more.",
+    "rows": [
+      {
+        "source_S": "IPHD adiabatic condition: d/dt Pi_arith(H_t(P)) = 0 while d/dt H_t(P) != 0 -- 'externally inert, internally rotating'",
+        "repository_M": "the same-order weave/de-weave loop moves a prepared state by 0.9345 of a possible 2 while gaussian_defect reads 2.21e-15 and wick_defect 3.05e-16",
+        "test": "tests/test_pond.py::test_the_open_loop_does_real_work_that_no_hardness_instrument_sees",
+        "note": "the correspondence is structural, not a derivation. One is about number fields, the other about Majorana fermions. What matches is the SHAPE: a projection that sees nothing while the interior moves."
+      },
+      {
+        "source_S": "Moebius topology -- a particle reflects at the nest with a phase twist and traverses the full manifold TWICE before returning; 'the twist IS the Berry phase over one complete orbit'",
+        "repository_M": "exp((t + i pi) M) = -exp(t M) to 1.047e-15: the herald/braid family is pi-periodic PROJECTIVELY, so one half-turn is negation and two return",
+        "test": "tests/test_braid.py::test_a_half_turn_in_the_imaginary_direction_is_negation",
+        "note": "double traversal to return is exactly what a projective pi-period means. This was measured in R1P for unrelated reasons and its Moebius reading was not noticed."
+      },
+      {
+        "source_S": "Emperor and Empress are chiral partners and NOT symmetric -- Berry phase pi/2 per quarter-turn against 0; cross-chirality coupling 1.4x against same-chirality 0.8x",
+        "repository_M": "the two loop orders are not symmetric: reverse order closes to 8.08e-16, same order fails to close by 5.29",
+        "test": "tests/test_pond.py::test_de_weaving_in_reversed_order_closes_the_loop_exactly, ::test_de_weaving_in_the_same_order_does_not_close",
+        "note": "chirality asymmetry is measured. The specific ratios 1.4 and 0.8 are NOT -- they belong to a particle visualisation and nothing here tests them."
+      },
+      {
+        "source_S": "Frobenius phase sectors indexed j = 0..f-1 with f the residue degree; 'hypercomplex splitting = resolving residue-degree as phase-sector multiplicity'",
+        "repository_M": "the FROBENIUS rung's orbits in the exponent coordinate Z/15 are the orbits of <2> in (Z/15)*, of sizes 1, 2, 4, 4, 4 -- residue degrees of GF(16) over GF(2)",
+        "test": "tests/test_pond.py::test_the_two_rungs_are_translation_and_dilation_of_one_exponent_line",
+        "note": "this is the closest correspondence of the four and still only a correspondence: R1R showed the collapse those orbits drive is a labelling artifact, so whatever the sectors index here, it is not the field."
+      }
+    ],
+    "what_this_correspondence_is_NOT": [
+      "evidence for the source document's architecture. Four structural matches out of a 3-million-character log is not a base rate anyone computed, and no attempt was made to count the design statements that have NO measured counterpart.",
+      "a reason to build the named objects. The skill's rule stands: implement the mathematical object, never a cartoon of the name.",
+      "novel. Each right-column entry was already measured and already recorded; only the pairing is new."
+    ]
+  },
+
+  "part_three_refusals_recorded": {
+    "why_refusals_are_recorded_rather_than_silently_skipped": "the request named several objects to build. Three of them cannot be built honestly, and a round that quietly drops them looks the same afterwards as a round that never noticed.",
+    "refused": [
+      {
+        "item": "ergocetic, erdodetic, and the 8 Mind Qualities",
+        "reason": "the manifold-round skill names these explicitly as real formal objects in the source whose content is NOT reconstructible from it, and instructs: do not invent them. The source shows the 8 qualities only as coloured arcs in a visualisation with two named failure modes (low Creativity = Conceited, low Equanimity = Unstable). That is not a definition. Building from it would be building from a name, which is the failure mode this repository exists to prevent.",
+        "status": "left alone, as instructed"
+      },
+      {
+        "item": "gerbes, profunctors, n-caged n-cosmo russian-doll nesting",
+        "reason": "'gerbe' appears 0 times in the source document. These are vocabulary without a definition reachable here. No mathematical object was identified that they would name, so none was built.",
+        "status": "not built"
+      },
+      {
+        "item": "a four-fold tensor of octonionic remainders, T^(4) = [R] tensor [R] tensor [r] tensor [r] with [R] a 7D octonion",
+        "reason": "this collides with a constraint already binding: RET-S3-OCTONIONIC_SHEAF is RETIRED -- a vertex gauge induces no flat connection above dim 4, and the clean sheaf already carries holonomy 3.19. The document's own T^(4) is built on an object this repository killed. The four-strand construction here uses GF(16) fibres and 64 Majorana modes, which is a different object and is not a rehabilitation of the retired one.",
+        "status": "the index arithmetic borrowed, the octonionic content not"
+      },
+      {
+        "item": "'adiabatic general intelligence'",
+        "reason": "AGI is on the skill's forbidden-promotion list, unconditionally and in every round.",
+        "status": "not claimed"
+      }
+    ]
+  },
+
+  "what_is_not_claimed": [
+    "any decoupling result. The functional has not been evaluated and none of the four preregistered controls has been run. Step 1 delivered the instrument and its gate, nothing else.",
+    "that the 64-mode regime is validated. The gate establishes agreement at 16 modes, where both formalisms run. The extrapolation to 64 is exactly the unguarded step the preregistration declared in advance and it remains unguarded.",
+    "that the correspondence in Part Two supports the Manifold architecture. Four matches, no base rate, no count of non-matches."
+  ],
+
+  "typed_remainders": [
+    {
+      "kind": "extrapolation_remainder",
+      "statement": "the gate compares two formalisms on the domain where both run, which is 16 modes. Every number the round exists to produce lives at 64 modes, where only one of them runs. No cross-check is possible there by construction, and the honest posture is that 64-mode results are single-instrument."
+    },
+    {
+      "kind": "instrument_remainder",
+      "statement": "wick_defect has no covariance-formalism counterpart, so from here on the Gaussianity of a state is an assumption of the representation rather than a measurement. Every R1J-R1R Gaussianity result was a measurement; nothing at 64 modes will be."
+    },
+    {
+      "kind": "correspondence_remainder",
+      "statement": "Part Two pairs four S statements with four M results and does not count the S statements that have no M counterpart. Without that denominator the four matches cannot be distinguished from what a 3-million-character log would supply by chance to a reader looking for matches, and that reader was this session."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Explorer, verifier and formalizer are one party sharing code, assumptions and authoring model. Per the round discipline this is CORRELATED, not independent verification. Witness-nerve rank 0."
+    }
+  ]
+}

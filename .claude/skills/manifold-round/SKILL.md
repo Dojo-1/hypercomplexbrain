@@ -9,8 +9,10 @@ You are continuing a **correction-heavy** research repository. Its value is its
 correction history, not its architecture. Most rounds end in a retirement, and
 that is a successful round.
 
-Read `docs/MANIFOLD_REFERENCE.md` first — it condenses the 1.56M-character source
-archive and lists what has already been killed.
+Read `docs/MANIFOLD_REFERENCE.md` first — it condenses the source archive
+(3,052,861 visible characters, remeasured in R1R; the 1.56M figure this line
+used to carry was not reproducible by any extraction) and lists what has
+already been killed.
 
 ## Step 1 — translate the vocabulary before writing code
 
