@@ -1,0 +1,124 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1Q-LABELLING-ARTIFACT-001",
+  "status": "measured and recorded. This round is primarily a RETRACTION: the central empirical claim of R1M, R1N and R1O -- that the GF(16) subgroup ladder splits into collapsing and non-collapsing rungs, with the break between GF(4) and GF(16) -- does not survive a relabelling of the modes and is not a fact about the field. Two candidate replacement rules were fitted and one of them also failed out of sample. The surviving mechanism is stated with its weak direction marked weak.",
+  "subject": "src/aionq/pond.py::relabelling_report, ::cut_crossing_pairs, ::same_qubit_pairs, ::pauli_centre_rank and src/aionq/gf_frames.py::orbit_geometry_report",
+
+  "the_question_that_prompted_it": "the user asked what relationship governs the orbits of x -> x^2 against the orbits of x -> w x, and suggested the link might lie in the stabiliser group each pair family generates inside the Pauli group. Both halves were computed. The first has a clean answer. The second is the rule that failed.",
+
+  "part_one_the_orbit_geometry": {
+    "statement": "pass GF(16)* to the exponent coordinate Z/15 by discrete log. There x -> w x is a TRANSLATION and x -> x^2 is a DILATION -- the additive and the multiplicative structure of one and the same line.",
+    "measured": {
+      "primitive_element": 4,
+      "powers": [1, 4, 6, 14, 5, 2, 8, 11, 7, 10, 3, 12, 13, 9, 15],
+      "M3_is_translation_by": 5,
+      "M3_orbits_in_Z15": [[0, 5, 10], [1, 6, 11], [2, 7, 12], [3, 8, 13], [4, 9, 14]],
+      "M3_orbits_are_the_cosets_of": [0, 5, 10],
+      "FROBENIUS_is_dilation_by": 2,
+      "FROBENIUS_orbits_in_Z15": [[0], [5, 10], [1, 2, 4, 8], [3, 6, 9, 12], [7, 11, 13, 14]],
+      "FROBENIUS_orbits_are_the_orbits_of": [1, 2, 4, 8],
+      "dilation_normalises_translation": "sigma M_a sigma^-1 = M_{a^2}, verified for all fifteen a",
+      "generated_group": "GammaL(1,16) = Z/15 : Z/4, order 60"
+    },
+    "the_single_intersection": "<2> preserves <5> setwise, so the M3 orbit {0,5,10} -- which is GF(4)* -- is a union of Frobenius orbits, {0} and {5,10}. It is the only M3 orbit that is, and correspondingly the two rungs share exactly ONE mode pair out of 19 and 15: (2,3), inside GF(4). The subfield is the whole intersection.",
+    "why_R1P_could_not_see_it": "both rungs have six orbits including zero -- five 3-cycles against sizes 1,1,2,4,4,4 -- so every count-based invariant R1P tried gives them the same value. The difference is in the shape, not the count.",
+    "executable_form": "tests/test_pond.py::test_the_two_rungs_are_translation_and_dilation_of_one_exponent_line",
+    "what_it_does_not_do": "it does not explain the collapse dichotomy, because by Part Two there is no field fact there to explain."
+  },
+
+  "part_two_the_retraction": {
+    "what_was_claimed": "R1M: 'the break in the field tower is between GF(4) and GF(16)' -- T2, T4 and FROBENIUS drive the entropy to exactly zero, M3, M15, T16 and AGL do not, and this was read as a statement about which subgroups of AGL(1,16) close.",
+    "the_test": "a relabelling permutes the modes. It leaves the pair set, the graph it forms, its component count, its F2 rank, its Pauli centre and every other intrinsic invariant unchanged -- it only renames modes. If the field structure were doing the work, the collapse would survive.",
+    "measured": {
+      "design": "3 collapsing rungs x (identity + 8 random relabellings) x 3 storm seeds, 150 steps each, n = 8 qubits",
+      "T2": {"identity": "3/3 collapse", "relabelled": "0/24"},
+      "T4": {"identity": "3/3 collapse", "relabelled": "0/24"},
+      "FROBENIUS": {"identity": "3/3 collapse", "relabelled": "0/24"},
+      "total": "9 of 9 as given, 0 of 72 relabelled"
+    },
+    "verdict": "the collapse dichotomy of R1M through R1O is an artifact of the mode-to-qubit labelling. R1M's own typed remainder named this risk in the exact words 'identifying mode j with field element j is a choice the Jordan-Wigner ordering fixes; the rungs act on those labels, so a relabelling conjugates them', and it went untested for three rounds while three further findings were built on top of it.",
+    "what_survives_from_R1M_to_R1O": [
+      "every state in every storm stays exactly Gaussian -- that is a statement about the operations, not the labelling",
+      "the storm is a sink toward stabiliser states",
+      "weak and projective heralds differ in KIND: asymptotic decay against arrival in seven steps and freezing. Measured at one labelling but the mechanism is the alpha -> pi/4 limit, not the labels",
+      "the break-count continuity in the measurement strength"
+    ],
+    "what_is_withdrawn": [
+      "'the break in the field tower is between GF(4) and GF(16)'",
+      "'collapse is about the family being closed under a subgroup'",
+      "the reading of T2/T4/FROBENIUS versus M3/M15/T16/AGL as a property of those subgroups"
+    ],
+    "executable_form": "tests/test_pond.py::test_the_collapse_does_not_survive_a_relabelling_of_the_modes"
+  },
+
+  "part_three_two_replacement_rules_one_of_which_failed": {
+    "rule_a_the_pauli_centre": {
+      "the_users_suggestion": "the stabiliser group each pair family generates inside the Pauli group",
+      "computed": "even-weight Majorana monomials c_S, c_T anticommute exactly when |S intersect T| is odd -- c_S c_T = (-1)^(|S||T| - |S intersect T|) c_T c_S with both weights even -- so two edge generators anticommute exactly when the edges share a vertex. The radical of the induced symplectic form on the F2 edge span is the centre of the generated group.",
+      "a_prose_slip_in_this_manifest_before_commit": "the first draft of this entry and of the two docstrings wrote the condition as |S symmetric-difference T| odd, which for two 2-element sets is always EVEN and so would say no two edges ever anticommute. The code was right throughout -- it computes bin(u & v).count('1') & 1, the intersection parity -- and only the prose was wrong. Recorded because a wrong statement of a rule beside a correct implementation of it is how a reader ends up trusting the wrong one.",
+      "measured": {
+        "T2": 8, "T4": 4, "FROBENIUS": 4,
+        "M3": 0, "M15": 0, "T16": 1, "AGL": 1
+      },
+      "in_sample": "PERFECT separation over all ten families -- radical 4 or 8 for every collapsing family, 0 or 1 for every other.",
+      "out_of_sample": "FAILED on the first family it was not fitted to. A random perfect matching has radical 8, identical to T2, and gives final entropy 2.0 at three seeds.",
+      "why_it_is_recorded": "a rule that separates every point it was built on and then breaks on the first new one is the exact failure mode this repository keeps finding, and the near-miss is more informative than the miss."
+    },
+    "rule_b_the_same_qubit_count": {
+      "the_reading": "under Jordan-Wigner mode j lives on qubit j//2, so i c_2k c_2k+1 is the single-qubit Z on qubit k. T2 is translation by 1, which pairs x with x^1 -- the same qubit. T2's eight pairs ARE the eight single-qubit Z measurements.",
+      "that_part_stands": "it is a complete account of what T2 is at the identity labelling, and T4 contains all eight.",
+      "the_general_rule_fails": {
+        "FROBENIUS_identity": "3 same-qubit pairs, collapses",
+        "FROBENIUS_relabelled_with_3": "final entropies 3.0, 3.0, 2.0 -- no collapse",
+        "FROBENIUS_relabelled_with_4": "final entropies 2.0, 1.0, 1.0 -- a HIGHER count and no collapse",
+        "eight_Zs_plus_eight_crossing_pairs": "the maximum count of 8, final entropies 3.0, 1.0, 1.0 -- no collapse"
+      },
+      "verdict": "the same-qubit count is not the mechanism. The first draft of this round's docstrings said it was."
+    },
+    "rule_c_the_cut": {
+      "statement": "entanglement_entropy reads the MIDDLE CUT, so on eight qubits the cut falls between mode 7 and mode 8. A herald on a pair that does not straddle it is local to one side, and local operations cannot build entanglement across it.",
+      "measured": {
+        "T2": 0, "T4": 0, "FROBENIUS": 0,
+        "M3": 8, "M15_complement": 8, "M15": 56, "M3_complement": 56,
+        "T16": 64, "AGL": 64, "T2_complement": 64
+      },
+      "separation": "exact over all ten families, and it also accounts for the control that destroyed rule A: a random perfect matching has four crossing pairs.",
+      "out_of_sample_strong_direction": "crossing pairs -> no collapse. Confirmed on a family carrying all eight single-qubit Z's plus eight crossing pairs, at three seeds: 3.0, 1.0, 1.0.",
+      "out_of_sample_weak_direction": "zero crossing pairs -> collapse. Tested on three random block-diagonal families with ZERO same-qubit pairs, three seeds each. Seven of nine reach exact zero at 150 steps; the two that do not read 0.918 and 0.806 at 150 and exact zero at both 400 and 900, so those two are step budget and not exceptions. 9 of 9. See the remainder: checked on three constructed families, not proved.",
+      "the_step_budget_control": "the budget cuts one way only, and that was checked rather than assumed. Relabelled families run to 900 steps do NOT drift to zero: T2 relabellings freeze at 2.0, 3.0, 2.0 and FROBENIUS relabellings at 2.0, 3.0, 3.0, identical or higher than at 150. So the 0-out-of-72 of Part Two is not itself a budget artifact -- which is precisely the trap R1O fell into and had to correct.",
+      "why_it_is_a_mechanism_and_not_a_lookup_table": "it names a causal path -- local operations do not create entanglement across the cut they are local to -- and it predicts the sign of a family it was not built from. The four invariants R1P tried named none.",
+      "and_it_is_still_about_the_labelling": "which pairs cross depends entirely on where the modes sit relative to mode 8. That is the labelling. So rule C explains the collapse WITHOUT rescuing any claim about GF(16).",
+      "executable_form": "tests/test_pond.py::test_the_cut_is_what_the_collapse_tracks, ::test_the_same_qubit_count_is_not_the_mechanism"
+    }
+  },
+
+  "what_is_not_claimed": [
+    "that zero crossing pairs implies collapse. Three constructed families and nine runs support it; it is not proved and the two slow runs needed 400 steps.",
+    "that the orbit geometry of Part One bears on hardness, entanglement or the collapse. It is a statement about GF(16) and Z/15 and nothing measured connects it to the storm.",
+    "that any earlier round's Gaussianity results are affected. Those are statements about the operations and are labelling-independent.",
+    "that the relabelling test exhausts S_16. Eight relabellings per rung out of 2.1e13, chosen at random. The result is one-sided -- zero collapses out of seventy-two -- so it refutes 'the collapse is intrinsic' without measuring how rare the collapsing labellings are."
+  ],
+
+  "typed_remainders": [
+    {
+      "kind": "measurement_remainder",
+      "statement": "the weak direction of rule C -- zero crossing pairs implies collapse -- rests on three constructed families at three seeds, 9 of 9, with two runs needing 400 steps rather than 150. A family with zero crossings that provably never collapses would refute it and was not searched for. Nor was the obvious sharpening measured: whether the surviving entropy of a crossing family is a function of the crossing count."
+    },
+    {
+      "kind": "scope_remainder",
+      "statement": "the cut is the middle cut because entanglement_entropy chooses it. Every result in R1M through R1Q is relative to that choice; a different bipartition gives a different crossing count and, by rule C, a different dichotomy. No round has varied the cut."
+    },
+    {
+      "kind": "propagation_remainder",
+      "statement": "R1M, R1N and R1O are not deleted and their manifests still assert the field-tower reading in their own text. This manifest supersedes those specific claims; the earlier files have not been rewritten, so a reader who finds R1M first will find a withdrawn claim stated as a finding."
+    },
+    {
+      "kind": "orbit_remainder",
+      "statement": "Part One answers what relates the two orbit systems and stops there. Whether the semidirect product GammaL(1,16) = Z/15 : Z/4 has any measurable consequence in this repository -- a rung between M15 and AGL, a herald family, anything -- was not tested. It is the natural next rung of the ladder and it is not this round's."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer. Three rounds of findings were built on a claim whose own remainder named the test that refutes it, and the test cost four minutes of compute."
+    }
+  ]
+}

@@ -2678,3 +2678,114 @@ Stating a conclusion the visible data contradicts is the same defect as stating
 one the data does not reach — and more dangerous, because it looks verified.
 
 Full record: `manifests/qsigma_r1p_complex_axis_finding.json`.
+
+## 8.20 The answer to the narrowed question, and the retraction it forced
+
+§8.19 narrowed three rounds of work to a single question: *what distinguishes the
+orbits of `x ↦ x²` from the orbits of `x ↦ ωx`?* Both halves of it were computed
+— the orbit geometry, and the stabiliser group each pair family generates inside
+the Pauli group. The first has a clean answer. The second is a rule that
+separated every family it was fitted to and then failed on the first one it was
+not. And running the two together exposed that **the question itself rested on a
+claim that does not survive its own control**.
+
+### The orbit geometry: translation and dilation of one line
+
+Pass `GF(16)*` to the exponent coordinate `Z/15` by discrete log (base 4, whose
+powers run `1, 4, 6, 14, 5, 2, 8, 11, 7, 10, 3, 12, 13, 9, 15`). There both rungs
+become elementary, and they become *different kinds of object on the same line*:
+
+| rung | map | in `Z/15` | orbits |
+| --- | --- | --- | --- |
+| M3 | `x ↦ ωx` | **translation** by 5 | cosets of `⟨5⟩`: `{0,5,10} {1,6,11} {2,7,12} {3,8,13} {4,9,14}` |
+| FROBENIUS | `x ↦ x²` | **dilation** by 2 | orbits of `⟨2⟩ ≤ (Z/15)*`: `{0} {5,10} {1,2,4,8} {3,6,9,12} {7,11,13,14}` |
+
+One is the additive and the other the multiplicative structure of a single
+`Z/15`, joined the way an affine line always joins them: **dilation normalises
+translation**, `σ M_a σ⁻¹ = M_{a²}`, verified for all fifteen `a`. Together they
+generate `ΓL(1,16) = Z/15 ⋊ Z/4` of order 60.
+
+They meet in exactly one place. `⟨2⟩` preserves `⟨5⟩` setwise, so the M3 orbit
+`{0,5,10}` — which is `GF(4)*` — is a union of Frobenius orbits, `{0}` and
+`{5,10}`. It is the only M3 orbit that is, and correspondingly the two rungs
+share **exactly one mode pair out of 19 and 15**: `(2,3)`, inside `GF(4)`. The
+subfield is the whole intersection.
+
+Both have six orbits including zero, which is exactly why every count-based
+invariant §8.19 tried was blind to them: the difference is in the *shape* — five
+3-cycles against sizes 1, 1, 2, 4, 4, 4 — and not in the count.
+
+### The retraction
+
+The user's other suggestion was the stabiliser group. Computing it meant
+computing the pair sets carefully, and that is where the labelling came into
+view: **T2's eight pairs are `(0,1), (2,3), … (14,15)`.** Under Jordan–Wigner
+mode `j` lives on qubit `j // 2`, so those are the eight single-qubit `Z`
+operators. T2 is not an exotic subgroup acting on a field; at this labelling it
+*is* measuring the register in the computational basis.
+
+So the control §8.17's own typed remainder had named — "identifying mode `j` with
+field element `j` is a choice the Jordan–Wigner ordering fixes; a relabelling
+conjugates them" — finally got run. A relabelling permutes the modes and changes
+no intrinsic invariant of the pair set: not the graph, not the components, not
+the F₂ rank, not the Pauli centre. If the field were doing the work, the collapse
+would survive.
+
+| rung | as given | relabelled |
+| --- | --- | --- |
+| T2 | 3/3 collapse | **0/24** |
+| T4 | 3/3 collapse | **0/24** |
+| FROBENIUS | 3/3 collapse | **0/24** |
+
+**Nine of nine as given, zero of seventy-two relabelled.** "The break in the
+field tower is between GF(4) and GF(16)" is withdrawn. It is a fact about where
+the modes sit, not about which subgroup they came from — and three rounds of
+findings were stacked on it in the interval.
+
+The obvious objection was checked rather than assumed: relabelled families run to
+900 steps do **not** drift to zero, they freeze at 1.0–3.0. The step budget is
+not what separates them. That is the trap §8.18 had to correct and it does not
+apply here.
+
+### Two replacement rules, and the one that survived
+
+**The Pauli centre — perfect in sample, dead out of it.** Even-weight Majorana
+monomials `c_S`, `c_T` anticommute exactly when `|S ∩ T|` is odd, so two edge
+generators anticommute exactly when the edges share a vertex, and the radical of
+the induced symplectic form on the F₂ edge span is the centre of the generated
+group. It separated all ten families perfectly — radical 4 or 8 for every
+collapsing family, 0 or 1 for every other. Then a **random perfect matching** has
+radical 8, identical to T2, and does not collapse. Ten points of agreement bought
+nothing, because the rule named no mechanism.
+
+**The same-qubit count — and the same mistake, made again in the same hour.**
+Having found what T2 is, the first draft recorded "the same-qubit count tracks
+the outcome". The same run's own output already refuted it: FROBENIUS collapses
+with 3 same-qubit pairs while relabellings with 3 *and with 4* do not, and a
+family built as all eight `Z`s **plus** eight crossing pairs has the maximum
+count of 8 and collapses at no seed.
+
+**The cut — a mechanism, and it predicts.** `entanglement_entropy` reads the
+*middle* cut, so on eight qubits it falls between mode 7 and mode 8. A herald on
+a pair that does not straddle it is an operation local to one side, and local
+operations cannot build entanglement across it.
+
+| family | crossing pairs | collapses |
+| --- | --- | --- |
+| T2, T4, FROBENIUS | **0** | yes |
+| M3, M15ᶜ | 8 | no |
+| M15, M3ᶜ | 56 | no |
+| T16, AGL, T2ᶜ | 64 | no |
+
+Exact separation, and it accounts for the control that killed the centre rule: a
+random perfect matching has four crossing pairs. Unlike the four invariants of
+§8.19 it names a causal path, so it was tested on families it was not built from
+and *predicted their sign*: eight `Z`s plus eight crossings → no collapse at
+three seeds; three random block-diagonal families with **zero** same-qubit pairs
+→ 9 of 9 collapse, seven at 150 steps and two more at 400.
+
+And it rescues nothing about `GF(16)`. Which pairs cross depends entirely on
+where the modes sit relative to the cut. The mechanism confirms the retraction
+rather than softening it.
+
+Full record: `manifests/qsigma_r1q_labelling_artifact_finding.json`.

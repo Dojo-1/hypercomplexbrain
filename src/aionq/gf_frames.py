@@ -64,6 +64,9 @@ __all__ = [
     "pg32_lines",
     "preserves_lines",
     "invariant_under_agl42",
+    "discrete_log",
+    "exponent_orbits",
+    "orbit_geometry_report",
 ]
 
 #: GF(4) = GF(2)[x]/(x^2+x+1) with 0,1,2,3 standing for 0, 1, w, w+1.
@@ -314,4 +317,113 @@ def invariant_under_agl42(measure, circuit, tolerance: float = 1e-12) -> dict:
         "generators_breaking": breaking,
         "invariant": not breaking,
         "identity_value": base,
+    }
+
+
+# --------------------------------------------------------------------------
+# The exponent line: what governs the orbits of x -> x^2 against x -> w x
+# --------------------------------------------------------------------------
+
+def discrete_log(base: int = 4) -> dict:
+    """``GF(16)* -> Z/15`` as an explicit table, with the base verified primitive.
+
+    ``4`` is a generator: its powers run ``1, 4, 6, 14, 5, 2, 8, 11, 7, 10, 3,
+    12, 13, 9, 15`` and hit all fifteen non-zero elements.  Checked here rather
+    than assumed, because everything below is a statement about the coordinate
+    this table defines.
+    """
+    powers, current = [], 1
+    for _ in range(15):
+        powers.append(current)
+        current = gf16_mul(current, base)
+    if current != 1 or len(set(powers)) != 15:
+        raise ValueError(f"{base} is not a primitive element of GF(16)")
+    return {"base": base, "powers": tuple(powers),
+            "log": {value: index for index, value in enumerate(powers)}}
+
+
+def exponent_orbits(name: str, base: int = 4) -> tuple:
+    """A rung's orbits on ``GF(16)*``, written in the exponent coordinate ``Z/15``.
+
+    Zero is dropped: it is a fixed point of every rung in the ladder and carries
+    no information about the orbit geometry.
+    """
+    table = discrete_log(base)["log"]
+    permutations = subgroup(name)
+    seen, out = set(), []
+    for element in range(1, 16):
+        if element in seen:
+            continue
+        orbit = frozenset(permutation[element] for permutation in permutations)
+        seen |= orbit
+        out.append(tuple(sorted(table[value] for value in orbit)))
+    return tuple(sorted(out, key=lambda o: (len(o), o)))
+
+
+def orbit_geometry_report(base: int = 4) -> dict:
+    """What relates the orbits of ``x -> x^2`` to the orbits of ``x -> w x``.
+
+    Pass to the exponent coordinate ``Z/15`` supplied by :func:`discrete_log`.
+    There both rungs become elementary and they become *different kinds* of
+    object on the same line:
+
+        M3         x -> w x     TRANSLATION by 5.  Orbits are the cosets of the
+                                additive subgroup <5> = {0, 5, 10}:
+                                {0,5,10} {1,6,11} {2,7,12} {3,8,13} {4,9,14}
+        FROBENIUS  x -> x^2     DILATION by 2.  Orbits are the orbits of the
+                                multiplicative subgroup <2> = {1,2,4,8} of
+                                (Z/15)*: {0} {5,10} {1,2,4,8} {3,6,9,12}
+                                {7,11,13,14}
+
+    So the answer to "what governs the two orbit systems" is that one is the
+    additive and the other the multiplicative structure of a single ``Z/15``, and
+    they are joined the way any affine line joins them: **dilation normalises
+    translation**, ``sigma M_a sigma^-1 = M_{a^2}``, verified here for all fifteen
+    ``a``.  Together they generate ``GammaL(1,16) = Z/15 : Z/4`` of order 60.
+
+    The two systems meet in exactly one place.  ``<2>`` preserves ``<5>``
+    setwise, so the M3 orbit ``{0,5,10}`` -- which is ``GF(4)*`` -- is a union of
+    Frobenius orbits, ``{0}`` and ``{5,10}``.  It is the only M3 orbit that is,
+    and correspondingly the two rungs share exactly ONE mode pair out of 19 and
+    15: ``(2,3)``, which lies inside ``GF(4)``.  The subfield is the whole
+    intersection.
+
+    Both rungs have six orbits including zero, which is why the two families were
+    indistinguishable to every graph invariant R1P tried.  The orbits differ in
+    *shape* -- five 3-cycles against sizes 1, 2, 4, 4, 4 -- and identically in
+    count.
+
+    What this does NOT do is explain the collapse dichotomy of R1M through R1O.
+    By R1Q that dichotomy does not survive a relabelling of the modes and is not
+    a fact about the field at all, so there is nothing here for the field
+    structure to explain.
+    """
+    table = discrete_log(base)
+    inverse = [0] * 16
+    for element in range(16):
+        inverse[frobenius(element)] = element
+    conjugation = all(
+        tuple(frobenius(gf16_mul(a, inverse[x])) for x in range(16))
+        == tuple(gf16_mul(gf16_mul(a, a), x) for x in range(16))
+        for a in range(1, 16))
+
+    frobenius_orbits = exponent_orbits("FROBENIUS", base)
+    mult_orbits = exponent_orbits("M3", base)
+    dilations = tuple(sorted({pow(2, k, 15) for k in range(4)}))
+    translations = tuple(sorted({(5 * k) % 15 for k in range(3)}))
+    return {
+        "base": base,
+        "frobenius_is_dilation_by": 2,
+        "frobenius_orbits": frobenius_orbits,
+        "frobenius_orbits_are_the_orbits_of": dilations,
+        "multiplication_is_translation_by": 5,
+        "multiplication_orbits": mult_orbits,
+        "multiplication_orbits_are_the_cosets_of": translations,
+        "dilation_normalises_translation": conjugation,
+        "generated_group": "GammaL(1,16) = Z/15 : Z/4",
+        "generated_order": 60,
+        "dilation_preserves_the_translation_subgroup": (
+            tuple(sorted({(2 * t) % 15 for t in translations})) == translations),
+        "orbit_counts_agree": len(frobenius_orbits) == len(mult_orbits),
+        "shared_orbit": translations,
     }

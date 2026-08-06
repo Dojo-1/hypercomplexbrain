@@ -769,3 +769,209 @@ def test_the_antisymmetric_pair_spectrum_depends_on_an_arbitrary_orientation():
         seen.add(tuple(np.sort(np.round(np.abs(np.linalg.eigvals(matrix)), 6))))
 
     assert len(seen) > 1
+
+
+# --------------------------------------------------------------------------
+# R1Q: the dichotomy of the three rounds above is a fact about the LABELLING
+# --------------------------------------------------------------------------
+
+def test_the_two_rungs_are_translation_and_dilation_of_one_exponent_line():
+    """What governs the orbits of `x -> x^2` against the orbits of `x -> w x`.
+
+    Pass `GF(16)*` to the exponent coordinate `Z/15` by discrete log. There the
+    two rungs stop being mysterious and stop being similar:
+
+        M3         x -> w x    TRANSLATION by 5, orbits the cosets of <5>
+        FROBENIUS  x -> x^2    DILATION by 2, orbits those of <2> <= (Z/15)*
+
+    -- the additive and the multiplicative structure of one and the same line,
+    joined the way an affine line always joins them: dilation normalises
+    translation, `sigma M_a sigma^-1 = M_{a^2}`, checked for all fifteen `a`.
+    Together they generate `GammaL(1,16) = Z/15 : Z/4` of order 60.
+
+    They meet in exactly one place. `<2>` preserves `<5>` setwise, so the M3
+    orbit `{0,5,10}` -- which is `GF(4)*` -- is a union of Frobenius orbits. It
+    is the only one that is, and the two rungs share exactly ONE mode pair out of
+    19 and 15: `(2,3)`, inside `GF(4)`. The subfield is the whole intersection.
+
+    Both have six orbits including zero, which is why every count-based invariant
+    R1P tried was blind to the difference: it is in the shape, not the count.
+    """
+    from aionq.gf_frames import orbit_geometry_report
+    from aionq.pond import rung_pairs
+
+    report = orbit_geometry_report()
+
+    assert report["multiplication_orbits"] == (
+        (0, 5, 10), (1, 6, 11), (2, 7, 12), (3, 8, 13), (4, 9, 14))
+    assert report["frobenius_orbits"] == (
+        (0,), (5, 10), (1, 2, 4, 8), (3, 6, 9, 12), (7, 11, 13, 14))
+
+    assert report["multiplication_orbits_are_the_cosets_of"] == (0, 5, 10)
+    assert report["frobenius_orbits_are_the_orbits_of"] == (1, 2, 4, 8)
+
+    assert report["dilation_normalises_translation"]
+    assert report["dilation_preserves_the_translation_subgroup"]
+    assert report["generated_order"] == 60
+    assert report["orbit_counts_agree"]
+
+    shared = set(rung_pairs("FROBENIUS")) & set(rung_pairs("M3"))
+    assert shared == {(2, 3)}, "the subfield is the whole intersection"
+
+
+def test_the_collapse_does_not_survive_a_relabelling_of_the_modes():
+    """The retraction. R1M's headline is an artifact of the mode labelling.
+
+    A relabelling permutes the modes. It leaves the pair set, the graph, the
+    component count, the F2 rank, the Pauli centre and every other intrinsic
+    invariant untouched -- it only renames. If the field structure were doing the
+    work, the collapse would survive it.
+
+    Over all three collapsing rungs, eight relabellings each, three storm seeds
+    each: **9 of 9 collapse as given, 0 of 72 relabelled.** So "the break in the
+    field tower is between GF(4) and GF(16)" is withdrawn.
+
+    R1M's own typed remainder named this test -- "identifying mode j with field
+    element j is a choice the Jordan-Wigner ordering fixes; the rungs act on those
+    labels, so a relabelling conjugates them" -- and it went unrun for three
+    rounds while three further findings were stacked on top.
+
+    Two relabellings per rung are checked here rather than eight, for runtime.
+    """
+    from aionq.pond import relabelling_report
+
+    for rung in ("T2", "T4", "FROBENIUS"):
+        result = relabelling_report(rung, trials=2, seed=0)
+        assert result["collapses_as_given"]
+        assert not result["collapses_after_relabelling"]
+
+
+def test_the_cut_is_what_the_collapse_tracks():
+    """`entanglement_entropy` reads the MIDDLE cut, and only crossings matter.
+
+    A herald on a pair that does not straddle mode 8 is an operation local to one
+    side of the bipartition, and local operations cannot build entanglement across
+    it. Counting crossings separates all ten families exactly:
+
+        T2, T4, FROBENIUS                     0    collapse
+        M3, M15^c                             8    no collapse
+        M15, M3^c                            56    no collapse
+        T16, AGL, T2^c                       64    no collapse
+
+    It also accounts for the control that destroyed the Pauli-centre rule: a
+    random perfect matching has four crossing pairs.
+
+    Unlike the four invariants R1P tried, this one names a causal path, so it
+    predicts rather than fits -- see the two out-of-sample checks in the test
+    below. And it is still a fact about the LABELLING: which pairs cross depends
+    entirely on where the modes sit relative to the cut.
+    """
+    from aionq.pond import complement_pairs, cut_crossing_pairs, rung_pairs
+
+    collapsing = {"T2", "T4", "FROBENIUS"}
+    for rung in ("T2", "T4", "T16", "M3", "M15", "FROBENIUS", "AGL"):
+        crossings = len(cut_crossing_pairs(rung_pairs(rung)))
+        assert (crossings == 0) == (rung in collapsing), rung
+    for rung in ("T2", "M3", "M15"):
+        assert len(cut_crossing_pairs(complement_pairs(rung))) > 0
+
+
+def test_the_same_qubit_count_is_not_the_mechanism():
+    """The rule that was fitted first, and the family that refutes it.
+
+    Under Jordan-Wigner `i c_2k c_2k+1` is the single-qubit `Z` on qubit `k`, and
+    `T2`'s eight pairs are exactly the eight `Z`s. That much stands. The general
+    rule "more same-qubit pairs means collapse" does not:
+
+        FROBENIUS as given              3 same-qubit    collapses
+        FROBENIUS relabelled            3 same-qubit    3.0, 3.0, 2.0
+        FROBENIUS relabelled            4 same-qubit    2.0, 1.0, 1.0
+        eight Z's + eight crossings     8 same-qubit    3.0, 1.0, 1.0
+
+    The last row is the decisive one and it is checked here: the MAXIMUM possible
+    same-qubit count, and no collapse, because eight crossing pairs keep feeding
+    the cut. Same failure shape as the Pauli-centre rule one paragraph earlier in
+    the same round -- a rule fitted to the families that suggested it.
+    """
+    import numpy as np
+
+    from aionq.pond import (breathing_trajectory, cut_crossing_pairs,
+                            same_qubit_pairs)
+
+    rng = np.random.default_rng(0)
+    crossing = [(a, b) for a in range(8) for b in range(8, 16)]
+    pairs = ([(2 * k, 2 * k + 1) for k in range(8)]
+             + [crossing[i] for i in rng.choice(len(crossing), 8, replace=False)])
+
+    assert len(same_qubit_pairs(pairs)) == 8, "the maximum"
+    assert len(cut_crossing_pairs(pairs)) == 8
+    assert breathing_trajectory(pairs, steps=150, seed=7)["final_entropy"] > 0.5
+
+
+def test_zero_crossings_collapses_a_family_the_rule_was_not_built_from():
+    """The other direction, out of sample, and the step budget that nearly hid it.
+
+    Three random block-diagonal families -- zero crossing pairs by construction
+    and ZERO same-qubit pairs, so nothing the earlier rules pointed at -- against
+    three storm seeds. Seven of nine reach exact zero at 150 steps; the other two
+    read 0.918 and 0.806 at 150 and exact zero at 400 and at 900.
+
+    So it is 9 of 9, and the two slow runs were the step budget rather than
+    exceptions -- the same trap R1O fell into and had to correct. One family and
+    the slower of its two seeds are checked here, at 400 steps.
+    """
+    import itertools
+
+    import numpy as np
+
+    from aionq.pond import (breathing_trajectory, cut_crossing_pairs,
+                            same_qubit_pairs)
+
+    rng = np.random.default_rng(0)
+    pool = [pair for pair in (list(itertools.combinations(range(8), 2))
+                              + list(itertools.combinations(range(8, 16), 2)))
+            if pair[0] // 2 != pair[1] // 2]
+    for _ in range(2):                       # advance to the second family
+        chosen = rng.choice(len(pool), 16, replace=False)
+    pairs = [pool[index] for index in chosen]
+
+    assert len(cut_crossing_pairs(pairs)) == 0
+    assert len(same_qubit_pairs(pairs)) == 0
+
+    assert breathing_trajectory(pairs, steps=150, seed=23)["final_entropy"] > 0.5
+    assert breathing_trajectory(pairs, steps=400, seed=23)["final_entropy"] == (
+        pytest.approx(0.0, abs=1e-9))
+
+
+def test_the_pauli_centre_separates_every_family_it_was_fitted_to_and_then_fails():
+    """The user's suggestion, computed, and the control that kills it.
+
+    Even-weight Majorana monomials `c_S`, `c_T` anticommute exactly when
+    `|S ∩ T|` is odd, so two edge generators anticommute exactly when the edges
+    share a vertex. The radical of the induced symplectic form on the F2 edge span
+    is the centre of the Pauli group the family generates. Measured:
+
+        collapse     T2 8    T4 4    FROBENIUS 4
+        no collapse  M3 0    M15 0   T16 1    AGL 1
+
+    Perfect separation over all ten families -- and then a random perfect matching
+    has radical 8, identical to `T2`, and does not collapse. It has four crossing
+    pairs, which is what actually decides it.
+    """
+    import numpy as np
+
+    from aionq.pond import (breathing_trajectory, cut_crossing_pairs,
+                            pauli_centre_rank, rung_pairs)
+
+    for rung in ("T2", "T4", "FROBENIUS"):
+        assert pauli_centre_rank(rung_pairs(rung))["radical"] >= 4
+    for rung in ("M3", "M15", "T16", "AGL"):
+        assert pauli_centre_rank(rung_pairs(rung))["radical"] <= 1
+
+    permutation = np.random.default_rng(0).permutation(16)
+    matching = [tuple(sorted((int(permutation[2 * k]), int(permutation[2 * k + 1]))))
+                for k in range(8)]
+
+    assert pauli_centre_rank(matching)["radical"] == 8, "the same value as T2"
+    assert len(cut_crossing_pairs(matching)) > 0, "and this is why it differs"
+    assert breathing_trajectory(matching, steps=150, seed=7)["final_entropy"] > 0.5

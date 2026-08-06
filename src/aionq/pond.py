@@ -78,6 +78,10 @@ __all__ = [
     "weak_herald",
     "breathing_trajectory",
     "complement_pairs",
+    "same_qubit_pairs",
+    "cut_crossing_pairs",
+    "pauli_centre_rank",
+    "relabelling_report",
 ]
 
 
@@ -680,3 +684,168 @@ def breathing_trajectory(pairs, alpha: float = 0.0, steps: int = 150,
         "final_state": state,
         "operators": operators,
     }
+
+
+# --------------------------------------------------------------------------
+# What was actually driving the collapse, and it is not the field
+# --------------------------------------------------------------------------
+
+def same_qubit_pairs(pairs) -> tuple:
+    """The pairs whose two modes sit on the same qubit -- i.e. the Pauli Z's.
+
+    Under Jordan-Wigner mode ``j`` lives on qubit ``j // 2``, so ``i c_2k c_2k+1``
+    is DIAGONAL: it is the single-qubit ``Z`` on qubit ``k``.  A herald on such a
+    pair is a computational-basis measurement of one qubit, and eight of them are
+    a measurement of the whole register.
+
+    ``T2`` is translation by 1, which pairs ``x`` with ``x ^ 1`` -- and ``x`` and
+    ``x ^ 1`` differ only in the lowest bit, so they are ``2k`` and ``2k+1``.
+    **T2's eight pairs are exactly the eight single-qubit Z measurements.**
+
+    THIS COUNT IS NOT THE MECHANISM, and the first version of this docstring said
+    it was.  Two measurements kill that reading:
+
+        FROBENIUS at the identity labelling collapses with 3 same-qubit pairs,
+        while relabellings of FROBENIUS with 3 and with 4 do not collapse
+        (final entropies 3.0, 3.0, 2.0 and 2.0, 1.0, 1.0);
+
+        a family built as the eight single-qubit Z's PLUS eight cut-crossing
+        pairs has the maximum count of 8 and does not collapse at any seed
+        (3.0, 1.0, 1.0).
+
+    What does track it is :func:`cut_crossing_pairs`.  Kept because the count is
+    the right diagnostic for what ``T2`` is, and because a rule that separated
+    every family it was fitted to and then failed out of sample is worth the
+    line.
+    """
+    return tuple(pair for pair in pairs if pair[0] // 2 == pair[1] // 2)
+
+
+def cut_crossing_pairs(pairs, qubits: int = 8) -> tuple:
+    """The pairs straddling the bipartition that :func:`entanglement_entropy` reads.
+
+    That function cuts the register in the middle, so on ``qubits = 8`` the cut
+    falls between mode 7 and mode 8.  A herald on a pair that does not cross it is
+    an operation local to one side, and local operations cannot build entanglement
+    across it.
+
+    MEASURED over the seven rungs and three complements:
+
+        T2   T4   FROBENIUS      0 crossing pairs      collapse
+        M3   M15^c              8                      no collapse
+        M15  M3^c              56                      no collapse
+        T16  AGL  T2^c         64                      no collapse
+
+    Perfect separation, and unlike the F2 rank, the component count and the Pauli
+    centre it is a *mechanism* rather than a coincidence of ten points.  It also
+    explains the control that destroyed the centre rule: a random perfect matching
+    has four crossing pairs.
+
+    The two directions do not hold equally, and the weaker one is stated as
+    weakly as it was measured:
+
+        crossing pairs  ->  no collapse.  Confirmed out of sample on a family
+        carrying all eight Z's and eight crossings, at three seeds.
+
+        no crossing pairs  ->  collapse.  Confirmed on three random
+        block-diagonal families with ZERO same-qubit pairs, three seeds each:
+        seven of nine reach exact zero at 150 steps and the other two read
+        0.918 and 0.806 at 150, then exact zero at 400 and at 900.  9 of 9.
+
+    The step budget cuts only one way, and that was checked rather than assumed:
+    relabelled families run to 900 steps do NOT drift to zero, they freeze at 1.0
+    to 3.0.  So the 0-out-of-72 of :func:`relabelling_report` is not a budget
+    artifact -- the trap R1O had to correct.
+
+    And it is a fact about the LABELLING, not about GF(16): which pairs cross
+    depends entirely on where the modes sit relative to the cut, which is why the
+    dichotomy does not survive :func:`relabelling_report`.
+    """
+    half = qubits  # modes 0..half-1 on the left, half..2*qubits-1 on the right
+    return tuple(pair for pair in pairs if (pair[0] < half) != (pair[1] < half))
+
+
+def pauli_centre_rank(pairs) -> dict:
+    """Rank, and the radical of the symplectic form -- the centre of the group.
+
+    For even-weight Majorana monomials ``c_S`` and ``c_T`` anticommute exactly
+    when ``|S & T|`` is odd -- ``c_S c_T = (-1)^(|S||T| - |S & T|) c_T c_S`` and
+    both weights are even -- so two edge generators anticommute exactly when the
+    edges share a vertex.  The radical of the induced form on the F2 span is the
+    centre of the Pauli group the family generates.
+
+    **This was measured and it does NOT govern the collapse.**  On the seven
+    rungs and three controls it separated them perfectly -- radical 4 or 8 for
+    every collapsing family, 0 to 2 for every other -- and then failed on the
+    first family it had not been fitted to: a random perfect matching has radical
+    8, identical to ``T2``, and does not collapse.  Recorded because the near-miss
+    is the point.
+    """
+    pivots = []
+    for left, right in pairs:
+        vector = (1 << left) ^ (1 << right)
+        for pivot in pivots:
+            vector = min(vector, vector ^ pivot)
+        if vector:
+            pivots.append(vector)
+            pivots.sort(reverse=True)
+    dimension = len(pivots)
+    rows = [[bin(u & v).count("1") & 1 for v in pivots] for u in pivots]
+    used, rank = [False] * dimension, 0
+    for column in range(dimension):
+        pivot_row = next((index for index in range(dimension)
+                          if not used[index] and rows[index][column]), None)
+        if pivot_row is None:
+            continue
+        used[pivot_row], rank = True, rank + 1
+        for index in range(dimension):
+            if index != pivot_row and rows[index][column]:
+                rows[index] = [a ^ b for a, b in zip(rows[index], rows[pivot_row])]
+    return {"rank": dimension, "radical": dimension - rank,
+            "max_abelian": (dimension - rank) + rank // 2}
+
+
+def relabelling_report(rung: str = "T2", trials: int = 5, seed: int = 0) -> dict:
+    """Does the collapse survive a relabelling of the modes?  It does not.
+
+    The pair set, the group it generates, its rank, radical and every graph
+    invariant are unchanged by relabelling -- a relabelling only renames the
+    modes.  If the field structure were doing the work, the collapse would
+    survive.
+
+    Measured over all three collapsing rungs, eight relabellings each and three
+    storm seeds each:
+
+        T2          identity 3/3 collapse      relabelled 0/24
+        T4          identity 3/3               relabelled 0/24
+        FROBENIUS   identity 3/3               relabelled 0/24
+
+    **Nine out of nine as given, zero out of seventy-two relabelled.**
+
+    So the collapse dichotomy of R1M through R1O is an artifact of the
+    mode-to-qubit labelling, not a fact about GF(16).  R1M's own remainder named
+    this risk exactly -- "identifying mode j with field element j is a choice the
+    Jordan-Wigner ordering fixes; the rungs act on those labels, so a relabelling
+    conjugates them" -- and it went untested for three rounds.
+
+    The mechanism is :func:`cut_crossing_pairs`, not :func:`same_qubit_pairs`; a
+    first reading of this experiment blamed the same-qubit count and is corrected
+    in that function's docstring.
+    """
+    base = rung_pairs(rung)
+    rng = np.random.default_rng(seed)
+    rows = [{"labelling": "identity", "same_qubit": len(same_qubit_pairs(base)),
+             "final_entropy": breathing_trajectory(base, steps=150)["final_entropy"]}]
+    for trial in range(trials):
+        permutation = rng.permutation(16)
+        moved = [tuple(sorted((int(permutation[a]), int(permutation[b]))))
+                 for a, b in base]
+        rows.append({
+            "labelling": f"random {trial}",
+            "same_qubit": len(same_qubit_pairs(moved)),
+            "final_entropy": breathing_trajectory(moved, steps=150)["final_entropy"],
+        })
+    return {"rung": rung, "rows": rows,
+            "collapses_as_given": abs(rows[0]["final_entropy"]) < 1e-9,
+            "collapses_after_relabelling": any(abs(r["final_entropy"]) < 1e-9
+                                               for r in rows[1:])}

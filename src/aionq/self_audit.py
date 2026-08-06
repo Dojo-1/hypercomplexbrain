@@ -1162,6 +1162,61 @@ CORRECTIONS = (
         "tests/test_pond.py::test_the_antisymmetric_pair_spectrum_depends_on_an_arbitrary_orientation",
         True,
     ),
+    Correction(
+        "QSigma-R1q",
+        "R1M's headline -- 'the break in the field tower is between GF(4) and "
+        "GF(16)', with T2, T4 and FROBENIUS collapsing and M3, M15, T16 and AGL "
+        "not -- is WITHDRAWN. It is an artifact of the mode-to-qubit labelling. "
+        "A relabelling permutes the modes and changes no intrinsic invariant of "
+        "the pair set, yet over three collapsing rungs, eight relabellings each "
+        "and three storm seeds each the result is 9 of 9 collapses as given and "
+        "0 of 72 relabelled. R1M's own typed remainder named this exact test and "
+        "it went unrun for three rounds while R1N, R1O and R1P were built on top "
+        "of it. The control that it is not a step budget was also run: relabelled "
+        "families at 900 steps freeze at 1.0 to 3.0 rather than drifting to zero",
+        "tests/test_pond.py::test_the_collapse_does_not_survive_a_relabelling_of_the_modes",
+        True,
+    ),
+    Correction(
+        "QSigma-R1q",
+        "the Pauli centre -- the radical of the symplectic form on the F2 edge "
+        "span, which is the centre of the stabiliser group each pair family "
+        "generates -- separated all ten families PERFECTLY: radical 4 or 8 for "
+        "every collapsing family, 0 or 1 for every other. It then failed on the "
+        "first family it was not fitted to. A random perfect matching has radical "
+        "8, identical to T2, and gives final entropy 2.0 at three seeds. Ten "
+        "points of agreement bought nothing, because the rule named no mechanism",
+        "tests/test_pond.py::test_the_pauli_centre_separates_every_family_it_was_fitted_to_and_then_fails",
+        True,
+    ),
+    Correction(
+        "QSigma-R1q",
+        "the replacement rule was ALSO wrong on first reading. Having found that "
+        "T2's eight pairs are exactly the eight single-qubit Z measurements, this "
+        "round recorded 'the same-qubit count is what tracks the outcome' -- and "
+        "the same run's own output already contradicted it: FROBENIUS collapses "
+        "with 3 same-qubit pairs while relabellings with 3 and with 4 do not. A "
+        "family built as all eight Z's plus eight cut-crossing pairs has the "
+        "maximum count of 8 and does not collapse at any seed. The mechanism is "
+        "cut_crossing_pairs: entanglement_entropy reads the middle cut, and a "
+        "herald on a pair that does not straddle it is local to one side",
+        "tests/test_pond.py::test_the_same_qubit_count_is_not_the_mechanism",
+        True,
+    ),
+    Correction(
+        "QSigma-R1q",
+        "the anticommutation criterion behind pauli_centre_rank was written in "
+        "three places as '|S symmetric-difference T| odd'. For two 2-element sets "
+        "that quantity is ALWAYS EVEN, so as stated it says no two edges ever "
+        "anticommute -- the opposite of what the function relies on. The correct "
+        "condition is |S intersect T| odd, from c_S c_T = (-1)^(|S||T| - |S cap "
+        "T|) c_T c_S with both weights even. The code was right throughout: it "
+        "computes bin(u & v).count('1') & 1, the intersection parity. Caught on "
+        "re-reading before commit. A wrong statement of a rule sitting beside a "
+        "correct implementation of it is worse than either alone",
+        "tests/test_pond.py::test_the_pauli_centre_separates_every_family_it_was_fitted_to_and_then_fails",
+        True,
+    ),
 )
 
 
