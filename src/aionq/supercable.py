@@ -57,6 +57,7 @@ __all__ = [
     "herald_sequence",
     "cap_restricted_run",
     "additivity_defect",
+    "paired_separation",
 ]
 
 
@@ -309,9 +310,19 @@ def herald_sequence(pairs, steps: int = 150, seed: int = 7) -> tuple:
     longer exposure than the numerator.
 
     Materialising the sequence fixes it: one draw, partitioned.  The cap
-    sub-sequences are disjoint and their union is exactly the whole sequence, so
-    the decomposition is a genuine partition of ONE process rather than a
-    comparison of several.
+    sub-sequences are disjoint and their union is exactly the whole sequence.
+
+    WHAT THAT DOES AND DOES NOT MEAN.  The DRAW is partitioned; the state
+    evolution is not.  Every cap replay restarts from the same prepared
+    covariance, so cap runs are counterfactual RESTRICTED PROCESSES, not
+    components of the realised whole trajectory, and the whole trajectory is not
+    their composition in any order.  What can be asked of them is whether their
+    scalar responses reconstruct the whole scalar response -- which is exactly
+    what :func:`additivity_defect` measures and all it measures.
+
+    Amendment 1 called this "a genuine partition of ONE process rather than a
+    comparison of several runs", which overstated it in the second half.  Caught
+    by GPT on second review.
     """
     pairs = tuple(pairs)
     walker = np.random.default_rng(seed)
@@ -400,4 +411,53 @@ def additivity_defect(pairs, caps, qubits: int, prepared, steps: int = 150,
         "additivity_defect_relative": linear / scale,
         "root_sum_square": root_sum_square,
         "ratio": float(abs(delta_whole) / root_sum_square) if root_sum_square > 1e-12 else float("nan"),
+    }
+
+
+def paired_separation(flat_ratios, curved_ratios, floor: float = 0.5) -> dict:
+    """The verdict function, after the frozen one turned out not to be disjoint.
+
+    R1S froze ``C < 2`` for LOW and ``C > 0.7 * sqrt(N)`` for HIGH with the band
+    between them "INDETERMINATE".  The thresholds are ordered the wrong way
+    whenever ``0.7 * sqrt(N) < 2``, that is for ``N < 8.163``, so there is no band
+    -- there is an OVERLAP, and a cell inside it satisfies both verdicts at once.
+    Eight of the fifteen cells the round had already produced land in it, ``N = 4``
+    giving ``[1.400, 2.000]`` and ``N = 5`` giving ``[1.565, 2.000]``.
+
+    The categorical rule is abandoned rather than patched.  Its two numbers lost
+    whatever meaning they had when the additivity gate failed, and a hierarchical
+    tie-break would rescue them by adding a third arbitrary decision.  What the
+    controls actually ask is directional -- does the interaction ratio rise where
+    the caps go flat against the cut -- and ``FLAT`` and ``CURVED`` are matched in
+    cap count and pair count, so they can be compared seed by seed.
+
+        SEPARATED      every paired difference shares one sign
+                       AND the median magnitude reaches ``floor``
+        NOT SEPARATED  mixed signs, or median magnitude below ``floor``
+
+    Two outcomes, exhaustive and mutually exclusive by construction, which is the
+    whole point.  ``floor = 0.5`` and eight seeds are conventions fixed in
+    amendment 2; the floor is set from the seed-to-seed spread of the ratio
+    within single families (median 0.200, worst 1.005) and is therefore chosen
+    after seeing non-control data.  That provenance is disclosed rather than
+    dressed up as principled.
+    """
+    flat = np.asarray(flat_ratios, dtype=float)
+    curved = np.asarray(curved_ratios, dtype=float)
+    if flat.shape != curved.shape or flat.ndim != 1 or flat.size == 0:
+        raise ValueError("flat and curved must be paired one-dimensional samples")
+
+    differences = flat - curved
+    signs = np.sign(differences)
+    consistent = bool(np.all(signs > 0) or np.all(signs < 0))
+    median = float(np.median(np.abs(differences)))
+    return {
+        "seeds": int(flat.size),
+        "differences": [float(value) for value in differences],
+        "sign_consistent": consistent,
+        "median_absolute_difference": median,
+        "floor": floor,
+        "separated": consistent and median >= floor,
+        "direction": ("flat_above_curved" if consistent and differences[0] > 0
+                      else "curved_above_flat" if consistent else "mixed"),
     }

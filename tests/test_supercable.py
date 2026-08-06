@@ -295,9 +295,15 @@ def test_the_additivity_gate_failed_and_the_name_was_dropped(prepared):
     The load-bearing cell is `M3`, and it is not a matter of degree. On the same
     partitioned sequence at matched dose the whole family moves the entropy
     **up** by 0.507 while its caps together move it **down** by 0.370. A large
-    defect could be a correction term; a sign reversal cannot. No inequality
+    defect could be a correction term; a sign reversal cannot be absorbed into an
+    ADDITIVE reconstruction.
+
+    The first version of this docstring went further and said "no inequality
     controlling the whole by an aggregate of its parts survives that, in l2 or
-    any other norm.
+    any other norm". That is false, and the round's own table refutes it: norms
+    discard sign, and any finite set of cells admits some `K`. The largest ratio
+    measured is 2.957, so `K = 3` satisfies the l2 inequality on all fifteen
+    cells. Caught by GPT on second review; retracted in amendment 2.
     """
     from aionq.supercable import additivity_defect
 
@@ -354,3 +360,77 @@ def _orbit_caps(rung: str) -> tuple:
     for pair in rung_pairs(rung):
         caps.setdefault(owner[min(pair)], []).append(pair)
     return tuple(tuple(group) for group in caps.values())
+
+
+# --------------------------------------------------------------------------
+# The verdict function, after the frozen one turned out not to be disjoint
+# --------------------------------------------------------------------------
+
+def test_the_frozen_verdict_thresholds_were_not_disjoint():
+    """The blocking defect, kept as the arithmetic that shows it.
+
+    R1S froze `C < 2` for LOW and `C > 0.7*sqrt(N)` for HIGH, calling the region
+    between them indeterminate. The thresholds are ordered the wrong way whenever
+    `0.7*sqrt(N) < 2`, i.e. `N < 8.163`, so there is no band -- there is an
+    overlap, and a cell inside it satisfies **both** verdicts.
+
+        N = 4  ->  HIGH above 1.400, LOW below 2.000  ->  overlap [1.400, 2.000]
+        N = 5  ->  HIGH above 1.565                   ->  overlap [1.565, 2.000]
+        N = 8  ->  HIGH above 1.980                   ->  overlap [1.980, 2.000]
+
+    Eight of the fifteen cells the round had already produced land in it --
+    `FROBENIUS` at all three seeds among them. More than half the data was
+    unclassifiable by the rule that was supposed to classify it. Caught by GPT on
+    second review.
+    """
+    import math
+
+    for caps, low_edge in ((1, 0.700), (4, 1.400), (5, 1.565), (8, 1.980)):
+        assert 0.7 * math.sqrt(caps) == pytest.approx(low_edge, abs=1e-3)
+        assert 0.7 * math.sqrt(caps) < 2.0, "HIGH edge below the LOW edge = overlap"
+
+    # a measured cell that satisfies both, with its real numbers
+    ratio, caps = 1.648, 4                       # FROBENIUS, seed 7
+    assert ratio > 0.7 * math.sqrt(caps) and ratio < 2.0
+
+
+def test_the_replacement_verdict_is_exhaustive_and_mutually_exclusive():
+    """Two outcomes, by construction, which is the whole point of replacing it.
+
+    Paired by seed, `D_s = C_FLAT(s) - C_CURVED(s)`. SEPARATED requires every
+    difference to share one sign **and** the median magnitude to reach the floor.
+    NOT SEPARATED is everything else. There is no third verdict and no region
+    where both apply.
+    """
+    from aionq.supercable import paired_separation
+
+    clean = paired_separation([2.0, 2.1, 2.2], [1.0, 1.1, 1.2])
+    assert clean["separated"] and clean["sign_consistent"]
+    assert clean["direction"] == "flat_above_curved"
+
+    mixed = paired_separation([2.0, 0.9, 2.2], [1.0, 1.1, 1.2])
+    assert not mixed["separated"], "one sign flip is enough to refuse"
+    assert mixed["direction"] == "mixed"
+
+    small = paired_separation([1.2, 1.3, 1.4], [1.0, 1.1, 1.2])
+    assert small["sign_consistent"] and not small["separated"], (
+        "consistent direction below the floor is still not a separation")
+
+    # exhaustive and exclusive: every input lands in exactly one verdict
+    rng = np.random.default_rng(0)
+    for _ in range(200):
+        flat, curved = rng.normal(size=8), rng.normal(size=8)
+        verdict = paired_separation(flat, curved)
+        assert verdict["separated"] == (
+            verdict["sign_consistent"]
+            and verdict["median_absolute_difference"] >= verdict["floor"])
+
+
+def test_the_verdict_function_refuses_unpaired_input():
+    """FLAT and CURVED are matched by protocol; unpaired samples are a bug."""
+    from aionq.supercable import paired_separation
+
+    with pytest.raises(ValueError, match="paired"):
+        paired_separation([1.0, 2.0, 3.0], [1.0, 2.0])
+    with pytest.raises(ValueError, match="paired"):
+        paired_separation([], [])

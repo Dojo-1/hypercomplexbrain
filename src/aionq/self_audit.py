@@ -1314,6 +1314,36 @@ CORRECTIONS = (
         "tests/test_supercable.py::test_the_cap_decomposition_is_a_partition_at_matched_dose",
         False,
     ),
+    Correction(
+        "QSigma-R1s",
+        "the additivity-gate finding stated that the M3 sign reversal means 'no "
+        "inequality controlling the whole by an aggregate of the parts can hold, "
+        "in l2 or in any other norm'. FALSE, and refuted by the table printed "
+        "three lines above it: norms discard sign, and any finite set of cells "
+        "admits some K -- the largest ratio measured is 2.957, so K = 3 satisfies "
+        "the l2 inequality on all fifteen. What the sign reversal kills is "
+        "ADDITIVE RECONSTRUCTION. R1P recorded that stating a conclusion the "
+        "visible data contradicts is worse than stating one the data does not "
+        "reach, because it looks verified; this is the same defect four commits "
+        "later in the same session. Retired (R)",
+        "tests/test_supercable.py::test_the_additivity_gate_failed_and_the_name_was_dropped",
+        False,
+    ),
+    Correction(
+        "QSigma-R1s",
+        "the frozen verdict function was not disjoint. C < 2 for LOW and "
+        "C > 0.7*sqrt(N) for HIGH are ordered the wrong way whenever "
+        "0.7*sqrt(N) < 2, that is for N < 8.163, so the region described as "
+        "'indeterminate' is an OVERLAP in which a cell satisfies BOTH verdicts. "
+        "Eight of the fifteen cells already measured land in it, including "
+        "FROBENIUS at all three seeds -- more than half the data was "
+        "unclassifiable by the rule meant to classify it, and a control cell "
+        "would have been reported as whichever verdict was read first. The "
+        "categorical rule is abandoned rather than patched, in favour of a paired "
+        "directional comparison with two exhaustive mutually exclusive outcomes",
+        "tests/test_supercable.py::test_the_frozen_verdict_thresholds_were_not_disjoint",
+        False,
+    ),
 )
 
 

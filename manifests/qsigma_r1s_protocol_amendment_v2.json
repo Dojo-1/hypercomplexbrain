@@ -1,0 +1,100 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R1S",
+  "title": "Protocol amendment 2: a non-disjoint verdict function, an overclaim retracted, and what 'partition' does not mean",
+  "status": "FROZEN_BEFORE_ANY_CONTROL_IS_RUN. FLAT has still not executed. It does not execute until this is committed.",
+  "date": "2026-08-06",
+  "supersedes": ["manifests/qsigma_r1s_additivity_gate_finding.json"],
+  "amends_rather_than_replaces": "the additivity gate result stands unaltered -- NOT ADDITIVE, median relative defect 0.109 against a declared 0.1, maximum 1.730. What changes is one sentence of its interpretation and the verdict function the controls were to use.",
+
+  "origin": "GPT's second review, at commits f9090c9 and bd560f2. It accepted the two-commit ordering and the MEASURED/ATTESTED correction, and raised two further defects plus one reading of the word 'partition'. All three verified against the files and the data. All three upheld.",
+
+  "finding_1_the_any_norm_claim_was_false_and_is_retracted": {
+    "what_was_written": "'no inequality controlling the whole by an aggregate of the parts can hold, in l2 or in any other norm'",
+    "why_it_is_wrong": "norms discard sign. The sign reversal in M3 refutes the ADDITIVE reconstruction Delta S(F) = sum_theta Delta S(F_theta); it says nothing about |Delta S(F)| <= K (sum |Delta S(F_theta)|^2)^{1/2}.",
+    "refuted_by_this_round_s_own_data": {
+      "GPT_s_example": "M3 at seed 7 has ratio 0.863, so that cell satisfies the l2 inequality with K = 1 despite the sign reversal. Verified.",
+      "the_stronger_refutation_which_is_ours": "any finite set of cells admits some K, namely the largest observed ratio. Across all fifteen cells the maximum is 2.957, so K = 3 satisfies the l2 inequality everywhere. The claim was not merely unsupported -- it was trivially false, and the table printed three lines above it was the counterexample.",
+      "per_cell_ratios": {
+        "T2": [2.757, 2.912, 2.957], "T4": [1.319, 2.111, 1.488],
+        "FROBENIUS": [1.648, 1.822, 1.685], "M3": [0.863, 1.869, 1.040],
+        "M15": [1.0, 1.0, 1.0]
+      }
+    },
+    "the_surviving_statement": "the cap responses do not reconstruct the whole entropy change additively. Inter-cap ordering contributes something no independently replayed cap response records. That is an M result and it needs no universal claim to stand.",
+    "tier_action": "the 'no cap-wise norm inequality of any kind' claim is RETIRED (R), as the review proposed. Retracted in place in the additivity-gate manifest and in the test docstring that carried it.",
+    "the_pattern_it_belongs_to": "this repository has recorded before that stating a conclusion the visible data contradicts is worse than stating one the data does not reach, because it looks verified. R1P recorded exactly that defect. This is the same defect, in the same session, four commits later."
+  },
+
+  "finding_2_the_verdict_function_was_not_disjoint_and_this_is_the_blocking_one": {
+    "what_was_frozen": "C < 2 means LOW interaction, C > 0.7*sqrt(N) means HIGH, and the band between them is INDETERMINATE.",
+    "the_defect": "the thresholds are ordered the wrong way whenever 0.7*sqrt(N) < 2, that is for N < 8.163. Then there is no band between them -- there is an OVERLAP, and a cell in it satisfies both verdicts at once.",
+    "overlap_by_cap_count": {
+      "N=1": "HIGH if C > 0.700, LOW if C < 2  -> overlap [0.700, 2.000]",
+      "N=4": "HIGH if C > 1.400, LOW if C < 2  -> overlap [1.400, 2.000]",
+      "N=5": "HIGH if C > 1.565, LOW if C < 2  -> overlap [1.565, 2.000]",
+      "N=8": "HIGH if C > 1.980, LOW if C < 2  -> overlap [1.980, 2.000]"
+    },
+    "this_is_not_hypothetical": {
+      "measured_cells_already_satisfying_BOTH_verdicts": 8,
+      "out_of": 15,
+      "examples": [
+        "T4 seed 23: C = 1.488, N = 4 -> HIGH (>1.400) and LOW (<2)",
+        "FROBENIUS all three seeds: C = 1.648, 1.822, 1.685, N = 4 -> both",
+        "M3 seed 11: C = 1.869, N = 5 -> both",
+        "M15 all three seeds: C = 1.000, N = 1 -> both"
+      ],
+      "reading": "more than half the cells the round has already produced are unclassifiable by its own frozen rule. A FLAT or CURVED cell would very likely have landed in the overlap and been reported as whichever verdict was read first."
+    },
+    "resolution_the_categorical_rule_is_abandoned_not_patched": {
+      "why_not_the_hierarchical_repair": "the review offered a hierarchical rule -- HIGH wins the overlap, else LOW, else INDETERMINATE -- and correctly noted it privileges HIGH and is a NEW choice. It would rescue two numbers that have no derivation behind them by adding a third arbitrary decision. The thresholds lost their meaning when the additivity gate failed; keeping them as a classifier is keeping the shape of a bound that no longer exists.",
+      "what_replaces_it": "the controls ask a DIRECTIONAL question and will be judged directionally. FLAT and CURVED are matched in cap count and pair count by the standing requirement, so they can be compared cell by cell at the same seed.",
+      "the_rule": {
+        "statistic": "paired by seed, D_s = C_FLAT(s) - C_CURVED(s), over 8 seeds",
+        "SEPARATED": "all 8 paired differences share one sign AND median |D_s| >= 0.5",
+        "NOT SEPARATED": "the signs are mixed, or median |D_s| < 0.5",
+        "there_is_no_third_verdict": "the two conditions are exhaustive and mutually exclusive by construction. That is the point of replacing the old rule.",
+        "prediction_restated": "the frozen prediction was FLAT shows no decoupling and CURVED does. Directionally that is C_FLAT > C_CURVED, and it is retained as the prediction."
+      },
+      "where_the_0.5_floor_comes_from_and_why_that_is_disclosed": {
+        "source": "the seed-to-seed spread of the interaction ratio within a single family, measured on the additivity-gate data: T2 0.200, T4 0.792, FROBENIUS 0.174, M3 1.005, M15 0.000. Median spread 0.200, maximum 1.005.",
+        "the_choice": "0.5 sits above the median within-family scatter and below the worst. Pairing by seed cancels the component of that scatter shared between FLAT and CURVED, so the effective noise on D_s should be smaller than these unpaired spreads -- but that has not been measured and 0.5 is not derived from it.",
+        "disclosed_because": "this floor is set from data. It is not control data -- the additivity gate is a protocol gate and no control has run -- but it is data this session has seen, and a threshold chosen after seeing any numbers is weaker than one chosen before. Recorded as a convention with a stated provenance rather than presented as principled.",
+        "sample_size_change": "8 seeds rather than 3, fixed here, because a sign-consistency criterion over 3 seeds has a 1-in-4 chance of unanimity from noise alone."
+      }
+    }
+  },
+
+  "finding_3_what_partition_does_and_does_not_mean": {
+    "the_review_s_point": "every cap replay restarts from the same prepared covariance, so the cap outputs are counterfactual RESTRICTED PROCESSES, not literal components of the realized whole trajectory. Correct.",
+    "what_is_true": "the herald SEQUENCE is partitioned exactly -- sub-sequences disjoint, kept counts summing to the whole, union equal to the whole. That is what fixes the dose mismatch and it is a real property, verified per cell.",
+    "what_was_overstated": "amendment 1 called this 'a genuine partition of ONE process rather than a comparison of several runs'. The draw is one process; the state evolutions are not. Each cap run is a separate trajectory from the same initial condition, and the whole trajectory is not their composition in any order.",
+    "consequence": "the additivity gate measured whether the cap SCALAR RESPONSES reconstruct the whole scalar response. It did not, and could not, decompose the state evolution. Corrected in the module docstring."
+  },
+
+  "what_this_amendment_does_not_do": [
+    "run FLAT. It has not executed and does not until this is committed.",
+    "alter the additivity gate result. NOT ADDITIVE stands, with its numbers unchanged.",
+    "alter the execution order, the matching requirement, the kill conditions, the evidence ceiling or the stop condition.",
+    "rescue the frozen thresholds. They are abandoned as a classifier rather than repaired."
+  ],
+
+  "typed_remainders": [
+    {
+      "kind": "protocol_remainder",
+      "statement": "this is the second amendment to a preregistration that has still produced no control result. Both amendments were forced by an external reader. The discipline's own instruments -- the gate, the suite, the correction ledger, the pointer checker -- caught none of the five protocol defects; every one was a statement about the protocol rather than about a value, and nothing here checks statements."
+    },
+    {
+      "kind": "threshold_remainder",
+      "statement": "the 0.5 floor and the 8-seed count are conventions set after seeing non-control data. A cleaner design would estimate the paired null by running FLAT against FLAT under different seeds and setting the floor from that, before running FLAT against CURVED. That was not done and it is cheap; it is named here so that the omission is on the record rather than in the result."
+    },
+    {
+      "kind": "retraction_remainder",
+      "statement": "the retracted 'any norm' sentence was written in the same commit as a table refuting it, and survived being written, reviewed by its author, committed and summarised. The author-side check that would catch this class does not exist, and this amendment adds none."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Measured and written by the Claude session; both blocking defects found by GPT, a separate authoring model. Witness rank for the R1S line remains ATTESTED: the review read this session's artifacts and re-derived nothing from primary sources. Claim tier for the additivity result is MEASURED."
+    }
+  ]
+}
