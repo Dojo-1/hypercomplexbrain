@@ -2556,3 +2556,63 @@ single run of each; a seed scan would establish whether the ordering is stable;
 it was not performed"* — and the scan has now been performed.
 
 Full record: `manifests/qsigma_r1n_liminal_tower_finding.json`.
+
+## 8.18 Breathing: the dichotomy was one point of a continuum
+
+§8.17 reported *"seven breaks or forty-plus, with nothing between"*. That was one
+point of a one-parameter family, and the family fills the gap.
+
+A **partial** herald is `K± = cos α·Π₊ + sin α·Π₋` (α = 0 projective, α = π/4 no
+measurement). It is **still exactly Gaussian at every strength** — `M = i c_a c_b`
+has `M² = 1`, so `a + bM ∝ exp(tM)`, the exponential of a quadratic. Measured
+Wick defect 4.3e-16 to 5.3e-16 across the whole range.
+
+| α/(π/4) | breaks at 150 steps |
+|---|---|
+| 0.00 | **7** |
+| 0.20 | 37 |
+| 0.40 | 63 |
+| 0.60 | 148 |
+
+### And they differ in kind, not in rate
+
+| steps | final entropy at α/(π/4) = 0.8 |
+|---|---|
+| 150 | 8.386e-01 |
+| 300 | 6.767e-03 |
+| 600 | **2.183e-06** |
+| 1000 | **1.484e-08** |
+
+The weak case decays toward zero **asymptotically and never arrives**. The
+projective case reaches *exactly* zero in seven steps and freezes. The `α → 0`
+limit is a decay whose rate diverges until the process becomes finite.
+
+**Two corrections to the same sweep.** First, an apparent threshold between
+α = 0.6 and 0.8 — that was the 150-step budget. Then, the fix to *that*: I read
+the 600-step value as `0.0000` and recorded *"slows the collapse but does not
+prevent it"*. It was **2.183e-06 printed at four decimals**. "Slower arrival" and
+"never arrives" are different claims about the same numbers, and only display
+precision separated them. Building the log-scale view is what caught it.
+
+### The variable is closure, not size
+
+| family | pairs | final S |
+|---|---|---|
+| T2, closed | 8 | **0.0** |
+| T2 + 6 arbitrary | 14 | 2.0 |
+| M15 complement | **15** | 2.45 |
+
+Six extra pairs destroy the collapse outright — no gradual threshold. And M15's
+complement has **fifteen** pairs, nearly twice T2's, and fails where T2 succeeds.
+Every complement tested fails. **What collapses a state is the pair family being
+closed under a subgroup**; a complement is exactly what is not closed, and
+contamination breaks closure at the first added pair.
+
+Closure is **necessary and not sufficient**: M3 and M15 are closed orbits and do
+not collapse. So §8.17's open question sharpens from *"why do these three
+collapse"* to *"what distinguishes T2, T4 and FROBENIUS from M3 and M15 among the
+closed families"* — a better question, still unanswered.
+
+Interactive view of all of it:
+[the herald storm on GF(16)](https://claude.ai/code/artifact/869e880e-9367-4931-9ddc-efeff7edb637).
+Full record: `manifests/qsigma_r1o_breathing_continuum_finding.json`.

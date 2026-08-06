@@ -75,6 +75,9 @@ __all__ = [
     "ladder_storm",
     "ladder_saturates",
     "collapse_trajectory",
+    "weak_herald",
+    "breathing_trajectory",
+    "complement_pairs",
 ]
 
 
@@ -552,6 +555,125 @@ def collapse_trajectory(rung: str, steps: int = 150, seed: int = 7,
         "pairs": len(pairs),
         "entropies": entropies,
         "breaks": tuple(breaks),
+        "break_count": len(breaks),
+        "last_break": breaks[-1] if breaks else 0,
+        "final_entropy": float(entropies[-1]),
+        "final_state": state,
+        "operators": operators,
+    }
+
+
+# --------------------------------------------------------------------------
+# The continuum: measurement strength as an infinitesimal, and the pair set
+# as something that must be CLOSED rather than merely small
+# --------------------------------------------------------------------------
+
+def weak_herald(state, operators, first: int, second: int, alpha: float,
+                outcome: int = 1):
+    """A partial parity measurement: ``alpha = 0`` projective, ``alpha = pi/4`` none.
+
+    ``K_+ = cos(alpha) Pi_+ + sin(alpha) Pi_-`` and ``K_-`` the swap, so
+    ``K_+* K_+ + K_-* K_- = I`` exactly.  This is the infinitesimal form of the
+    herald and it fills in the whole circle between measuring and not.
+
+    IT IS STILL GAUSSIAN, at every strength.  ``M = i c_a c_b`` satisfies
+    ``M^2 = 1``, so ``a + bM`` is proportional to ``exp(t M)`` with
+    ``tanh t = b/a`` -- the exponential of a quadratic, hence a (non-unitary)
+    Gaussian operation.  Measured: worst Wick defect 4.3e-16 to 5.3e-16 across
+    ``alpha/(pi/4) = 0, 0.25, 0.5, 0.8, 0.999``.  Breathing keeps the pond flat.
+    """
+    dimension = np.asarray(state).ravel().shape[0]
+    parity = 1j * operators[first] @ operators[second]
+    parity = (parity + parity.conj().T) / 2.0
+    plus = (np.eye(dimension) + parity) / 2.0
+    minus = (np.eye(dimension) - parity) / 2.0
+    kraus = (np.cos(alpha) * plus + np.sin(alpha) * minus if outcome > 0
+             else np.sin(alpha) * plus + np.cos(alpha) * minus)
+    moved = kraus @ np.asarray(state).ravel()
+    probability = float(np.linalg.norm(moved) ** 2)
+    if probability < 1e-14:
+        return None, probability
+    return moved / np.linalg.norm(moved), probability
+
+
+def complement_pairs(rung: str) -> tuple:
+    """The 120 pairs minus one rung's: the primed, orthogonal clone of it.
+
+    Measured, no complement collapses -- including ``M15^c``, which has 15 pairs,
+    the same count as ``M3``, and which fails where ``T2``'s 8 succeed.  So
+    collapse is not about how many pairs a family has; it is about the family
+    being closed under a subgroup.  A complement is exactly the thing that is not.
+    """
+    everything = {(a, b) for a in range(16) for b in range(a + 1, 16)}
+    return tuple(sorted(everything - set(rung_pairs(rung))))
+
+
+def breathing_trajectory(pairs, alpha: float = 0.0, steps: int = 150,
+                         seed: int = 7, prepared_seed: int = 0) -> dict:
+    """A storm of partial heralds at strength ``alpha``.
+
+    THE CONTINUUM, and it dissolves R1N's dichotomy.  At ``T2`` with 150 steps:
+
+        alpha/(pi/4)   final entropy   breaks   last break
+             0.00          0.0000          7        10
+             0.20          0.0000         37        44
+             0.40          0.0000         63        71
+             0.60          0.0000        148       150
+             0.80          0.8386        150       150
+             0.90          1.7231        150       150
+             0.98          2.2576        150       150
+
+    "Seven breaks or forty-plus, nothing between" was the PROJECTIVE END of a
+    one-parameter family.  The break count is continuous in the strength.
+
+    AND THE APPARENT THRESHOLD IS THE STEP BUDGET, NOT THE PHYSICS -- but the
+    correction to that reading needed correcting too.  At ``alpha/(pi/4) = 0.8``
+    the entropy reads 8.4e-1 at 150 steps, 6.8e-3 at 300, 2.2e-6 at 600, 1.5e-8
+    at 1000.  It is not collapsing more slowly to zero; it is decaying toward
+    zero **asymptotically and never arriving**, about two and a half orders of
+    magnitude per 300 heralds.
+
+    So weak and projective differ in KIND, not in rate.  Projective reaches
+    exactly 0 in seven steps and freezes; weak approaches 0 forever.  The
+    ``alpha -> 0`` limit is a decay whose rate diverges until the process
+    becomes finite.  A first reading of the 600-step number as "0.0000" was
+    2.18e-06 printed at four decimals.
+    """
+    from scipy.linalg import expm
+
+    from .majorana import majorana_operators
+
+    qubits = 8
+    operators = majorana_operators(qubits)
+    modes = 2 * qubits
+    rng = np.random.default_rng(prepared_seed)
+    raw = rng.normal(size=(modes, modes))
+    generator = (raw - raw.T) / 2.0
+    hamiltonian = sum(
+        1j * generator[left, right] * (operators[left] @ operators[right])
+        for left in range(modes) for right in range(modes) if left < right)
+    hamiltonian = (hamiltonian + hamiltonian.conj().T) / 2.0
+    state = expm(1j * (hamiltonian + hamiltonian.conj().T) / 2.0) @ vacuum(qubits)
+
+    pairs = tuple(pairs)
+    walker = np.random.default_rng(seed)
+    entropies = [entanglement_entropy(state, qubits)]
+    for _ in range(steps):
+        first, second = pairs[int(walker.integers(0, len(pairs)))]
+        _, probability = weak_herald(state, operators, first, second, alpha, +1)
+        outcome = 1 if walker.random() < probability else -1
+        moved, _ = weak_herald(state, operators, first, second, alpha, outcome)
+        if moved is not None:
+            state = moved
+        entropies.append(entanglement_entropy(state, qubits))
+
+    entropies = np.array(entropies)
+    breaks = [index for index in range(1, len(entropies))
+              if abs(entropies[index] - entropies[index - 1]) > 1e-9]
+    return {
+        "alpha": alpha,
+        "pairs": len(pairs),
+        "entropies": entropies,
         "break_count": len(breaks),
         "last_break": breaks[-1] if breaks else 0,
         "final_entropy": float(entropies[-1]),

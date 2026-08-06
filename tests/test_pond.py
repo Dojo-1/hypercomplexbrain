@@ -562,3 +562,131 @@ def test_the_state_level_escape_from_the_class_is_first_order():
             slope = np.polyfit(np.log(scales),
                                np.log(np.maximum(values, 1e-300)), 1)[0]
             assert slope == pytest.approx(1.0, abs=0.05)
+
+
+# --------------------------------------------------------------------------
+# The continuum: strength as an infinitesimal, closure as the real variable
+# --------------------------------------------------------------------------
+
+@pytest.mark.parametrize("fraction", [0.0, 0.25, 0.5, 0.8, 0.999])
+def test_a_weak_herald_is_still_exactly_gaussian(fraction):
+    """`M = i c_a c_b` has `M^2 = 1`, so `a + bM` is proportional to `exp(tM)`.
+
+    That is the exponential of a quadratic, hence a (non-unitary) Gaussian
+    operation -- so a PARTIAL parity measurement cannot leave the class either,
+    at any strength. Breathing keeps the pond flat.
+    """
+    import math
+
+    from aionq.pond import weak_herald
+
+    operators = majorana_operators(4)
+    modes = 8
+    rng = np.random.default_rng(0)
+    raw = rng.normal(size=(modes, modes))
+    generator = (raw - raw.T) / 2.0
+    hamiltonian = sum(
+        1j * generator[left, right] * (operators[left] @ operators[right])
+        for left in range(modes) for right in range(modes) if left < right)
+    prepared = expm(1j * (hamiltonian + hamiltonian.conj().T) / 2.0) @ vacuum(4)
+
+    alpha = fraction * math.pi / 4
+    for outcome in (+1, -1):
+        moved, probability = weak_herald(prepared, operators, 0, 3, alpha, outcome)
+        if probability > 1e-12:
+            assert wick_defect(moved, operators) < 1e-12
+
+
+def test_the_break_count_is_continuous_in_the_measurement_strength():
+    """R1N's "seven or forty-plus, nothing between" was one end of a family.
+
+    At `T2`: 7 breaks projective, then 37, 63, 148 as the herald weakens. The
+    dichotomy was measured at a single point of a one-parameter family and the
+    family fills the gap.
+    """
+    import math
+
+    from aionq.pond import breathing_trajectory, rung_pairs
+
+    pairs = rung_pairs("T2")
+    counts = [breathing_trajectory(pairs, fraction * math.pi / 4)["break_count"]
+              for fraction in (0.0, 0.2, 0.4, 0.6)]
+
+    assert counts[0] == 7
+    assert all(left < right for left, right in zip(counts, counts[1:]))
+    assert counts[-1] > 100
+
+
+def test_weak_measurement_gives_an_asymptotic_approach_not_a_slower_arrival():
+    """The apparent threshold in strength is the step budget -- and the fix to
+    that reading is itself a correction.
+
+    At `alpha/(pi/4) = 0.8` the entropy reads 8.4e-1 after 150 heralds, 6.8e-3
+    after 300, 2.2e-6 after 600, 1.5e-8 after 1000. It is not collapsing more
+    slowly to zero; it is decaying toward zero **asymptotically and never
+    arriving**, roughly two and a half orders of magnitude per 300 steps.
+
+    The projective case is different in KIND, not in rate: it reaches exactly
+    0 in seven steps and freezes. So the `alpha -> 0` limit is a decay whose
+    rate diverges until the process becomes finite.
+
+    A first reading called 600 steps "0.0000" -- that was 2.18e-06 shown at four
+    decimals, and it would have been recorded as an exact collapse.
+    """
+    import math
+
+    from aionq.pond import breathing_trajectory, rung_pairs
+
+    pairs = rung_pairs("T2")
+    alpha = 0.8 * math.pi / 4
+
+    finals = [breathing_trajectory(pairs, alpha, steps=steps)["final_entropy"]
+              for steps in (150, 300, 600, 1000)]
+
+    assert all(left > right for left, right in zip(finals, finals[1:]))
+    assert finals[0] > 0.5
+    assert finals[-1] < 1e-6
+    assert finals[-1] > 0.0, (
+        "a weak herald approaches zero asymptotically; exactly zero would make "
+        "it projective, which is the case this test contrasts against")
+
+    projective = breathing_trajectory(pairs, 0.0, steps=150)
+    assert projective["final_entropy"] == pytest.approx(0.0, abs=1e-12)
+    assert projective["last_break"] <= 10
+
+
+def test_contaminating_a_closed_pair_set_destroys_the_collapse_at_once():
+    """Six extra pairs added to T2's eight, and the collapse is gone.
+
+    There is no gradual threshold in the pair count: `T2` with 8 pairs collapses
+    to 0, and `T2` plus six arbitrary pairs -- 14 in all -- does not collapse at
+    all. The property is CLOSURE of the family under a subgroup, not its size,
+    and closure is destroyed by any contamination.
+    """
+    from aionq.pond import breathing_trajectory, rung_pairs
+
+    base = list(rung_pairs("T2"))
+    everything = [(a, b) for a in range(16) for b in range(a + 1, 16)]
+    rest = [pair for pair in everything if pair not in set(base)]
+    extra = [rest[index] for index in
+             np.random.default_rng(11).permutation(len(rest))[:6]]
+
+    assert breathing_trajectory(base)["final_entropy"] == pytest.approx(0.0, abs=1e-9)
+    assert breathing_trajectory(base + extra)["final_entropy"] > 0.5
+
+
+@pytest.mark.parametrize("rung", ["T2", "T4", "FROBENIUS", "M15"])
+def test_the_orthogonal_clone_of_a_rung_never_collapses(rung):
+    """Every complement fails, including the one with fifteen pairs.
+
+    `M15^c` has 15 pairs -- the same count as `M3`, twice `T2`'s 8 -- and does
+    not collapse where `T2` does. So collapse is not about how many pairs a
+    family has. It is about the family being closed under a subgroup, and a
+    complement is exactly the thing that is not.
+    """
+    from aionq.pond import breathing_trajectory, complement_pairs
+
+    result = breathing_trajectory(complement_pairs(rung))
+    assert result["final_entropy"] > 0.5
+    if rung == "M15":
+        assert len(complement_pairs(rung)) == 15

@@ -1127,6 +1127,18 @@ CORRECTIONS = (
         "tests/test_pond.py::test_the_break_in_the_field_tower_is_between_gf4_and_gf16",
         True,
     ),
+    Correction(
+        "QSigma-R1o",
+        "the weak-herald sweep at alpha/(pi/4)=0.8 was read as reaching 0.0000 at "
+        "600 steps and recorded as 'weak measurement slows the collapse but does "
+        "not prevent it'. The printed 0.0000 was 2.18e-06 shown at four decimals. "
+        "Measured properly: 8.4e-1 at 150 steps, 6.8e-3 at 300, 2.2e-6 at 600, "
+        "1.5e-8 at 1000 -- an asymptotic decay that never arrives, where the "
+        "projective case reaches exactly 0 in seven steps and freezes. Weak and "
+        "projective differ in KIND, not in rate, and the display precision hid it",
+        "tests/test_pond.py::test_weak_measurement_gives_an_asymptotic_approach_not_a_slower_arrival",
+        True,
+    ),
 )
 
 

@@ -1,0 +1,70 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1O-BREATHING-CONTINUUM-001",
+  "status": "measured and recorded. R1N's dichotomy is dissolved into a continuum, and the variable behind the collapse is identified as closure rather than size. One misreading of a printed number was caught and is recorded.",
+  "subject": "src/aionq/pond.py::weak_herald, breathing_trajectory, complement_pairs -- partial parity measurement as the infinitesimal form of the herald",
+  "measurement_1_a_weak_herald_is_still_exactly_gaussian": {
+    "construction": "K_+ = cos(alpha) Pi_+ + sin(alpha) Pi_-, K_- the swap, so K_+* K_+ + K_-* K_- = I exactly. alpha = 0 is projective, alpha = pi/4 is no measurement at all.",
+    "why_it_cannot_leave": "M = i c_a c_b satisfies M^2 = 1, so a + bM is proportional to exp(tM) with tanh t = b/a -- the exponential of a quadratic, hence a non-unitary Gaussian operation",
+    "measured": "worst Wick defect 4.34e-16 to 5.27e-16 across alpha/(pi/4) = 0, 0.25, 0.5, 0.8, 0.999",
+    "executable_form": "tests/test_pond.py::test_a_weak_herald_is_still_exactly_gaussian"
+  },
+  "measurement_2_the_dichotomy_dissolves": {
+    "what_R1N_reported": "seven breaks or forty-plus, with nothing between",
+    "what_the_strength_sweep_shows": "the break count is continuous in alpha. At T2 with 150 steps: 7 breaks projective, then 37, 63, 148 as the herald weakens, then 150 (the budget) beyond.",
+    "reading": "R1N measured a single point of a one-parameter family and reported the gap as structure. The family fills it.",
+    "executable_form": "tests/test_pond.py::test_the_break_count_is_continuous_in_the_measurement_strength"
+  },
+  "measurement_3_weak_and_projective_differ_in_kind": {
+    "trace_at_alpha_over_quarter_pi_equals_0.8": {"150_steps": 8.386e-01, "300_steps": 6.767e-03, "600_steps": 2.183e-06, "1000_steps": 1.484e-08},
+    "the_statement": "the weak case decays toward zero asymptotically and never arrives, about two and a half orders of magnitude per 300 heralds. The projective case reaches exactly 0 in seven steps and freezes. So the alpha -> 0 limit is a decay whose rate diverges until the process becomes finite.",
+    "correction_recorded": {
+      "what_was_first_reported": "'weak measurement slows the collapse and does not prevent it', from reading the 600-step value as 0.0000",
+      "what_it_actually_was": "2.183e-06, printed at four decimals",
+      "why_it_matters": "'slower arrival' and 'never arrives' are different claims about the same numbers, and only the display precision separated them. The first reading had already corrected an earlier one -- an apparent threshold between alpha = 0.6 and 0.8 that was the 150-step budget -- so this is the second correction to the same sweep.",
+      "bound_correction": "self_audit CORRECTIONS entry QSigma-R1o"
+    },
+    "executable_form": "tests/test_pond.py::test_weak_measurement_gives_an_asymptotic_approach_not_a_slower_arrival"
+  },
+  "measurement_4_the_variable_is_closure_not_size": {
+    "contamination": "T2's 8 pairs collapse to 0. T2 plus six arbitrary pairs -- 14 in all -- does not collapse at all (final entropy 2.0). There is no gradual threshold in the pair count; six extra pairs destroy it outright.",
+    "orthogonal_clones": {
+      "T2 (8) -> 0.0": "complement (112) -> 2.0",
+      "T4 (24) -> 0.0": "complement (96) -> 3.0",
+      "FROBENIUS (19) -> 0.0": "complement (101) -> 3.0",
+      "M3 (15) -> 1.99": "complement (105) -> 2.0",
+      "M15 (105) -> 1.0": "complement (15) -> 2.45"
+    },
+    "the_decisive_row": "M15's complement has FIFTEEN pairs -- the same count as M3, nearly twice T2's eight -- and does not collapse, where T2 does. Collapse is not about how many pairs a family contains.",
+    "the_statement": "what collapses a state is the pair family being closed under a subgroup. A complement is exactly the thing that is not closed, and a contaminated set stops being closed at the first added pair.",
+    "executable_form": "tests/test_pond.py::test_contaminating_a_closed_pair_set_destroys_the_collapse_at_once, ::test_the_orthogonal_clone_of_a_rung_never_collapses"
+  },
+  "visualisation": {
+    "artifact": "https://claude.ai/code/artifact/869e880e-9367-4931-9ddc-efeff7edb637",
+    "contents": "the 16 modes on the 4x4 nibble grid of GF(2)^4 with each rung's pair set drawn as chords; entropy traces per rung; the closure comparison; the strength sweep with a log-scale toggle",
+    "why_the_log_toggle_matters": "on a linear axis the weak traces appear to collapse as well. The distinction between exact arrival and asymptotic decay is only visible in logs, and building the view is what caught the 2.18e-06 misreading."
+  },
+  "what_is_not_claimed": [
+    "any bearing on hardness. Every trace is Gaussian throughout; entanglement is a state property and not a simulation cost.",
+    "that closure is sufficient. It is measured to be necessary -- contamination and complementation both destroy the collapse -- but no closed family outside the ladder was tested, and M3 and M15 are closed and do not collapse. So closure is necessary and not sufficient, and what distinguishes T2, T4 and FROBENIUS among the closed families is still unexplained.",
+    "that the asymptotic decay is exponential. It is measured at four points and falls about 2.5 orders per 300 heralds; no rate law was fitted and none is asserted."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "sufficiency_remainder",
+      "statement": "closure is established as necessary and explicitly not as sufficient: M3 and M15 are closed subgroup orbits and do not collapse. The open question sharpens from 'why do these three collapse' to 'what distinguishes T2, T4 and FROBENIUS from M3 and M15 among the closed families', which is a better question than R1N's and is still unanswered."
+    },
+    {
+      "kind": "precision_remainder",
+      "statement": "two successive corrections to the same strength sweep -- a budget artefact and then a display-precision artefact -- were both caught only by re-running with different parameters. Neither would have been caught by any assertion in the suite as it stood, and the tests added here pin the corrected readings rather than the process that found them."
+    },
+    {
+      "kind": "seed_remainder",
+      "statement": "the strength sweep, the contamination test and the complement scan are each one prepared state and one walker seed. R1N's correction was exactly about publishing single-seed numbers as properties, and these are single-seed numbers; the qualitative claims (continuity in alpha, asymptotic versus exact, contamination destroys collapse) are robust to the extent that they are large effects, and the specific values are not."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}
