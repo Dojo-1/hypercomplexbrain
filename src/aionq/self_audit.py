@@ -1114,6 +1114,19 @@ CORRECTIONS = (
         "tests/test_pond.py::test_a_post_storm_state_can_still_receive_magic",
         True,
     ),
+    Correction(
+        "QSigma-R1n",
+        "R1M published a seven-row table of final entropies and supports per "
+        "ladder rung as though each were a property of the rung. They are one "
+        "draw: over five seeds T16 gives 3.0, 1.0, 1.0, 2.0, 1.0 and M15 gives "
+        "2.0, 2.0, 0.0, 2.0, 2.0 -- M15 reaching the collapsed value once. Only "
+        "the collapse/no-collapse dichotomy is seed-robust, and within it only "
+        "T2, T4 and FROBENIUS collapse on all five seeds. The non-monotonicity "
+        "claim survives (FROBENIUS robustly 0, M3 robustly not) but the specific "
+        "values do not",
+        "tests/test_pond.py::test_the_break_in_the_field_tower_is_between_gf4_and_gf16",
+        True,
+    ),
 )
 
 

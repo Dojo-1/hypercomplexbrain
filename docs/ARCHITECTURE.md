@@ -2485,3 +2485,74 @@ Not claimed: any bearing on hardness. Every storm stays Gaussian; what varies is
 entanglement and support, which are state properties and not simulation costs.
 
 Full record: `manifests/qsigma_r1m_gf_ladder_storm_finding.json`.
+
+## 8.17 The limit is the subfield tower, and the breaks are seven
+
+§8.16 reported **endpoints**, and endpoints hide the crossing. Traced densely —
+entropy at every herald, not at five checkpoints — the picture is sharper and one
+of §8.16's claims does not survive.
+
+### There is no omni rung: the ladder saturates at its middle
+
+The union of all seven rungs is **120 pairs — exactly what `T16` alone gives**,
+because translations by the 15 nonzero field elements already realise every
+unordered pair `{x, x+t}`. So `T16`, `AGL` and any union are the *same* herald
+family. An "all at once" storm is not a new object. The distinctions live in the
+**small** rungs: T2 (8), M3 (15), FROBENIUS (19), T4 (24), M15 (105).
+
+### The limit is the tower
+
+`T2`, `T4`, `T16` are translation by `GF(2)`, `GF(4)`, `GF(16)` — the subfield
+tower itself, nested as pair sets. Final entropy over **five seeds**:
+
+| rung | seeds | verdict |
+|---|---|---|
+| **T2** = GF(2) | 0, 0, 0, 0, 0 | **collapses, 5/5** |
+| **T4** = GF(4) | 0, 0, 0, 0, 0 | **collapses, 5/5** |
+| **FROBENIUS** | 0, 0, 0, 0, 0 | **collapses, 5/5** |
+| T16 = GF(16) | 3.0, 1.0, 1.0, 2.0, 1.0 | never |
+| M3 | 2.0, 1.5, 1.0, 2.7, 1.0 | never |
+| M15 | 2.0, 2.0, **0.0**, 2.0, 2.0 | once |
+
+**Translation by a proper subfield collapses the state; translation by the whole
+field never does. The break in the tower is between `GF(4)` and `GF(16)`.** The
+Frobenius lift `x ↦ x²` sits with the proper subfields — consistent with its
+being the generator of `Gal(GF(16)/GF(2))`, whose fixed field is the smallest.
+
+### The symmetry-breaking moments
+
+| rung | steps at which entropy moves | count |
+|---|---|---|
+| T2 | 1, 2, 3, 4, 6, 8, 10 | **7** |
+| T4 | 1, 2, 4, 5, 6, 8, 10 | **7** |
+| FROBENIUS | 1, 4, 6, 8, 15, 16, 25 | **7** |
+| T16 / M3 / M15 / AGL | spread throughout | 48 / 56 / 48 / 48 |
+
+**Seven breaks or forty-plus, with nothing between.** The collapsing rungs move
+exactly seven times, all inside the first ten to twenty-five heralds, then are
+frozen for the remaining 125 steps. The others never stop. That is the liminal
+structure the endpoint table hid: a short finite sequence of breaks and then a
+fixed point, versus an orbit that keeps wandering. Both end somewhere; only one
+*arrives*.
+
+### The boundary is first-order at the state level too
+
+Escape order **1.0000** in every quartic direction, 2-flat and generic alike —
+matching §8.7's operator-level result. So the 2-flat effect §8.16 recorded is
+about where the state **ends up** after a collapse, not about how the boundary is
+crossed.
+
+### Correction to §8.16
+
+That section published a seven-row table of endpoint entropies and supports as
+though each were a property of its rung. **They are one draw.** `T16` ranges 1.0
+to 3.0 across seeds and `M15` reaches the collapsed value once. What survives is
+the collapse/no-collapse dichotomy and which rungs fall on which side — including
+§8.16's non-monotonicity, since FROBENIUS robustly collapses and M3 robustly does
+not despite having fewer pairs. The specific numbers do not survive.
+
+§8.16's own remainder named this risk exactly — *"the non-monotonicity rests on a
+single run of each; a seed scan would establish whether the ordering is stable;
+it was not performed"* — and the scan has now been performed.
+
+Full record: `manifests/qsigma_r1n_liminal_tower_finding.json`.

@@ -73,6 +73,8 @@ __all__ = [
     "rung_pairs",
     "two_flats",
     "ladder_storm",
+    "ladder_saturates",
+    "collapse_trajectory",
 ]
 
 
@@ -458,6 +460,101 @@ def ladder_storm(rung: str, steps: int = 200, seed: int = 7,
         "entropy": entanglement_entropy(state, qubits),
         "support": int((np.abs(state) > 1e-9).sum()),
         "wick_defect": wick_defect(state, operators),
+        "final_state": state,
+        "operators": operators,
+    }
+
+
+def ladder_saturates() -> dict:
+    """Is there an OMNI rung beyond the top of the ladder?  There is not.
+
+    The union of all seven rungs' pair sets is 120 pairs -- which is exactly what
+    ``T16`` alone gives, because translations by the 15 nonzero field elements
+    already realise every unordered pair ``{x, x+t}``.  So ``T16``, ``AGL`` and
+    any union of rungs are the same herald family, and an "all at once" storm is
+    not a new object.  The distinctions that matter live in the SMALL rungs:
+    T2 (8 pairs), M3 (15), FROBENIUS (19), T4 (24), M15 (105).
+    """
+    from .gf_frames import SUBGROUP_LADDER
+
+    sets = {rung: frozenset(rung_pairs(rung)) for rung in SUBGROUP_LADDER}
+    union = frozenset().union(*sets.values())
+    return {
+        "union_size": len(union),
+        "sizes": {rung: len(pairs) for rung, pairs in sets.items()},
+        "saturating_rungs": tuple(sorted(r for r, p in sets.items() if p == union)),
+        "subfield_tower": (sets["T2"] <= sets["T4"] <= sets["T16"]),
+    }
+
+
+def collapse_trajectory(rung: str, steps: int = 150, seed: int = 7,
+                        prepared_seed: int = 0) -> dict:
+    """The dense entropy trace, and the steps at which it actually moves.
+
+    R1M reported only endpoints, and endpoints hide the crossing.  Traced step by
+    step the rungs fall into two classes with nothing between them:
+
+        rung        break steps                          final entropy
+        T2          1, 2, 3, 4, 6, 8, 10  (7 moves)      0.0
+        T4          1, 2, 4, 5, 6, 8, 10  (7 moves)      0.0
+        FROBENIUS   1, 4, 6, 8, 15, 16, 25 (7 moves)     0.0
+        T16         48 moves, spread throughout          1.0 - 3.0
+        M3          56 moves                             1.0 - 2.7
+        M15         48 moves                             0.0 - 2.0
+        AGL         48 moves                             1.0 - 3.0
+
+    The collapsing rungs make **seven** symmetry-breaking moves, all inside the
+    first ten to twenty-five heralds, and are then frozen.  The others never stop
+    moving.  That is the liminal structure: a short finite sequence of breaks and
+    then a fixed point, versus an orbit that keeps wandering.
+
+    WHAT THE FIELD TOWER SAYS.  ``T2``, ``T4`` and ``T16`` are translation by
+    ``GF(2)``, ``GF(4)`` and ``GF(16)`` -- the subfield tower itself, and nested
+    as sets.  Over five seeds, translation by a PROPER subfield reaches entropy 0
+    every time (T2: 5/5, T4: 5/5) and translation by the WHOLE field never does
+    (T16: 3.0, 1.0, 1.0, 2.0, 1.0).  The break in the tower is exactly between
+    ``GF(4)`` and ``GF(16)``.
+    """
+    from scipy.linalg import expm
+
+    from .majorana import majorana_operators
+
+    qubits = 8
+    operators = majorana_operators(qubits)
+    modes = 2 * qubits
+    rng = np.random.default_rng(prepared_seed)
+    raw = rng.normal(size=(modes, modes))
+    generator = (raw - raw.T) / 2.0
+    hamiltonian = sum(
+        1j * generator[left, right] * (operators[left] @ operators[right])
+        for left in range(modes) for right in range(modes) if left < right)
+    hamiltonian = (hamiltonian + hamiltonian.conj().T) / 2.0
+    state = expm(1j * hamiltonian) @ vacuum(qubits)
+
+    pairs = rung_pairs(rung)
+    walker = np.random.default_rng(seed)
+    entropies = [entanglement_entropy(state, qubits)]
+    for _ in range(steps):
+        first, second = pairs[int(walker.integers(0, len(pairs)))]
+        gamma = covariance(state, operators)
+        outcome = 1 if walker.random() < outcome_probability(gamma, first, second) else -1
+        herald = herald_parity(state, operators, (first, second), outcome,
+                               measure_defect=False)
+        if herald["probability"] >= 1e-12:
+            state = herald["state"]
+        entropies.append(entanglement_entropy(state, qubits))
+
+    entropies = np.array(entropies)
+    breaks = [index for index in range(1, len(entropies))
+              if abs(entropies[index] - entropies[index - 1]) > 1e-9]
+    return {
+        "rung": rung,
+        "pairs": len(pairs),
+        "entropies": entropies,
+        "breaks": tuple(breaks),
+        "break_count": len(breaks),
+        "last_break": breaks[-1] if breaks else 0,
+        "final_entropy": float(entropies[-1]),
         "final_state": state,
         "operators": operators,
     }

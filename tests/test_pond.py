@@ -437,3 +437,128 @@ def test_more_pairs_does_not_mean_more_collapse():
     assert frobenius["pairs"] > multiplicative["pairs"]
     assert frobenius["entropy"] < multiplicative["entropy"]
     assert frobenius["support"] < multiplicative["support"]
+
+
+# --------------------------------------------------------------------------
+# The limit, and the moments at which the symmetry breaks
+# --------------------------------------------------------------------------
+
+def test_there_is_no_omni_rung_because_the_ladder_saturates():
+    """The union of all seven rungs is 120 pairs -- exactly what T16 alone gives.
+
+    Translations by the 15 nonzero field elements already realise every unordered
+    pair `{x, x+t}`, so `T16`, `AGL` and any union of rungs are the same herald
+    family. An "all at once" storm is not a new object, and the distinctions that
+    matter live in the SMALL rungs.
+    """
+    from aionq.pond import ladder_saturates
+
+    report = ladder_saturates()
+    assert report["union_size"] == 120
+    assert set(report["saturating_rungs"]) == {"T16", "AGL"}
+    assert report["subfield_tower"], "T2 < T4 < T16 must nest as pair sets"
+    assert report["sizes"]["T2"] == 8 and report["sizes"]["M3"] == 15
+
+
+@pytest.mark.parametrize("rung", ["T2", "T4", "FROBENIUS"])
+def test_a_collapsing_rung_breaks_seven_times_and_then_freezes(rung):
+    """Seven symmetry-breaking moves, all early, then a fixed point.
+
+    R1M reported only endpoints, and endpoints hide the crossing. Traced step by
+    step, the collapsing rungs move exactly seven times -- inside the first ten
+    heralds for `T2` and `T4`, the first twenty-five for `FROBENIUS` -- and are
+    then frozen for the remaining 125 steps.
+    """
+    from aionq.pond import collapse_trajectory
+
+    result = collapse_trajectory(rung)
+    assert result["break_count"] == 7
+    assert result["last_break"] <= 25
+    assert result["final_entropy"] == pytest.approx(0.0, abs=1e-9)
+    assert all(abs(value) < 1e-9 for value in result["entropies"][30:])
+
+
+@pytest.mark.parametrize("rung", ["T16", "M3", "M15", "AGL"])
+def test_a_non_collapsing_rung_never_stops_moving(rung):
+    """Forty or more breaks, spread throughout, and no fixed point.
+
+    The dichotomy has nothing between it: seven breaks or forty-plus. Asserting
+    both halves is what makes it a dichotomy rather than an observation about
+    three rungs.
+    """
+    from aionq.pond import collapse_trajectory
+
+    result = collapse_trajectory(rung)
+    assert result["break_count"] >= 40
+    assert result["last_break"] > 100
+
+
+@pytest.mark.parametrize("rung,collapses", [
+    ("T2", True), ("T4", True), ("FROBENIUS", True), ("T16", False),
+])
+def test_the_break_in_the_field_tower_is_between_gf4_and_gf16(rung, collapses):
+    """Translation by a PROPER subfield collapses the state; by the whole field not.
+
+    `T2`, `T4` and `T16` are translation by `GF(2)`, `GF(4)` and `GF(16)` -- the
+    subfield tower itself. Over five seeds, the proper subfields reach entropy 0
+    every time and the full field never does (3.0, 1.0, 1.0, 2.0, 1.0).
+
+    This is the seed-robust core of R1M. That round reported a single-draw table
+    of endpoint values; the values fluctuate seed to seed and only the
+    collapse/no-collapse dichotomy survives.
+    """
+    from aionq.pond import collapse_trajectory
+
+    finals = [collapse_trajectory(rung, seed=seed)["final_entropy"]
+              for seed in range(5)]
+    if collapses:
+        assert all(abs(value) < 1e-9 for value in finals)
+    else:
+        assert all(abs(value) > 0.5 for value in finals)
+
+
+def test_the_state_level_escape_from_the_class_is_first_order():
+    """Escape order 1.0000 in every quartic direction, 2-flat or generic.
+
+    §8.7 measured first-order escape at the OPERATOR level. This is the same
+    question at the STATE level, and it gives the same answer: the Gaussian class
+    is transverse in every quartic direction tested, and the field-structured
+    2-flats have no different escape rate from generic quadruples.
+
+    So the 2-flat effect R1M recorded is about where the state ENDS UP after a
+    collapse, not about how the boundary is crossed.
+    """
+    import math
+    from itertools import combinations
+
+    from aionq.pond import two_flats
+
+    operators = majorana_operators(8)
+    modes = 16
+    rng = np.random.default_rng(0)
+    raw = rng.normal(size=(modes, modes))
+    generator = (raw - raw.T) / 2.0
+    hamiltonian = sum(
+        1j * generator[left, right] * (operators[left] @ operators[right])
+        for left in range(modes) for right in range(modes) if left < right)
+    prepared = expm(1j * (hamiltonian + hamiltonian.conj().T) / 2.0) @ vacuum(8)
+
+    generic = [q for q in combinations(range(16), 4)
+               if q[0] ^ q[1] ^ q[2] ^ q[3] != 0]
+    scales = np.geomspace(1e-5, 1e-2, 6)
+
+    picker = np.random.default_rng(3)
+    for pool in (list(two_flats()), generic):
+        for index in picker.choice(len(pool), 3, replace=False):
+            quad = pool[int(index)]
+            product = np.eye(2 ** 8, dtype=complex)
+            for mode in quad:
+                product = product @ operators[mode]
+            product = (product + product.conj().T) / 2.0
+            values = []
+            for scale in scales:
+                moved = expm(1j * scale * product) @ prepared
+                values.append(wick_defect(moved / np.linalg.norm(moved), operators))
+            slope = np.polyfit(np.log(scales),
+                               np.log(np.maximum(values, 1e-300)), 1)[0]
+            assert slope == pytest.approx(1.0, abs=0.05)

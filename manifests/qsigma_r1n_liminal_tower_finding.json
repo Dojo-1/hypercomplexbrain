@@ -1,0 +1,75 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1N-LIMINAL-TOWER-001",
+  "status": "measured and recorded. Corrects R1M's endpoint table, which was a single draw, and replaces it with the seed-robust structure underneath: a dichotomy indexed by the subfield tower.",
+  "subject": "src/aionq/pond.py::ladder_saturates, collapse_trajectory -- the dense trajectory of a GF(16)-structured herald storm rather than its endpoint",
+  "there_is_no_omni_rung": {
+    "measured": "the union of all seven rungs' pair sets is 120 pairs, which is exactly what T16 alone gives",
+    "why": "translations by the 15 nonzero field elements already realise every unordered pair {x, x+t}, so T16, AGL and any union are the same herald family",
+    "consequence": "an 'all at once' storm is not a new object. The distinctions that matter live in the SMALL rungs: T2 (8 pairs), M3 (15), FROBENIUS (19), T4 (24), M15 (105). This is the honest answer to the omni question: the ladder saturates at its middle rung, not at its top.",
+    "executable_form": "tests/test_pond.py::test_there_is_no_omni_rung_because_the_ladder_saturates"
+  },
+  "the_limit_is_the_subfield_tower": {
+    "structure": "T2, T4 and T16 are translation by GF(2), GF(4) and GF(16) -- the subfield tower itself, verified to nest as pair sets",
+    "measured_over_five_seeds": {
+      "T2": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "T4": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "FROBENIUS": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "T16": [3.0, 1.0, 1.0, 2.0, 1.0],
+      "M3": [1.999, 1.4917, 1.0, 2.659, 1.0],
+      "M15": [2.0, 2.0, 0.0, 2.0, 2.0]
+    },
+    "the_statement": "translation by a PROPER subfield collapses the state to entropy 0 on every seed; translation by the WHOLE field never does. The break in the tower is exactly between GF(4) and GF(16).",
+    "the_frobenius_row": "the Galois lift x -> x^2 also collapses on every seed, which places it with the proper subfields rather than with the multiplicative rungs -- consistent with its being the generator of Gal(GF(16)/GF(2)), whose fixed field is the smallest subfield.",
+    "executable_form": "tests/test_pond.py::test_the_break_in_the_field_tower_is_between_gf4_and_gf16"
+  },
+  "the_symmetry_breaking_moments": {
+    "method": "trace the entanglement entropy at every herald rather than at five checkpoints, and record the steps at which it actually moves",
+    "collapsing_rungs": {
+      "T2": {"breaks": [1, 2, 3, 4, 6, 8, 10], "count": 7},
+      "T4": {"breaks": [1, 2, 4, 5, 6, 8, 10], "count": 7},
+      "FROBENIUS": {"breaks": [1, 4, 6, 8, 15, 16, 25], "count": 7}
+    },
+    "non_collapsing_rungs": {"T16": 48, "M3": 56, "M15": 48, "AGL": 48},
+    "the_dichotomy": "seven breaks or forty-plus, with nothing between. The collapsing rungs make exactly seven symmetry-breaking moves, all inside the first ten to twenty-five heralds, and are then frozen for the remaining 125 steps. The others never stop moving.",
+    "reading": "that is the liminal structure the endpoint table hid: a short finite sequence of breaks followed by a fixed point, versus an orbit that keeps wandering. Both end somewhere; only one of them arrives.",
+    "executable_form": "tests/test_pond.py::test_a_collapsing_rung_breaks_seven_times_and_then_freezes, ::test_a_non_collapsing_rung_never_stops_moving"
+  },
+  "the_boundary_is_first_order_at_the_state_level_too": {
+    "measured": "escape order 1.0000 in every quartic direction tested, 2-flat and generic alike, from log-log slope of wick_defect against exp(i s Q) over s in [1e-5, 1e-2]",
+    "relation_to_R1C": "R1C measured first-order escape at the OPERATOR level and found no direction of order two or more. This is the same question at the STATE level and gives the same answer.",
+    "consequence_for_R1M": "the 2-flat effect R1M recorded is about where the state ENDS UP after a collapse, not about how the boundary is crossed. The field-structured quartics have no different escape rate from generic ones.",
+    "executable_form": "tests/test_pond.py::test_the_state_level_escape_from_the_class_is_first_order"
+  },
+  "correction_to_R1M": {
+    "what_R1M_published": "a seven-row table of final entropies and supports per rung, presented as properties of the rungs",
+    "what_five_seeds_say": "the values are one draw. T16 gives 3.0, 1.0, 1.0, 2.0, 1.0; M15 gives 2.0, 2.0, 0.0, 2.0, 2.0 -- reaching the collapsed value once. M3 ranges 1.0 to 2.66.",
+    "what_survives": "the collapse/no-collapse dichotomy, and within it the identification of which rungs collapse: T2, T4 and FROBENIUS on all five seeds. R1M's non-monotonicity claim also survives -- FROBENIUS robustly collapses and M3 robustly does not, despite FROBENIUS having more pairs -- but the specific entropies and supports do not.",
+    "why_it_happened": "R1M reported endpoints from one seed and one walker. The typed_remainders of that manifest named this exact risk ('the non-monotonicity is the load-bearing claim and it rests on a single run of each. A seed scan would establish whether the ordering of rungs is stable; it was not performed') and the scan has now been performed.",
+    "bound_correction": "self_audit CORRECTIONS entry QSigma-R1n"
+  },
+  "what_is_not_claimed": [
+    "any bearing on hardness. Every rung leaves the Wick defect at machine zero throughout; what varies is entanglement, which is a state property and not a simulation cost.",
+    "that the collapse is understood. That T2, T4 and FROBENIUS collapse and T16 does not is measured; WHY the proper subfields differ from the full field is not explained here, and the natural guess -- that a proper subfield's translations fail to connect all 16 modes into one orbit under the resulting Pauli group -- was not verified.",
+    "that seven is a meaningful number. Three rungs each made seven moves at one prepared state and one walker seed. Whether seven is structural or coincidental was not tested across seeds.",
+    "that the GF(16) labelling is canonical. R1H recorded that the Jordan-Wigner encoding does more work here than it appears to, and every statement above inherits that."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "explanation_remainder",
+      "statement": "the dichotomy is measured and unexplained. T2's eight pairs form a perfect matching; T4's twenty-four and FROBENIUS's nineteen do not, yet all three collapse. A structural account would have to say what those three families share that T16's 120 pairs lack, and none is offered."
+    },
+    {
+      "kind": "break_count_remainder",
+      "statement": "the seven-break figure is one seed. The dichotomy between seven and forty-plus is large enough that it is unlikely to invert, but the specific count was not scanned, and R1M's correction here is precisely about publishing a single-seed number as a property."
+    },
+    {
+      "kind": "saturation_remainder",
+      "statement": "the ladder saturating at T16 means the ladder has, for this purpose, five distinguishable rungs rather than seven. Whether a finer ladder exists between T4 (24 pairs) and M15 (105) -- where the dichotomy's boundary must lie -- was not constructed."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}
