@@ -2307,3 +2307,64 @@ post-selected operations, which are a strictly larger class and the obvious next
 thing.
 
 Full record: `manifests/qsigma_r1j_braid_null_finding.json`.
+
+## 8.14 The pond and the rain: heralding is not the magic
+
+Everything up to here measured **operators**. A state has a description too, and
+for a fermionic Gaussian state it is small: `Γ_jk = (i/2)⟨[c_j, c_k]⟩`, a real
+antisymmetric `2n × 2n` matrix standing in for `2ⁿ` amplitudes. That is the
+**field** side of the duality. Every correlator follows from it by Wick's
+theorem, so the **membrane** — the instrument that says whether a state is still
+Gaussian — is the failure of that identity at order four:
+
+`wick_defect(ψ) = max_{a<b<c<d} |⟨c_a c_b c_c c_d⟩ + (Γ_ab Γ_cd − Γ_ac Γ_bd + Γ_ad Γ_bc)|`
+
+| | Wick defect | probability |
+|---|---|---|
+| vacuum | 0.000e+00 | — |
+| after a Gaussian unitary | 3.2e-16 | — |
+| after a braid | 3.3e-16 | — |
+| **heralded quadratic parity**, 3 pairs × 2 outcomes | **4.4e-16** | 0.135 – 0.865 |
+| **heralded quartic parity**, 3 sets × 2 outcomes | **0.183 – 0.647** | 0.439 – 0.561 |
+| quartic unitary kick | 1.5e-01 | — |
+
+**Heralding is not the magic; the degree of the measured observable is.**
+Post-selecting a quadratic parity — the standard fermionic parity measurement, at
+either outcome — leaves the pond exactly flat. Post-selecting a *quartic* parity
+disturbs it by up to 0.65, at *more* balanced probabilities. So the separation is
+degree, not rarity. That settles the question §8.13 left open.
+
+Note the instrument choice: `Γ² = −I` would have certified the non-Gaussian
+state, because every state has a well-formed `Γ`. The defect must be evaluated at
+an order the description does not already fix, which is four.
+
+### Weave and de-weave
+
+| loop | `‖L − I‖` | `gaussian_defect` | `wick_defect` | `‖Lψ − ψ‖` |
+|---|---|---|---|---|
+| reversed order | **8.1e-16** | 1.7e-15 | 2.2e-16 | 0 |
+| **same order** | **5.29** | 2.2e-15 | 2.0e-17 | **0.93** |
+
+De-weaving in the same order rather than the reverse does not close the loop, and
+the open loop moves the state by **0.93 of a possible 2** while *every* hardness
+instrument reads machine zero on it. The loop is **hardness-collapsed and
+state-resolving** — the `movingframe` distinction appearing at the level of a
+physical process rather than a coordinate. De-weaving in the wrong order is real,
+physical, and undetectable by any measurement of hardness in this repository.
+
+### The correction this earned, and it is the second of its kind
+
+`herald_parity` first built its observable by *symmetrising* a Majorana product
+instead of phasing it by `i^{k(k−1)/2}`. For `k = 2` the product is
+**anti**-Hermitian, so symmetrising annihilated it: every projector became `I/2`,
+all six quadratic heralds fired at probability **exactly 0.25**, and the
+"post-selected" state was the input. The headline was, for one round, supported by
+a measurement of the identity operator.
+
+It survives the fix. But this is the **second missing factor of `i`** this
+session (§8.10 was the first), and the Hermiticity assertion written to catch it
+*passed* — because the zero matrix is Hermitian. The guard is now on the
+spectrum: a parity observable must square to the identity, which zero does not.
+The tell was `probability_range = [0.25, 0.25]`, six identical values.
+
+Full record: `manifests/qsigma_r1k_pond_and_rain_finding.json`.

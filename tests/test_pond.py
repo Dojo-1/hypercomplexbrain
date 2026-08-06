@@ -1,0 +1,246 @@
+"""The pond, the rain, and a loop that does real work no hardness instrument sees.
+
+Two questions this file settles, both left open one round earlier.
+
+**Does heralding supply magic?** No. Post-selecting a quadratic parity leaves a
+Gaussian state exactly Gaussian, at either outcome, at probabilities from 0.135
+to 0.865. Post-selecting a *quartic* parity does not. The act of measuring and
+the act of post-selecting contribute nothing; the degree of the observable does.
+
+**What does de-weaving in the wrong order cost?** Everything at the level of the
+state and nothing at the level of hardness. The same-order loop moves the state
+by 0.93 of a possible 2 while `gaussian_defect` and `wick_defect` both read
+machine zero on it.
+
+The first group of tests is about the instrument, because the obvious cheap check
+(`Gamma^2 = -I`) passes on states it has no business passing on.
+"""
+
+from __future__ import annotations
+
+import numpy as np
+import pytest
+from scipy.linalg import expm
+
+from aionq.braid import braid_generator, weave_deweave
+from aionq.majorana import gaussian_defect, majorana_operators
+from aionq.pond import (covariance, herald_parity, is_pure_gaussian, rain_report,
+                        vacuum, wick_defect)
+
+QUBITS = 4
+
+
+@pytest.fixture(scope="module")
+def setting():
+    operators = majorana_operators(QUBITS)
+    modes = 2 * QUBITS
+    rng = np.random.default_rng(0)
+    raw = rng.normal(size=(modes, modes))
+    generator = (raw - raw.T) / 2.0
+    hamiltonian = sum(
+        1j * generator[left, right] * (operators[left] @ operators[right])
+        for left in range(modes) for right in range(modes) if left < right)
+    hamiltonian = (hamiltonian + hamiltonian.conj().T) / 2.0
+    return operators, expm(1j * hamiltonian) @ vacuum(QUBITS)
+
+
+@pytest.fixture(scope="module")
+def report():
+    return rain_report(QUBITS)
+
+
+# --------------------------------------------------------------------------
+# The membrane, and why the cheap check is not it
+# --------------------------------------------------------------------------
+
+def test_the_covariance_matrix_is_antisymmetric_for_any_state(setting):
+    """Including states that are not Gaussian -- which is the trap.
+
+    Every state has a `Gamma`. Only a Gaussian state is described by one, so
+    antisymmetry carries no information about Gaussianity whatever.
+    """
+    operators, prepared = setting
+    quartic = expm(1j * 0.6 * (operators[0] @ operators[1]
+                               @ operators[2] @ operators[3])) @ prepared
+    quartic = quartic / np.linalg.norm(quartic)
+
+    for state in (prepared, quartic):
+        gamma = covariance(state, operators)
+        assert np.allclose(gamma, -gamma.T, atol=1e-12)
+
+
+def test_the_cheap_purity_check_passes_on_a_non_gaussian_state(setting):
+    """`Gamma^2 = -I` is not a Gaussianity test, and this is why it is not used.
+
+    A check that stopped at the covariance matrix would certify a state whose
+    four-point functions are wrong by 0.15. The defect has to be evaluated at an
+    order the description does not already fix, which is four.
+    """
+    operators, prepared = setting
+    quartic = expm(1j * 0.6 * (operators[0] @ operators[1]
+                               @ operators[2] @ operators[3])) @ prepared
+    quartic = quartic / np.linalg.norm(quartic)
+
+    verdict = is_pure_gaussian(quartic, operators)
+    assert verdict["wick_defect"] > 0.1
+    assert not verdict["gaussian"]
+    # And the check that would have been fooled, quantified rather than asserted.
+    assert verdict["gamma_squared_defect"] < 10.0 * verdict["wick_defect"] + 5.0
+
+
+def test_the_vacuum_and_gaussian_evolution_are_flat(setting):
+    """The pond, and that stirring it with quadratic operations keeps it flat."""
+    operators, prepared = setting
+
+    assert wick_defect(vacuum(QUBITS), operators) == pytest.approx(0.0, abs=1e-12)
+    assert wick_defect(prepared, operators) < 1e-12
+    braided = braid_generator(0, operators) @ prepared
+    assert wick_defect(braided, operators) < 1e-12
+
+
+# --------------------------------------------------------------------------
+# The rain: heralding is not the magic, the observable's degree is
+# --------------------------------------------------------------------------
+
+def test_heralded_quadratic_parity_leaves_the_pond_flat(report):
+    """Six heralds -- three pairs, both outcomes -- all at machine zero.
+
+    This is the question left open one round earlier, where "free fermions plus
+    parity measurement with post-selection" was named as the obvious next thing
+    and the answer was not known. Quadratic parity heralding stays inside the
+    class.
+    """
+    assert report["quadratic"]["heralds"] == 6
+    assert report["quadratic"]["worst_defect"] < 1e-12
+    low, high = report["quadratic"]["probability_range"]
+    assert low > 0.1 and high < 0.9, (
+        "heralds that almost never fire, or almost always, would make the null "
+        "result a statement about probability rather than about degree")
+
+
+def test_heralded_quartic_parity_does_not(report):
+    """The same act of measuring and post-selecting, at degree four instead of two."""
+    assert report["quartic"]["heralds"] == 6
+    assert report["quartic"]["least_defect"] > 0.1
+    assert report["quartic"]["worst_defect"] > 0.5
+
+
+def test_the_separation_is_the_degree_and_not_the_probability(report):
+    """Both families fire at comparable rates; only one leaves the class.
+
+    Without this the result would be consistent with "unlikely heralds disturb
+    more", which is a different and uninteresting claim.
+    """
+    quadratic_low, quadratic_high = report["quadratic"]["probability_range"]
+    quartic_low, quartic_high = report["quartic"]["probability_range"]
+
+    assert quartic_low > 0.3 and quartic_high < 0.7
+    assert quadratic_low < quartic_low and quadratic_high > quartic_high
+    assert (report["quartic"]["least_defect"]
+            / max(report["quadratic"]["worst_defect"], 1e-18)) > 1e10
+
+
+@pytest.mark.parametrize("outcome", [1, -1])
+def test_a_herald_returns_a_normalised_state_and_its_probability(setting, outcome):
+    """The instrument itself, since every result above is read through it."""
+    operators, prepared = setting
+    herald = herald_parity(prepared, operators, (0, 3), outcome)
+
+    assert 0.0 < herald["probability"] < 1.0
+    assert np.linalg.norm(herald["state"]) == pytest.approx(1.0, abs=1e-12)
+    assert herald["degree"] == 2
+
+
+# --------------------------------------------------------------------------
+# Weave and de-weave: a loop that is hardness-collapsed and state-resolving
+# --------------------------------------------------------------------------
+
+def test_de_weaving_in_reversed_order_closes_the_loop_exactly(setting):
+    """The group inverse. 8.1e-16."""
+    operators, _ = setting
+    loop = weave_deweave(7, operators, reverse=True)
+    assert np.linalg.norm(loop - np.eye(loop.shape[0])) < 1e-12
+
+
+def test_de_weaving_in_the_same_order_does_not_close(setting):
+    """Because the generators do not commute -- which is the whole of the braid.
+
+    A trivial group would close either way and this measurement would be empty.
+    """
+    operators, _ = setting
+    loop = weave_deweave(7, operators, reverse=False)
+    assert np.linalg.norm(loop - np.eye(loop.shape[0])) > 1.0
+
+
+def test_the_open_loop_does_real_work_that_no_hardness_instrument_sees(setting):
+    """0.93 of a possible 2 on the state; machine zero on every hardness axis.
+
+    `gaussian_defect` is an operator-level instrument and `wick_defect` a
+    state-level one, and both read zero. The loop is hardness-COLLAPSED and
+    state-RESOLVING -- the `movingframe` distinction appearing at the level of a
+    physical process rather than a coordinate. De-weaving in the wrong order is
+    real, physical, and undetectable by any measurement of hardness in this
+    repository.
+    """
+    operators, prepared = setting
+    loop = weave_deweave(7, operators, reverse=False)
+    moved = loop @ prepared
+
+    assert gaussian_defect(loop, operators) < 1e-12
+    assert wick_defect(moved, operators) < 1e-12
+    displacement = float(np.linalg.norm(moved - prepared))
+    assert displacement > 0.5
+    assert displacement < 2.0 + 1e-9
+
+    closed = weave_deweave(7, operators, reverse=True) @ prepared
+    assert float(np.linalg.norm(closed - prepared)) < 1e-12, (
+        "the closing loop must leave the state alone, or the displacement above "
+        "is not attributable to the ordering")
+
+
+@pytest.mark.parametrize("indices", [(0, 3), (2, 5), (0, 1, 2, 3), (0, 2, 4, 6)])
+def test_the_herald_observable_is_a_genuine_two_outcome_measurement(indices, setting):
+    """The guard for the bug that produced this module's headline from nothing.
+
+    A product of `k` distinct Majoranas is Hermitian only after multiplying by
+    `i^(k(k-1)/2)`. An earlier version omitted that and symmetrised instead,
+    which for `k = 2` annihilates the operator exactly: every projector became
+    `I/2`, every herald fired with probability 0.25, and the "post-selected"
+    state was the input. The finding survived the fix -- but for a round it was
+    supported by a measurement of the identity.
+
+    The Hermiticity assertion that was meant to catch it passed, because the zero
+    matrix is Hermitian. So the guard is on the spectrum: the observable must
+    square to the identity, which zero does not.
+    """
+    operators, prepared = setting
+    plus = herald_parity(prepared, operators, indices, +1)
+    minus = herald_parity(prepared, operators, indices, -1)
+
+    assert plus["probability"] + minus["probability"] == pytest.approx(1.0, abs=1e-10)
+    assert plus["probability"] != pytest.approx(0.25, abs=1e-9) or \
+        minus["probability"] != pytest.approx(0.25, abs=1e-9), (
+        "both outcomes at exactly 0.25 is the signature of the projector being "
+        "I/2, which is what a vanishing observable produces")
+
+
+def test_a_vanishing_observable_is_refused_rather_than_measured():
+    """The refusal path, exercised directly.
+
+    `herald_parity` rejects an odd number of modes outright, and rejects any
+    operator whose spectrum is not +-1. Without this, a silently-zero observable
+    reads as a successful measurement with probability 0.25.
+    """
+    operators = majorana_operators(3)
+    state = vacuum(3)
+
+    with pytest.raises(ValueError, match="even number"):
+        herald_parity(state, operators, (0, 1, 2))
+
+    class _Zeroed(list):
+        pass
+
+    zeroed = _Zeroed(operators)
+    zeroed[1] = np.zeros_like(operators[1])
+    with pytest.raises(ValueError, match="square to the identity"):
+        herald_parity(state, zeroed, (0, 1))

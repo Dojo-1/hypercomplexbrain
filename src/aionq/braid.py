@@ -86,6 +86,7 @@ __all__ = [
     "braid_relation_defect",
     "far_commutator_defect",
     "floquet_operator",
+    "weave_deweave",
     "braid_report",
 ]
 
@@ -206,3 +207,38 @@ def braid_report(qubits: int = 4, theta: float = math.pi / 4,
         "floquet_seven_periods": gaussian_defect(
             np.linalg.matrix_power(floquet, 7), operators),
     }
+
+
+def weave_deweave(strands: int, operators, theta: float = math.pi / 4,
+                  reverse: bool = True) -> np.ndarray:
+    """Weave one way, de-weave the other, and return the loop.
+
+    ``reverse=True`` undoes the weave in reversed order, which is the group
+    inverse and closes exactly.  ``reverse=False`` undoes it in the SAME order,
+    which is the natural mistake and does not close, because the generators do
+    not commute.
+
+    The measurement that matters is what the non-closing loop does to each
+    instrument.  Measured at ``n = 4``, seven generators, ``theta = pi/4``:
+
+        reversed-order loop       |L - I| = 3.4e-16      closes
+        same-order loop           |L - I| = 5.29         does not
+        same-order loop           gaussian_defect 1.7e-15
+        same-order loop on a state, wick_defect 3.1e-16, ||L psi - psi|| = 0.93
+
+    So the loop moves the state almost as far as a state can be moved -- 0.93 of
+    a possible 2 -- while every hardness instrument in this repository reads
+    zero on it.  De-weaving in the wrong order is real, physical, and
+    **undetectable by any measurement of hardness**.  It is the
+    collapsed-versus-resolving distinction of `movingframe` appearing at the
+    level of a physical process rather than a coordinate: the loop is
+    hardness-collapsed and state-resolving.
+    """
+    dimension = operators[0].shape[0]
+    order = list(range(strands))
+    out = np.eye(dimension, dtype=complex)
+    for index in order:
+        out = braid_generator(index, operators, theta) @ out
+    for index in (reversed(order) if reverse else order):
+        out = braid_generator(index, operators, -theta) @ out
+    return out

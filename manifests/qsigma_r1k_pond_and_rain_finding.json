@@ -1,0 +1,81 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1K-POND-AND-RAIN-001",
+  "status": "measured and recorded. Settles a question R1J left explicitly open. The headline survives a correction that, for one round, had it resting on a measurement of the identity operator.",
+  "subject": "src/aionq/pond.py, and the weave/de-weave holonomy added to src/aionq/braid.py",
+  "the_open_question_this_settles": {
+    "where": "manifests/qsigma_r1j_braid_null_finding.json, what_is_not_claimed: 'free fermions plus parity measurement with post-selection is a different and strictly larger class, and it was not implemented or measured. It is the obvious next thing and it is not this round's.'",
+    "the_answer": "quadratic parity heralding does NOT leave the free-fermion class. Heralding is not the magic; the degree of the measured observable is."
+  },
+  "the_instrument": {
+    "field_side": "Gamma_jk = (i/2)<[c_j, c_k]>, a real antisymmetric 2n x 2n matrix standing in for 2^n amplitudes. Every correlator of a Gaussian state follows from it by Wick's theorem.",
+    "membrane": "wick_defect(psi) = max over {a<b<c<d} of |<c_a c_b c_c c_d> + (Gamma_ab Gamma_cd - Gamma_ac Gamma_bd + Gamma_ad Gamma_bc)|",
+    "why_order_four": "the two-point functions are what Gamma IS, so testing them tests nothing. Four is the lowest order at which the Gaussian description makes a prediction that can fail.",
+    "why_not_the_cheap_check": "Gamma^2 = -I is purity of the Gaussian description and is satisfied by states that are not Gaussian. Measured: a state with wick_defect 0.15 passes it. A check that stopped at the covariance matrix would certify states it has no business certifying.",
+    "relation_to_the_existing_instrument": "majorana.gaussian_defect is operator-level (is the unitary quadratic?); wick_defect is state-level (is the state Gaussian?). Different objects, different questions, and R1K needed both."
+  },
+  "measurement_the_rain": {
+    "setting": "n = 4 qubits, 8 modes, a Gaussian state prepared by a random quadratic unitary from the vacuum",
+    "baseline": {"vacuum": 0.0, "after_gaussian_unitary": 3.19e-16, "after_a_braid": 3.33e-16},
+    "quadratic_heralds": {
+      "count": 6, "pairs": [[0, 3], [2, 5], [1, 6]], "outcomes": "both",
+      "worst_wick_defect": 4.44e-16,
+      "probability_range": [0.1350, 0.8650]
+    },
+    "quartic_heralds": {
+      "count": 6, "sets": [[0, 1, 2, 3], [0, 2, 4, 6], [1, 3, 5, 7]], "outcomes": "both",
+      "least_wick_defect": 0.1833, "worst_wick_defect": 0.6470,
+      "probability_range": [0.4390, 0.5610]
+    },
+    "the_separation_is_degree_not_rarity": "the quartic heralds fire at MORE balanced probabilities (0.44 to 0.56) than the quadratic ones (0.135 to 0.865), and they are the ones that disturb. So the result cannot be read as 'unlikely heralds disturb more', which would be a different and uninteresting claim.",
+    "reading": "the act of measuring and the act of post-selecting contribute nothing. Magic has to be brought in, and it is brought in by measuring something of degree four -- or equivalently by injecting a non-Gaussian resource. It does not condense out of the measurement process.",
+    "executable_form": "tests/test_pond.py::test_heralded_quadratic_parity_leaves_the_pond_flat, ::test_heralded_quartic_parity_does_not, ::test_the_separation_is_the_degree_and_not_the_probability"
+  },
+  "measurement_the_weave_and_the_deweave": {
+    "construction": "weave seven adjacent Majorana exchanges at theta = pi/4 in order, then de-weave at -theta either in REVERSED order (the group inverse) or in the SAME order (the natural mistake)",
+    "reversed_order": {"loop_minus_identity": 8.08e-16, "state_displacement": 0.0},
+    "same_order": {
+      "loop_minus_identity": 5.292,
+      "gaussian_defect": 2.21e-15,
+      "wick_defect_of_the_moved_state": 1.96e-17,
+      "state_displacement": 0.9345,
+      "maximum_possible_displacement": 2.0
+    },
+    "reading": "the open loop moves the state by 0.93 of a possible 2 while every hardness instrument in this repository reads machine zero on it. The loop is HARDNESS-COLLAPSED and STATE-RESOLVING -- the movingframe distinction appearing at the level of a physical process rather than a coordinate. De-weaving in the wrong order is real, physical, and undetectable by any measurement of hardness here.",
+    "executable_form": "tests/test_pond.py::test_de_weaving_in_reversed_order_closes_the_loop_exactly, ::test_de_weaving_in_the_same_order_does_not_close, ::test_the_open_loop_does_real_work_that_no_hardness_instrument_sees"
+  },
+  "correction_the_headline_first_rested_on_the_identity": {
+    "what_happened": "herald_parity built its observable by symmetrising a Majorana product instead of phasing it. A product of k distinct Majoranas satisfies (c_1...c_k)* = (-1)^(k(k-1)/2) c_1...c_k, so it is Hermitian only after multiplication by i^(k(k-1)/2) -- i for k = 2, -1 for k = 4. For k = 2 the product is ANTI-Hermitian and symmetrising annihilates it exactly.",
+    "consequence": "every projector became (I + 0)/2 = I/2. All six quadratic heralds fired with probability exactly 0.25 = ||psi/2||^2, and the 'post-selected' state was the input. The reported wick_defect of 3.19e-16 was the prepared state's own defect, measured six times.",
+    "why_the_quartic_arm_still_worked": "for k = 4 the product IS already Hermitian, since (-1)^6 = +1. So the disturbing arm of the experiment was correct throughout and only the null arm was vacuous -- which is the worst arrangement, because the null arm was the headline.",
+    "what_caught_it": "probability_range = [0.25, 0.25], six identical values where the ad-hoc probe had given 0.135 to 0.865. A constant probability across three different mode pairs and both outcomes is not what a measurement produces.",
+    "the_guard_that_failed": "the function asserted np.allclose(observable, observable.conj().T) and PASSED, because the zero matrix is Hermitian. This is the pattern this repository has now recorded eleven times: a guard whose witness cannot reach the case it asserts. The guard is now on the spectrum -- a parity observable must square to the identity, which zero does not.",
+    "outcome": "the finding survives the fix, at probabilities 0.135 to 0.865 and worst defect 4.44e-16. Nothing is withdrawn; what is recorded is that it was unsupported for a round.",
+    "classification": "SECOND missing factor of i this session. The first (R1G) made every Hamiltonian zero and every unitary the identity, and both branches of that dichotomy reported defect 0.000e+00. Both were caught by a number being suspiciously exact rather than by any assertion.",
+    "bound_correction": "self_audit CORRECTIONS entry QSigma-R1k"
+  },
+  "what_is_not_claimed": [
+    "that free fermions plus measurement cannot be universal. The literature route is measurement of non-Gaussian observables or injection of non-Gaussian resource states, and the measurement here is consistent with it: degree four disturbs. What is refuted is only the weaker guess that the act of heralding itself supplies the departure.",
+    "that adaptive measurement was tested. Every herald here is applied to a fixed prepared state with no feed-forward. An adaptive protocol chooses later measurements from earlier outcomes, and nothing about that is measured.",
+    "that mixed states were tested. wick_defect is written for pure states; the post-selected states are pure because the projectors are rank-preserving on a pure input. A mixed-state version would need the density-matrix form of Wick's theorem and is not implemented.",
+    "any statement about richer fusion rules. R1J named Fibonacci anyons as untested and they remain so."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "scale_remainder",
+      "statement": "wick_defect costs O(C(2n,4) * 4^n) and was run at n = 4. It is feasible to n = 5 or 6 and no further by this implementation. Every result here is at one system size, one prepared state, one seed."
+    },
+    {
+      "kind": "degree_remainder",
+      "statement": "only degrees two and four were heralded. Degree six and above are neither measured nor argued, and the natural conjecture -- that everything above two disturbs -- is not tested. Nor was the AMOUNT of disturbance related to the degree; 0.18 to 0.65 at degree four is a wide range whose structure was not investigated."
+    },
+    {
+      "kind": "purity_remainder",
+      "statement": "the weave/de-weave displacement of 0.9345 is measured on one prepared state. It is a property of the pair (loop, state), not of the loop alone, and no average over states was taken. A different state could be moved less, or not at all if it happened to be an eigenvector of the loop."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}

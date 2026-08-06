@@ -1075,6 +1075,21 @@ CORRECTIONS = (
         "tests/test_braid.py::test_folding_alone_scrambles_the_statistic_by_as_much_as_the_signal",
         True,
     ),
+    Correction(
+        "QSigma-R1k",
+        "herald_parity built its observable by symmetrising a Majorana product "
+        "instead of phasing it by i^(k(k-1)/2). For k=2 the product is "
+        "ANTI-Hermitian, so symmetrising annihilated it: every projector became "
+        "I/2, all six quadratic heralds fired at probability exactly 0.25, and "
+        "the 'post-selected' state was the input. The headline -- quadratic "
+        "parity heralding preserves Gaussianity -- was for one round supported by "
+        "a measurement of the identity. It survives the fix, at probabilities "
+        "0.135 to 0.865 and defect 4.4e-16. Second missing factor of i this "
+        "session, and the Hermiticity assertion meant to catch it PASSED, because "
+        "the zero matrix is Hermitian; the guard is now on the spectrum",
+        "tests/test_pond.py::test_the_herald_observable_is_a_genuine_two_outcome_measurement",
+        True,
+    ),
 )
 
 
