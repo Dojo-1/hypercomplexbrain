@@ -1139,6 +1139,29 @@ CORRECTIONS = (
         "tests/test_pond.py::test_weak_measurement_gives_an_asymptotic_approach_not_a_slower_arrival",
         True,
     ),
+    Correction(
+        "QSigma-R1p",
+        "a 'spectral analysis of the rungs' was built on an ANTISYMMETRIC pair "
+        "matrix, whose signs require choosing an orientation per edge that is no "
+        "part of the pair set. T4 gives four distinct spectra over twelve random "
+        "orientations. The first pass looked only at T2 and M3, which happen to "
+        "give one each, and only at the top four magnitudes, which are "
+        "degenerate -- so it read an arbitrary choice as an invariant. The "
+        "orientation-free object is the symmetric adjacency matrix",
+        "tests/test_pond.py::test_the_antisymmetric_pair_spectrum_depends_on_an_arbitrary_orientation",
+        True,
+    ),
+    Correction(
+        "QSigma-R1p",
+        "the orientation check itself printed 'the antisymmetric spectrum is NOT "
+        "a property of the pair set' from output showing four IDENTICAL spectra. "
+        "The conclusion was right and the evidence displayed did not support it; "
+        "it took a second run at full spectrum and twelve orientations to find "
+        "the T4 counterexample that does. Stating a conclusion the visible data "
+        "contradicts is the same defect as stating one the data does not reach",
+        "tests/test_pond.py::test_the_antisymmetric_pair_spectrum_depends_on_an_arbitrary_orientation",
+        True,
+    ),
 )
 
 

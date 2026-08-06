@@ -209,3 +209,59 @@ def test_past_the_threshold_the_statistic_inverts_its_sign():
     assert below > 0.2
     assert above < 0.0
     assert wrap_count(chaotic, 0.7) > 4.0
+
+
+# --------------------------------------------------------------------------
+# One family, two axes: the braid is the imaginary direction of the herald
+# --------------------------------------------------------------------------
+
+def test_the_herald_is_the_exponential_of_the_parity():
+    """`K(alpha) = cos a Pi_+ + sin a Pi_-` equals `exp(t M)` up to scale.
+
+    `Pi_+- = (1 +- M)/2`, so `K` is proportional to `1 + lambda M` with
+    `lambda = tan(pi/4 - alpha)`; and `M^2 = 1` makes that `exp(t M)` with
+    `t = artanh lambda`. The projective limit is `t -> infinity`, which is why
+    weak measurement never arrives: the arrival is at infinite parameter.
+    """
+    from aionq.braid import complex_axis_report
+
+    assert complex_axis_report()["herald_is_exponential"] < 1e-12
+
+
+def test_the_braid_is_the_imaginary_axis_of_the_herald():
+    """`exp(i s M) = exp(-s c_a c_b)` -- the braid generator, exactly.
+
+    Agreement 0.00e+00 at three values of `s`. So the herald family and the
+    braid family are not analogous, not related: they are the same
+    one-parameter object `exp(t M)` continued in two directions.
+
+        real t        measurement, non-unitary, drives entropy down
+        imaginary t   braid, unitary, and by R1J invisible to hardness
+
+    Everything measured about braids in R1J and about heralds in R1K-R1O is
+    that single object read along two perpendicular lines.
+    """
+    from aionq.braid import complex_axis_report
+
+    assert complex_axis_report()["braid_is_the_imaginary_axis"] < 1e-14
+
+
+def test_the_whole_complex_plane_stays_gaussian():
+    """25 points of the complex `t`-plane, worst Wick defect 3.3e-16.
+
+    Neither axis can leave the class, and neither can any combination of them.
+    """
+    from aionq.braid import complex_axis_report
+
+    assert complex_axis_report()["complex_plane_stays_gaussian"] < 1e-12
+
+
+def test_a_half_turn_in_the_imaginary_direction_is_negation():
+    """`exp((t + i pi) M) = -exp(t M)`: the family is pi-periodic, projectively.
+
+    So the 180-degree intersection is exact and the two half-turns are the same
+    channel. There is no additional structure hiding at the antipode.
+    """
+    from aionq.braid import complex_axis_report
+
+    assert complex_axis_report()["half_turn_is_negation"] < 1e-12

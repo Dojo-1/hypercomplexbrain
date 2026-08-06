@@ -690,3 +690,82 @@ def test_the_orthogonal_clone_of_a_rung_never_collapses(rung):
     assert result["final_entropy"] > 0.5
     if rung == "M15":
         assert len(complement_pairs(rung)) == 15
+
+
+def test_no_invariant_tested_separates_the_collapsing_families():
+    """A negative result, recorded because it sharpens the question.
+
+    Ten families -- seven rungs and three controls -- against three natural
+    invariants of the pair set:
+
+        components   collapse {4,6,8}    no-collapse {1,2,6}
+        F2 rank      collapse {8,10,12}  no-collapse {10,14,15}
+
+    Both overlap, and they overlap on the SAME decisive pair: `FROBENIUS` and
+    `M3` have six components each and F2 rank ten each, and one collapses while
+    the other does not. Pair count is technically disjoint across the ten but
+    interleaved -- 8 collapses, 14 and 15 do not, 19 and 24 do -- so it is a
+    lookup table over ten points, not a rule.
+
+    So the open question narrows from seven objects to two: what distinguishes
+    the Frobenius orbits from the GF(4)* orbits? No invariant tested sees it.
+    """
+    from aionq.pond import complement_pairs, rung_pairs
+
+    def components(pairs):
+        parent = list(range(16))
+
+        def find(node):
+            while parent[node] != node:
+                parent[node] = parent[parent[node]]
+                node = parent[node]
+            return node
+
+        for left, right in pairs:
+            parent[find(left)] = find(right)
+        return len({find(index) for index in range(16)})
+
+    def f2_rank(pairs):
+        pivots, rank = [], 0
+        for left, right in pairs:
+            vector = (1 << left) ^ (1 << right)
+            for pivot in pivots:
+                vector = min(vector, vector ^ pivot)
+            if vector:
+                pivots.append(vector)
+                pivots.sort(reverse=True)
+                rank += 1
+        return rank
+
+    frobenius, multiplicative = rung_pairs("FROBENIUS"), rung_pairs("M3")
+    assert components(frobenius) == components(multiplicative) == 6
+    assert f2_rank(frobenius) == f2_rank(multiplicative) == 10
+
+    # ...and they land on opposite sides, which is what makes the invariants blind.
+    from aionq.pond import breathing_trajectory
+    assert breathing_trajectory(frobenius)["final_entropy"] == pytest.approx(0.0, abs=1e-9)
+    assert breathing_trajectory(multiplicative)["final_entropy"] > 0.5
+
+
+def test_the_antisymmetric_pair_spectrum_depends_on_an_arbitrary_orientation():
+    """Which is why the orientation-free symmetric adjacency is used instead.
+
+    Building an antisymmetric matrix from a pair set requires choosing a sign
+    per edge, and that choice is not part of the pair set. Measured on `T4`:
+    **four distinct spectra** over twelve random orientations. `T2` and `M3`
+    happen to give one each, which is how a first pass that looked only at those
+    -- and only at the top four magnitudes -- concluded the spectrum was an
+    invariant when it is not.
+    """
+    from aionq.pond import rung_pairs
+
+    seen = set()
+    rng = np.random.default_rng(1)
+    for _ in range(12):
+        matrix = np.zeros((16, 16))
+        for left, right in rung_pairs("T4"):
+            sign = 1 if rng.random() < 0.5 else -1
+            matrix[left, right], matrix[right, left] = sign, -sign
+        seen.add(tuple(np.sort(np.round(np.abs(np.linalg.eigvals(matrix)), 6))))
+
+    assert len(seen) > 1

@@ -1,0 +1,65 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1P-COMPLEX-AXIS-001",
+  "status": "measured and recorded. Unifies two families this session treated as separate. The spectral question R1O left open is answered with a NEGATIVE result that narrows it from seven objects to two.",
+  "subject": "src/aionq/braid.py::complex_axis_report -- the herald and the braid as one operator family on the complex plane",
+  "the_unification": {
+    "statement": "a partial parity herald K(alpha) = cos(alpha) Pi_+ + sin(alpha) Pi_- equals exp(t M) up to scale, with M = i c_a c_b, lambda = tan(pi/4 - alpha) and t = artanh(lambda). And exp(i s M) = exp(-s c_a c_b), which is the braid generator. So the herald and the braid are the same one-parameter object continued in two perpendicular directions.",
+    "measured": {
+      "herald_equals_exponential": 4.441e-16,
+      "braid_equals_imaginary_axis": 0.0,
+      "complex_plane_stays_gaussian": 3.331e-16,
+      "half_turn_is_negation": 1.047e-15
+    },
+    "the_two_axes": {
+      "real t": "measurement -- non-unitary, drives entropy down, projective at t -> infinity",
+      "imaginary t": "braid -- unitary, and by R1J invisible to every hardness instrument",
+      "t -> infinity": "the projective limit, which is why weak measurement never arrives: the arrival is at infinite parameter"
+    },
+    "consequence_for_earlier_rounds": "R1J measured braids and R1K through R1O measured heralds as separate objects. They are one object read along two lines. R1O's finding that weak measurement approaches zero asymptotically while projective arrives in seven steps is, in this language, the statement that the arrival sits at t = infinity.",
+    "the_180_degree_intersection": "exp((t + i pi) M) = -exp(t M) to 1.0e-15, so the family is pi-periodic in the imaginary direction projectively. The two half-turns are the same channel; nothing additional hides at the antipode.",
+    "executable_form": "tests/test_braid.py::test_the_herald_is_the_exponential_of_the_parity, ::test_the_braid_is_the_imaginary_axis_of_the_herald, ::test_the_whole_complex_plane_stays_gaussian, ::test_a_half_turn_in_the_imaginary_direction_is_negation"
+  },
+  "negative_result_no_invariant_tested_separates_the_collapse": {
+    "question": "R1O narrowed the open question to: what distinguishes T2, T4 and FROBENIUS from M3 and M15 among the closed families?",
+    "invariants_tried": {
+      "connected_components": {"collapse": [4, 6, 8], "no_collapse": [1, 2, 6], "separates": false},
+      "F2_rank_of_the_edge_span": {"collapse": [8, 10, 12], "no_collapse": [10, 14, 15], "separates": false},
+      "pair_count": {"collapse": [8, 19, 24], "no_collapse": [14, 15, 105, 112, 120], "note": "technically disjoint over these ten families but INTERLEAVED -- 8 collapses, 14 and 15 do not, 19 and 24 do. A lookup table over ten points, not a rule."},
+      "symmetric_adjacency_spectrum": {"collapse": ["{1,-1}", "{3,-1}", "{3,1,0,-1}"], "no_collapse": ["{15,-1}", "{2,0,-1}", "{14,0,-1}"], "separates": false, "note": "largest eigenvalue is 1, 3, 3 for the collapsing families and 2, 14, 15 for the others -- the 2 sits inside the collapsing range"}
+    },
+    "the_decisive_pair": "FROBENIUS and M3 have SIX connected components each and F2 rank TEN each, and one collapses while the other does not. Every invariant tried gives them the same value.",
+    "what_this_buys": "the open question narrows from seven objects to two: what distinguishes the orbits of x -> x^2 from the orbits of x -> omega x? That is a sharper question than R1O's and it is stated over a pair of explicitly enumerable objects.",
+    "executable_form": "tests/test_pond.py::test_no_invariant_tested_separates_the_collapsing_families"
+  },
+  "correction_the_spectral_instrument_read_an_arbitrary_choice": {
+    "what_happened": "the first spectral analysis built an ANTISYMMETRIC matrix from each pair set, which requires choosing a sign per edge. That orientation is not part of the pair set.",
+    "measured": "T4 gives FOUR distinct full spectra over twelve random orientations. T2 and M3 give one each.",
+    "why_it_was_not_caught_immediately": "the first check looked only at T2 and M3 -- which happen to be orientation-independent -- and only at the top four magnitudes, which are degenerate for T4.",
+    "the_fix": "the symmetric adjacency matrix, which is orientation-free and is what the negative result above uses.",
+    "a_second_correction_in_the_same_check": {
+      "what_happened": "the orientation check printed the conclusion 'the antisymmetric spectrum is NOT a property of the pair set' from output showing four IDENTICAL spectra",
+      "why_it_matters": "the conclusion was right and the evidence displayed did not support it. It took a second run -- full spectrum, twelve orientations -- to find the T4 counterexample that does. Stating a conclusion the visible data contradicts is the same defect as stating one the data does not reach, and it is more dangerous because it looks verified."
+    },
+    "bound_corrections": "self_audit CORRECTIONS entries QSigma-R1p, both of them"
+  },
+  "what_is_not_claimed": [
+    "that no invariant separates the classes. Four were tried and none does. The space of invariants is not exhausted and the natural next candidates -- the stabiliser group generated by each family's Pauli strings, and its maximal abelian subgroups -- were not computed.",
+    "any bearing on hardness. The complex-plane result says the whole family is Gaussian, which is a statement that nothing in it is hard, and the collapse question is about entanglement rather than cost.",
+    "that the herald/braid unification is new mathematics. That a parity projector and a Majorana exchange are both exponentials of the same quadratic generator follows from M^2 = 1 and is elementary. What is recorded is that this repository treated them as two subjects for five rounds and measured them separately."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "invariant_remainder",
+      "statement": "the negative result is over four invariants and ten families. The stabiliser group each pair family generates inside the Pauli group -- its rank, and whether it contains a rank-8 abelian subgroup -- is the physically motivated candidate and was not computed. It is the obvious next thing and it is not this round's."
+    },
+    {
+      "kind": "unification_remainder",
+      "statement": "the two axes are unified for a SINGLE pair (a,b). A storm applies many heralds on different pairs, and the corresponding braid word applies many generators; whether the whole storm has a braid-word counterpart under the same continuation was not measured, and the generators for different pairs do not commute."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}

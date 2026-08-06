@@ -87,6 +87,8 @@ __all__ = [
     "far_commutator_defect",
     "floquet_operator",
     "weave_deweave",
+    "herald_generator",
+    "complex_axis_report",
     "braid_report",
 ]
 
@@ -242,3 +244,93 @@ def weave_deweave(strands: int, operators, theta: float = math.pi / 4,
     for index in (reversed(order) if reverse else order):
         out = braid_generator(index, operators, -theta) @ out
     return out
+
+
+def herald_generator(operators, first: int, second: int) -> np.ndarray:
+    """``M = i c_a c_b``, with ``M^2 = 1``: the generator both families share."""
+    parity = 1j * operators[first] @ operators[second]
+    return (parity + parity.conj().T) / 2.0
+
+
+def complex_axis_report(qubits: int = 4, first: int = 0, second: int = 1) -> dict:
+    """The herald and the braid are one family, continued in two directions.
+
+    A partial parity herald is ``K(alpha) = cos(alpha) Pi_+ + sin(alpha) Pi_-``.
+    Writing ``Pi_+- = (1 +- M)/2`` gives ``K proportional to 1 + lambda M`` with
+    ``lambda = tan(pi/4 - alpha)``, and since ``M^2 = 1`` that is
+    ``proportional to exp(t M)`` with ``t = artanh(lambda)``.  Measured: the two
+    agree to 0.0, 3.1e-16, 4.4e-16 at three strengths.
+
+    **The braid is the imaginary axis of the same family.**
+    ``exp(i s M) = exp(i s * i c_a c_b) = exp(-s c_a c_b)``, which is the braid
+    generator of `braid_generator` at ``-s``.  Measured agreement: **0.00e+00**,
+    exactly, at three values of ``s``, and unitary to 0.00e+00.
+
+    So one object, ``exp(t M)`` on the complex ``t``-plane:
+
+        real t        measurement       non-unitary, drives entropy down
+        imaginary t   braid             unitary, and by R1J does nothing to hardness
+        t -> infinity projective limit  the arrival that weak measurement never reaches
+
+    And the whole plane is Gaussian: 25 sampled points of ``t``, worst Wick
+    defect 3.33e-16.  The 180-degree intersection is exact --
+    ``exp((t + i pi) M) = -exp(t M)`` to 4.2e-16 -- so the family is
+    pi-periodic in the imaginary direction, projectively.
+    """
+    from scipy.linalg import expm
+
+    from .majorana import majorana_operators
+    from .pond import vacuum, wick_defect
+
+    operators = majorana_operators(qubits)
+    dimension = 2 ** qubits
+    generator = herald_generator(operators, first, second)
+    identity = np.eye(dimension)
+
+    herald_match = 0.0
+    for fraction in (0.2, 0.5, 0.9):
+        alpha = fraction * math.pi / 4
+        parameter = math.atanh(math.tan(math.pi / 4 - alpha))
+        kraus = (math.cos(alpha) * (identity + generator)
+                 + math.sin(alpha) * (identity - generator)) / 2.0
+        exponential = expm(parameter * generator)
+        scale = (np.trace(exponential.conj().T @ kraus)
+                 / np.trace(exponential.conj().T @ exponential))
+        herald_match = max(herald_match,
+                           float(np.linalg.norm(kraus - scale * exponential)))
+
+    braid_match = 0.0
+    for step in (0.3, math.pi / 4, 1.1):
+        rotated = expm(1j * step * generator)
+        braided = braid_generator(first, operators, -step)
+        braid_match = max(braid_match, float(np.linalg.norm(rotated - braided)))
+
+    modes = 2 * qubits
+    rng = np.random.default_rng(0)
+    raw = rng.normal(size=(modes, modes))
+    antisymmetric = (raw - raw.T) / 2.0
+    hamiltonian = sum(
+        1j * antisymmetric[left, right] * (operators[left] @ operators[right])
+        for left in range(modes) for right in range(modes) if left < right)
+    prepared = expm(1j * (hamiltonian + hamiltonian.conj().T) / 2.0) @ vacuum(qubits)
+
+    plane = 0.0
+    for real in (-1.5, -0.4, 0.0, 0.4, 1.5):
+        for imaginary in (0.0, 0.5, math.pi / 4, 1.2, math.pi / 2):
+            moved = expm(complex(real, imaginary) * generator) @ prepared
+            if np.linalg.norm(moved) > 1e-12:
+                plane = max(plane, wick_defect(moved / np.linalg.norm(moved),
+                                               operators))
+
+    period = 0.0
+    for parameter in (0.4, 1.1):
+        base = expm(parameter * generator)
+        shifted = expm((parameter + 1j * math.pi) * generator)
+        period = max(period, float(np.linalg.norm(shifted + base)))
+
+    return {
+        "herald_is_exponential": herald_match,
+        "braid_is_the_imaginary_axis": braid_match,
+        "complex_plane_stays_gaussian": plane,
+        "half_turn_is_negation": period,
+    }

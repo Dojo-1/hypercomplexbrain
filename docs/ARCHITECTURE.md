@@ -2616,3 +2616,65 @@ closed families"* — a better question, still unanswered.
 Interactive view of all of it:
 [the herald storm on GF(16)](https://claude.ai/code/artifact/869e880e-9367-4931-9ddc-efeff7edb637).
 Full record: `manifests/qsigma_r1o_breathing_continuum_finding.json`.
+
+## 8.19 One family, two axes: the braid is the imaginary direction of the herald
+
+A partial parity herald is `K(α) = cos α·Π₊ + sin α·Π₋`. Since `Π± = (1 ± M)/2`
+with `M = i c_a c_b`, that is `∝ 1 + λM` with `λ = tan(π/4 − α)` — and `M² = 1`
+makes it **`∝ exp(tM)` with `t = artanh λ`**.
+
+And `exp(i s M) = exp(−s c_a c_b)` — **the braid generator**.
+
+| | measured |
+|---|---|
+| herald equals `exp(tM)` | 4.4e-16 |
+| **braid equals the imaginary axis** | **0.00e+00** |
+| whole complex `t`-plane stays Gaussian (25 points) | 3.3e-16 |
+| `exp((t+iπ)M) = −exp(tM)` | 1.0e-15 |
+
+So one object on the complex plane:
+
+- **real `t`** — measurement: non-unitary, drives entropy down
+- **imaginary `t`** — braid: unitary, and by §8.13 invisible to every hardness instrument
+- **`t → ∞`** — the projective limit
+
+That last line explains §8.18: weak measurement never arrives because **the
+arrival sits at infinite parameter**. And the 180° intersection is exact — the
+family is π-periodic in the imaginary direction, so nothing hides at the antipode.
+
+§8.13 measured braids and §8.14–8.18 measured heralds as separate subjects for
+five rounds. They are one object read along two perpendicular lines.
+
+### The spectral question: a negative result that sharpens it
+
+§8.18 asked what distinguishes T2, T4, FROBENIUS from M3, M15 among the *closed*
+families. Four invariants:
+
+| invariant | collapse | no collapse | separates |
+|---|---|---|---|
+| components | {4, 6, 8} | {1, 2, **6**} | no |
+| F₂ rank of edge span | {8, **10**, 12} | {**10**, 14, 15} | no |
+| symmetric adjacency spectrum | max 1, 3, 3 | max **2**, 14, 15 | no |
+| pair count | {8, 19, 24} | {14, 15, 105, 112, 120} | interleaved |
+
+**FROBENIUS and M3 have six components each and F₂ rank ten each, and land on
+opposite sides.** Every invariant tried gives them the same value. So the
+question narrows from seven objects to two: *what distinguishes the orbits of
+`x ↦ x²` from the orbits of `x ↦ ωx`?*
+
+### Two corrections, in the same check
+
+The first spectral pass used an **antisymmetric** pair matrix, which needs a sign
+per edge that is no part of the pair set. T4 gives **four distinct spectra** over
+twelve random orientations. It went unnoticed because the check looked only at T2
+and M3 — which happen to be orientation-independent — and only at the top four
+magnitudes, which are degenerate for T4.
+
+And the orientation check itself **printed a conclusion its own output
+contradicted**: four identical spectra above the line "the spectrum is NOT a
+property of the pair set". The conclusion was right; the displayed evidence did
+not support it, and it took a second run to find the T4 counterexample that does.
+Stating a conclusion the visible data contradicts is the same defect as stating
+one the data does not reach — and more dangerous, because it looks verified.
+
+Full record: `manifests/qsigma_r1p_complex_axis_finding.json`.
