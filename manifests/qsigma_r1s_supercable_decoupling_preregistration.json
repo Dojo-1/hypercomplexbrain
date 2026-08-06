@@ -1,0 +1,110 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R1S",
+  "title": "Decoupling over GF(16) orbit caps on a four-strand supercable",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-08-06",
+
+  "why_this_is_preregistered_rather_than_measured_first": "R1R recorded that four rules have been proposed for the collapse and three died out of sample, each written down as confirmed BEFORE being shown a case it could not have anticipated, each refuting case cheap, each run only afterwards. R1R named the fix -- generate the refuter before recording the rule -- and did not make it. This manifest is that fix, applied once: the controls below are declared with their predicted outcomes, and the round reports against them whether or not they are flattering.",
+
+  "question": "Fourier decoupling holds because of CURVATURE: partition a curved surface into caps and the norm of the sum is controlled by the l2 aggregate of the caps, while a FLAT surface fails because its pieces interfere constructively everywhere. R1R found the same shape without naming it -- cut_crossing_pairs is a transversality count, and T4 read at an even split is flat against the cut and collapses, read at an odd split is transverse and does not. Does an l2 decoupling inequality hold for entropy production over GF(16) orbit caps, and does its constant degenerate exactly where the cap geometry goes flat relative to the cut?",
+
+  "provenance_of_the_construction": {
+    "what_the_user_specified": "caps should be the GF(16) orbits, assembled into (GF(16) x GF(16) x GF(16) x GF(16)) supercables, referring to manifold_latest_latest_latest.docx.",
+    "what_the_document_actually_contains": "T^(4) = [R] tensor [R] tensor [r] tensor [r] -> 16 partition spaces, with [R] the system-level remainder (7D octonion), [r] the clause-level remainder (7D, per clause), read through a (2,2) lens whose quadrants are PP (tractable evolution), PN/NP (wall-crossing), NN (dark mode, sedenion dominant).",
+    "what_the_document_does_NOT_contain": [
+      "the word 'supercable' -- 0 occurrences. 'cable' occurs once and is the substring inside 'applicable'.",
+      "'GF(16)' -- 0 occurrences. 'GF(2' -- 0 occurrences. The field tower is this repository's construction in src/aionq/gf_frames.py and is not in the source document.",
+      "'Hong Wang', 'Falconer', 'Kakeya' -- 0 occurrences each. The document's own eight uses of 'decoupl' are about SAT/UNSAT complexity decoupling, not Fourier decoupling."
+    ],
+    "so_what_is_borrowed": "the COMBINATORIAL SKELETON only: a four-fold tensor over an index set of size 16, and a four-class quadrant partition. Both are design language, tagged [S] by docs/MANIFOLD_REFERENCE.md's own reading rule, and neither inherits theorem status. The correspondence that makes it usable here is arithmetic and stated plainly: T^(4) gives 16 partition spaces, and this testbed has exactly 16 modes labelled by GF(16). Nothing stronger is claimed.",
+    "the_hypercomplexization_is_this_repository_s_move": "replacing the document's 7D octonionic remainders with GF(16) fibres is the standing instruction from earlier in this session ('from root seed hypercomplexize, instead of n=4 let GF[GF(2,2), GF(2,2)]'), not a reading of the document."
+  },
+
+  "scope": {
+    "inside": [
+      "a four-strand supercable: 4 x 16 = 64 Majorana modes = 32 qubits, each strand labelled by GF(16)",
+      "caps = orbits of a subgroup-ladder rung acting within a strand, plus explicitly declared cross-strand coupling pairs",
+      "an l2 decoupling functional over those caps and its measured constant",
+      "the covariance-matrix simulator required to reach 64 modes at all",
+      "the four controls below, all of them, reported whatever they say"
+    ],
+    "outside": [
+      "any claim about hardness. Every state in this construction is exactly Gaussian by R1J and R1K; the subject is entanglement across a cut.",
+      "any claim that this is Fourier decoupling, or that a decoupling THEOREM holds. What is measured is whether an inequality of that SHAPE holds with a constant, on this finite object.",
+      "any claim about the Manifold document's T^(4) beyond borrowing its index arithmetic.",
+      "QTau-Germinal, a further cognitive organ, and independent witnessing -- all still out of scope per the standing contract."
+    ]
+  },
+
+  "enabling_step_and_its_gate": {
+    "problem": "64 modes is 2^32 amplitudes. Exact state-vector simulation, which every round from R1K to R1R used, is impossible here.",
+    "solution": "every state in this line is exactly Gaussian, so it is fully described by the 64 x 64 real antisymmetric covariance matrix Gamma_jk = (i/2)<[c_j, c_k]>. A parity herald on (a,b) acts on Gamma in closed form, and the entanglement entropy across a mode subset A follows from the imaginary eigenvalues of the restricted block: S = sum over k of H2((1 + nu_k)/2) with H2 the binary entropy.",
+    "MANDATORY GATE, declared before implementation": "the covariance simulator must reproduce the existing state-vector results at 16 modes -- rung_pairs storms for T2, T4, FROBENIUS and M3 at every split, and the R1R cut sweep table -- to within 1e-9 on final entropy. If it does not, the round STOPS and reports the discrepancy as its result. A new instrument that disagrees with the old one on the old one's domain is a bug until proven otherwise, and this repository has twice mistaken an instrument artifact for a finding (the folding statistic in R1J, the display precision in R1O).",
+    "second_gate": "the simulator must also reproduce that every state stays Gaussian, which in the covariance formalism means Gamma remains real antisymmetric with Gamma^2 = -I to 1e-9. This is a weaker check than wick_defect and is recorded as weaker: by pond.py's own module docstring, Gamma^2 = -I passes on states it has no business passing on. It is a necessary condition only."
+  },
+
+  "the_functional": {
+    "definition": "for a herald family F decomposed into caps F = union over theta of F_theta, let Delta S(G) be the change in entanglement entropy across the declared cut produced by a storm driven by family G, from the same prepared state, at the same step budget and seed. Define the decoupling constant C(F) = |Delta S(F)| / sqrt(sum over theta of Delta S(F_theta)^2).",
+    "reading": "C = O(1), or growing no faster than N^epsilon in the number of caps N, is DECOUPLING: the caps act independently in l2 and the whole is controlled by its parts. C growing like sqrt(N) is the trivial Cauchy-Schwarz bound and means NO decoupling: the caps interfere constructively and the decomposition buys nothing.",
+    "declared_in_advance": "the threshold is C < 2 for decoupling and C > 0.7 * sqrt(N) for no-decoupling, with the band between them reported as INDETERMINATE rather than pushed to either side. These numbers are fixed here and will not be moved after seeing data."
+  },
+
+  "controls_with_predicted_outcomes_declared_before_measurement": [
+    {
+      "id": "C1-FLAT",
+      "construction": "a supercable whose caps all lie inside one block of the cut -- zero transversality, the degenerate case",
+      "prediction": "NO decoupling, C near sqrt(N)",
+      "why_it_is_the_refuter": "if a flat configuration decouples just as well as a curved one, the functional is not measuring curvature and the whole framing is wrong. This is the case that must be run first."
+    },
+    {
+      "id": "C2-CURVED",
+      "construction": "caps spread transversally across the cut, matched in cap count and total pair count to C1",
+      "prediction": "decoupling, C small",
+      "matching_requirement": "C1 and C2 must agree in number of caps, number of pairs per cap, and total pairs. An unmatched comparison measures size, not geometry -- the error R1M made with pair counts and R1O had to correct."
+    },
+    {
+      "id": "C3-BLINDNESS",
+      "construction": "compare C1 against C2 and against a random family matched to both",
+      "prediction": "the three must separate. If C is the same on all three within noise, the functional is BLIND and the round reports BLIND.",
+      "precedent": "the repository already has an ORBIT-COLLAPSED / ORBIT-RESOLVING / BLIND classification, and BLIND is a legitimate outcome that has been recorded before."
+    },
+    {
+      "id": "C4-RELABELLING",
+      "construction": "apply a random permutation of the 64 modes to every family and recompute C",
+      "prediction": "NOT DECLARED. This is the control R1M omitted and R1Q had to run three rounds late, and it is being run first this time precisely because its outcome is not obvious.",
+      "how_each_outcome_is_read": {
+        "C_moves_under_relabelling": "the decoupling constant is a fact about the mode labelling, exactly as the collapse dichotomy turned out to be. The round reports a labelling artifact and does NOT dress it as geometry.",
+        "C_is_invariant_under_relabelling": "the constant is intrinsic to the family, which would be the first quantity in this whole line that is. That would be the finding, and it would need its own out-of-sample check before being recorded."
+      }
+    }
+  ],
+
+  "kill_conditions": [
+    "the covariance simulator fails either gate against the 16-mode state-vector results -- STOP, report the discrepancy",
+    "entropy differences fall below 1e-7, where the functional is a ratio of numerical noise -- STOP, report the floor",
+    "C1, C2 and C3 do not separate -- report BLIND and do not proceed to interpretation",
+    "the round produces a rule that separates the families it was built on: it may NOT be recorded until a family it was not built on has been generated and run against it. This is the standing failure mode and it is a kill condition, not an aspiration."
+  ],
+
+  "what_would_make_this_round_worthless": "measuring C on the seven ladder rungs, finding a clean separation, and recording it. That is precisely what the Pauli centre, the same-qubit count and rule C's weak direction all did. The controls above are the round, and the rung table is decoration.",
+
+  "evidence_ceiling": "ATTESTED at best. Verifier equals producer; the witness batch that would raise this is PENDING on every task, which is a transport state and not a verdict. No independent witnessing is claimed or claimable this round.",
+
+  "stop_condition": "the round ends when the four controls have been run and reported, or when a kill condition fires. It does not end when an attractive number appears.",
+
+  "typed_remainders_declared_in_advance": [
+    {
+      "kind": "borrowing_remainder",
+      "statement": "the four-fold structure is borrowed from a research log's design language and hypercomplexized by this repository. Neither the borrowing nor the hypercomplexization is justified by anything measured. If the round produces a result, that result is about 64 Majorana modes and a bipartition, and the supercable framing carries none of it."
+    },
+    {
+      "kind": "analogy_remainder",
+      "statement": "'decoupling' here names the SHAPE of an inequality, not the theorem. Bourgain-Demeter is about L^p norms of extension operators over caps of a curved surface at scale delta, with an epsilon-loss and an asymptotic regime. This object is finite, has no scale parameter and no asymptotics, so no epsilon-loss statement can even be posed. The word is a guide, and the moment it is used as evidence the round has failed."
+    },
+    {
+      "kind": "instrument_remainder",
+      "statement": "the covariance simulator will be new code validated against old code on the old code's domain. That establishes agreement where both run and nothing where only one does -- which is the entire 64-mode regime the round is for. The extrapolation is the round's largest unguarded step and is declared as such here rather than discovered later."
+    }
+  ]
+}

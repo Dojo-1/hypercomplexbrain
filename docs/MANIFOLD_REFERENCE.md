@@ -1,8 +1,27 @@
 # Manifold programme — condensed reference
 
 Source: `manifold_latest_latest_latest.docx`, a continuous research conversation
-(1.56M characters, largely with Claude 4.6), plus `Manifold_Research_Atlas_v0.1.docx`.
-Four uploaded copies are byte-identical (md5 `7cc62d56c7`).
+(largely with Claude 4.6), plus `Manifold_Research_Atlas_v0.1.docx`.
+
+**Provenance, remeasured in R1R.** The four uploaded copies are indeed
+byte-identical — but the two numbers this header used to give were both wrong,
+and both were checkable:
+
+| claimed | measured |
+|---|---|
+| md5 `7cc62d56c7` | md5 `37875de3beb29e89bdc6d89810c68d6c` |
+| 1.56M characters | **3,052,861** visible characters |
+
+The recorded md5 matches nothing reachable: not the `.docx` bytes, not the Atlas
+(`0880fc5f6986…`), not the extracted text under any extraction tried (raw
+`7f95a2d9339c…`, `<w:t>`-runs only `ba9c3b115ba6…`, whitespace-collapsed
+`03efb8e9bc70…`). The character count is off by roughly a factor of two against a
+count of the visible `<w:t>` runs, and no extraction reproduced 1.56M.
+
+Recorded rather than quietly fixed, because this file's own reading rule says
+*"frequency in the document is not evidence"* — and it was carrying two
+unverified quantitative claims about the document itself. The Atlas md5 is
+`0880fc5f6986…`.
 
 This file exists because the source is a **conversation, not a specification**:
 its definitions are scattered, revised in place, and sometimes contradict earlier
