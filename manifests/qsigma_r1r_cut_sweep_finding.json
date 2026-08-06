@@ -1,0 +1,115 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1R-CUT-SWEEP-001",
+  "status": "measured and recorded. A consolidation round -- no new territory -- whose primary result is that the mechanism R1Q promoted one commit earlier is REFUTED in one of its two directions by the control R1Q's own remainder named. The refutation came with its own repair, tested by intervention rather than by fitting.",
+  "supersedes": ["manifests/qsigma_r1q_labelling_artifact_finding.json"],
+  "subject": "src/aionq/pond.py::entanglement_entropy, ::cut_crossing_pairs, ::breathing_trajectory (all gaining a `split` parameter) and src/aionq/self_audit.py::manifest_pointers_resolve",
+
+  "why_this_round_exists": "asked for a consolidation cycle rather than a further advance. Four items were outstanding: the cut had never been varied, three superseded manifests still asserted a withdrawn claim in their own text, the withdrawn claim still lived in live docstrings and in a test's own name, and nothing checked that manifests point at tests that exist.",
+
+  "part_one_the_refutation": {
+    "the_unexamined_choice": "entanglement_entropy cut the register at qubits // 2, and cut_crossing_pairs was defined against the same boundary. The two agreed by construction, and R1M through R1Q never varied it. R1Q's scope_remainder said so in as many words and left it.",
+    "the_prediction": "rule C says a family with zero pairs straddling the cut must collapse. At split = 2 the rung M3 has zero crossing pairs. So M3 -- the canonical NON-collapsing family of four rounds -- must collapse when the entropy is read after qubit 2.",
+    "measured": {
+      "design": "4 rungs x 7 cuts x 3 storm seeds, 400 steps, n = 8 qubits",
+      "cells": 28,
+      "agreements": 27,
+      "the_one_disagreement": {
+        "family": "M3", "split": 2, "crossing_pairs": 0,
+        "final_entropy_400_steps": [0.983691, 0.978267, 0.740547],
+        "final_entropy_900_steps": [0.983691, 0.978267, 0.740547],
+        "predicted": "collapse", "observed": "no collapse"
+      },
+      "not_a_step_budget_artifact": "identical to six significant figures at 400 and at 900 steps, so it is a plateau and not a slow decay. The R1O trap was checked for explicitly."
+    },
+    "verdict": "the weak direction of rule C -- zero crossings implies collapse -- is WITHDRAWN. It was recorded one commit earlier as 'confirmed, 9 of 9', and that evidence was three families constructed at a single cut. The first genuinely out-of-sample cell refuted it.",
+    "the_strong_direction_stands": "crossing pairs implies no ROBUST collapse survives all 28 cells. It is weakened in one respect: individual seeds can still reach zero at a low crossing count -- T4 at split 5 gives 0, 0, 1 -- so what crossings destroy is seed-reproducibility, not possibility.",
+    "executable_form": "tests/test_pond.py::test_zero_crossings_is_necessary_and_not_sufficient"
+  },
+
+  "part_two_the_repair": {
+    "the_diagnosis": "M3 is multiplication and 0 is its fixed point, so mode 0 appears in NO M3 pair and receives no herald ever. At split = 2 the left block is modes 0..3; it contains a mode the family cannot reach, so it cannot be driven to a product across the cut.",
+    "the_intervention": "add exactly one pair to cover it. M3 + (0,1) has the same zero crossing pairs at split = 2 and differs in nothing else.",
+    "measured": {
+      "M3_alone": {"modes_uncovered": [0], "final_entropy_400": [0.983691, 0.978267, 0.740547], "final_entropy_900": [0.983691, 0.978267, 0.740547]},
+      "M3_plus_0_1": {"modes_uncovered": [], "final_entropy_400": [0.0, 0.0, 0.0], "final_entropy_900": [0.0, 0.0, 0.0]}
+    },
+    "the_corrected_condition": "zero pairs across the cut AND every mode covered by some pair within its block.",
+    "why_this_is_stronger_evidence_than_the_27_agreements": "it is an intervention. One pair was added for one stated reason and the outcome flipped from a plateau at 0.74-0.98 to exact zero at every seed and both budgets. The 27 agreeing cells are consistent with several rules; this single flip is not.",
+    "executable_form": "tests/test_pond.py::test_one_pair_chosen_for_coverage_restores_the_collapse"
+  },
+
+  "part_three_the_cut_dependence_itself": {
+    "statement": "the same rung reads differently depending only on where the register is cut. The family is untouched.",
+    "crossing_counts_by_split": {
+      "splits": [1, 2, 3, 4, 5, 6, 7],
+      "T2": [0, 0, 0, 0, 0, 0, 0],
+      "T4": [4, 0, 4, 0, 4, 0, 4],
+      "FROBENIUS": [0, 0, 4, 0, 6, 8, 6],
+      "M3": [2, 0, 4, 8, 8, 8, 4]
+    },
+    "the_clean_case": "T4 is translation by GF(4), so its pairs differ only in the low two bits and straddle a boundary at mode 2k exactly when 2k = 2 mod 4. Its collapse therefore ALTERNATES with the cut. Nothing about T4 changes.",
+    "consequence": "every collapse statement in R1M through R1R is indexed by a bipartition, and none of those rounds carried the index. This manifest adds it retroactively: read all of them at split = 4.",
+    "executable_form": "tests/test_pond.py::test_the_middle_cut_was_never_an_innocent_default"
+  },
+
+  "part_four_repository_hygiene": {
+    "the_retraction_was_propagated": {
+      "problem": "R1Q recorded the retraction in a new manifest and left the withdrawn claim asserted as fact in four live places, including a test whose NAME was the claim.",
+      "done": [
+        "tests/test_pond.py::test_the_break_in_the_field_tower_is_between_gf4_and_gf16 renamed to ::test_translation_by_a_proper_subfield_collapses_at_this_labelling. The measurement is unchanged and still passes; a test whose title asserts a withdrawn claim re-publishes the error on every green run.",
+        "pond.py::complement_pairs and the complement test both carried 'collapse is about the family being closed under a subgroup'. Marked withdrawn in place, with the measurement left standing.",
+        "the correction binding in self_audit.py was repointed to the renamed test."
+      ]
+    },
+    "supersession_made_bidirectional": {
+      "problem": "the convention was forward-only. A new manifest declares what it supersedes; the superseded file said nothing. R1M could be found on its own, stating a withdrawn claim as a finding, with no signal that R1Q had retracted it.",
+      "done": "R1M, R1N and R1O carry a supersession block naming R1Q, the specific withdrawn clauses, and what still stands. R1Q declares what it supersedes. Stamped by textual insertion rather than a JSON round-trip, so the diffs are additive and no existing value was reformatted.",
+      "found_beyond_the_case_it_was_built_for": "the enforcing test immediately flagged three more one-directional supersessions in the R6k Part B chain -- interval_correction -> effective_protocol -> effective_protocol_v2 -> input_freeze. All three now carry back-pointers. No clause of those manifests was altered and none of them asserts anything about execution: Part B has still never been run.",
+      "executable_form": "tests/test_self_audit.py::test_supersession_is_recorded_in_both_directions"
+    },
+    "manifest_pointers_are_now_checked": {
+      "problem": "executable_form is the field that turns a manifest's statement into something a reader can run, and nothing had ever checked that those pointers landed anywhere. A manifest is not executed, so a pointer into nothing fails silently and forever.",
+      "measured": "70 pointers across 15 manifests. One was broken -- by this round's own rename, in the same commit that made it.",
+      "the_shape_of_the_defect": "this is the repository's recurring pattern in its purest form -- a guard whose witness cannot reach the case it asserts -- except that here there was no guard at all.",
+      "negative_control": "the checker is exercised against a fabricated corpus containing a deliberately dangling pointer, because a check that has never reported a problem has not been tested.",
+      "executable_form": "tests/test_self_audit.py::test_every_manifest_pointer_resolves_to_a_test_that_exists, and ::test_the_pointer_check_can_actually_fail"
+    }
+  },
+
+  "the_pattern_this_round_makes_explicit": {
+    "statement": "four rules have now been proposed for the collapse and three have died out of sample: the Pauli centre (perfect on ten families, killed by a random perfect matching), the same-qubit count (killed by a family carrying the maximum count), and rule C's weak direction (killed by the first cell at a cut it had not seen). The survivor is one direction of one rule plus a coverage clause found by intervention.",
+    "the_common_feature_of_the_three_failures": "each was fitted to the families that suggested it and each was recorded as confirmed before being shown a case it could not have anticipated. In every instance the refuting case was cheap -- a random matching, one added pair, one changed integer -- and in every instance it was run only after the rule had been written down as a finding.",
+    "what_would_change_this": "generating the refuting case BEFORE recording the rule, as a required step rather than as a follow-up round. Nothing in the repository enforces that, and this round did not add it."
+  },
+
+  "what_is_not_claimed": [
+    "that the corrected condition -- zero crossings and full coverage -- is right. It is one intervention on one family at one cut, plus 27 consistent cells. It is the fourth rule in this line and the previous three all looked at least this good when they were recorded.",
+    "that the cut sweep is exhaustive. Four rungs of seven, contiguous cuts only, three seeds, one prepared state. Non-contiguous bipartitions were not tried and are the obvious next attack.",
+    "any bearing on hardness. Every state in every one of these storms is exactly Gaussian; the whole subject is entanglement across a chosen cut.",
+    "that the hygiene work found everything. It found what its two checks look for. No check yet enforces that a commit describing an artifact surface as 'preserved' preserved it -- the open remainder of S4-G100-ACAF-REGEN-001."
+  ],
+
+  "typed_remainders": [
+    {
+      "kind": "measurement_remainder",
+      "statement": "the coverage clause was tested by adding (0,1) to M3 at split 2, at three seeds. A family with full coverage and zero crossings that nonetheless fails to collapse would refute it and was not searched for. The search is cheap and was not run, which is exactly the omission the round's own pattern section names."
+    },
+    {
+      "kind": "scope_remainder",
+      "statement": "cuts here are contiguous prefixes of the qubit register. entanglement_entropy cannot express a non-contiguous bipartition, so the sweep covers 7 of the 127 non-trivial cuts on 8 qubits. Whether rule C survives an interleaved cut is untested and the answer is not obvious, because interleaving changes the crossing count of every family at once."
+    },
+    {
+      "kind": "propagation_remainder",
+      "statement": "R1Q's own text still states the weak direction as 'confirmed, 9 of 9'. It now carries a supersession pointer to this manifest, which is the same remedy R1Q applied to R1M -- and it has the same weakness: the original sentence is still there for anyone who reads only the one file."
+    },
+    {
+      "kind": "instrument_remainder",
+      "statement": "manifest_pointers_resolve checks that a pointer names a test that exists. It does not check that the test asserts what the manifest says it asserts, and no mechanical check can. The rename this round performed was necessary precisely because a test's name had drifted from its content, and only a reader caught that."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer. The batch that would raise it above ATTESTED is still PENDING on every task, which is a transport state and not a verdict."
+    }
+  ]
+}

@@ -19,7 +19,8 @@ import pytest
 
 from aionq.self_audit import (CORRECTIONS, corrections_are_bound,
                               envelope_census, godelian_gap, independence_report,
-                              iter_envelopes, preregistration_ordering,
+                              iter_envelopes, manifest_pointers_resolve,
+                              preregistration_ordering,
                               recognition_asymmetry, repo_root, self_audit,
                               typed_remainder_census, witness_graph)
 from aionq.witness_nerve import EvidenceRank, WitnessAct, WitnessGraph, evidence_rank
@@ -618,3 +619,83 @@ def test_a_pre_existing_modification_target_is_not_a_violation(tmp_path):
     assert row["files_predating_manifest"] == 1
     assert row["files_created_after_manifest"] == 1
     assert row["ordering_status"] == "holds"
+
+
+# ---------------------------------------- manifests must point at live things
+
+def test_every_manifest_pointer_resolves_to_a_test_that_exists():
+    """The guard that did not exist for sixteen rounds.
+
+    `executable_form` is the field that turns a manifest's statement into
+    something a reader can run, and nothing checked that those pointers landed
+    anywhere. Seventy of them across fifteen manifests, and the gap surfaced for
+    the dullest possible reason: R1R renamed a test whose old name asserted a
+    claim R1Q had withdrawn, and the manifest citing it went stale in the same
+    commit.
+
+    A manifest is not executed, so a pointer into nothing fails silently and
+    forever. That is this repository's recurring defect in its purest form -- a
+    guard whose witness cannot reach the case it asserts -- except that here
+    there was no guard at all.
+    """
+    result = manifest_pointers_resolve()
+
+    assert result["pointers"] > 60, "the extractor stopped seeing pointers"
+    assert result["unresolved"] == []
+    assert result["all_resolve"]
+
+
+def test_the_pointer_check_can_actually_fail(tmp_path):
+    """Because a check that has never reported a problem has not been tested.
+
+    A fabricated corpus with one manifest naming a test that was never written.
+    If this passes, the check above is decoration.
+    """
+    (tmp_path / "artifacts").mkdir()
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "manifests").mkdir()
+    (tmp_path / "tests" / "test_real.py").write_text(
+        "def test_that_exists():\n    pass\n", encoding="utf-8")
+    (tmp_path / "manifests" / "good.json").write_text(json.dumps(
+        {"executable_form": "tests/test_real.py::test_that_exists"}), encoding="utf-8")
+    (tmp_path / "manifests" / "bad.json").write_text(json.dumps(
+        {"nested": {"executable_form": "tests/test_real.py::test_that_never_was"}}),
+        encoding="utf-8")
+
+    result = manifest_pointers_resolve(tmp_path)
+
+    assert result["pointers"] == 2
+    assert result["resolved"] == 1
+    assert not result["all_resolve"]
+    assert result["unresolved"][0]["manifest"] == "bad.json"
+
+
+def test_supersession_is_recorded_in_both_directions():
+    """A reader who arrives at the old manifest first must be told.
+
+    The repository's convention was forward-only: a new manifest lists what it
+    `supersedes` and the superseded file says nothing. So R1M could be found on
+    its own, stating a withdrawn claim as a finding, with no signal that R1Q had
+    retracted it. R1R makes the link bidirectional and this test keeps it that
+    way -- every manifest named in someone's `supersedes` must carry a matching
+    `supersession.superseded_by` pointing back.
+    """
+    root = repo_root()
+    claimed = {}
+    for path in sorted((root / "manifests").glob("*.json")):
+        document = json.loads(path.read_text(encoding="utf-8"))
+        targets = document.get("supersedes")
+        for target in ([targets] if isinstance(targets, str) else targets or []):
+            if target.startswith("manifests/"):
+                claimed.setdefault(target, []).append(f"manifests/{path.name}")
+
+    assert claimed, "no manifest declares a supersession at all"
+
+    missing = []
+    for target, superseders in claimed.items():
+        document = json.loads((root / target).read_text(encoding="utf-8"))
+        back = (document.get("supersession") or {}).get("superseded_by")
+        if back not in superseders:
+            missing.append((target, back, superseders))
+
+    assert missing == [], f"one-directional supersession: {missing}"

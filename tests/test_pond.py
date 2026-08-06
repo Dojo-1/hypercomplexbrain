@@ -496,16 +496,28 @@ def test_a_non_collapsing_rung_never_stops_moving(rung):
 @pytest.mark.parametrize("rung,collapses", [
     ("T2", True), ("T4", True), ("FROBENIUS", True), ("T16", False),
 ])
-def test_the_break_in_the_field_tower_is_between_gf4_and_gf16(rung, collapses):
-    """Translation by a PROPER subfield collapses the state; by the whole field not.
+def test_translation_by_a_proper_subfield_collapses_at_this_labelling(rung, collapses):
+    """The measurement stands. The name it used to carry does not.
 
-    `T2`, `T4` and `T16` are translation by `GF(2)`, `GF(4)` and `GF(16)` -- the
-    subfield tower itself. Over five seeds, the proper subfields reach entropy 0
-    every time and the full field never does (3.0, 1.0, 1.0, 2.0, 1.0).
+    This test was called `test_the_break_in_the_field_tower_is_between_gf4_and_
+    gf16` and its docstring read "translation by a PROPER subfield collapses the
+    state; by the whole field not", as though the subfield tower were the cause.
+    **R1Q withdraws that reading.** The numbers are unchanged and still
+    seed-robust over five seeds -- what changed is that they are a fact about the
+    Jordan-Wigner labelling, not about `GF(16)`:
 
-    This is the seed-robust core of R1M. That round reported a single-draw table
-    of endpoint values; the values fluctuate seed to seed and only the
-    collapse/no-collapse dichotomy survives.
+        relabel the modes, which preserves every intrinsic invariant of the pair
+        set, and the collapse vanishes -- 9 of 9 as given, 0 of 72 relabelled;
+
+        `T2`, `T4` and `FROBENIUS` are exactly the families with ZERO pairs
+        straddling the cut that `entanglement_entropy` reads, and `T16` is not.
+
+    Kept under an honest name because the measurement is real and reproducible,
+    and because a test whose *title* asserts a withdrawn claim is worse than no
+    test: it re-publishes the error on every green run.
+
+    See `test_the_collapse_does_not_survive_a_relabelling_of_the_modes` and
+    `test_the_cut_is_what_the_collapse_tracks`.
     """
     from aionq.pond import collapse_trajectory
 
@@ -681,8 +693,14 @@ def test_the_orthogonal_clone_of_a_rung_never_collapses(rung):
 
     `M15^c` has 15 pairs -- the same count as `M3`, twice `T2`'s 8 -- and does
     not collapse where `T2` does. So collapse is not about how many pairs a
-    family has. It is about the family being closed under a subgroup, and a
-    complement is exactly the thing that is not.
+    family has.
+
+    The reason once given for it -- "the family is closed under a subgroup, and a
+    complement is exactly the thing that is not" -- is WITHDRAWN by R1Q. Closure
+    survives a relabelling of the modes and the collapse does not, 0 of 72. A
+    complement's real property is that it straddles the cut: `T2^c` has 64
+    crossing pairs against `T2`'s 0. The measurement stands; the explanation did
+    not.
     """
     from aionq.pond import breathing_trajectory, complement_pairs
 
@@ -975,3 +993,94 @@ def test_the_pauli_centre_separates_every_family_it_was_fitted_to_and_then_fails
     assert pauli_centre_rank(matching)["radical"] == 8, "the same value as T2"
     assert len(cut_crossing_pairs(matching)) > 0, "and this is why it differs"
     assert breathing_trajectory(matching, steps=150, seed=7)["final_entropy"] > 0.5
+
+
+# --------------------------------------------------------------------------
+# R1R: sweeping the cut refutes the rule that R1Q had just promoted
+# --------------------------------------------------------------------------
+
+def test_zero_crossings_is_necessary_and_not_sufficient():
+    """The decisive out-of-sample prediction, and it failed.
+
+    R1Q read the cut at `qubits // 2` because `entanglement_entropy` chose it
+    there, and R1Q's own remainder flagged that no round had ever varied it.
+    Varying it puts rule C's prediction in front of the rule: at `split = 2` the
+    family `M3` has **zero** crossing pairs and must therefore collapse.
+
+        M3 at split 2, crossing pairs 0, three seeds:
+            400 steps   0.984  0.978  0.741
+            900 steps   0.984  0.978  0.741
+
+    Identical at both budgets, so not the R1O trap. Over the whole sweep -- four
+    rungs, seven cuts, three seeds -- 27 of 28 cells agreed with rule C and the
+    one that did not was the single cell the rule had never seen.
+
+    **The miss is worth more than the 27.** `M3` is multiplication and `0` is its
+    fixed point, so mode 0 is never heralded and the left block cannot be
+    purified. Zero crossings is necessary; reaching every mode in each block is
+    the missing half. See the next test.
+    """
+    from aionq.pond import breathing_trajectory, cut_crossing_pairs, rung_pairs
+
+    pairs = rung_pairs("M3")
+    assert len(cut_crossing_pairs(pairs, split=2)) == 0
+    assert 0 not in {mode for pair in pairs for mode in pair}, (
+        "0 is the fixed point of multiplication, so M3 never heralds it")
+
+    finals = [breathing_trajectory(pairs, steps=400, seed=seed, split=2)["final_entropy"]
+              for seed in (7, 11, 23)]
+    assert all(value > 0.5 for value in finals), (
+        "zero crossings did not produce a collapse; that is the refutation")
+
+
+def test_one_pair_chosen_for_coverage_restores_the_collapse():
+    """The refinement, tested the only way a mechanism can be: by intervening.
+
+    `M3 + (0,1)` has the same zero crossing pairs at `split = 2` and differs from
+    `M3` in exactly one thing -- mode 0 now receives heralds. All three seeds go
+    to exactly 0.0, at 400 steps and at 900.
+
+    So the condition is *zero pairs across the cut AND every mode covered*. This
+    is the fourth rule in this line; the Pauli centre and the same-qubit count
+    both died out of sample, and rule C survived only after its weak direction
+    was cut off. Recorded that way rather than as a clean discovery.
+    """
+    from aionq.pond import breathing_trajectory, cut_crossing_pairs, rung_pairs
+
+    pairs = list(rung_pairs("M3")) + [(0, 1)]
+
+    assert len(cut_crossing_pairs(pairs, split=2)) == 0, "still no crossings"
+    assert {mode for pair in pairs for mode in pair} == set(range(16))
+
+    finals = [breathing_trajectory(pairs, steps=400, seed=seed, split=2)["final_entropy"]
+              for seed in (7, 11, 23)]
+    assert all(abs(value) < 1e-9 for value in finals)
+
+
+def test_the_middle_cut_was_never_an_innocent_default():
+    """Every collapse result of R1M through R1Q is relative to one choice.
+
+    `entanglement_entropy` cuts at `qubits // 2` and `cut_crossing_pairs` is
+    defined against the same boundary, so the two agreed by construction and four
+    rounds never noticed. Move the cut and the dichotomy moves with it:
+
+        T2         0 crossings at every cut          collapses at every cut
+        T4         4 0 4 0 4 0 4  (splits 1..7)      collapses only at even splits
+        FROBENIUS  0 0 4 0 6 8 6                     collapses at 1, 2, 4
+        M3         2 0 4 8 8 8 4                     collapses at none
+
+    `T4` is the clean case: it is translation by `GF(4)`, its pairs differ only
+    in the low two bits, so they straddle a boundary at `2k` exactly when
+    `2k = 2 mod 4`. The rung is unchanged; the reading of it alternates with
+    where the register is cut.
+    """
+    from aionq.pond import cut_crossing_pairs, rung_pairs
+
+    counts = {rung: [len(cut_crossing_pairs(rung_pairs(rung), split=split))
+                     for split in range(1, 8)]
+              for rung in ("T2", "T4", "FROBENIUS", "M3")}
+
+    assert counts["T2"] == [0] * 7
+    assert counts["T4"] == [4, 0, 4, 0, 4, 0, 4]
+    assert counts["FROBENIUS"] == [0, 0, 4, 0, 6, 8, 6]
+    assert counts["M3"] == [2, 0, 4, 8, 8, 8, 4]

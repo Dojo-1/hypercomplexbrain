@@ -275,15 +275,22 @@ def outcome_probability(gamma, first: int, second: int, outcome: int = 1) -> flo
     return float((1.0 + outcome * np.asarray(gamma)[first, second]) / 2.0)
 
 
-def entanglement_entropy(state, qubits: int) -> float:
-    """Von Neumann entropy across the middle cut, in bits.
+def entanglement_entropy(state, qubits: int, split: int | None = None) -> float:
+    """Von Neumann entropy across a contiguous cut, in bits.
 
     Included because it is what reveals where the storm actually goes.  The
     Gaussianity of the state never moves; its entropy does.
+
+    ``split`` is the number of qubits on the left and defaults to the MIDDLE
+    cut, ``qubits // 2``.  That default was the only cut R1M through R1Q used,
+    and by R1R it is not an innocent one: every collapse result in those rounds
+    is relative to it, because :func:`cut_crossing_pairs` is defined against the
+    same boundary.  Qubit 0 is the most significant index of the state vector,
+    so a left block of ``split`` qubits is modes ``0 .. 2*split - 1``.
     """
     state = np.asarray(state).ravel()
-    left = 2 ** (qubits // 2)
-    values = np.linalg.svd(state.reshape(left, -1), compute_uv=False)
+    split = qubits // 2 if split is None else split
+    values = np.linalg.svd(state.reshape(2 ** split, -1), compute_uv=False)
     weights = values ** 2
     weights = weights[weights > 1e-30]
     return float(-np.sum(weights * np.log2(weights)))
@@ -605,15 +612,24 @@ def complement_pairs(rung: str) -> tuple:
 
     Measured, no complement collapses -- including ``M15^c``, which has 15 pairs,
     the same count as ``M3``, and which fails where ``T2``'s 8 succeed.  So
-    collapse is not about how many pairs a family has; it is about the family
-    being closed under a subgroup.  A complement is exactly the thing that is not.
+    collapse is not about how many pairs a family has.
+
+    SUPERSEDED READING (R1Q).  This docstring used to continue "it is about the
+    family being closed under a subgroup, and a complement is exactly the thing
+    that is not".  That is withdrawn.  Closure under a subgroup is neither
+    necessary nor sufficient: a relabelling of the modes preserves closure and
+    destroys the collapse, 0 out of 72.  What a complement actually is, is a
+    family that straddles the cut -- ``T2^c`` has 64 crossing pairs against
+    ``T2``'s 0 -- and by :func:`cut_crossing_pairs` that is what decides it.  The
+    measurement above is unaffected; only the reason given for it was wrong.
     """
     everything = {(a, b) for a in range(16) for b in range(a + 1, 16)}
     return tuple(sorted(everything - set(rung_pairs(rung))))
 
 
 def breathing_trajectory(pairs, alpha: float = 0.0, steps: int = 150,
-                         seed: int = 7, prepared_seed: int = 0) -> dict:
+                         seed: int = 7, prepared_seed: int = 0,
+                         split: int | None = None) -> dict:
     """A storm of partial heralds at strength ``alpha``.
 
     THE CONTINUUM, and it dissolves R1N's dichotomy.  At ``T2`` with 150 steps:
@@ -661,7 +677,7 @@ def breathing_trajectory(pairs, alpha: float = 0.0, steps: int = 150,
 
     pairs = tuple(pairs)
     walker = np.random.default_rng(seed)
-    entropies = [entanglement_entropy(state, qubits)]
+    entropies = [entanglement_entropy(state, qubits, split)]
     for _ in range(steps):
         first, second = pairs[int(walker.integers(0, len(pairs)))]
         _, probability = weak_herald(state, operators, first, second, alpha, +1)
@@ -669,7 +685,7 @@ def breathing_trajectory(pairs, alpha: float = 0.0, steps: int = 150,
         moved, _ = weak_herald(state, operators, first, second, alpha, outcome)
         if moved is not None:
             state = moved
-        entropies.append(entanglement_entropy(state, qubits))
+        entropies.append(entanglement_entropy(state, qubits, split))
 
     entropies = np.array(entropies)
     breaks = [index for index in range(1, len(entropies))
@@ -721,7 +737,7 @@ def same_qubit_pairs(pairs) -> tuple:
     return tuple(pair for pair in pairs if pair[0] // 2 == pair[1] // 2)
 
 
-def cut_crossing_pairs(pairs, qubits: int = 8) -> tuple:
+def cut_crossing_pairs(pairs, qubits: int = 8, split: int | None = None) -> tuple:
     """The pairs straddling the bipartition that :func:`entanglement_entropy` reads.
 
     That function cuts the register in the middle, so on ``qubits = 8`` the cut
@@ -741,16 +757,33 @@ def cut_crossing_pairs(pairs, qubits: int = 8) -> tuple:
     explains the control that destroyed the centre rule: a random perfect matching
     has four crossing pairs.
 
-    The two directions do not hold equally, and the weaker one is stated as
-    weakly as it was measured:
+    The two directions do not hold equally, and by R1R only one of them holds:
 
-        crossing pairs  ->  no collapse.  Confirmed out of sample on a family
-        carrying all eight Z's and eight crossings, at three seeds.
+        crossing pairs  ->  no ROBUST collapse.  Stands.  Confirmed out of
+        sample on a family carrying all eight Z's and eight crossings, and
+        across all seven cuts of :func:`entanglement_entropy`, 28 cells.
+        Individual seeds can still reach zero at a low crossing count -- ``T4``
+        at split 5 gives ``0, 0, 1`` -- so what crossings destroy is
+        reproducibility across seeds, not the possibility.
 
-        no crossing pairs  ->  collapse.  Confirmed on three random
-        block-diagonal families with ZERO same-qubit pairs, three seeds each:
-        seven of nine reach exact zero at 150 steps and the other two read
-        0.918 and 0.806 at 150, then exact zero at 400 and at 900.  9 of 9.
+        no crossing pairs  ->  collapse.  **REFUTED**, one commit after it was
+        recorded.  Sweeping the cut instead of holding it at the middle put the
+        rule's own prediction in front of it: at ``split = 2`` the family ``M3``
+        has ZERO crossing pairs and must collapse.  It does not -- 0.984, 0.978,
+        0.741 at three seeds, identical at 400 and at 900 steps, so not a budget
+        artifact either.  27 of 28 cells agreed and the one that did not was the
+        single out-of-sample prediction.
+
+    WHAT THE MISS BOUGHT.  Zero crossings is necessary and not sufficient: the
+    family must also *reach* every mode inside each block.  ``M3`` is
+    multiplication, ``0`` is its fixed point, so mode 0 receives no herald ever
+    and the left block cannot be purified.  Adding ONE pair to cover it --
+    ``M3 + (0,1)``, same zero crossings -- takes all three seeds to exactly 0.0
+    at both budgets.  One pair, chosen for coverage, flips it.
+
+    So the condition is: zero pairs across the cut AND every mode covered.  That
+    is a mechanism and it is testable; it is also, still, entirely a fact about
+    the labelling.
 
     The step budget cuts only one way, and that was checked rather than assumed:
     relabelled families run to 900 steps do NOT drift to zero, they freeze at 1.0
@@ -761,8 +794,15 @@ def cut_crossing_pairs(pairs, qubits: int = 8) -> tuple:
     depends entirely on where the modes sit relative to the cut, which is why the
     dichotomy does not survive :func:`relabelling_report`.
     """
-    half = qubits  # modes 0..half-1 on the left, half..2*qubits-1 on the right
-    return tuple(pair for pair in pairs if (pair[0] < half) != (pair[1] < half))
+    # ``split`` counts QUBITS on the left, matching entanglement_entropy's
+    # reshape(2 ** (qubits // 2)).  The first version of this function took the
+    # boundary to be ``qubits`` directly, which agrees for even ``qubits`` and is
+    # wrong for odd -- at 7 qubits the entropy cuts at mode 6 and the crossing
+    # count would have been taken at mode 7.  Latent: no odd case was ever run.
+    split = qubits // 2 if split is None else split
+    boundary = 2 * split         # modes 0..boundary-1 left, boundary.. right
+    return tuple(pair for pair in pairs
+                 if (pair[0] < boundary) != (pair[1] < boundary))
 
 
 def pauli_centre_rank(pairs) -> dict:

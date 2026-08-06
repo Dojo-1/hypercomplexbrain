@@ -2789,3 +2789,100 @@ where the modes sit relative to the cut. The mechanism confirms the retraction
 rather than softening it.
 
 Full record: `manifests/qsigma_r1q_labelling_artifact_finding.json`.
+
+## 8.21 A tock: varying the one thing four rounds held fixed
+
+No new territory. A consolidation cycle over four outstanding items — and the
+first of them refuted the mechanism §8.20 had promoted one commit earlier.
+
+### The cut was never an innocent default
+
+`entanglement_entropy` cut the register at `qubits // 2`, and
+`cut_crossing_pairs` was defined against the same boundary. **The two agreed by
+construction**, and §8.17–§8.20 never varied it. §8.20's own remainder said so
+and left it there.
+
+Varying it puts the rule's prediction in front of the rule. At `split = 2` the
+rung `M3` — the canonical *non*-collapsing family of four rounds — has zero
+crossing pairs, so rule C says it must collapse.
+
+| | 400 steps | 900 steps |
+| --- | --- | --- |
+| `M3` at split 2, 0 crossings | 0.984, 0.978, 0.741 | 0.984, 0.978, 0.741 |
+
+Identical at both budgets, so it is a plateau and not a slow decay — the §8.18
+trap was checked for explicitly. Over the whole sweep, four rungs × seven cuts ×
+three seeds, **27 of 28 cells agreed and the one that did not was the single
+genuinely out-of-sample cell.** The weak direction of rule C is withdrawn.
+
+### The repair, found by intervening rather than fitting
+
+`M3` is multiplication and `0` is its fixed point, so mode 0 appears in no `M3`
+pair and is never heralded. At `split = 2` the left block is modes 0–3 and
+contains a mode the family cannot reach.
+
+Add exactly one pair to cover it. `M3 + (0,1)` has the same zero crossings and
+differs in nothing else:
+
+| family | modes uncovered | final entropy, three seeds |
+| --- | --- | --- |
+| `M3` | `[0]` | 0.984, 0.978, 0.741 |
+| `M3 + (0,1)` | `[]` | **0.0, 0.0, 0.0** |
+
+So the condition is *zero pairs across the cut **and** every mode covered within
+its block*. One pair, added for one stated reason, flips the outcome — which is
+worth more than the 27 agreeing cells, because 27 agreements are consistent with
+several rules and this flip is not.
+
+### The dichotomy moves with the cut
+
+| rung | crossings at splits 1…7 | collapses at |
+| --- | --- | --- |
+| T2 | 0 0 0 0 0 0 0 | every cut |
+| T4 | 4 0 4 0 4 0 4 | even splits only |
+| FROBENIUS | 0 0 4 0 6 8 6 | 1, 2, 4 |
+| M3 | 2 0 4 8 8 8 4 | none |
+
+`T4` is the clean case: translation by `GF(4)`, so its pairs differ only in the
+low two bits and straddle a boundary at mode `2k` exactly when `2k ≡ 2 (mod 4)`.
+Its collapse **alternates** with where the register is cut. Nothing about `T4`
+changes. Every collapse statement from §8.16 onward is indexed by a bipartition
+and none of them carried the index; read them all at `split = 4`.
+
+### Three chores, and one of them found more than it was built for
+
+**The retraction was still asserted as fact in four live places**, including a
+test whose *name* was the withdrawn claim — it re-published the error on every
+green run. Renamed, with the measurement untouched; the docstrings that said
+"collapse is about the family being closed under a subgroup" now say what
+happened to that reading.
+
+**Supersession was forward-only.** A new manifest declared what it superseded and
+the superseded file said nothing, so §8.17's manifest could be read on its own as
+a live finding. Now bidirectional, and enforced by a test — which immediately
+flagged **three more** one-directional links in the R6k Part B chain that had
+nothing to do with this round.
+
+**Nothing checked that manifests point at tests that exist.** 70 pointers across
+15 manifests, never validated in sixteen rounds. One was broken — by this round's
+own rename, in the same commit that made it. This is the repository's recurring
+defect in its purest form, a guard whose witness cannot reach the case it
+asserts, except that here there was no guard at all. The checker is exercised
+against a fabricated corpus with a deliberately dangling pointer, because a check
+that has never reported a problem has not been tested.
+
+### The pattern, stated plainly
+
+Four rules have been proposed for the collapse and three have died out of sample:
+the Pauli centre (perfect on ten families, killed by a random matching), the
+same-qubit count (killed by a family carrying the maximum count), and rule C's
+weak direction (killed by the first cell at an unseen cut). Each was fitted to
+the families that suggested it, and each was written down as confirmed *before*
+being shown a case it could not have anticipated. In every instance the refuting
+case was cheap. In every instance it was run only afterwards.
+
+What would change this is generating the refuting case before recording the rule,
+as a required step rather than as the next round. Nothing enforces that, and this
+round did not add it either.
+
+Full record: `manifests/qsigma_r1r_cut_sweep_finding.json`.

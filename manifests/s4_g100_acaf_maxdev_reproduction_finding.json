@@ -1,0 +1,86 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "S4-G100-ACAF-MAXDEV-REPRO-001",
+  "status": "measured. This closes the open verification remainder of S4-G100-ACAF-REGEN-001, which recorded a mechanism and marked it NOT VERIFIED BY RE-EXECUTION. It has now been re-executed twice. The mechanism is confirmed and one of that finding's remainders is resolved in a direction the finding could not have settled from the artifact alone.",
+  "supersedes": ["manifests/s4_g100_acaf_frame_sweep_regeneration_finding.json"],
+  "subject": "artifacts/s4_g100/summaries/acaf_frame_sweep.json against artifacts/s4_g100/reproductions/acaf_frame_sweep_r1r_linux.json",
+
+  "what_was_open": "S4-G100-ACAF-REGEN-001 found that a regeneration of a file declared preserved changed 924 leaves: 923 continuous last-bit drifts in rows[*].gap_k, and ONE discrete change, rows[232].sheaf_maxdev moving 4/238 -> 3/238. It proposed that a tie at the extremal frame resolved the other way under last-bit noise, and stated explicitly that confirming this required re-running the sweep under both float environments, which had not been done.",
+
+  "method": {
+    "command": "experiments/run_acaf_frame_sweep.py, executed twice, with its single write site redirected to a scratch directory so the committed artifact was never touched",
+    "why_redirected": "the script's only output path is OUT / 'acaf_frame_sweep.json', which is the committed file itself. Running it in place would have overwritten the very artifact under examination -- the exact act the superseded finding is about.",
+    "determinism": "the sweep is fully seeded: numpy.random.default_rng(31337) drives frame generation and default_rng(7) drives localisation. There is no unseeded randomness.",
+    "environment": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "scipy": "1.17.1",
+      "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39"
+    },
+    "artifacts": {
+      "committed": {"path": "artifacts/s4_g100/summaries/acaf_frame_sweep.json", "sha256": "4ecd42a7dd4ea891c788546f68259268bebae5e89170de10e2419542eddb81ac"},
+      "reproduction": {"path": "artifacts/s4_g100/reproductions/acaf_frame_sweep_r1r_linux.json", "sha256": "8d03960cc9cf8e6b3ddb43767ead195117604aaa3a4648b23a4972b4d35dc063"}
+    }
+  },
+
+  "measurement_1_the_sweep_is_deterministic_within_an_environment": {
+    "design": "two independent executions in the same container, same interpreter, same libraries",
+    "result": "0 of 15207 leaves differ. BIT-IDENTICAL.",
+    "why_it_matters": "it removes the alternative explanation. The differences against the committed file are not run-to-run nondeterminism; this code, on fixed inputs, gives the same answer every time it is asked in one place."
+  },
+
+  "measurement_2_the_population_split_reproduces_exactly": {
+    "design": "leaf-by-leaf exact comparison of the reproduction against the committed file, 15207 leaves, identical key sets",
+    "result": {
+      "differing_leaves": 924,
+      "continuous_population": {"count": 923, "leaf": "rows[*].gap_k", "scale": "last-bit, order 1e-14"},
+      "discrete_population": {"count": 1, "leaf": "rows[232].sheaf_maxdev"}
+    },
+    "significance": "this is the SAME 923 + 1 split the superseded finding reported for the original regeneration, recovered independently on a third environment. The split is a property of the computation, not of the one transition that was first noticed."
+  },
+
+  "measurement_3_the_statistic_is_bistable_and_the_mechanism_is_confirmed": {
+    "values_of_rows_232_sheaf_maxdev": {
+      "pre_regeneration_commit_9346527": 0.01680672268907568,
+      "committed_after_regeneration_a677880": 0.012605042016806789,
+      "reproduction_here_run_1": 0.01680672268907568,
+      "reproduction_here_run_2": 0.01680672268907568
+    },
+    "exact_forms": {"0.01680672268907568": "4/238 = 2/119", "0.012605042016806789": "3/238"},
+    "the_controlling_observation": "rows[232].sheaf_auroc is BIT-IDENTICAL at 235/238 across the committed file and both reproductions. The identity-frame score ordering never moves. Only the worst-frame departure does.",
+    "verdict": "CONFIRMED. sheaf_maxdev = max(|v - identity_value|) over admissible frames, where each v is an AUROC on the 1/238 pair grid. A maximum over a step function of floating-point scores is discontinuous in its inputs, so a tie at the extremal frame resolves either way under the same last-bit perturbation visible in the 923 gap_k leaves. The statistic moves by a full grid unit while every continuous quantity moves by 1e-14.",
+    "executable_form": "tests/test_s4_g100.py::test_the_worst_frame_deviation_is_bistable_across_environments"
+  },
+
+  "resolution_of_the_direction_remainder": {
+    "what_was_open": "the superseded finding recorded that the single discrete change moved the reported worst-case deviation DOWN, making the sheaf invariant look one count more robust after regeneration, and noted that 'a favourable drift is precisely the kind that goes unquestioned'.",
+    "resolved": "this environment reproduces the UNFAVOURABLE value, 4/238, twice. The statistic is not drifting in a preferred direction; it is not reproducible across environments in either direction. No selection is indicated and none is now suspected.",
+    "what_this_does_not_absolve": "the commit that carried the regeneration still described the S4/G100 artifact surface as preserved while 924 leaves changed. That remains a statement about intent rather than about bytes, and nothing yet enforces it."
+  },
+
+  "what_is_not_claimed": [
+    "that the tie was observed directly. The mechanism is confirmed by its signature -- a full grid-unit jump in a discontinuous statistic, coincident with last-bit motion elsewhere, with the identity-frame score frozen -- and not by instrumenting the frame comparison and watching two AUROCs cross. That instrumentation was not written.",
+    "that any S4/G100 conclusion changes. sheaf_mean_auroc, win_rate, invariance_breaks and equivariance_failures are all in the unchanged set, in the original regeneration and in this reproduction. No headline moves.",
+    "that sheaf_maxdev is wrong. It is a legitimate worst-case statistic. What is established is that it is not REPRODUCIBLE at grid resolution across float environments, so it must not be compared between environments as though a one-unit difference meant something.",
+    "cross-platform anything. Two runs, one Linux container. The committed file was produced elsewhere and that environment was not available to re-run."
+  ],
+
+  "typed_remainders": [
+    {
+      "kind": "reproduction_remainder",
+      "statement": "the reproduction establishes that the value differs between this environment and whichever produced the committed file. It cannot establish which is 'correct', because neither is: both are legitimate resolutions of a tie. Any downstream use of sheaf_maxdev at grid resolution inherits this and none was audited."
+    },
+    {
+      "kind": "instrument_remainder",
+      "statement": "the fix suggested by this finding -- report sheaf_maxdev with an explicit tie tolerance, or report the multiset of frame AUROCs rather than their maximum -- was NOT implemented. The statistic is unchanged and will do this again."
+    },
+    {
+      "kind": "preservation_remainder",
+      "statement": "inherited unresolved from the superseded finding. No automated check enforces that a commit declaring an artifact surface preserved has preserved it. R1R added such a check for manifest pointers and none for artifact bytes, and the 924-leaf discrepancy still had to be found by hand-diffing two blobs."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer. The party that made the original change was unavailable then and is unavailable now, so the reading of intent is still one party's."
+    }
+  ]
+}

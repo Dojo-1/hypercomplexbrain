@@ -2,6 +2,13 @@
   "schema": "hypercomplexbrain.preregistration.amendment.v1",
   "round": "QSigma-R6k-W1",
   "status": "pre-execution correction: part B has never been run, and cannot be until R6l's C_raw reaches origin",
+  "supersession": {
+    "superseded_by": "manifests/qsigma_r6k_w1_partb_effective_protocol.json",
+    "chain": "qsigma_r6k_w1_partb_interval_correction -> effective_protocol -> effective_protocol_v2 -> input_freeze",
+    "governing_document": "manifests/qsigma_r6k_w1_partb_input_freeze.json",
+    "added_by": "R1R. The back-pointer only; no clause of this manifest was altered. The forward 'supersedes' declarations already existed and this side of the link did not, so a reader arriving here first had no signal.",
+    "unchanged": "Part B has never been run. This stamp records document supersession and asserts nothing about execution."
+  },
   "amends": "manifests/qsigma_r6k_w1_semantic_reproduction_preregistration.json, part_b.frozen_prediction",
 
   "reason": "An external audit of the published branch found that B1 and B2 were written as equivalent statements and are not. The word 'equivalently' asserted a bijection between a depth interval and a J_psi interval that the closed form does not provide. Two non-equivalent predictions joined by 'equivalently' are one prediction that cannot fail cleanly: whichever endpoint the measurement misses, the other reading is available afterwards. That is the shape of an unfalsifiable claim and it is corrected before execution rather than after.",

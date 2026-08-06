@@ -891,3 +891,65 @@ def test_resource_accounting_works_without_the_unix_resource_module():
             "RSS is omitted, not faked, where the platform supplies none"
     finally:
         m.resource = saved
+
+
+# ------------------------------------------- a statistic that is not reproducible
+
+def test_the_worst_frame_deviation_is_bistable_across_environments():
+    """`sheaf_maxdev` moves a full grid unit while everything continuous moves 1e-14.
+
+    S4-G100-ACAF-REGEN-001 found that regenerating a file declared preserved
+    changed 924 leaves: 923 last-bit drifts in `gap_k` and **one** discrete jump,
+    `rows[232].sheaf_maxdev` from `4/238` to `3/238`. It proposed a tie at the
+    extremal frame resolving the other way, and recorded that confirming this
+    needed a re-execution that had not been done.
+
+    R1R re-executed the sweep twice. The two runs are **bit-identical** to each
+    other -- the sweep is fully seeded, so there is no run-to-run randomness --
+    and against the committed file they reproduce the same 923 + 1 split, landing
+    on `4/238`, the *pre*-regeneration value.
+
+    Meanwhile `rows[232].sheaf_auroc` is bit-identical at `235/238` in all three.
+    The identity-frame ordering never moves; only the worst-frame departure does.
+
+    `sheaf_maxdev` is a maximum over a step function of float scores, so it is
+    discontinuous in its inputs. It must not be compared across environments at
+    grid resolution -- a one-unit difference means nothing. This also settles the
+    direction remainder: the drift is not toward the favourable value, because
+    this environment reproduces the unfavourable one, twice.
+    """
+    root = Path(__file__).resolve().parent.parent
+    committed = json.loads(
+        (root / "artifacts/s4_g100/summaries/acaf_frame_sweep.json").read_text())
+    reproduced = json.loads(
+        (root / "artifacts/s4_g100/reproductions/"
+                "acaf_frame_sweep_r1r_linux.json").read_text())
+
+    left, right = committed["rows"][232], reproduced["rows"][232]
+
+    # The discontinuous statistic: a full 1/238 grid unit apart.
+    assert left["sheaf_maxdev"] != right["sheaf_maxdev"]
+    assert abs(left["sheaf_maxdev"] - right["sheaf_maxdev"]) == pytest.approx(
+        1 / 238, rel=1e-9)
+    assert right["sheaf_maxdev"] == pytest.approx(4 / 238, rel=1e-12)
+
+    # The score it is a deviation FROM never moved at all.
+    assert left["sheaf_auroc"] == right["sheaf_auroc"]
+
+    # And the two populations, recounted rather than quoted.
+    changed = [(index, key)
+               for index, (a, b) in enumerate(zip(committed["rows"], reproduced["rows"]))
+               for key in a
+               if isinstance(a[key], float) and a[key] != b[key]]
+    discrete = [cell for cell in changed if cell[1] != "gap_k"]
+
+    assert len(changed) == 924
+    assert discrete == [(232, "sheaf_maxdev")], (
+        "exactly one non-gap_k leaf may differ; more would mean a result change")
+    assert max(abs(committed["rows"][i][k] - reproduced["rows"][i][k])
+               for i, k in changed if k == "gap_k") < 1e-13
+
+    # Headline statistics are untouched, which is why no S4/G100 claim moves.
+    for key in ("sheaf_mean_auroc", "laplacian_mean_auroc", "win_rate",
+                "invariance_breaks", "equivariance_failures"):
+        assert committed[key] == reproduced[key]

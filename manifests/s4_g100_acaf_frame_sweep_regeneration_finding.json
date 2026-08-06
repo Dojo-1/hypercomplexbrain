@@ -2,6 +2,15 @@
   "schema": "hypercomplexbrain.finding.v1",
   "id": "S4-G100-ACAF-REGEN-001",
   "status": "recorded, not adjudicated; no S4/G100 claim is withdrawn or upheld by this document",
+  "supersession": {
+    "superseded_by": "manifests/s4_g100_acaf_maxdev_reproduction_finding.json",
+    "resolved_clauses": [
+      "mechanism.verification_status, which read 'NOT VERIFIED BY RE-EXECUTION'. The sweep has now been re-executed twice and the mechanism is CONFIRMED: 923 gap_k last-bit drifts plus one full grid-unit jump in rows[232].sheaf_maxdev, with rows[232].sheaf_auroc bit-identical throughout.",
+      "the direction_remainder. This environment reproduces the UNFAVOURABLE value 4/238, twice, so the statistic is not drifting in a preferred direction -- it is not reproducible across environments in either direction."
+    ],
+    "what_still_stands": "every measurement in this document, and the preservation_remainder: nothing yet enforces that a commit declaring an artifact surface preserved has preserved it.",
+    "added_by": "R1R. The back-pointer and this note only; no clause of this manifest was altered."
+  },
   "subject": "artifacts/s4_g100/summaries/acaf_frame_sweep.json",
   "statement": "A file whose commit declared the S4/G100 artifact surface preserved was regenerated, and one leaf changed by a discrete step that floating-point rounding cannot produce.",
   "why_this_is_recorded": "Only one leaf in the file is not attributable to last-bit noise, and it is a reported robustness statistic that moved in the favourable direction. A regeneration that improves a headline number inside a file declared preserved must be visible whether or not its mechanism turns out to be benign, because the alternative is a repository in which results improve without anyone having claimed an improvement.",

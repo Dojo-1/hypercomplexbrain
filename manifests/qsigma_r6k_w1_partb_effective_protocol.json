@@ -3,6 +3,13 @@
   "round": "QSigma-R6k-W1",
   "part": "B",
   "status": "pre-execution. Part B has never been run and cannot be until R6l's C_exec and C_raw reach origin. This supersedes qsigma_r6k_w1_partb_interval_correction.json in every clause where the two differ.",
+  "supersession": {
+    "superseded_by": "manifests/qsigma_r6k_w1_partb_effective_protocol_v2.json",
+    "chain": "qsigma_r6k_w1_partb_interval_correction -> effective_protocol -> effective_protocol_v2 -> input_freeze",
+    "governing_document": "manifests/qsigma_r6k_w1_partb_input_freeze.json",
+    "added_by": "R1R. The back-pointer only; no clause of this manifest was altered. The forward 'supersedes' declarations already existed and this side of the link did not, so a reader arriving here first had no signal.",
+    "unchanged": "Part B has never been run. This stamp records document supersession and asserts nothing about execution."
+  },
   "supersedes": "manifests/qsigma_r6k_w1_partb_interval_correction.json",
 
   "reason": "The previous amendment corrected the interval and left the protocol underdetermined: it named no noise slice, no aggregation, no margin definitions, no receiver reconstruction, no precedence between outcomes and no exhaustive outcome table. A prediction whose measurement procedure is unfixed is decidable after the fact by choosing the procedure, which is the same defect the interval correction was written to remove, one level up. It also carried three factual errors, corrected below.",

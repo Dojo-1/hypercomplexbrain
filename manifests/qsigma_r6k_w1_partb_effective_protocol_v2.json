@@ -3,6 +3,13 @@
   "round": "QSigma-R6k-W1",
   "part": "B",
   "status": "pre-execution. Supersedes qsigma_r6k_w1_partb_effective_protocol.json, which superseded qsigma_r6k_w1_partb_interval_correction.json. Where any of the three differ, this one governs.",
+  "supersession": {
+    "superseded_by": "manifests/qsigma_r6k_w1_partb_input_freeze.json",
+    "chain": "qsigma_r6k_w1_partb_interval_correction -> effective_protocol -> effective_protocol_v2 -> input_freeze",
+    "governing_document": "manifests/qsigma_r6k_w1_partb_input_freeze.json",
+    "added_by": "R1R. The back-pointer only; no clause of this manifest was altered. The forward 'supersedes' declarations already existed and this side of the link did not, so a reader arriving here first had no signal.",
+    "unchanged": "Part B has never been run. This stamp records document supersession and asserts nothing about execution."
+  },
   "supersedes": [
     "manifests/qsigma_r6k_w1_partb_effective_protocol.json",
     "manifests/qsigma_r6k_w1_partb_interval_correction.json"

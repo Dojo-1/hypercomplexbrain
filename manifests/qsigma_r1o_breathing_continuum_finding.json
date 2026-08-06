@@ -2,6 +2,13 @@
   "schema": "hypercomplexbrain.finding.v1",
   "id": "R1O-BREATHING-CONTINUUM-001",
   "status": "measured and recorded. R1N's dichotomy is dissolved into a continuum, and the variable behind the collapse is identified as closure rather than size. One misreading of a printed number was caught and is recorded.",
+  "supersession": {
+    "superseded_by": "manifests/qsigma_r1q_labelling_artifact_finding.json",
+    "withdrawn_clauses": [
+      "measurement_4's reading that 'the variable is closure, not size'. Closure survives relabelling and the collapse does not."
+    ],
+    "what_still_stands": "the weak-herald continuum, the asymptotic-versus-arrival distinction between weak and projective measurement, and the break-count continuity in alpha. Those are properties of the alpha -> pi/4 limit and are labelling-independent."
+  },
   "subject": "src/aionq/pond.py::weak_herald, breathing_trajectory, complement_pairs -- partial parity measurement as the infinitesimal form of the herald",
   "measurement_1_a_weak_herald_is_still_exactly_gaussian": {
     "construction": "K_+ = cos(alpha) Pi_+ + sin(alpha) Pi_-, K_- the swap, so K_+* K_+ + K_-* K_- = I exactly. alpha = 0 is projective, alpha = pi/4 is no measurement at all.",

@@ -2,6 +2,16 @@
   "schema": "hypercomplexbrain.finding.v1",
   "id": "R1M-GF-LADDER-STORM-001",
   "status": "measured and recorded. The testbed is changed from a size to a field, and the result changes with it: where a storm of parity heralds lands depends on the algebraic structure of the herald family, not on how large it is.",
+  "supersession": {
+    "superseded_by": "manifests/qsigma_r1q_labelling_artifact_finding.json",
+    "withdrawn_clauses": [
+      "that the collapse/no-collapse split across the AGL(1,16) subgroup ladder is a property of those subgroups",
+      "that 'collapse is about the family being closed under a subgroup'"
+    ],
+    "what_still_stands": "every Gaussianity result, the storm-as-sink reading, and the measured entropies themselves at the identity labelling. R1N already corrected the single-draw endpoint table.",
+    "why": "a relabelling of the modes preserves the pair set, its graph, its F2 rank and its Pauli centre, and destroys the collapse: 9 of 9 as given, 0 of 72 relabelled. The cause is cut_crossing_pairs -- whether a family straddles the bipartition entanglement_entropy reads.",
+    "named_in_advance": "this manifest's own typed remainder said 'identifying mode j with field element j is a choice the Jordan-Wigner ordering fixes; the rungs act on those labels, so a relabelling conjugates them'. The test it names went unrun for three rounds."
+  },
   "subject": "src/aionq/pond.py::ladder_storm, rung_pairs, two_flats -- 16 Majorana modes labelled by GF(16), heralds indexed by the AGL(1,16) subgroup ladder of src/aionq/gf_frames.py",
   "the_redirection_that_produced_it": "the repository owner objected that the testbeds were sizes -- n = 4, n = 6 -- rather than hypercomplex geometries, and proposed GF(GF(2,2), GF(2,2)). At n = 8 there are 16 Majorana modes and 16 = |GF(16)|, so the mode set is not an arbitrary index range: it carries the field structure gf_frames already built, and the herald family becomes a coordinate on a known group instead of a nuisance parameter.",
   "enabling_work": {

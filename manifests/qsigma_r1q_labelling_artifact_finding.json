@@ -2,6 +2,20 @@
   "schema": "hypercomplexbrain.finding.v1",
   "id": "R1Q-LABELLING-ARTIFACT-001",
   "status": "measured and recorded. This round is primarily a RETRACTION: the central empirical claim of R1M, R1N and R1O -- that the GF(16) subgroup ladder splits into collapsing and non-collapsing rungs, with the break between GF(4) and GF(16) -- does not survive a relabelling of the modes and is not a fact about the field. Two candidate replacement rules were fitted and one of them also failed out of sample. The surviving mechanism is stated with its weak direction marked weak.",
+  "supersession": {
+    "superseded_by": "manifests/qsigma_r1r_cut_sweep_finding.json",
+    "withdrawn_clauses": [
+      "rule C's WEAK direction, recorded below as 'zero crossing pairs -> collapse ... 9 of 9'. Refuted at the first cut it had not seen: M3 at split 2 has zero crossing pairs and does not collapse.",
+      "the phrase 'out_of_sample_weak_direction'. The three families supporting it were constructed at the same single cut the rule was defined against, so they were not out of sample in the respect that mattered."
+    ],
+    "what_still_stands": "the retraction itself -- the collapse dichotomy is a labelling artifact, 9 of 9 against 0 of 72 -- the orbit geometry of Part One, the failure of the Pauli centre rule, the failure of the same-qubit count, and rule C's STRONG direction.",
+    "the_repair": "zero crossings is necessary and not sufficient; the family must also cover every mode within each block. M3 never heralds mode 0 because 0 is the fixed point of multiplication, and M3 + (0,1) collapses to exact zero at every seed."
+  },
+  "supersedes": [
+    "manifests/qsigma_r1m_gf_ladder_storm_finding.json",
+    "manifests/qsigma_r1n_liminal_tower_finding.json",
+    "manifests/qsigma_r1o_breathing_continuum_finding.json"
+  ],
   "subject": "src/aionq/pond.py::relabelling_report, ::cut_crossing_pairs, ::same_qubit_pairs, ::pauli_centre_rank and src/aionq/gf_frames.py::orbit_geometry_report",
 
   "the_question_that_prompted_it": "the user asked what relationship governs the orbits of x -> x^2 against the orbits of x -> w x, and suggested the link might lie in the stabiliser group each pair family generates inside the Pauli group. Both halves were computed. The first has a clean answer. The second is the rule that failed.",

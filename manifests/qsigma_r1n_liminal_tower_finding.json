@@ -2,6 +2,14 @@
   "schema": "hypercomplexbrain.finding.v1",
   "id": "R1N-LIMINAL-TOWER-001",
   "status": "measured and recorded. Corrects R1M's endpoint table, which was a single draw, and replaces it with the seed-robust structure underneath: a dichotomy indexed by the subfield tower.",
+  "supersession": {
+    "superseded_by": "manifests/qsigma_r1q_labelling_artifact_finding.json",
+    "withdrawn_clauses": [
+      "'the limit is the subfield tower' as a statement about GF(16); the break between GF(4) and GF(16) is a fact about the Jordan-Wigner labelling"
+    ],
+    "what_still_stands": "the ladder saturation (the union of all seven rungs is T16's 120 pairs), the seed-robustness correction to R1M's endpoint table, and the state-level first-order escape result.",
+    "renamed_target": "the test cited in executable_form below was called test_translation_by_a_proper_subfield_collapses_at_this_labelling. Its measurement is unchanged and still passes; R1R renamed it to test_translation_by_a_proper_subfield_collapses_at_this_labelling, because a test whose title asserts a withdrawn claim re-publishes the error on every green run. The pointer was updated to the new name and nothing else in this manifest was altered."
+  },
   "subject": "src/aionq/pond.py::ladder_saturates, collapse_trajectory -- the dense trajectory of a GF(16)-structured herald storm rather than its endpoint",
   "there_is_no_omni_rung": {
     "measured": "the union of all seven rungs' pair sets is 120 pairs, which is exactly what T16 alone gives",
@@ -21,7 +29,7 @@
     },
     "the_statement": "translation by a PROPER subfield collapses the state to entropy 0 on every seed; translation by the WHOLE field never does. The break in the tower is exactly between GF(4) and GF(16).",
     "the_frobenius_row": "the Galois lift x -> x^2 also collapses on every seed, which places it with the proper subfields rather than with the multiplicative rungs -- consistent with its being the generator of Gal(GF(16)/GF(2)), whose fixed field is the smallest subfield.",
-    "executable_form": "tests/test_pond.py::test_the_break_in_the_field_tower_is_between_gf4_and_gf16"
+    "executable_form": "tests/test_pond.py::test_translation_by_a_proper_subfield_collapses_at_this_labelling"
   },
   "the_symmetry_breaking_moments": {
     "method": "trace the entanglement entropy at every herald rather than at five checkpoints, and record the steps at which it actually moves",

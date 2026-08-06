@@ -49,6 +49,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -63,7 +64,8 @@ __all__ = [
     "party_kind", "repo_root", "iter_envelopes", "envelope_census",
     "witness_graph",
     "independence_report", "recognition_asymmetry", "typed_remainder_census",
-    "corrections_are_bound", "preregistration_ordering", "godelian_gap",
+    "corrections_are_bound", "manifest_pointers_resolve",
+    "preregistration_ordering", "godelian_gap",
     "self_audit",
 ]
 
@@ -1124,7 +1126,7 @@ CORRECTIONS = (
         "T2, T4 and FROBENIUS collapse on all five seeds. The non-monotonicity "
         "claim survives (FROBENIUS robustly 0, M3 robustly not) but the specific "
         "values do not",
-        "tests/test_pond.py::test_the_break_in_the_field_tower_is_between_gf4_and_gf16",
+        "tests/test_pond.py::test_translation_by_a_proper_subfield_collapses_at_this_labelling",
         True,
     ),
     Correction(
@@ -1215,6 +1217,46 @@ CORRECTIONS = (
         "re-reading before commit. A wrong statement of a rule sitting beside a "
         "correct implementation of it is worse than either alone",
         "tests/test_pond.py::test_the_pauli_centre_separates_every_family_it_was_fitted_to_and_then_fails",
+        True,
+    ),
+    Correction(
+        "QSigma-R1r",
+        "rule C's weak direction -- 'zero pairs across the cut implies collapse' "
+        "-- was recorded in R1Q as CONFIRMED, 9 of 9, one commit before it was "
+        "refuted. The supporting families were all constructed at the same single "
+        "cut the rule was defined against, so they were not out of sample in the "
+        "respect that mattered: entanglement_entropy cut at qubits//2 and "
+        "cut_crossing_pairs was defined against the same boundary, so the two "
+        "agreed by construction. Sweeping the cut gave 27 of 28 cells in "
+        "agreement and one refutation, and the refutation was the only cell the "
+        "rule had never seen -- M3 at split 2 has zero crossings and does not "
+        "collapse, 0.984, 0.978, 0.741, identical at 400 and 900 steps. The "
+        "strong direction survives; the biconditional does not",
+        "tests/test_pond.py::test_zero_crossings_is_necessary_and_not_sufficient",
+        True,
+    ),
+    Correction(
+        "QSigma-R1r",
+        "no check had ever verified that a manifest's executable_form points at a "
+        "test that exists. Seventy pointers across fifteen manifests, unvalidated "
+        "for sixteen rounds, and a manifest is never executed so a pointer into "
+        "nothing fails silently and forever. The gap surfaced because this round "
+        "renamed a test whose old name asserted a claim R1Q had withdrawn, and "
+        "the citing manifest went stale in the same commit. Same shape as every "
+        "other defect in this ledger -- a guard whose witness cannot reach the "
+        "case it asserts -- except that here there was no guard at all",
+        "tests/test_self_audit.py::test_every_manifest_pointer_resolves_to_a_test_that_exists",
+        True,
+    ),
+    Correction(
+        "QSigma-R1r",
+        "supersession was recorded in one direction only. A new manifest declared "
+        "what it superseded; the superseded file said nothing, so R1M could be "
+        "read on its own as a live finding while stating a claim R1Q had "
+        "retracted. R1Q itself repeated the omission. Making the link "
+        "bidirectional and enforcing it by test immediately turned up three more "
+        "one-directional links in the R6k Part B chain, unrelated to this round",
+        "tests/test_self_audit.py::test_supersession_is_recorded_in_both_directions",
         True,
     ),
 )
@@ -1456,6 +1498,86 @@ def corrections_are_bound(root=None) -> dict:
         "rows": rows,
     }
 
+
+# --------------------------------------------------------------------------
+# Manifest pointers, which nothing checked until a rename broke one
+# --------------------------------------------------------------------------
+
+#: ``executable_form`` values mix pointers with prose, so pointers are extracted
+#: rather than parsed: a qualified ``path::name``, or a bare ``::name`` that
+#: inherits the last path seen.
+_POINTER = re.compile(r"(?:([\w./-]+\.py))?::(test_\w+)")
+
+
+def _iter_pointers(node, manifest: str):
+    """Every ``executable_form`` pointer anywhere in a manifest, at any depth."""
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == "executable_form":
+                for text in ([value] if isinstance(value, str) else
+                             value if isinstance(value, list) else []):
+                    last = None
+                    for path, name in _POINTER.findall(text):
+                        last = path or last
+                        if last:
+                            yield manifest, last, name
+            else:
+                yield from _iter_pointers(value, manifest)
+    elif isinstance(node, list):
+        for item in node:
+            yield from _iter_pointers(item, manifest)
+
+
+def manifest_pointers_resolve(root=None) -> dict:
+    """Every ``executable_form`` in every manifest must name a test that exists.
+
+    The manifests are where this repository states what it has measured, and
+    ``executable_form`` is the field that turns each statement into something a
+    reader can run.  **Nothing checked those pointers for sixteen rounds.**  The
+    gap surfaced in R1R for the dullest possible reason: a test was renamed
+    because its old name asserted a claim R1Q had withdrawn, and the manifest
+    that cited it went stale in the same commit.
+
+    That is the same defect this repository keeps finding in its own physics --
+    a guard whose witness cannot reach the case it asserts -- except here there
+    was no guard at all.  A pointer into nothing fails silently and forever,
+    because a manifest is not executed.
+
+    Source-level, like :func:`corrections_are_bound`, and for the same reason: it
+    is called from a test, and a test that runs the suite it belongs to either
+    recurses or measures nothing.
+    """
+    root = Path(root) if root is not None else repo_root()
+    defined: dict[str, set] = {}
+    for path in sorted((root / "tests").rglob("*.py")):
+        defined[path.relative_to(root).as_posix()] = set(
+            re.findall(r"^def (test_\w+)", path.read_text(encoding="utf-8"), re.M))
+
+    rows = []
+    for path in sorted((root / "manifests").glob("*.json")):
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            rows.append({"manifest": path.name, "target": None, "resolves": False,
+                         "reason": "unreadable"})
+            continue
+        for manifest, test_path, test_name in _iter_pointers(document, path.name):
+            rows.append({
+                "manifest": manifest,
+                "target": f"{test_path}::{test_name}",
+                "resolves": test_name in defined.get(test_path, ()),
+                "reason": ("" if test_path in defined else "no such test file"),
+            })
+
+    unresolved = [row for row in rows if not row["resolves"]]
+    return {
+        "pointers": len(rows),
+        "manifests_with_pointers": len({r["manifest"] for r in rows}),
+        "resolved": len(rows) - len(unresolved),
+        "all_resolve": not unresolved,
+        "unresolved": unresolved,
+        "rows": rows,
+    }
 
 # --------------------------------------------------------------------------
 # Preregistration ordering, checked against git rather than against a flag
