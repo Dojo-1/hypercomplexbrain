@@ -4,6 +4,12 @@
   "title": "Protocol amendment 1: execution order, the missing baseline, and two provenance defects",
   "status": "FROZEN_BEFORE_ANY_CONTROL_IS_RUN. Amends the R1S preregistration. No control has executed and none executes until this is committed.",
   "date": "2026-08-06",
+  "supersession": {
+    "superseded_by": "manifests/qsigma_r1s_additivity_gate_finding.json",
+    "resolved_clause": "the additivity gate declared in finding_2. It was run after this amendment was committed and it FAILED: median relative defect 0.109 against a declared 0.1, maximum 1.730, and a sign reversal in M3 where the whole moves entropy up while its caps move it down. Per the rule declared here in advance, the quantity is permanently an INTERACTION RATIO.",
+    "what_still_governs": "the execution order FLAT, CURVED, BLINDNESS, RELABELLING; the reconstructed partitioned-sequence decomposition; the docstring and trajectory-gate repairs; and every clause of the original preregistration this amendment did not touch.",
+    "added_by": "R1S additivity gate. Back-pointer only; no clause of this file was altered."
+  },
   "supersedes": ["manifests/qsigma_r1s_supercable_decoupling_preregistration.json"],
   "amends_rather_than_replaces": "the original file is preserved unaltered. Every clause not listed below still governs, including the four controls, the kill conditions, the evidence ceiling and the stop condition.",
 

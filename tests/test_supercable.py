@@ -282,6 +282,53 @@ def test_the_additivity_gate_decides_what_the_ratio_may_be_called(prepared):
     assert report["additivity_defect"] >= 0.0
 
 
+def test_the_additivity_gate_failed_and_the_name_was_dropped(prepared):
+    """The declared rule fired against the framing. Recorded as a test, not prose.
+
+    Protocol amendment 1 fixed the rule before the number existed: relative
+    additivity defect under 0.1 earns the l2 baseline and the name "decoupling
+    constant"; at or above it, the quantity is permanently an INTERACTION RATIO.
+
+    Measured over 5 rungs and 3 seeds: median relative defect 0.109, maximum
+    1.730. The gate failed.
+
+    The load-bearing cell is `M3`, and it is not a matter of degree. On the same
+    partitioned sequence at matched dose the whole family moves the entropy
+    **up** by 0.507 while its caps together move it **down** by 0.370. A large
+    defect could be a correction term; a sign reversal cannot. No inequality
+    controlling the whole by an aggregate of its parts survives that, in l2 or
+    any other norm.
+    """
+    from aionq.supercable import additivity_defect
+
+    qubits, _, _, gamma = prepared
+
+    whole_up = additivity_defect(rung_pairs("M3"), _orbit_caps("M3"), qubits, gamma,
+                                 steps=150, seed=7, split=4)
+    assert whole_up["delta_whole"] > 0.0
+    assert sum(whole_up["delta_per_cap"]) < 0.0, "the sign reversal that settles it"
+    assert whole_up["additivity_defect_relative"] > 0.1
+
+    worst = max(
+        additivity_defect(rung_pairs(rung), _orbit_caps(rung), qubits, gamma,
+                          steps=150, seed=seed, split=4)["additivity_defect_relative"]
+        for rung in ("T2", "T4", "FROBENIUS", "M3") for seed in (7, 11))
+    assert worst > 0.1, "the declared threshold, and it is exceeded"
+
+
+def test_the_single_cap_row_is_a_tautology_and_is_labelled_one():
+    """`M15` reads perfectly for a reason that is not evidence.
+
+    Its orbits are `{0}` and the other fifteen elements, and the singleton
+    carries no pairs, so all 105 land in ONE cap. Whole equals cap by
+    construction: defect exactly 0.0, ratio exactly 1.0. Reported in the finding
+    rather than dropped, because removing it would leave a cleaner table than the
+    experiment supports.
+    """
+    assert len(_orbit_caps("M15")) == 1
+    assert len(_orbit_caps("M15")[0]) == 105
+
+
 def _orbit_caps(rung: str) -> tuple:
     """Caps = the orbits of the rung, as the round specifies.
 

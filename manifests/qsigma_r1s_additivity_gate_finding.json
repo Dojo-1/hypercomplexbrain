@@ -1,0 +1,80 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1S-ADDITIVITY-GATE-001",
+  "status": "measured. The gate declared in protocol amendment 1 was run after that amendment was committed, so the rule was fixed before the number existed. IT FAILED. The quantity R1S called a decoupling constant is permanently an INTERACTION RATIO and the word 'decoupling' is dropped from this round's conclusions.",
+  "supersedes": ["manifests/qsigma_r1s_protocol_amendment_v1.json"],
+  "subject": "src/aionq/supercable.py::additivity_defect",
+  "governing_protocol": "manifests/qsigma_r1s_protocol_amendment_v1.json, committed at f9090c9 before this measurement was taken",
+
+  "the_rule_that_was_declared_first": {
+    "if_additive": "relative additivity defect below 0.1 earns the l2 baseline, licenses the name 'decoupling constant', and retains the frozen thresholds",
+    "if_not_additive": "the quantity is renamed INTERACTION RATIO permanently, its thresholds become operational conventions with no bound behind them, and the word 'decoupling' is dropped",
+    "threshold": "0.1 relative, fixed in the amendment and not movable afterwards"
+  },
+
+  "measurement": {
+    "design": "5 rungs x 3 storm seeds = 15 cells, 150 heralds each, 16 modes, split 4, one prepared state. Caps are the rung's orbits; each pair is assigned to the orbit containing its smaller endpoint, which is a partition.",
+    "dose": "matched by construction: one herald sequence is materialised and partitioned, so the cap sub-sequences are disjoint and sum to the whole. Verified per cell.",
+    "rows_at_seed_7": [
+      {"rung": "T2", "caps": 8, "delta_whole": -2.2792, "sum_of_cap_deltas": -2.0732, "defect": 0.2060, "relative": 0.090, "ratio": 2.757},
+      {"rung": "T4", "caps": 4, "delta_whole": -2.2792, "sum_of_cap_deltas": -3.3761, "defect": 1.0969, "relative": 0.481, "ratio": 1.319},
+      {"rung": "FROBENIUS", "caps": 4, "delta_whole": -2.2792, "sum_of_cap_deltas": -2.5269, "defect": 0.2476, "relative": 0.109, "ratio": 1.648},
+      {"rung": "M3", "caps": 5, "delta_whole": 0.5071, "sum_of_cap_deltas": -0.3701, "defect": 0.8773, "relative": 1.730, "ratio": 0.863},
+      {"rung": "M15", "caps": 1, "delta_whole": 0.7208, "sum_of_cap_deltas": 0.7208, "defect": 0.0, "relative": 0.0, "ratio": 1.0}
+    ],
+    "across_all_15_cells": {"min_relative": 0.0, "median_relative": 0.109, "max_relative": 1.730}
+  },
+
+  "verdict": "NOT ADDITIVE. Median relative defect 0.109 against a declared threshold of 0.1, maximum 1.730. The l2 baseline is not earned.",
+
+  "the_decisive_cell_is_M3_and_it_is_not_a_matter_of_degree": {
+    "observation": "the whole family moves the entropy UP by 0.507 while its caps, run on the same partitioned sequence at matched dose, move it DOWN by 0.370 in total. The signs are opposite.",
+    "why_this_settles_it": "a large additivity defect could be a correction term. A sign reversal cannot: the caps individually reduce entanglement across the cut and together increase it, so no inequality controlling the whole by an aggregate of the parts can hold, in l2 or in any other norm. This is not a constant that is too big -- it is a relation that does not exist.",
+    "reading": "the caps interact. Heralds in different orbits do not commute, and the order in which the sequence interleaves them is doing work that no cap-wise quantity records."
+  },
+
+  "the_degenerate_cell_recorded_as_degenerate": {
+    "row": "M15",
+    "why_it_reads_perfectly": "M15's orbits are {0} and the other fifteen elements, and the singleton carries no pairs, so all 105 pairs land in ONE cap. Whole equals cap by construction, defect is exactly 0.0 and ratio exactly 1.0.",
+    "status": "a tautology, not evidence. It is reported because dropping the row silently would leave a cleaner-looking table than the experiment supports."
+  },
+
+  "what_this_does_to_the_round": {
+    "the_original_question_is_answered_at_the_level_of_its_premise": "R1S asked whether an l2 decoupling inequality holds for entropy production over GF(16) orbit caps. It does not hold, and more than that it is not well-posed for this functional: the additive relation such an inequality compares against is measurably absent, with a sign reversal in one of five rungs.",
+    "what_survives": "the ratio is still computable and still reportable at matched dose. It measures how far the whole departs from its cap-wise aggregate, which is a real quantity about interaction. It is not a decoupling constant and its thresholds are conventions.",
+    "the_controls_still_run": "FLAT, CURVED, BLINDNESS and RELABELLING remain mandatory and their predictions stand, restated without the word decoupling: they now ask whether the interaction ratio tracks transversality to the cut. FLAT is still the refuter and still runs first.",
+    "the_frozen_thresholds": "C < 2 and C > 0.7*sqrt(N) survive only as operational conventions. Nothing derives them. They are retained rather than re-chosen because re-choosing them after seeing data is the move the preregistration exists to prevent."
+  },
+
+  "credit_and_correction_of_the_reviewer": {
+    "the_objection_was_GPT_s_and_it_was_right": "GPT identified that the Cauchy-Schwarz baseline did not follow from the constructed objects. This measurement confirms the objection empirically rather than only in principle: the additivity such a baseline needs fails, and fails in sign.",
+    "what_the_review_did_not_reach": "the dose mismatch. The frozen definition compared runs at equal step budget, so a cap received |F|/|F_theta| times fewer heralds in the union run than alone -- up to fifteenfold. That defect lived in the sampling loop rather than the protocol text and would have corrupted the ratio independently. Found while verifying the review.",
+    "what_the_review_got_wrong": "it read the preregistration's 'ATTESTED' as tier A. Two ladders: witness_nerve.EvidenceRank answers who witnessed, governance.EvidenceTag answers what kind of claim. This finding is MEASURED at rank ATTESTED."
+  },
+
+  "what_is_not_claimed": [
+    "that no decoupling-type inequality holds for any functional on this object. What was measured is that THIS functional -- entropy change under a partitioned herald sequence -- has no additive cap decomposition. A different functional with a genuine linear structure was not constructed and might behave differently.",
+    "that the interaction ratio is meaningless. It is well-defined at matched dose and its cells are reproducible. It simply has no derived baseline, so its numbers cannot be read as near or far from a bound.",
+    "any result about curvature or transversality. None of the four controls has run. This is a gate outcome, not a control outcome.",
+    "anything at 64 modes. Every cell here is 16 modes, where the formalism is cross-validated."
+  ],
+
+  "typed_remainders": [
+    {
+      "kind": "functional_remainder",
+      "statement": "the gate rules out additivity for entropy change and says nothing about other functionals. The obvious candidate with real linear structure is the covariance matrix itself -- Gamma is where the herald acts linearly-in-a-sense -- but sequential heralds still fail to commute there, so a cap decomposition would need an ordering-free object that has not been identified."
+    },
+    {
+      "kind": "sample_remainder",
+      "statement": "15 cells, 5 rungs, 3 seeds, one prepared state, one split, one step budget. The verdict rests on the median crossing 0.1 and on one sign reversal. The sign reversal is the load-bearing evidence and it occurs in one rung; it was not checked whether it survives other prepared states."
+    },
+    {
+      "kind": "convention_remainder",
+      "statement": "the thresholds C < 2 and C > 0.7*sqrt(N) are now conventions with nothing behind them, and they are being carried forward into the controls anyway. A convention retained for procedural honesty is still a convention, and any control verdict that turns on those exact numbers should be read as turning on an arbitrary choice."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Measured by the Claude session on the Linux container; the objection that forced the gate came from GPT, a separate authoring model. That makes the protocol correction non-correlated and the measurement itself still single-party. Witness-nerve rank ATTESTED, claim tier MEASURED."
+    }
+  ]
+}
