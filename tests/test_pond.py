@@ -244,3 +244,196 @@ def test_a_vanishing_observable_is_refused_rather_than_measured():
     zeroed[1] = np.zeros_like(operators[1])
     with pytest.raises(ValueError, match="square to the identity"):
         herald_parity(state, zeroed, (0, 1))
+
+
+# --------------------------------------------------------------------------
+# The storm: many heralds, adaptive, and where they actually take the state
+# --------------------------------------------------------------------------
+
+def test_the_field_predicts_every_particle_event(setting):
+    """`p(+1) = (1 + Gamma_ab)/2`, over all 28 mode pairs, to 2.2e-16.
+
+    The duality closing. Every herald outcome's probability is one entry of the
+    covariance matrix, so the entire storm -- outcomes and all -- is samplable
+    from `O(n^2)` numbers and the record it produces carries no more than they
+    do. There is no magic in what we collect either.
+    """
+    from aionq.pond import outcome_probability
+
+    operators, prepared = setting
+    gamma = covariance(prepared, operators)
+    modes = len(operators)
+
+    worst = 0.0
+    for first in range(modes):
+        for second in range(first + 1, modes):
+            exact = herald_parity(prepared, operators, (first, second), +1)
+            worst = max(worst, abs(exact["probability"]
+                                   - outcome_probability(gamma, first, second, +1)))
+    assert worst < 1e-12
+
+
+@pytest.mark.parametrize("adaptive", [False, True])
+def test_two_hundred_heralds_never_leave_the_class(adaptive):
+    """Adaptive or not, the Wick defect stays at machine zero throughout.
+
+    Adaptivity -- choosing the next measurement from the record of outcomes so
+    far -- is the one route by which a disturbance could compound rather than
+    reset. It does not. Sampling is honest rather than post-selected: outcomes
+    are drawn at the probability the field predicts, so this is a trajectory the
+    experiment would actually produce.
+    """
+    from aionq.pond import storm
+
+    result = storm(qubits=6, steps=200, adaptive=adaptive)
+    assert result["heralds"] == 200
+    assert result["worst_wick_defect"] < 1e-12
+    assert all(row["wick_defect"] < 1e-12 for row in result["trajectory"])
+
+
+def test_the_storm_is_a_sink_toward_stabiliser_states():
+    """Entropy converges to integers; support to powers of two.
+
+    Under Jordan-Wigner `i c_a c_b` is a Pauli string, so a storm of quadratic
+    parity heralds is repeated Pauli measurement -- which drives any state into
+    the stabiliser set. The signature is that the entropy stops being a generic
+    real number: 1.0000 and 2.0000 exactly, on a state that started at 1.7168.
+    """
+    from aionq.pond import storm
+
+    result = storm(qubits=6, steps=200)
+    late = [row for row in result["trajectory"] if row["heralds"] >= 20]
+
+    assert late, "no late trajectory points to test"
+    for row in late:
+        assert abs(row["entropy"] - round(row["entropy"])) < 1e-6, (
+            f"entropy {row['entropy']} is not an integer, so the state is not "
+            "in the stabiliser set and this identification is wrong")
+        support = row["support"]
+        assert support & (support - 1) == 0, f"support {support} is not a power of two"
+
+    assert result["trajectory"][0]["entropy"] != pytest.approx(
+        round(result["trajectory"][0]["entropy"]), abs=1e-6), (
+        "the state must START at a non-integer entropy, or the sink is not a sink")
+
+
+def test_a_post_storm_state_can_still_receive_magic():
+    """Six seeds at `n = 6`, every one taken to Wick defect 1.0 by some quartic.
+
+    A first version of this measurement ran a single seed at `n = 4` and
+    concluded that the storm destroys the capacity to receive magic. That was
+    wrong twice: wrong seed, and wrong size. Across twelve seeds at `n = 4` only
+    three of twelve exceed 0.5; across six seeds at `n = 6` all six do, at
+    exactly 1.0. The size dependence is about how OFTEN, not about whether.
+    """
+    from aionq.pond import storm
+
+    best = []
+    for seed in range(6):
+        result = storm(qubits=6, steps=200, seed=seed)
+        operators, state = result["operators"], result["final_state"]
+        live = []
+        for quad in ((0, 1, 2, 3), (0, 2, 4, 6), (1, 3, 5, 7), (2, 3, 4, 5)):
+            herald = herald_parity(state, operators, quad, +1)
+            if 1e-6 < herald["probability"] < 1 - 1e-6:
+                live.append(herald["wick_defect"])
+        assert len(live) >= 3, f"seed {seed}: too few non-vacuous quartic heralds"
+        best.append(max(live))
+
+    assert all(value > 0.5 for value in best)
+
+
+def test_a_vacuous_herald_is_detected_rather_than_reported_as_a_null():
+    """The control failure that would have supported a false null.
+
+    A herald on a state that is already an eigenvector of the observable fires
+    at probability 0 or 1 and changes nothing, so its Wick defect reads 1e-16 --
+    which, reported without the probability, is "even a quartic herald cannot
+    disturb this state". The vacuum is such a case by construction: it is an
+    eigenvector of `c_0 c_1 c_2 c_3`, at `p = 1.000000` exactly, at both sizes.
+
+    The tell is the probability, and it is asserted here on a deliberately
+    constructed case rather than on a storm trajectory -- because the trajectory
+    version turned out to be one seed in thirty-six, which is itself the reason
+    this test exists.
+    """
+    for qubits in (4, 6):
+        operators = majorana_operators(qubits)
+        herald = herald_parity(vacuum(qubits), operators, (0, 1, 2, 3), +1)
+        assert herald["probability"] == pytest.approx(1.0, abs=1e-12)
+        assert herald["wick_defect"] < 1e-12
+
+        # ...while a herald that genuinely fires on the same state does not
+        # have a degenerate probability, which is what makes the tell a tell.
+        live = herald_parity(vacuum(qubits), operators, (0, 2, 4, 6), +1)
+        assert 0.01 < live["probability"] < 0.99
+
+
+# --------------------------------------------------------------------------
+# The testbed as a field: 16 Majorana modes = |GF(16)|
+# --------------------------------------------------------------------------
+
+def test_the_ladder_rungs_give_genuinely_different_herald_families():
+    """T2 is a perfect matching of 8; T16 and AGL give all 120.
+
+    Without this the rung comparison below would be comparing sample sizes
+    rather than structures.
+    """
+    from aionq.pond import rung_pairs
+
+    sizes = {rung: len(rung_pairs(rung))
+             for rung in ("T2", "T4", "T16", "M3", "M15", "FROBENIUS", "AGL")}
+    assert sizes == {"T2": 8, "T4": 24, "T16": 120, "M3": 15,
+                     "M15": 105, "FROBENIUS": 19, "AGL": 120}
+    # T2 is x -> x + 1, a fixed-point-free involution, so its pairs partition
+    # the 16 modes exactly -- which is what makes it the extreme case.
+    covered = [mode for pair in rung_pairs("T2") for mode in pair]
+    assert sorted(covered) == list(range(16))
+
+
+def test_the_field_singles_out_one_hundred_forty_quartic_index_sets():
+    """The 2-flats of AG(4,2): quadruples whose GF(16) labels XOR to zero."""
+    from aionq.pond import two_flats
+
+    flats = two_flats()
+    assert len(flats) == 140
+    assert all(a ^ b ^ c ^ d == 0 for a, b, c, d in flats)
+    from math import comb
+    assert comb(16, 4) - len(flats) == 1680
+
+
+@pytest.mark.parametrize("rung,entropy,support", [
+    ("T2", 0.0, 1), ("M3", 1.0, 128), ("AGL", 2.0, 64),
+])
+def test_the_sink_depends_on_the_rung_and_not_on_the_number_of_pairs(
+        rung, entropy, support):
+    """The same state, the same 200 heralds, three different destinations.
+
+    `M3` has fifteen pairs and leaves the state at entropy 1 with support 128 --
+    LESS collapsed than `FROBENIUS`, which has nineteen and drives it to entropy
+    0. `T2`, the perfect matching, collapses it to a single basis state. So the
+    algebraic structure of the herald family decides the sink, not its size.
+
+    This is the measurement that only exists because the mode set carries the
+    field: with 2n = 16 = |GF(16)| the herald family is a coordinate on a known
+    group rather than a nuisance parameter.
+    """
+    from aionq.pond import ladder_storm
+
+    result = ladder_storm(rung)
+    assert result["entropy"] == pytest.approx(entropy, abs=1e-6)
+    assert result["support"] == support
+    assert result["wick_defect"] < 1e-12, (
+        "every rung must stay Gaussian; only where it stops differs")
+
+
+def test_more_pairs_does_not_mean_more_collapse():
+    """The non-monotonicity, asserted directly rather than left to the table."""
+    from aionq.pond import ladder_storm
+
+    frobenius = ladder_storm("FROBENIUS")
+    multiplicative = ladder_storm("M3")
+
+    assert frobenius["pairs"] > multiplicative["pairs"]
+    assert frobenius["entropy"] < multiplicative["entropy"]
+    assert frobenius["support"] < multiplicative["support"]

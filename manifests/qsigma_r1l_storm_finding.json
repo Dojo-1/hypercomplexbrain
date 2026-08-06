@@ -1,0 +1,82 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1L-STORM-001",
+  "status": "measured and recorded. Completes the free-fermion-plus-measurement arc R1J opened and R1K half-answered. Two successive misreadings of the same experiment were caught within the round; both are recorded as bound corrections rather than quietly fixed.",
+  "subject": "src/aionq/pond.py::storm -- long, optionally adaptive streams of quadratic parity heralds on a Gaussian state",
+  "measurement_1_the_field_predicts_every_particle_event": {
+    "statement": "p(+1) = (1 + Gamma_ab)/2, read off one entry of the covariance matrix",
+    "checked_against": "the exact amplitude calculation, over all 28 mode pairs at n = 4",
+    "worst_disagreement": 2.22e-16,
+    "consequence": "the entire storm, outcomes and all, is samplable from O(n^2) numbers. The classical record the storm produces carries no more information than the covariance matrix already did, so there is no magic in what is collected either.",
+    "executable_form": "tests/test_pond.py::test_the_field_predicts_every_particle_event"
+  },
+  "measurement_2_two_hundred_heralds_never_leave": {
+    "non_adaptive": {"heralds": 200, "worst_wick_defect": 4.44e-16},
+    "adaptive": {"heralds": 200, "worst_wick_defect": 6.66e-16,
+                 "rule": "the next mode pair is chosen from the record of outcomes so far"},
+    "why_adaptivity_was_the_case_to_test": "it is the one route by which a disturbance could compound rather than reset, and it was named in R1K as the last untouched possibility.",
+    "sampling_discipline": "outcomes are drawn at the probability the field predicts rather than post-selected, so these are trajectories the experiment would actually produce. A post-selected trajectory would be a different and much weaker claim.",
+    "executable_form": "tests/test_pond.py::test_two_hundred_heralds_never_leave_the_class"
+  },
+  "measurement_3_the_storm_is_a_sink_toward_stabiliser_states": {
+    "mechanism": "under Jordan-Wigner i c_a c_b is a Pauli string, so a storm of quadratic parity heralds is repeated Pauli measurement, which drives any state into the stabiliser set",
+    "signature": "the entanglement entropy stops being a generic real number",
+    "trajectory_n6": [
+      {"heralds": 0, "entropy": 1.7168, "support": 32},
+      {"heralds": 5, "entropy": 1.4424, "support": 32},
+      {"heralds": 20, "entropy": 2.0000, "support": 16},
+      {"heralds": 100, "entropy": 1.0000, "support": 16},
+      {"heralds": 200, "entropy": 2.0000, "support": 16}
+    ],
+    "reading": "integers, and powers of two. Gaussianity never moves; the entropy does. The storm does not add anything to the state -- it removes the part of the state that was not stabiliser.",
+    "executable_form": "tests/test_pond.py::test_the_storm_is_a_sink_toward_stabiliser_states"
+  },
+  "near_miss_1_the_control_could_not_fire": {
+    "what_happened": "the positive control was a quartic herald applied to a post-storm n = 4 state. It fired at probability 1.000: the state was already an eigenvector of the observable, so the projection did nothing and the Wick defect read 1.1e-16.",
+    "what_would_have_been_reported": "'even a quartic herald cannot disturb a post-storm state' -- a striking claim, and false.",
+    "the_tell": "the probability, not the defect. A herald at p = 0 or 1 has not measured anything.",
+    "generalisation": "a control that cannot fire is not a control. This is the twelfth occurrence in this repository of the pattern 'a guard whose witness cannot reach the case it asserts', and the first in which the unreachable case was a POSITIVE control rather than a guard.",
+    "bound_correction": "self_audit CORRECTIONS entry QSigma-R1l, first of two"
+  },
+  "near_miss_2_the_replacement_reading_was_also_wrong": {
+    "what_happened": "having caught the vacuous control, the next reading was that the storm destroys a state's capacity to receive magic. That was drawn from one seed at n = 4.",
+    "what_the_scan_says": {
+      "n=4_vacuous_quartic_heralds": "1 of 36 across 12 seeds -- so the eigenvector coincidence was a single-seed accident, not a property of post-storm states",
+      "n=4_receptivity": "3 of 12 seeds have a live quartic herald reaching wick_defect above 0.5",
+      "n=6_receptivity": "6 of 6 seeds, every one at exactly 1.0"
+    },
+    "the_corrected_statement": "a post-storm state CAN still receive magic. The size dependence is about how OFTEN, not about whether: at n = 6 every seed's post-storm state is taken to the largest Wick defect seen anywhere in this repository by some quartic herald.",
+    "the_methodological_point": "two successive readings of the same experiment were both artifacts of a single small case. Catching a bad control is not the same as having a good one, and the corrected reading needed its own control exactly as much as the original did.",
+    "bound_correction": "self_audit CORRECTIONS entry QSigma-R1l, second of two"
+  },
+  "what_the_arc_now_establishes": {
+    "R1J": "braids, theta-deformations and Floquet drives all stay inside the free-fermion class; only an interaction leaves",
+    "R1K": "heralding a quadratic parity stays inside; heralding a quartic parity leaves. The degree of the observable is the variable, not the act of measuring or post-selecting",
+    "R1L": "compounding and adaptivity change nothing: 200 heralds, chosen from the outcome record, stay inside. The storm is a sink toward stabiliser states, and the outcome record itself is samplable from the covariance matrix",
+    "together": "free fermions plus quadratic parity measurement with post-selection, adaptive, of any length, is closed. Every route tried that looked as though it should escape -- topology, motion, deformation, measurement, post-selection, adaptivity, accumulation -- does not. The only thing that escapes is an observable or a Hamiltonian term of degree four."
+  },
+  "what_is_not_claimed": [
+    "that free fermions plus measurement cannot be universal. The literature route is exactly the one measured to work here -- non-Gaussian observables or resource states -- and nothing refutes it. What is closed is the weaker hope that quadratic heralding, compounded or adapted, supplies the departure by itself.",
+    "that the stabiliser identification is proved. It is an identification from a signature: integer entropies and power-of-two supports, on a state that started at 1.7168. No stabiliser-group extraction was performed and the claim is at the level of evidence, not proof.",
+    "anything about mixed states or noise. Every trajectory here is pure, because parity projections preserve purity on a pure input. A noisy storm is a different object and was not measured.",
+    "anything about richer fusion rules, which R1J named as untested and which remain so."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "scale_remainder",
+      "statement": "the storm was run at n = 4, 5 and 6, and the receptivity scan at n = 4 (12 seeds) and n = 6 (6 seeds). wick_defect costs O(C(2n,4) * 4^n) and the test file now takes 154 seconds, which is close to the limit of what belongs in a suite. Whether the receptivity fraction continues to rise with n is not measured beyond 6."
+    },
+    {
+      "kind": "identification_remainder",
+      "statement": "the sink is identified as the stabiliser set from the entropy signature, and the mechanism (i c_a c_b is a Pauli string under Jordan-Wigner) is structural. But the storm samples mode pairs uniformly, so it is repeated measurement of a RANDOM Pauli from a restricted family, and which stabiliser states are reachable was not characterised."
+    },
+    {
+      "kind": "adaptivity_remainder",
+      "statement": "the adaptive rule is one deterministic function of the outcome record, chosen for being cheap and non-trivial rather than for being the best adversary. A different adaptive strategy is not ruled out by this measurement, and the structural argument -- Gaussian measurements are closed under any choice of which one to make next -- is stronger than the measurement and is what actually carries the claim."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}

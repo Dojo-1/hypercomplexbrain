@@ -2368,3 +2368,120 @@ spectrum: a parity observable must square to the identity, which zero does not.
 The tell was `probability_range = [0.25, 0.25]`, six identical values.
 
 Full record: `manifests/qsigma_r1k_pond_and_rain_finding.json`.
+
+## 8.15 The storm: a sink toward stabiliser states, and two near-misses
+
+§8.14 heralded one parity at a time. The storm is the compounding version — 200
+sequential heralds, optionally **adaptive** (each measurement chosen from the
+record of outcomes so far), which is the one route by which a disturbance could
+accumulate rather than reset.
+
+**The field predicts every particle event.** `p(+1) = (1 + Γ_ab)/2`, checked
+against the exact amplitude calculation over all 28 mode pairs: worst
+disagreement **2.2e-16**. So the entire storm — outcomes and all — is samplable
+from `O(n²)` numbers. *There is no magic in what we collect either.*
+
+**200 heralds never leave the class**, adaptive or not: worst Wick defect
+**4.4e-16** and **6.7e-16** respectively, at every checkpoint. Sampling is honest
+rather than post-selected — outcomes are drawn at the probability the field
+predicts — so these are trajectories the experiment would actually produce.
+
+**Where the storm goes.** Under Jordan–Wigner `i c_a c_b` is a Pauli string, so a
+storm of quadratic parity heralds is *repeated Pauli measurement* — which drives
+any state into the **stabiliser set**. The signature is that entropy stops being
+a generic real number:
+
+| heralds | entropy | support |
+|---|---|---|
+| 0 | 1.7168 | 32 |
+| 5 | 1.4424 | 32 |
+| 20 | **2.0000** | 16 |
+| 100 | **1.0000** | 16 |
+| 200 | **2.0000** | 16 |
+
+Integers, and powers of two. The storm is a **sink**, and what it sinks to is a
+stabiliser state. Gaussianity never moves; the entropy does.
+
+### Two near-misses, both caught, in one round
+
+**The positive control was vacuous.** A quartic herald on a post-storm `n = 4`
+state fired at probability **1.000** — the state was already an eigenvector, so
+the projection did nothing and the Wick defect read `1.1e-16`. Reported without
+the probability, that is *"even a quartic herald cannot disturb a post-storm
+state"*, which is false. **The tell is the probability, not the defect**, and a
+control that cannot fire is not a control.
+
+**Then the replacement reading was also wrong** — and wrong twice: it was one
+seed, and it was `n = 4`. Across twelve seeds at `n = 4` only **1 of 36** quartic
+heralds is vacuous. Across six seeds at `n = 6`, **every** post-storm state is
+taken to Wick defect **1.0** by some quartic herald; at `n = 4` only 3 of 12
+seeds are. The size dependence is about how *often*, not about *whether*.
+
+Two successive readings of the same experiment were both artifacts of a single
+small case. That is the sharpest methodological point of this round: catching a
+bad control is not the same as having a good one, and the corrected reading needs
+its own control just as much as the original did.
+
+Full record: `manifests/qsigma_r1l_storm_finding.json`.
+
+## 8.16 The testbed as a field: 16 modes = |GF(16)|
+
+§8.15 ran storms at `n = 4` and `n = 6` — sizes, not geometries. At `n = 8` there
+are **16 Majorana modes, and 16 = |GF(16)| = |GF(GF(2,2), GF(2,2))|**. So the
+mode set is not an arbitrary index range: it carries the field structure
+`gf_frames` already built, and the herald family becomes a *coordinate on a known
+group* rather than a nuisance parameter.
+
+Reaching `n = 8` needed the instruments fixed first. The Majoranas are Hermitian,
+so `⟨c_j c_k⟩ = (c_jψ)†(c_kψ)` and `⟨c_a c_b c_c c_d⟩ = (c_b c_a ψ)†(c_c c_d ψ)`.
+Precomputing the pair-vectors makes every correlator one inner product —
+identical to the direct form to `0.0`, and `n = 8` goes from unreachable to
+**0.25 s** (the pond test file from 480 s to 24 s).
+
+### The sink depends on the rung, not on the number of pairs
+
+Same prepared state (entropy 2.2792), same 200 heralds; only the rung varies:
+
+| rung | pairs | final entropy | support |
+|---|---|---|---|
+| **T2** | 8 | **0.0000** | **1** |
+| T4 | 24 | 0.0000 | 8 |
+| FROBENIUS | 19 | 0.0000 | 16 |
+| **M3** | **15** | **1.0000** | **128** |
+| T16 | 120 | 2.0000 | 64 |
+| M15 | 105 | 2.0000 | 64 |
+| AGL | 120 | 2.0000 | 64 |
+
+**`M3` has fifteen pairs and leaves the state *less* collapsed than `FROBENIUS`,
+which has nineteen.** `T2` — the perfect matching, since `x ↦ x+1` is
+fixed-point-free and its 8 pairs partition the 16 modes — drives the state to a
+**single basis state**. The algebraic structure of the herald family decides
+where the storm stops; its size does not.
+
+Every rung leaves the Wick defect at machine zero. The storm stays Gaussian on
+all seven; only the destination differs. **This measurement does not exist on an
+unstructured index range** — there, the herald family is either "random pairs" or
+"all pairs", with nothing between them to vary.
+
+### The 2-flats
+
+The 140 quadruples whose GF(16) labels XOR to zero — the 2-flats of `AG(4,2)`,
+the characteristic-2 orthogonality `pg32_lines` uses one dimension lower —
+against the 1680 generic quadruples, as quartic heralds:
+
+| after storm on | 2-flat mean | generic mean |
+|---|---|---|
+| **T2** | **1.0000** | 0.6400 |
+| M3 | 0.6379 | 0.6529 |
+| AGL | 0.7200 | 0.7200 |
+
+The field structure of the *quartic* sets shows an effect at exactly one rung —
+the one whose *quadratic* family is also field-structured enough to collapse the
+state to a basis state. **Suggestive, not established**: 25 samples per pool, one
+seed, no error bars. Recorded because it is the first place in this arc where the
+quartic index structure mattered at all.
+
+Not claimed: any bearing on hardness. Every storm stays Gaussian; what varies is
+entanglement and support, which are state properties and not simulation costs.
+
+Full record: `manifests/qsigma_r1m_gf_ladder_storm_finding.json`.

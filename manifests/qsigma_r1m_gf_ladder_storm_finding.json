@@ -1,0 +1,63 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "R1M-GF-LADDER-STORM-001",
+  "status": "measured and recorded. The testbed is changed from a size to a field, and the result changes with it: where a storm of parity heralds lands depends on the algebraic structure of the herald family, not on how large it is.",
+  "subject": "src/aionq/pond.py::ladder_storm, rung_pairs, two_flats -- 16 Majorana modes labelled by GF(16), heralds indexed by the AGL(1,16) subgroup ladder of src/aionq/gf_frames.py",
+  "the_redirection_that_produced_it": "the repository owner objected that the testbeds were sizes -- n = 4, n = 6 -- rather than hypercomplex geometries, and proposed GF(GF(2,2), GF(2,2)). At n = 8 there are 16 Majorana modes and 16 = |GF(16)|, so the mode set is not an arbitrary index range: it carries the field structure gf_frames already built, and the herald family becomes a coordinate on a known group instead of a nuisance parameter.",
+  "enabling_work": {
+    "problem": "wick_defect cost O(C(2n,4) * 4^n) with full matrix products and covariance cost O((2n)^2 * 4^n); n = 8 was out of reach and the test file took 480 seconds",
+    "fix": "the Majoranas are Hermitian, so <c_j c_k> = (c_j psi)* (c_k psi) and <c_a c_b c_c c_d> = (c_b c_a psi)* (c_c c_d psi). Precomputing the 2n single-mode vectors and the ordered pair-vectors turns every correlator into one inner product.",
+    "verification": "identical to the direct form to 0.0 at n = 4 and n = 5, on Gaussian (2.6e-16) and non-Gaussian (0.151365, 0.499501) states alike",
+    "effect": "n = 8 covariance in 0.18 s and wick_defect in 0.25 s; the pond test file from 480 s to 24 s. Also made the per-herald defect measurement opt-in, since a storm needs it only at checkpoints."
+  },
+  "measurement_the_sink_depends_on_the_rung": {
+    "setting": "one prepared Gaussian state at n = 8, entropy 2.2792; 200 quadratic parity heralds; the only thing varied is which rung of the AGL(1,16) ladder supplies the mode pairs",
+    "table": [
+      {"rung": "T2", "pairs": 8, "entropy": 0.0, "support": 1},
+      {"rung": "T4", "pairs": 24, "entropy": 0.0, "support": 8},
+      {"rung": "FROBENIUS", "pairs": 19, "entropy": 0.0, "support": 16},
+      {"rung": "M3", "pairs": 15, "entropy": 1.0, "support": 128},
+      {"rung": "T16", "pairs": 120, "entropy": 2.0, "support": 64},
+      {"rung": "M15", "pairs": 105, "entropy": 2.0, "support": 64},
+      {"rung": "AGL", "pairs": 120, "entropy": 2.0, "support": 64}
+    ],
+    "the_non_monotonicity": "M3 has 15 pairs and leaves the state at entropy 1 with support 128 -- LESS collapsed than FROBENIUS, which has 19 pairs and drives it to entropy 0 with support 16. T2, the perfect matching (x -> x+1 is a fixed-point-free involution, so its 8 pairs partition the 16 modes), collapses the state to a single basis state.",
+    "reading": "the algebraic structure of the herald family decides where the storm stops, not its size. Every rung leaves the Wick defect at machine zero -- the storm stays Gaussian on all of them; only the destination differs.",
+    "why_this_could_not_be_seen_before": "with modes indexed by an arbitrary range the herald family is either 'random pairs' or 'all pairs' and there is nothing between them to vary. The ladder supplies seven structured families on the same 16 modes.",
+    "executable_form": "tests/test_pond.py::test_the_sink_depends_on_the_rung_and_not_on_the_number_of_pairs, ::test_more_pairs_does_not_mean_more_collapse, ::test_the_ladder_rungs_give_genuinely_different_herald_families"
+  },
+  "measurement_the_two_flats": {
+    "construction": "the 140 quadruples whose GF(16) labels XOR to zero -- the 2-flats of AG(4,2), affine planes {x, x+u, x+v, x+u+v} -- against the 1680 generic quadruples. The condition is the characteristic-2 orthogonality gf_frames.pg32_lines uses one dimension lower.",
+    "result": {
+      "after_T2_storm": {"two_flat_mean_wick": 1.0, "two_flat_max": 1.0, "generic_mean": 0.64, "generic_max": 1.0},
+      "after_M3_storm": {"two_flat_mean_wick": 0.6379, "generic_mean": 0.6529},
+      "after_AGL_storm": {"two_flat_mean_wick": 0.72, "generic_mean": 0.72}
+    },
+    "reading": "the field-structured quartic heralds separate from generic ones only on the maximally collapsed T2 state, where every one of the 22 live 2-flat heralds reaches Wick defect exactly 1.0 against a generic mean of 0.64. After the M3 and AGL storms there is no separation at all. So the 3-XOR structure is visible in the herald response only when the state has been driven to a basis state by a herald family that is itself field-structured.",
+    "status_of_this_reading": "SUGGESTIVE, not established. It is 25 sampled quadruples per pool per rung, at one prepared seed and one walker seed, and no error bars were computed. It is recorded because it is the first place in this session where the field structure of the QUARTIC sets, rather than of the quadratic ones, showed any effect at all."
+  },
+  "what_is_not_claimed": [
+    "that any of this bears on hardness. Every storm stays Gaussian; the Wick defect is at machine zero on all seven rungs. What varies is entanglement and support, which are state properties and not simulation costs, and q_sim_upper is untouched.",
+    "that the sink is characterised. The final states are identified only by entropy and support. Which stabiliser state each rung reaches, and whether the map rung -> sink is well defined or seed-dependent, was not measured.",
+    "that the two-flat effect is real. It is one seed, 25 samples per pool, no error bars, and it appears at exactly one of the three rungs scanned.",
+    "that the GF(16) labelling is canonical. The Jordan-Wigner mode ordering fixes which Majorana is which field element, and a different ordering would permute the rungs' pair sets. R1H already recorded that the encoding does more work here than it appears to."
+  ],
+  "typed_remainders": [
+    {
+      "kind": "seed_remainder",
+      "statement": "the rung table is one prepared state and one walker seed. The non-monotonicity (M3 above FROBENIUS) is the load-bearing claim and it rests on a single run of each. A seed scan would establish whether the ordering of rungs is stable; it was not performed."
+    },
+    {
+      "kind": "labelling_remainder",
+      "statement": "identifying mode j with field element j is a choice. The rungs are subgroups of AGL(1,16) acting on the labels, so relabelling conjugates them -- the ladder is intrinsic but its action on THESE Majoranas is not, and how the table moves under relabelling is not measured."
+    },
+    {
+      "kind": "scale_remainder",
+      "statement": "16 modes is the only size at which this experiment exists, because it is the only one where 2n is a power of two matching a field the repository has built. The next would be 2n = 256 at n = 128, which is unreachable, so this measurement has no scaling direction."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "Built and measured by the Claude session on the Linux container, from a redirection by the repository owner. Witness-nerve rank 0: verifier equals producer."
+    }
+  ]
+}

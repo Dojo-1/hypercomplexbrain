@@ -1090,6 +1090,30 @@ CORRECTIONS = (
         "tests/test_pond.py::test_the_herald_observable_is_a_genuine_two_outcome_measurement",
         True,
     ),
+    Correction(
+        "QSigma-R1l",
+        "the positive control for the storm experiment was VACUOUS: a quartic "
+        "herald applied to a post-storm state fired at probability 1.000, so the "
+        "state was already an eigenvector and the projection did nothing. Its "
+        "wick_defect of 1.1e-16 would have been reported as 'even a quartic "
+        "herald cannot disturb a post-storm state', which is false. The tell is "
+        "the probability, not the defect, and a control that cannot fire is not "
+        "a control",
+        "tests/test_pond.py::test_a_vacuous_herald_is_detected_rather_than_reported_as_a_null",
+        True,
+    ),
+    Correction(
+        "QSigma-R1l",
+        "having caught the vacuous control, the replacement reading -- that the "
+        "storm destroys a state's capacity to receive magic -- was itself wrong, "
+        "and wrong twice: it was one seed and it was n = 4. Across twelve seeds "
+        "at n = 4 only 1 of 36 quartic heralds is vacuous, and across six seeds "
+        "at n = 6 every single post-storm state is taken to wick_defect 1.0 by "
+        "some quartic herald. Two successive readings of the same experiment "
+        "were both artifacts of a single small case",
+        "tests/test_pond.py::test_a_post_storm_state_can_still_receive_magic",
+        True,
+    ),
 )
 
 
