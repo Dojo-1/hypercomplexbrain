@@ -54,15 +54,31 @@ __all__ = [
     "covariance_entropy",
     "covariance_storm",
     "agrees_with_state_vector",
+    "herald_sequence",
+    "cap_restricted_run",
+    "additivity_defect",
 ]
 
 
 def vacuum_covariance(qubits: int) -> np.ndarray:
     """``Gamma`` of ``|0...0>`` under the Jordan-Wigner convention used here.
 
-    Read off the convention rather than assumed: mode ``2k`` and ``2k+1`` live on
-    qubit ``k``, and ``i c_2k c_2k+1`` is the single-qubit ``Z``, which is ``+1``
-    on ``|0>``.  So the vacuum block-diagonalises into ``[[0, 1], [-1, 0]]``.
+    Mode ``2k`` and ``2k+1`` live on qubit ``k``, and in this repository's
+    Jordan-Wigner convention ``Gamma[2k, 2k+1] = -1`` on the vacuum, so each
+    qubit contributes the block ``[[0, -1], [1, 0]]``.
+
+    THE SIGN IS READ OFF `pond.covariance`, NOT DERIVED HERE, AND THIS PARAGRAPH
+    IS THE REASON.  The first version of this docstring argued that ``i c_2k
+    c_2k+1`` is the single-qubit ``Z`` and therefore ``+1`` on ``|0>``, and wrote
+    the opposite block.  The gate caught the code at a defect of exactly 2.0; the
+    code was fixed and **the derivation that produced the error was left standing
+    for a whole commit**.  A maintainer following it would have "corrected" the
+    working code back into the bug, and the regression test would then have
+    looked like the thing at fault.
+
+    Caught by GPT on rejoining co-development.  Recorded because fixing a value
+    while leaving the reasoning that generated it is a worse state than the
+    original bug: the bug was inert, the reasoning is contagious.
 
     `agrees_with_state_vector` checks this against `pond.covariance` rather than
     taking it on trust, because a sign convention that is wrong here would be
@@ -273,4 +289,115 @@ def agrees_with_state_vector(qubits: int = 4, tolerance: float = 1e-9) -> dict:
         "worst": worst,
         "tolerance": tolerance,
         "passes": all(value < tolerance for value in worst.values()),
+    }
+
+
+# --------------------------------------------------------------------------
+# The cap decomposition that actually reconstructs, after GPT's review
+# --------------------------------------------------------------------------
+
+def herald_sequence(pairs, steps: int = 150, seed: int = 7) -> tuple:
+    """The draw, materialised, so that caps can be compared at MATCHED dose.
+
+    R1S's frozen functional compared a storm on ``F`` against storms on each
+    ``F_theta`` "at the same step budget and seed".  Those are not comparable.
+    The walker draws uniformly from whichever family it is handed, so over
+    ``steps`` heralds a cap receives about ``steps * |F_theta| / |F|`` of them
+    inside the union run and ``steps`` of them when run alone -- a dose mismatch
+    of ``|F| / |F_theta|``, which for a rung of 120 pairs against a cap of 8 is a
+    factor of fifteen.  The denominator of the ratio was measuring a fifteen-fold
+    longer exposure than the numerator.
+
+    Materialising the sequence fixes it: one draw, partitioned.  The cap
+    sub-sequences are disjoint and their union is exactly the whole sequence, so
+    the decomposition is a genuine partition of ONE process rather than a
+    comparison of several.
+    """
+    pairs = tuple(pairs)
+    walker = np.random.default_rng(seed)
+    return tuple(pairs[int(walker.integers(0, len(pairs)))] for _ in range(steps))
+
+
+def cap_restricted_run(sequence, cap, qubits: int, prepared, split: int | None = None,
+                       outcome_seed: int = 11) -> dict:
+    """Replay one herald sequence, keeping only the heralds that land in ``cap``.
+
+    The outcome draws are taken from their own generator indexed by POSITION in
+    the full sequence, so a herald at step ``t`` gets the same random number
+    whether or not the caps before it were kept.  Without that, restricting to a
+    cap would re-index the randomness and the runs would differ for a reason that
+    has nothing to do with the caps.
+    """
+    split = qubits // 2 if split is None else split
+    left = list(range(2 * split))
+    gamma = np.array(prepared, dtype=float)
+    cap = {tuple(sorted(pair)) for pair in cap}
+
+    draws = np.random.default_rng(outcome_seed).random(len(sequence))
+    kept = 0
+    for position, (first, second) in enumerate(sequence):
+        if tuple(sorted((first, second))) not in cap:
+            continue
+        kept += 1
+        probability = herald_probability(gamma, first, second, +1)
+        outcome = 1 if draws[position] < probability else -1
+        moved, _ = herald_covariance(gamma, first, second, outcome)
+        if moved is not None:
+            gamma = moved
+    return {"kept": kept, "final_entropy": covariance_entropy(gamma, left),
+            "covariance": gamma}
+
+
+def additivity_defect(pairs, caps, qubits: int, prepared, steps: int = 150,
+                      seed: int = 7, split: int | None = None,
+                      outcome_seed: int = 11) -> dict:
+    """Does the whole response reconstruct from the cap responses?  MEASURE IT.
+
+    This is the gate the frozen protocol lacked.  R1S declared a "trivial
+    Cauchy-Schwarz bound" of ``sqrt(N)`` for its ratio, and that bound does not
+    follow from anything the protocol constructs: Cauchy-Schwarz needs a sum and
+    a norm, and here each run is a separate stochastic trajectory, entropy is
+    nonlinear in ``Gamma``, and sequential heralds do not commute.  Without an
+    additive relation the ratio has no baseline and its thresholds are arbitrary.
+
+    So the relation is not assumed -- it is measured, and the measurement decides
+    what the ratio may be called:
+
+        additive      ``|Delta S(F) - sum_theta Delta S(F_theta)|`` small, and
+                      the l2 comparison has a baseline worth the name
+        not additive  the ratio is an empirical INTERACTION RATIO and its
+                      thresholds are operational conventions, not bounds
+
+    Either way the number is reportable.  Only one of them licenses the word
+    "decoupling", and that is the point of measuring first.
+    """
+    sequence = herald_sequence(pairs, steps, seed)
+    split = qubits // 2 if split is None else split
+    left = list(range(2 * split))
+
+    baseline = covariance_entropy(np.asarray(prepared, dtype=float), left)
+    whole = cap_restricted_run(sequence, set(map(tuple, map(sorted, pairs))), qubits,
+                               prepared, split, outcome_seed)
+    parts = [cap_restricted_run(sequence, cap, qubits, prepared, split, outcome_seed)
+             for cap in caps]
+
+    delta_whole = whole["final_entropy"] - baseline
+    deltas = [part["final_entropy"] - baseline for part in parts]
+
+    linear = float(abs(delta_whole - sum(deltas)))
+    scale = max(abs(delta_whole), 1e-12)
+    root_sum_square = float(np.sqrt(sum(value ** 2 for value in deltas)))
+    return {
+        "caps": len(caps),
+        "steps": steps,
+        "heralds_kept_whole": whole["kept"],
+        "heralds_kept_per_cap": [part["kept"] for part in parts],
+        "dose_is_matched": whole["kept"] == sum(part["kept"] for part in parts),
+        "baseline_entropy": baseline,
+        "delta_whole": float(delta_whole),
+        "delta_per_cap": [float(value) for value in deltas],
+        "additivity_defect": linear,
+        "additivity_defect_relative": linear / scale,
+        "root_sum_square": root_sum_square,
+        "ratio": float(abs(delta_whole) / root_sum_square) if root_sum_square > 1e-12 else float("nan"),
     }

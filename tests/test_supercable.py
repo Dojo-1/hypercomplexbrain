@@ -65,26 +65,39 @@ def test_the_covariance_formalism_reproduces_the_exact_one(qubits):
 
 
 def test_the_storm_agrees_at_sixteen_modes_including_the_r1r_refutation(prepared):
-    """The half of the gate that matters: whole trajectories, not single steps.
+    """Every step of every trajectory, not just where they end up.
 
-    Four rungs at two splits, 150 heralds each, worst disagreement 9.5e-14
-    against a preregistered tolerance of 1e-9. It reproduces R1R's refuting cell
+    The frozen gate asks for final entropy, and the first version of this test
+    compared only that -- while its own docstring said "whole trajectories".
+    Two different entropy paths can land on the same endpoint and pass. GPT
+    caught the overstatement on review; the assertion is now over all 151 points
+    of each trajectory, which strengthens the check without touching the
+    preregistered acceptance criterion (final entropy under 1e-9 is asserted
+    separately below and is unchanged).
+
+    Four rungs at two splits, 150 heralds each. It reproduces R1R's refuting cell
     exactly -- `M3` at split 2 gives 0.983691 in both formalisms -- which is the
     strongest single check available, because that number is the one that killed
     a rule and nothing about it is round or expected.
     """
     qubits, _, _, gamma = prepared
 
-    worst = 0.0
+    worst_final, worst_path = 0.0, 0.0
     for rung in ("T2", "T4", "FROBENIUS", "M3"):
         pairs = rung_pairs(rung)
         for split in (2, 4):
             exact = breathing_trajectory(pairs, steps=150, seed=7, split=split)
             fast = covariance_storm(pairs, qubits, steps=150, seed=7, split=split,
                                     prepared=gamma)
-            worst = max(worst, abs(exact["final_entropy"] - fast["final_entropy"]))
+            worst_final = max(worst_final,
+                              abs(exact["final_entropy"] - fast["final_entropy"]))
 
-    assert worst < 1e-9
+            left, right = np.asarray(exact["entropies"]), np.asarray(fast["entropies"])
+            assert left.shape == right.shape == (151,)
+            worst_path = max(worst_path, float(np.abs(left - right).max()))
+
+    assert worst_final < 1e-9, "the preregistered criterion, unchanged"
+    assert worst_path < 1e-9, "and every intermediate point as well"
 
     refutation = covariance_storm(rung_pairs("M3"), qubits, steps=150, seed=7,
                                   split=2, prepared=gamma)
@@ -204,3 +217,93 @@ def test_the_formalism_reaches_where_the_state_vector_cannot():
     assert result["covariance"].shape == (64, 64)
     assert result["purity_defect"] < 1e-8
     assert np.isfinite(result["final_entropy"])
+
+
+# --------------------------------------------------------------------------
+# The reconstructed cap decomposition, after GPT's review
+# --------------------------------------------------------------------------
+
+def test_the_cap_decomposition_is_a_partition_at_matched_dose(prepared):
+    """One draw, partitioned -- not several runs compared.
+
+    The frozen protocol compared a storm on `F` against storms on each `F_theta`
+    "at the same step budget and seed". The walker draws uniformly from whatever
+    family it is handed, so a cap received about `steps * |F_theta| / |F|`
+    heralds inside the union run and `steps` when run alone. For a 120-pair rung
+    against an 8-pair cap that is a fifteenfold dose mismatch, and it would have
+    made the ratio meaningless independently of the Cauchy-Schwarz question.
+
+    Materialising the sequence once and partitioning it fixes both: the cap
+    sub-sequences are disjoint, their sizes sum to the whole, and their union IS
+    the whole sequence. That is what makes a cap-level reconstruction even
+    askable.
+    """
+    from aionq.supercable import additivity_defect, herald_sequence
+
+    qubits, _, _, gamma = prepared
+    pairs = rung_pairs("T4")
+    caps = _orbit_caps("T4")
+
+    sequence = herald_sequence(pairs, steps=150, seed=7)
+    assert len(sequence) == 150
+    assert set(map(tuple, map(sorted, sequence))) <= set(pairs)
+
+    report = additivity_defect(pairs, caps, qubits, gamma, steps=150, seed=7, split=4)
+
+    assert report["dose_is_matched"], "cap sub-sequences must partition the whole"
+    assert sum(report["heralds_kept_per_cap"]) == report["heralds_kept_whole"] == 150
+    assert report["caps"] == len(caps)
+
+
+def test_the_additivity_gate_decides_what_the_ratio_may_be_called(prepared):
+    """Declared before measuring: additive licenses "decoupling", otherwise not.
+
+    The rule is fixed in `manifests/qsigma_r1s_protocol_amendment_v1.json` --
+    relative additivity defect below 0.1 earns the l2 baseline and the name
+    "decoupling constant"; at or above it, the quantity is permanently an
+    INTERACTION RATIO whose thresholds are operational conventions with no bound
+    behind them.
+
+    This test does not assert which way it goes. It asserts that the gate is
+    computable, is reported with the numbers a reader needs to check it, and is
+    not silently skipped -- the outcome is recorded in the round's finding
+    manifest, not decided here.
+    """
+    from aionq.supercable import additivity_defect
+
+    qubits, _, _, gamma = prepared
+    report = additivity_defect(rung_pairs("T4"), _orbit_caps("T4"), qubits, gamma,
+                               steps=150, seed=7, split=4)
+
+    for key in ("delta_whole", "delta_per_cap", "additivity_defect",
+                "additivity_defect_relative", "root_sum_square", "ratio"):
+        assert key in report
+    assert np.isfinite(report["additivity_defect"])
+    assert report["additivity_defect"] >= 0.0
+
+
+def _orbit_caps(rung: str) -> tuple:
+    """Caps = the orbits of the rung, as the round specifies.
+
+    The orbits partition the sixteen modes, so assigning each pair to the orbit
+    containing its SMALLER endpoint makes the caps disjoint and exhaustive over
+    the family. Any pair-to-cap rule must be a partition or the reconstruction is
+    not one, which is what
+    `test_the_cap_decomposition_is_a_partition_at_matched_dose` checks.
+    """
+    from aionq.gf_frames import subgroup
+
+    permutations = subgroup(rung)
+    owner, seen = {}, set()
+    for element in range(16):
+        if element in seen:
+            continue
+        orbit = frozenset(permutation[element] for permutation in permutations)
+        seen |= orbit
+        for mode in orbit:
+            owner[mode] = orbit
+
+    caps = {}
+    for pair in rung_pairs(rung):
+        caps.setdefault(owner[min(pair)], []).append(pair)
+    return tuple(tuple(group) for group in caps.values())

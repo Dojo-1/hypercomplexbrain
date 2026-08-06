@@ -4,6 +4,17 @@
   "title": "Decoupling over GF(16) orbit caps on a four-strand supercable",
   "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
   "date": "2026-08-06",
+  "supersession": {
+    "superseded_by": "manifests/qsigma_r1s_protocol_amendment_v1.json",
+    "amended_clauses": [
+      "the execution order. C1-FLAT and C4-RELABELLING both claimed to run first; the amendment declares FLAT, CURVED, BLINDNESS, RELABELLING.",
+      "the_functional.reading, which called C ~ sqrt(N) 'the trivial Cauchy-Schwarz bound'. No sum and no norm are constructed, so the bound was unearned. The amendment reconstructs the cap decomposition as a partition of one herald sequence and GATES additivity: earned or the quantity is renamed an interaction ratio.",
+      "the_functional.definition's 'at the same step budget and seed', which produced a dose mismatch of |F|/|F_theta| between numerator and denominator -- up to fifteenfold."
+    ],
+    "what_still_governs": "everything else, unaltered: the four controls and their predictions, the matching requirement, the kill conditions, the evidence ceiling, the stop condition, and the enabling gate.",
+    "no_control_had_run": "this file was amended before any control executed. Nothing measured under it is being reinterpreted.",
+    "added_by": "R1S protocol amendment 1, after GPT's review at f6c22d6. Back-pointer only; no clause of this file was altered."
+  },
 
   "why_this_is_preregistered_rather_than_measured_first": "R1R recorded that four rules have been proposed for the collapse and three died out of sample, each written down as confirmed BEFORE being shown a case it could not have anticipated, each refuting case cheap, each run only afterwards. R1R named the fix -- generate the refuter before recording the rule -- and did not make it. This manifest is that fix, applied once: the controls below are declared with their predicted outcomes, and the round reports against them whether or not they are flattering.",
 

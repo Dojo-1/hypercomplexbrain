@@ -1,0 +1,84 @@
+{
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R1S",
+  "title": "Protocol amendment 1: execution order, the missing baseline, and two provenance defects",
+  "status": "FROZEN_BEFORE_ANY_CONTROL_IS_RUN. Amends the R1S preregistration. No control has executed and none executes until this is committed.",
+  "date": "2026-08-06",
+  "supersedes": ["manifests/qsigma_r1s_supercable_decoupling_preregistration.json"],
+  "amends_rather_than_replaces": "the original file is preserved unaltered. Every clause not listed below still governs, including the four controls, the kill conditions, the evidence ceiling and the stop condition.",
+
+  "origin": "GPT rejoined co-development at commit f6c22d6 and reviewed the R1S implementation against its frozen preregistration. Three protocol-level findings, all verified against the files before being accepted, all upheld. A fourth defect was found during that verification and is not GPT's. One claim in the review is itself incorrect and is recorded in both directions.",
+
+  "finding_1_the_execution_order_contradicted_itself": {
+    "verified": "C1-FLAT reads 'This is the case that must be run first.' C4-RELABELLING reads 'it is being run first this time precisely because its outcome is not obvious.' Both are in the frozen file. They cannot both hold.",
+    "resolution": "the declared order is FLAT, then CURVED, then BLINDNESS, then RELABELLING.",
+    "why_this_order_and_not_the_other": "FLAT is the refuter for the framing itself -- if a flat configuration decouples as well as a curved one, the functional is not measuring curvature and nothing after it is worth running. RELABELLING tests whether the constant is a labelling artifact, which is a question about a quantity that must first exist. The handoff narrative and the commit message both name FLAT first, so this reading restores consistency rather than choosing between two live options.",
+    "what_is_NOT_weakened": "RELABELLING remains mandatory, its outcome remains undeclared, and both of its readings remain written down in advance. Moving it to fourth changes when it runs, not whether, and not what it would mean."
+  },
+
+  "finding_2_the_cauchy_schwarz_baseline_was_unearned": {
+    "verified": "the frozen functional calls C ~ sqrt(N) 'the trivial Cauchy-Schwarz bound'. That bound needs a sum and a norm -- ||sum f_theta|| <= sum ||f_theta|| <= sqrt(N) (sum ||f_theta||^2)^{1/2} -- and the protocol constructs neither. Each storm is a separate stochastic trajectory, entropy is nonlinear in Gamma, sequential projective heralds do not commute, and running the union is not running the caps and adding.",
+    "accepted": "the objection is correct. As frozen, C is an empirical interaction ratio whose thresholds have no derivation behind them.",
+    "a_fourth_defect_found_while_verifying_this_one_and_not_in_the_review": {
+      "statement": "the frozen definition compares a storm on F against storms on each F_theta 'at the same step budget and seed'. The walker draws uniformly from whichever family it is handed, so across `steps` heralds a cap receives about steps * |F_theta| / |F| of them inside the union run and `steps` of them when run alone.",
+      "size": "a dose mismatch of |F| / |F_theta|. For a 120-pair rung against an 8-pair cap that is a factor of fifteen: the denominator of the ratio would have measured a fifteen-fold longer exposure than the numerator.",
+      "severity": "this alone would have made C meaningless independently of the Cauchy-Schwarz question, and it was not visible from the review's vantage because it lives in the sampling loop rather than in the protocol text."
+    },
+    "resolution_reconstruct_rather_than_merely_rename": {
+      "construction": "materialise the herald draw once as a sequence, then partition it by cap. The cap sub-sequences are disjoint and their union is exactly the whole sequence, so this is a genuine partition of ONE process rather than a comparison of several runs. Outcome randomness is indexed by POSITION in the full sequence, so a herald at step t draws the same number whether or not earlier caps were kept -- without that, restricting to a cap re-indexes the randomness and the runs differ for a reason unrelated to the caps.",
+      "the_gate": "additivity is then a measurable question at matched dose: |Delta S(F) - sum_theta Delta S(F_theta)|, reported absolutely and relative to |Delta S(F)|.",
+      "the_rule_declared_before_the_measurement": {
+        "if_additive": "the l2 comparison has a baseline worth the name and the term 'decoupling constant' is licensed, with the frozen thresholds retained.",
+        "if_not_additive": "the quantity is renamed INTERACTION RATIO permanently, its thresholds are demoted to operational conventions with no bound behind them, and the word 'decoupling' is dropped from the round's conclusions. It remains reportable; it does not remain a decoupling constant.",
+        "threshold": "additive means relative additivity defect below 0.1. Fixed here, before the measurement, and not movable afterwards."
+      },
+      "implementation": "src/aionq/supercable.py::herald_sequence, ::cap_restricted_run, ::additivity_defect"
+    }
+  },
+
+  "finding_3_the_docstring_carried_the_bug_the_gate_had_caught": {
+    "verified": "vacuum_covariance stored Gamma[2k, 2k+1] = -1.0 while its docstring argued the observable is +1 on the vacuum and displayed the opposite block.",
+    "severity": "the worst of the three, and worse than the original bug. The code was fixed and the DERIVATION THAT PRODUCED THE ERROR was left standing for a whole commit. A maintainer following it would have 'corrected' the working code back into the bug, and the regression test would then have looked like the thing at fault.",
+    "resolution": "the docstring now states the convention as read off pond.covariance, says explicitly that it is not derived here, and records why. Bound as a correction.",
+    "the_general_lesson": "fixing a value while leaving the reasoning that generated it is a worse state than the original defect: the defect was inert, the reasoning is contagious. Nothing in this repository's discipline caught it -- the gate checks values, and no gate checks that prose agrees with the code beside it."
+  },
+
+  "finding_4_the_trajectory_test_overstated_its_coverage": {
+    "verified": "the test docstring said 'whole trajectories, not single steps' while the assertion compared final entropy only. Two different entropy paths can share an endpoint and pass.",
+    "review_was_right_that_this_is_not_noncompliance": "the frozen gate asks for final entropy, so the test met the criterion and the description exceeded it.",
+    "resolution": "the assertion now covers all 151 points of each trajectory. The preregistered criterion is asserted separately and unchanged, so this strengthens the gate without altering what was frozen.",
+    "measured_after_strengthening": "worst path-wise disagreement under 1e-9 across four rungs and two splits, same as the endpoint figure."
+  },
+
+  "where_the_review_is_incorrect": {
+    "claim": "'Evidence ceiling after eventual execution: A, as the preregistration states.'",
+    "correction": "the preregistration states ATTESTED, not A. These are two different ladders and the repository maintains both in code. witness_nerve.EvidenceRank is NONE / ATTESTED / REVIEWED / INDEPENDENT and answers WHO witnessed. governance.EvidenceTag is PROVED / AXIOMATIZED / MEASURED / HYPOTHESIS / SEMANTIC / RETIRED and answers WHAT KIND of claim. 'A' in the second ladder is AXIOMATIZED -- passes a named weaker surrogate -- which is not what a completed control run produces.",
+    "the_correct_statement": "a completed R1S control run yields a claim tagged MEASURED (M), carrying witness rank ATTESTED. Conflating the ladders would tag a measurement as a surrogate result, which understates the measurement and overstates the witnessing at the same time.",
+    "recorded_symmetrically": "GPT found three real defects here, two of which no internal check would have caught, and one of its eight or so subsidiary claims is wrong. That ratio is recorded because the round's discipline applies to reviewers too, and because an external reviewer who is right about the important things and wrong about a small one is the normal and useful case."
+  },
+
+  "what_this_amendment_does_not_do": [
+    "run any control. FLAT does not execute until this is committed, per the review's own recommendation.",
+    "alter the four controls, their predictions, the kill conditions, the evidence ceiling or the stop condition.",
+    "rescue the Cauchy-Schwarz reading by argument. It is either earned by the additivity measurement or dropped."
+  ],
+
+  "typed_remainders": [
+    {
+      "kind": "protocol_remainder",
+      "statement": "the frozen file was internally contradictory and stated an unearned bound, and both survived being written, committed and described in a handoff. The preregistration discipline caught neither; an external reader did. Preregistration constrains when claims may be made and does not check that the protocol is coherent."
+    },
+    {
+      "kind": "instrument_remainder",
+      "statement": "no check in this repository compares a docstring against the code beside it. The vacuum defect was a contradiction sitting in one function between line 5 and line 25, invisible to a full green suite. Nothing has been added this round to detect the class."
+    },
+    {
+      "kind": "reconstruction_remainder",
+      "statement": "the partitioned-sequence construction makes the caps a genuine decomposition of one process and does NOT make entropy linear. Additivity remains an empirical question, which is why it is gated rather than assumed. If it fails, the round still reports a ratio -- it simply may not call it decoupling."
+    },
+    {
+      "kind": "authorship_remainder",
+      "statement": "GPT and this session are separate authoring models, which is the first non-correlated review in this line. It is still not INDEPENDENT in the witness-nerve sense: the review read this session's artifacts and re-derived nothing from primary sources, so it raises rank toward REVIEWED and not beyond."
+    }
+  ]
+}

@@ -1285,6 +1285,35 @@ CORRECTIONS = (
         "tests/test_supercable.py::test_the_entropy_pairing_bug_is_invisible_at_the_smallest_split",
         True,
     ),
+    Correction(
+        "QSigma-R1s",
+        "the vacuum_covariance docstring was left arguing that i c_2k c_2k+1 is "
+        "+1 on |0>, and displaying the opposite block, for a whole commit AFTER "
+        "the gate had caught the code and the code had been fixed. Fixing a value "
+        "while leaving the reasoning that generated it is worse than the original "
+        "bug: the bug was inert, the reasoning is contagious, and a maintainer "
+        "following the derivation would have restored the defect and then found "
+        "the regression test apparently at fault. No check in this repository "
+        "compares a docstring against the code beside it, so a full green suite "
+        "saw nothing",
+        "tests/test_supercable.py::test_the_vacuum_sign_convention_is_read_off_and_not_assumed",
+        False,
+    ),
+    Correction(
+        "QSigma-R1s",
+        "the R1S preregistration called C ~ sqrt(N) 'the trivial Cauchy-Schwarz "
+        "bound'. Cauchy-Schwarz needs a sum and a norm and the protocol "
+        "constructed neither: each storm is a separate stochastic trajectory, "
+        "entropy is nonlinear in Gamma, and sequential heralds do not commute. "
+        "Worse, and found while verifying that objection, the definition compared "
+        "runs 'at the same step budget', so a cap received steps*|F_theta|/|F| "
+        "heralds inside the union run against steps alone -- a dose mismatch up "
+        "to fifteenfold, which would have made the ratio meaningless on its own. "
+        "The protocol also declared two different controls to be run first. All "
+        "three survived being written, committed and described in a handoff",
+        "tests/test_supercable.py::test_the_cap_decomposition_is_a_partition_at_matched_dose",
+        False,
+    ),
 )
 
 
