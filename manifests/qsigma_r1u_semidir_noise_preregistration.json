@@ -1,0 +1,119 @@
+{
+  "task_id": "qsigma-r1u-semidir-noise",
+  "claim": {
+    "text": "On the frozen 16-state R1T projected-Simon testbed, a time-ordered noisy action of the non-abelian regular group Z4 semidirect Z4 (inversion action) can alter sector-resolved and global Simon leakage in an order-sensitive way that is absent in the capacity-matched abelian Z4 x Z4 control under the same generator/noise schedule.",
+    "scope": "Finite exact statevector experiment on 16 amplitudes. Tests representation/order sensitivity under a regular permutation action and time-dependent stochastic generator perturbations; no hardware, asymptotic, biological, manifold, or quantum-speedup claim.",
+    "status_before": "H",
+    "assumptions": [
+      "non-abelian group presentation a^4=b^4=e and b a b^-1=a^-1",
+      "both groups act by left-regular permutations on the same 16 computational-basis labels",
+      "the same projected Simon states and the same coherent four-cell partitions from R1T are used",
+      "noise schedules are generated before metrics are evaluated and reused identically for non-abelian and abelian controls",
+      "time reversal means reversing the exact realized noisy generator word, not resampling noise"
+    ],
+    "forbidden_promotions": [
+      "no claim that non-abelian symmetry is intrinsically better",
+      "no claim of noise robustness unless a matched metric improves under preregistered comparison",
+      "no claim about general Z_l semidirect Z_m families from this single Z4 semidirect Z4 instance",
+      "no claim that permutation noise models physical device noise",
+      "no independent-witness claim"
+    ]
+  },
+  "specification": {
+    "intended_object": "For group coordinates (i,j) in Z4 x Z4, compare abelian product (i,j)(k,l)=(i+k,j+l) mod 4 with non-abelian semidirect product (i,j)(k,l)=(i+(-1)^j k,j+l) mod 4. Their left-regular actions induce permutations on 16 projected amplitudes. A time-dependent noisy word w_eta(t) over generators a,b,a^-1,b^-1 is applied stepwise to the projected state and partition labels, then R1T Walsh/interference metrics are evaluated after each step.",
+    "invariants": [
+      "both multiplication laws satisfy identity and inverse checks on all 16 elements",
+      "non-abelian presentation bab^-1=a^-1 holds exactly",
+      "abelian control commutator [a,b]=e holds exactly",
+      "every regular action is a permutation of 0..15",
+      "same realized noisy word and same initial state/partition are used across matched group controls",
+      "forward and reversed realized words contain identical generator multisets",
+      "R1T interference closure remains <=1e-12 after every permutation action"
+    ],
+    "known_answer_cases": [
+      "zero-noise identity schedule leaves all R1T metrics unchanged",
+      "in the abelian control, any forward/reversed words with identical generator multiset produce identical endpoint permutation and endpoint metrics",
+      "the non-abelian commutator word a b a^-1 b^-1 is non-identity while the abelian counterpart is identity"
+    ]
+  },
+  "implementation": {
+    "artifact": "planned: src/aionq/semidirect_noise.py; experiments/run_semidirect_noise.py; tests/test_semidirect_noise.py; artifacts/r1u_semidir_noise/semidirect_noise.json",
+    "commit": "implementation must descend from this preregistration commit",
+    "environment": "Python >=3.10, NumPy >=1.24",
+    "live_entrypoint": "planned: PYTHONPATH=src python3 experiments/run_semidirect_noise.py",
+    "representation": "16 group elements encoded lexicographically as label 4*j+i; exact left-regular permutation representation"
+  },
+  "metric": {
+    "name": "time_ordered_group_noise_effect_region",
+    "type": "typed_tuple",
+    "units": "dimensionless",
+    "direction": "partial_order",
+    "raw_before_clipping": true,
+    "semantic_invariance_claimed": false,
+    "equivalence_attacks": [
+      "abelian Z4 x Z4 with identical realized word",
+      "time-reversed realized word",
+      "generator-name relabelling a<->b with matched counts",
+      "conjugated non-abelian representation by a fixed random basis permutation",
+      "zero-noise schedule"
+    ]
+  },
+  "tests": {
+    "black_box": ["endpoint permutation from iterative action equals direct product element regular action"],
+    "structural": ["group tables exhaustive", "presentation relations exact", "regular permutations bijective"],
+    "property_based": ["interference closure <=1e-12 across seeds/times/groups"],
+    "metamorphic": ["abelian forward/reverse endpoint equality", "conjugated representation preserves relabelled physical predictions"],
+    "fuzzing": ["8 projection seeds x 8 noise seeds x 3 noise profiles"],
+    "historical": ["R1T field-vs-random result requires matched structural controls and forbids attributing effects to labels alone"]
+  },
+  "controls": {
+    "matched_baselines": [
+      "ABELIAN: Z4 x Z4 regular action with same noisy word",
+      "NO-NOISE: identity perturbation schedule",
+      "REVERSED: exact realized word reversed",
+      "CONJUGATED: non-abelian representation conjugated by fixed label permutation"
+    ],
+    "negative_controls": ["commutator word must vanish in abelian control and remain nontrivial in non-abelian group"],
+    "compute_parity": "same number of permutation applications, Walsh transforms, states, partitions, and time points",
+    "parameter_parity": "same generator alphabet and word length",
+    "sampling_parity": "same projection seeds, noise seeds, and realized words",
+    "data_access_parity": "same initial projected wavefunction and partition"
+  },
+  "preregistration": {
+    "prediction": "P1 abelian forward/reverse endpoint metric defect <=1e-12 for every run. P2 non-abelian forward/reverse endpoint permutation differs for at least 75% of nontrivial noisy words and endpoint metric defect is >1e-8 for at least one preregistered metric in at least 50% of nondegenerate runs. P3 zero-noise identity leaves metrics unchanged <=1e-12. P4 conjugating the representation and consistently relabelling state/partition leaves metrics unchanged <=1e-12. P5 interference closure remains <=1e-12 at all time points.",
+    "primary_metric": "paired forward-vs-reverse endpoint defect vector: (permutation_disagreement, global_forbidden_mass_defect, sector_forbidden_mass_defect, offdiag_forbidden_defect), compared non-abelian versus abelian",
+    "uncertainty_method": "exact finite permutations plus deterministic seeded noise; report every row and aggregate proportions over 8x8x3 matched cells",
+    "kill_condition": "Retire the non-abelian order-sensitivity interpretation if the abelian forward/reverse endpoint differs above 1e-12, if conjugation changes consistently relabelled metrics above 1e-12, if interference closure exceeds 1e-12, or if non-abelian endpoint permutation differs but no preregistered wavefunction metric differs above 1e-8 in at least 50% of nondegenerate runs.",
+    "stop_condition": "Stop after the four controls, three fixed noise profiles, 8 projection seeds, 8 noise seeds, and time-series/end-point metrics are recorded. No adiabatic, sheaf, holoportation, continuous Lie, or larger Z_l semidirect Z_m sweep inside R1U.",
+    "promotion_rule": "H -> M only for the bounded statement that order-sensitive non-abelian regular actions under the declared time-dependent noise produce a reproducible effect on these projected-partition metrics beyond matched abelian/relabelled controls. Any stronger geometric interpretation remains H/S."
+  },
+  "evidence": {
+    "primary_sources": ["R1T implementation and result on parent branch"],
+    "execution_records": ["none before preregistration"],
+    "independent_witnesses": [{"name":"none","origin":"same GPT development line","artifact":"not applicable"}],
+    "claim_to_artifact_map": [
+      "group law/presentation -> src/aionq/semidirect_noise.py + structural tests",
+      "time-dependent matched noise -> experiment raw artifact",
+      "order-sensitive projected metrics -> experiment raw artifact + focused tests",
+      "representation invariance -> conjugation metamorphic test"
+    ]
+  },
+  "round_trip": {
+    "edges": [{
+      "from": "time-dependent noisy group word",
+      "to": "regular permutation action on projected wavefunction and coherent partition",
+      "preserved": ["norm", "partition cardinalities", "exact generator chronology"],
+      "transformed": ["basis support and hidden-pair alignment"],
+      "lost": ["physical noise semantics: this is an abstract permutation-noise model"],
+      "remainder": ["[R]_noise-model", "[R]_group-family"]
+    }]
+  },
+  "result": {
+    "observed": "not run",
+    "effect_size": "not applicable before execution",
+    "uncertainty": "not applicable before execution",
+    "status_after": "H",
+    "retired_claims": [],
+    "active_remainder": ["[R]_noise-model", "[R]_group-family", "[R]_witness"]
+  }
+}
