@@ -1,0 +1,190 @@
+{
+  "task_id": "qsigma-r1t-projected-partition",
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R1T",
+  "title": "Coherent partitions of projected Simon superpositions",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-08-07",
+  "base_commit": "a090939cb72519d2b0af49fafc4e772d71740f56",
+  "claim": {
+    "text": "A coherent partition of a projected Simon-type wavefunction exposes whether a logical/geometric partition is aligned with the hidden translation: partitions invariant under x -> x XOR s have zero forbidden Simon mass inside every sector, while transverse partitions can carry forbidden mass sector-wise that cancels only through cross-sector interference when the sectors are recombined.",
+    "scope": "Finite 4-bit / GF(16)-labelled statevector testbed. The experiment studies projected wavefunctions and coherent partitions, not oracle-query speedup, hardware advantage, biological cognition, or a theorem about arbitrary bundles/manifolds.",
+    "status_before": "H",
+    "assumptions": [
+      "n = 4 and the hidden nonzero translation s is fixed before projection weights and partitions are measured",
+      "the substrate state is the exact Simon coset-entangled state over 16 input labels and 8 quotient labels",
+      "projection acts only on the quotient/output register and is postselected mathematically without measurement noise",
+      "all compared partitions contain four cells of four computational-basis labels",
+      "Walsh-Hadamard is the exact normalized 4-bit transform"
+    ],
+    "forbidden_promotions": [
+      "no claim that GF(16) is intrinsically superior to an equally aligned non-field partition",
+      "no claim of quantum computational speedup or lower circuit complexity",
+      "no claim that a partition corresponds to physical spacetime geometry",
+      "no claim that sector interference proves the Hypercomplex Brain ontology",
+      "no claim of independent witnessing; producer and verifier are the same development line until an external recomputation exists"
+    ]
+  },
+  "specification": {
+    "intended_object": "A 7-qubit-equivalent pure substrate state |Psi_s> = (1/4) sum_x |x>|[x]_s>, projected by a normalized quotient-register bra to a 4-qubit pure state |psi_chi>. A partition P={C_alpha} decomposes |psi_chi> into unmeasured sector states |psi_alpha>=P_alpha|psi_chi>. Each sector is Walsh transformed separately before coherent recombination.",
+    "invariants": [
+      "projection consistency: direct pair-weight construction equals explicit substrate-register projection",
+      "Simon symmetry: psi[x] = psi[x XOR s]",
+      "global forbidden mass L_global = sum_{y: y dot s = 1} |W psi[y]|^2 is zero to numerical tolerance",
+      "partition norm conservation: sum_alpha ||psi_alpha||^2 = 1",
+      "interference closure: diagonal forbidden mass plus off-diagonal forbidden interference equals L_global",
+      "secret-aligned partitions commute with the hidden translation and have zero sector forbidden mass",
+      "all partition controls are capacity matched at four cells x four labels"
+    ],
+    "known_answer_cases": [
+      "GF(4)-additive-coset partition containing s is hidden-translation aligned and must have sector forbidden mass <= 1e-12",
+      "a random partition built by grouping complete {x,x XOR s} pairs is also aligned and must have sector forbidden mass <= 1e-12",
+      "the unpartitioned projected state must have global forbidden mass <= 1e-12 for every seed",
+      "for any partition, forbidden diagonal plus forbidden off-diagonal contribution must reconstruct global forbidden mass to <= 1e-12"
+    ]
+  },
+  "implementation": {
+    "artifact": "planned: src/aionq/projected_partition.py; experiments/run_projected_partition.py; tests/test_projected_partition.py; artifacts/r1t_projected_partition/projected_partition.json",
+    "commit": "implementation must descend from this preregistration commit, not from the base commit directly",
+    "environment": "Python >=3.10, NumPy >=1.24; Qiskit is already a repository dependency but is not required for the exact finite statevector arithmetic in this round",
+    "live_entrypoint": "planned: PYTHONPATH=src python3 experiments/run_projected_partition.py",
+    "representation": "16 computational-basis labels identified with GF(16) elements already implemented in aionq.gf_frames; quotient/coset labels are virtual output-fibre coordinates; partitions are explicit disjoint subsets of the 16 projected amplitudes"
+  },
+  "metric": {
+    "name": "sector_forbidden_mass_with_interference_closure",
+    "type": "typed_tuple",
+    "units": "dimensionless probabilities/amplitude bilinears",
+    "direction": "partial_order",
+    "raw_before_clipping": true,
+    "semantic_invariance_claimed": false,
+    "components": [
+      "L_global: total Walsh probability on y dot s = 1 after coherent recombination",
+      "L_sector: sum_alpha sum_{y dot s = 1} |W psi_alpha[y]|^2",
+      "I_off_forbidden: sum_{alpha != beta, y dot s = 1} Wpsi_alpha[y] conj(Wpsi_beta[y])",
+      "closure_defect: |L_global - (L_sector + Re I_off_forbidden)|",
+      "pair_cut_fraction: fraction of hidden pairs {x,x XOR s} split across partition cells",
+      "translation_commutator_defect: normalized Frobenius defect of partition projectors against T_s"
+    ],
+    "equivalence_attacks": [
+      "random secret-aligned non-field partitions matched in cell count and size",
+      "random fully transverse partitions forced to split every hidden pair",
+      "random relabellings of the aligned GF(4) partition while keeping the state and secret fixed",
+      "all five distinct GF(4)-scaled 2D additive subspaces a*GF(4) when available, so the field family contains both aligned and transverse members rather than one hand-picked geometry"
+    ]
+  },
+  "tests": {
+    "black_box": [
+      "explicit substrate-register projection equals direct projected-state construction",
+      "global Walsh distribution has zero forbidden Simon mass"
+    ],
+    "structural": [
+      "partitions are disjoint, exhaustive, and exactly four cells of four labels",
+      "field partitions are generated from gf16_mul rather than hard-coded expected outcomes",
+      "translation alignment is computed independently from the spectral metric"
+    ],
+    "property_based": [
+      "across deterministic projection seeds, pair symmetry and interference closure hold to 1e-12",
+      "every secret-aligned partition has zero sector forbidden mass to 1e-12"
+    ],
+    "metamorphic": [
+      "reordering cells changes no metric",
+      "global phase of the projected state changes no probability metric",
+      "coherently summing all sectors exactly recovers the unpartitioned wavefunction"
+    ],
+    "fuzzing": [
+      "eight deterministic projection seeds and eight matched random-partition seeds",
+      "random aligned and forced-transverse partitions generated independently of the Walsh computation"
+    ],
+    "historical": [
+      "R1Q/R1R/R1S showed that partition labels and cut transversality can create misleading geometry claims; this round therefore includes relabelling and matched non-field partitions from the start"
+    ]
+  },
+  "controls": {
+    "matched_baselines": [
+      "FIELD-ALIGNED: GF(4) additive cosets containing s",
+      "ALIGNED-RANDOM: random grouping of complete Simon pairs into four cells of four",
+      "FIELD-TRANSVERSE: other GF(4)-scaled additive subspace coset partitions not containing s",
+      "TRANSVERSE-RANDOM: random four-by-four partitions forced to split every Simon pair"
+    ],
+    "negative_controls": [
+      "RELABELLED-FIELD: random permutations of the aligned field partition with the state and secret held fixed; any surviving zero leakage must be explained by accidental retained alignment",
+      "alignment-only control forbids interpreting FIELD-ALIGNED zero leakage as a field-specific advantage if ALIGNED-RANDOM also gives zero"
+    ],
+    "compute_parity": "Every partition evaluates the same 16 amplitudes, four sector Walsh transforms of length 16, and the same metrics; no control receives more statevector samples or optimization.",
+    "parameter_parity": "not applicable: deterministic finite transform with no trainable parameters",
+    "sampling_parity": "same eight projection seeds and matched partition-seed count for every stochastic control family",
+    "data_access_parity": "all controls receive the same projected wavefunction and hidden secret; only the partition changes"
+  },
+  "preregistration": {
+    "prediction": "P1: L_global <= 1e-12 for every seed and partition. P2: FIELD-ALIGNED and ALIGNED-RANDOM have L_sector <= 1e-12. P3: every forced-transverse partition has L_sector > 1e-8 for every nondegenerate projection seed. P4: for transverse partitions, Re(I_off_forbidden) is negative and cancels L_sector so closure_defect <= 1e-12. P5: field-scaled partitions separate only by whether they contain the hidden translation, not by being field-derived per se.",
+    "primary_metric": "effect region over (pair_cut_fraction, L_sector, Re I_off_forbidden, closure_defect); no scalar winner score",
+    "uncertainty_method": "exact finite arithmetic up to floating-point error plus eight deterministic projection seeds; report per-seed rows, medians, minima, maxima, and no asymptotic inference",
+    "kill_condition": "Kill the structural interpretation if an aligned partition has L_sector > 1e-12, if any forced-transverse partition has L_sector <= 1e-8 on a nondegenerate seed, if global Simon leakage exceeds 1e-12, or if interference closure defect exceeds 1e-12. If FIELD-ALIGNED differs from ALIGNED-RANDOM while both have identical hidden-pair alignment, report representation dependence rather than field advantage.",
+    "stop_condition": "Stop R1T after the projected-state gate, four control families, field-spread comparison, relabelling attack, and interference accounting are reported. Do not add hyper-Walsh, adiabatic, sheaf, holoportation, or higher-cosmos dynamics to rescue or embellish this round.",
+    "promotion_rule": "H -> M only for the finite claim that sector-resolved Walsh interference detects hidden-pair transversality on this 16-state testbed, and only if the preregistered gates pass with raw artifacts committed. CI may establish additional platform reproduction only for jobs that actually finish green; it is not required for the mathematical finite-state result and no cross-platform claim is made from a pending/failed job. Independent witnessing remains unavailable without a genuinely independent recomputation."
+  },
+  "evidence": {
+    "primary_sources": [
+      "repository source: src/aionq/gf_frames.py at base commit a090939cb72519d2b0af49fafc4e772d71740f56",
+      "repository correction lineage: R1Q/R1R/R1S manifests and commits through a090939cb72519d2b0af49fafc4e772d71740f56",
+      "analytic Walsh/Simon identities used as known-answer cases; no external theorem is promoted by this manifest"
+    ],
+    "execution_records": [
+      "none before this preregistration by construction"
+    ],
+    "independent_witnesses": [
+      {
+        "name": "none",
+        "origin": "same ChatGPT/GPT development line will specify and execute this first pass",
+        "artifact": "not applicable before external recomputation"
+      }
+    ],
+    "claim_to_artifact_map": [
+      "projection consistency -> tests/test_projected_partition.py + raw artifact",
+      "field partition construction -> src/aionq/projected_partition.py using aionq.gf_frames.gf16_mul",
+      "sector interference and transversality -> experiments/run_projected_partition.py + artifacts/r1t_projected_partition/projected_partition.json",
+      "portability -> GitHub Actions CI jobs only if actually green"
+    ]
+  },
+  "round_trip": {
+    "edges": [
+      {
+        "from": "higher/virtualized substrate",
+        "to": "projected 4-qubit wavefunction",
+        "preserved": ["hidden-pair amplitude equality", "projection weights per quotient fibre"],
+        "transformed": ["quotient-fibre amplitudes become computational-basis amplitudes"],
+        "lost": ["the explicit quotient-register coordinate after projection"],
+        "remainder": ["[R]_projection: this experiment models projection as an exact chosen bra and does not model physical postselection cost/noise"]
+      },
+      {
+        "from": "projected wavefunction",
+        "to": "coherent partition sectors",
+        "preserved": ["complete amplitude attribution", "total norm after sector sum"],
+        "transformed": ["one wavefunction is represented as a direct sum of support-restricted sector vectors"],
+        "lost": ["nothing if sector labels remain coherent"],
+        "remainder": ["[R]_partition: the selected partition family samples only finite combinatorial geometries on 16 labels"]
+      },
+      {
+        "from": "sector Walsh amplitudes",
+        "to": "recombined Walsh distribution",
+        "preserved": ["all diagonal and off-diagonal bilinears"],
+        "transformed": ["sector-local forbidden mass may cancel through cross-sector interference"],
+        "lost": ["off-diagonal terms would be lost if sector labels were measured; this round does not measure them"],
+        "remainder": ["[R]_measurement: physical decoherence/measurement of the partition register is outside scope"]
+      }
+    ]
+  },
+  "result": {
+    "observed": "not run",
+    "effect_size": "not applicable before execution",
+    "uncertainty": "not applicable before execution",
+    "status_after": "H",
+    "retired_claims": [],
+    "active_remainder": [
+      "[R]_projection",
+      "[R]_partition",
+      "[R]_measurement",
+      "[R]_witness: no independent verifier yet"
+    ]
+  }
+}
