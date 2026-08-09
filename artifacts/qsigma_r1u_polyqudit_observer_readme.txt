@@ -1,0 +1,1 @@
+Raw seed-level artifact is generated deterministically by the committed runner. The repository stores the compact measured summary and execution receipt alongside the exact code and tests used for the run. Independent reproduction remains open.
