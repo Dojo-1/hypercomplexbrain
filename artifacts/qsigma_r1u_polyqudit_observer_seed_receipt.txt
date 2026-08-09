@@ -1,0 +1,12 @@
+QSigma-R1U seed receipt
+
+The committed runner emits the full 120-row seed-level JSON artifact deterministically with:
+
+python experiments/run_qsigma_r1u_polyqudit_observer.py > artifacts/qsigma_r1u_polyqudit_observer.json
+
+Executed environment: Python 3.13.5, NumPy 2.3.5, Linux-6.18.35-x86_64-with-glibc2.41.
+Dimensions d={2,3,4,5,7}; N={8,16,32}; seeds={0,1,2,3,4,5,6,7}; k=2.
+Focused tests: 4 passed in 0.04 s.
+Full local execution: promotion_pass=false; promotion_ds=[]; max frame-orbit spread=0 for every d.
+
+This receipt does not replace independent witnessing. [R]_witness remains open.
