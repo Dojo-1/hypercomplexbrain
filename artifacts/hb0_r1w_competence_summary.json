@@ -1,0 +1,61 @@
+{
+  "round": "HB0-R1W",
+  "status": "MEASURED_SELF_ATTESTED",
+  "execution": {
+    "environment": "local Python/NumPy container",
+    "focused_tests": "4 passed in 0.12s",
+    "wall_time_s": 13.735998992000077,
+    "peak_tracemalloc_bytes": 430807
+  },
+  "config": {
+    "N": [16, 32, 64],
+    "seeds": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],
+    "latent_dim": 4,
+    "tracking_horizon": 48,
+    "drift_tick": 24,
+    "calibration_ticks": [0,8,16,32,40],
+    "noise_sigma": 0.05
+  },
+  "correctness": {
+    "max_orthogonality_defect": 1.1102230246251565e-15,
+    "max_roundtrip_defect": 1.3322676295501878e-15,
+    "passed": true
+  },
+  "tracking": {
+    "16": {"hb0_mean": 0.5829415786095561, "flat_mean": 0.793726649647883, "shuffled_mean": 0.8905105434972391, "paired_diff_mean": -0.1969727574967089, "bootstrap_95_ucb": -0.1450880585803263, "hb0_matvec_mean": 768.0, "best_control_matvec_mean": 768.0},
+    "32": {"hb0_mean": 0.5626632073742105, "flat_mean": 0.7664610343331942, "shuffled_mean": 0.8746230167259499, "paired_diff_mean": -0.195092032084652, "bootstrap_95_ucb": -0.15374449715833235, "hb0_matvec_mean": 1536.0, "best_control_matvec_mean": 1536.0},
+    "64": {"hb0_mean": 0.5644486969381594, "flat_mean": 0.7856906145054422, "shuffled_mean": 0.8907141401463277, "paired_diff_mean": -0.20932482534671765, "bootstrap_95_ucb": -0.18312890747521124, "hb0_matvec_mean": 3072.0, "best_control_matvec_mean": 3072.0}
+  },
+  "coordination": {
+    "hb0_shared_mean": 0.03514571432104101,
+    "flat_shared_mean": 0.5631190972208671,
+    "paired_diff_mean": -0.5279733828998261,
+    "bootstrap_95_ucb": -0.42618625585691144,
+    "hb0_private_leakage": 0.0,
+    "flat_private_leakage": 0.6951698802281414,
+    "max_viewpoint_asymmetry": 0.0
+  },
+  "correction": {
+    "hb0_final_mean": 0.0,
+    "one_clock_final_mean": 0.15926022040439203,
+    "paired_diff_mean": -0.15926022040439203,
+    "bootstrap_95_ucb": -0.15926022040439197,
+    "hb0_overwrite_rate": 0.0,
+    "one_clock_overwrite_rate": 0.0
+  },
+  "gates": {
+    "H1_tracking": true,
+    "H2_coordination": true,
+    "H3_correction": false,
+    "compute_ok": true,
+    "promotion_pass": false
+  },
+  "kill_reason": "combined promotion killed because the preregistered H3 overwrite-rate separation did not occur",
+  "interpretation_ceiling": "bounded synthetic competence only; no AGI, consciousness, quantum, hardware, or asymptotic claim",
+  "remainders": {
+    "task": "constructed orthogonal-chart tasks may favor typed local transport",
+    "competence": "no external cognitive benchmark",
+    "witness": "producer and verifier are not independent",
+    "integration": "local numeric run was standalone; repository HB-0 integration is separately asserted by the committed test and requires repo/CI execution"
+  }
+}
