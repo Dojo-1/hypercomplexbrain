@@ -1,0 +1,3 @@
+promotion_pass=false
+promotion_ds=[]
+stronger_hypothesis=KILLED_FOR_R1U

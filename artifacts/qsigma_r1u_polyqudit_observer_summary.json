@@ -1,0 +1,30 @@
+{
+  "round": "QSigma-R1U",
+  "status": "MEASURED_SELF_ATTESTED",
+  "environment": {
+    "python": "3.13.5",
+    "numpy": "2.3.5",
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.41"
+  },
+  "config": {
+    "d": [2, 3, 4, 5, 7],
+    "N": [8, 16, 32],
+    "seeds": [0, 1, 2, 3, 4, 5, 6, 7],
+    "k": 2,
+    "r_cap": 32,
+    "q_nominal": 0.125
+  },
+  "summary": {
+    "2": {"mean_delta_recall_at_budget": -0.041666666666666664, "bootstrap_95_lcb": -0.10416666666666667, "max_frame_orbit_spread": 0.0, "n": 24, "mean_algebra_recall": 0.3645833333333333, "mean_alignment_recall": 0.3645833333333333},
+    "3": {"mean_delta_recall_at_budget": -0.0625, "bootstrap_95_lcb": -0.125, "max_frame_orbit_spread": 0.0, "n": 24, "mean_algebra_recall": 0.3854166666666667, "mean_alignment_recall": 0.3854166666666667},
+    "4": {"mean_delta_recall_at_budget": -0.020833333333333332, "bootstrap_95_lcb": -0.052083333333333336, "max_frame_orbit_spread": 0.0, "n": 24, "mean_algebra_recall": 0.53125, "mean_alignment_recall": 0.53125},
+    "5": {"mean_delta_recall_at_budget": -0.020833333333333332, "bootstrap_95_lcb": -0.0625, "max_frame_orbit_spread": 0.0, "n": 24, "mean_algebra_recall": 0.65625, "mean_alignment_recall": 0.65625},
+    "7": {"mean_delta_recall_at_budget": -0.010416666666666666, "bootstrap_95_lcb": -0.03125, "max_frame_orbit_spread": 0.0, "n": 24, "mean_algebra_recall": 0.6458333333333334, "mean_alignment_recall": 0.6458333333333334}
+  },
+  "promotion_ds": [],
+  "promotion_pass": false,
+  "kill_reason": "algebra-aware observer failed preregistered delta_recall gate against alignment-only/matched controls",
+  "peak_tracemalloc_bytes": 334302,
+  "wall_time_s": 0.36732241599999327,
+  "interpretation_ceiling": "finite synthetic local modular-relation localization only; no quantum/cognitive/asymptotic claim"
+}
