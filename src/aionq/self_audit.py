@@ -1344,6 +1344,28 @@ CORRECTIONS = (
         "tests/test_supercable.py::test_the_frozen_verdict_thresholds_were_not_disjoint",
         False,
     ),
+    Correction(
+        "QSigma-R1t",
+        "while auditing an external Lean review, this session claimed that "
+        "lean_census.strip_noncode UNDER-counts placeholders and is 'broken in "
+        "the flattering direction', citing TuringHalting_Master.lean:376,407 as "
+        "real sorrys reported as zero. FALSE, and refuted by this repository's "
+        "own recorded measurement: those lines sit inside an unterminated "
+        "comment whose opener is line 69, and the archive's own pinned toolchain "
+        "-- Lean 4.32.0-rc1, installed here -- reports 'unterminated comment at "
+        "1363:0 (end of file)' for exactly that file. There are no proofs after "
+        "line 69, so there are no placeholders in proofs there. The counter "
+        "agrees with the real lexer on 11 of 11 files and the agreement is "
+        "already asserted by a test. The evidence gathered was CORRECT -- 87 "
+        "openers against 85 closers, depth never returning to zero -- and its "
+        "meaning was inverted: an unterminated comment makes those lines prose, "
+        "not code. Caught only by opening the module before editing it; one more "
+        "step would have 'fixed' correct code into a defect on the strength of "
+        "the error, which is exactly the hazard recorded against the "
+        "vacuum_covariance docstring two commits earlier",
+        "tests/test_leanmath_vendor.py::test_the_python_counter_still_agrees_with_the_pinned_lexer",
+        True,
+    ),
 )
 
 
