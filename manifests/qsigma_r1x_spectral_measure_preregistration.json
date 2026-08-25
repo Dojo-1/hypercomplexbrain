@@ -12,45 +12,38 @@
     "tests/test_lebesgue.py",
     "artifacts/r1x_spectral_measure/spectral_measure.json"
   ],
-
   "why_this_round_exists": {
     "observation": "Every partition R1Q through R1T constructed is a partition of the DOMAIN. R1Q partitioned mode indices at a cut. R1R swept the cut. R1S partitioned the herald alphabet into GF(16) orbit caps. R1T partitions sixteen GF(16) labels into four cells. That is Riemann integration: chop the base, evaluate on each piece, add the pieces up.",
     "what_went_wrong_with_it": "R1Q's rule was a labelling artifact -- it was stated in mode indices and did not survive relabelling. R1R refuted its weak direction out of sample. R1S's additivity gate FAILED: the whole is not reconstructed by an aggregate of the parts, and the sign reverses at M3, so no directional inequality holds either. Three consecutive rounds in which a domain-partition statistic either did not survive a change of coordinates or did not reconstruct.",
     "the_lebesgue_move": "Partition the RANGE instead. For a Gaussian state the range object already exists and this repository already computes it: the symplectic spectrum of the restricted covariance. Writing mu_A for the empirical measure of those values on [0,1], the entropy this repository has been computing since R1J IS an integral against mu_A. The round does not introduce the object; it names the object that was already there, and asks whether working with the measure rather than its scalar integral buys anything the scalar cannot give.",
     "the_honest_ceiling": "Frame invariance of a spectrum under relabelling is a triviality of linear algebra, not a discovery. It is preregistered here as a CONTROL -- the exact attack that killed R1Q's statistic, run against the new carrier with the answer known in advance -- and it is worth nothing on its own. The round stands or falls on P3, which can fail."
   },
-
   "definitions": {
     "spectral_measure": "For covariance Gamma and a mode subset A with |A| = 2m, the block Gamma_A has spectrum {+-i nu_k}, k = 1..m, nu_k in [0,1]. mu_A = (1/m) sum_k delta_{nu_k}, a probability measure on [0,1]. One representative per conjugate pair, per the R1S entropy-pairing correction.",
     "lebesgue_weight": "w(A) = mu_A({nu >= 1 - eps}), eps = 1e-9: the fraction of modes of A already pure. mu_A = w*delta_1 + (1-w)*mu_tilde is a Lebesgue-style decomposition into the atom at purity and the rest. Collapse is w -> 1; this is graded where final_entropy is a scalar summary.",
     "reconstruction_defect": "For a partition {A_i} of A with |A_i| = 2 m_i, D(A; {A_i}) = W1(mu_A, sum_i (m_i/m) mu_{A_i}), the Wasserstein-1 distance, computed exactly as the mean absolute difference of the two sorted atom lists (equal atom counts by construction, since sum_i m_i = m).",
     "why_W1_and_not_total_variation": "Both measures are purely atomic and generically share no atom, so total variation is identically 1 and carries no information. W1 is the L1 distance between the two cumulative distribution functions and respects the metric of [0,1]. This is recorded before measuring because choosing the metric after seeing the numbers is how a defect functional gets tuned into significance."
   },
-
   "gates_with_known_answers": {
     "G1_entropy_is_this_integral": "m * integral H2((1+nu)/2) dmu_A(nu) equals aionq.supercable.covariance_entropy(Gamma, A) to 1e-12, on every split of a random Gaussian state at 4, 6 and 8 qubits. A new instrument must reproduce the old one on the old one's domain before any new number is recorded; this repository has twice mistaken an instrument artifact for a finding.",
     "G2_vacuum": "For the vacuum covariance and any A that is a union of Majorana pairs (2k, 2k+1), mu_A = delta_1 exactly. For A = {0, 2} -- two modes from different pairs -- the block is zero and mu_A = delta_0. Both are asserted, because the second is the case a careless reading of 'the vacuum is pure' would get wrong.",
     "G3_frame_invariance": "mu_A, w(A) and D are unchanged to 1e-12 under any permutation of mode labels inside A, and under any orthogonal mixing inside A. KNOWN IN ADVANCE to be true by similarity invariance of the spectrum. It is a control, not a result."
   },
-
   "the_empirical_question": {
     "text": "Does the measure separate what the scalar merges? Entropy is one number read off mu_A. Two states with the same entropy can have very different mu_A -- one mode at nu = 0.5 beside one pure mode carries the same bits as two modes near nu = 0.72, and the two situations are not the same situation. The question is whether that difference is realised on this repository's own testbed or is only hypothetically available.",
     "procedure": "Run aionq.supercable.covariance_storm at 8 qubits over each cell of gf_frames.SUBGROUP_LADDER (T2, T4, T16, M3, M15, FROBENIUS, AGL), three seeds, fixed step budget, one prepared state shared by all cells. At the final covariance record S (bits), w, and D against the two-half partition of the left block."
   },
-
   "preregistered_predictions": {
     "P1": "G1, G2 and G3 all hold to their stated tolerances. If any fails the module is wrong and nothing else in this round is read.",
     "P2": "D and w are invariant to 1e-12 under relabelling within cells, while pond.cut_crossing_pairs changes for the same relabelling on at least one cell. This is the R1Q attack; the answer is known and the control exists so that the claim 'this carrier is immune to that artifact' is exhibited rather than asserted.",
     "P3": "THE ONE THAT CAN FAIL. There exists at least one pair of ladder cells, at matched seed, with |Delta S| < 0.05 bits and |Delta D| > 0.10 -- cells the entropy scalar calls the same and the measure calls different.",
     "P4": "No prediction is made about the ORDER of cells under D, or about which cells separate. R1Q, R1R and R1S each proposed a rule for which cells behave differently and each rule died out of sample. This round proposes none."
   },
-
   "kill_conditions": [
     "If G1 fails, the spectral measure as implemented is not the object the entropy integrates and the round stops.",
     "If P3 fails -- no pair of cells is merged by S and separated by D -- then on this testbed the measure carries nothing the scalar does not, and the round REPORTS THAT as its result. A negative P3 is a publishable outcome of this round, not a reason to change the threshold, the split, the step budget, the qubit count or the ladder.",
     "If P3 is rescued by widening the |Delta S| window or narrowing the |Delta D| window after the numbers are seen, the round is void. The thresholds 0.05 bits and 0.10 are frozen by this file."
   ],
-
   "forbidden_promotions": [
     "no claim that mu_A is a physical measure, an observable, or anything a laboratory could read off",
     "no claim that this rescues the additivity R1S killed; D MEASURES the failure to reconstruct, it does not repair it",
@@ -59,20 +52,26 @@
     "no claim of independent witnessing: producer and verifier are the same development line",
     "no claim of cross-platform reproduction without an actually green job on that platform"
   ],
-
   "evidence_ceiling": "MEASURED at best, and only for the finite statement that on this 8-qubit Gaussian testbed the spectral measure does or does not separate cells the entropy merges. G3 and P2 are SEMANTIC: they restate linear algebra.",
-
   "stop_condition": "Stop R1X after the three gates, the relabelling control, and the ladder table are reported with raw artifacts committed. Do not add the ensemble-level Lebesgue decomposition over trajectories, do not extend to 64 modes, do not begin QTau-Germinal, and do not add a cognitive organ.",
-
   "typed_remainders_declared_in_advance": [
     "[R]_gaussian: the whole construction assumes the state is Gaussian. It was MEASURED to be so for the R1J-R1R line, not assumed, but a quartic term leaves the formalism and takes mu_A with it.",
     "[R]_finite: mu_A is an empirical measure over m atoms. Every statement about absolutely continuous versus singular parts is an analogy at finite m, where every measure is atomic. The Lebesgue decomposition used here is the split at the purity atom, which is well defined at finite m; the ac/singular language is NOT and is not used.",
     "[R]_witness: no independent recomputation exists."
   ],
-
   "result": {
-    "observed": "not run",
+    "observed": "G1, G2, G3 and P2 pass; P3 not established, budget-dependent (true at 300 steps, false at 900)",
+    "effect_size": "P3 hits: 2 of 63 matched-seed pairs at 300 steps, 0 of 63 at 900. Both 300-step hits are at seed 7 and both involve M15, so one state produces the whole effect.",
+    "uncertainty": "three seeds, two budgets, exact finite arithmetic up to floating point; no asymptotic inference",
     "status_after": "H",
-    "active_remainder": ["[R]_gaussian", "[R]_finite", "[R]_witness"]
-  }
+    "retired_claims": [],
+    "active_remainder": [
+      "[R]_gaussian",
+      "[R]_finite",
+      "[R]_budget",
+      "[R]_witness"
+    ]
+  },
+  "reported_by": "manifests/qsigma_r1x_spectral_measure_finding.json",
+  "freeze_note": "Every clause above this line is as frozen at 1b55ce0 and unaltered. Only the result block below is filled in, which is what it exists for, and the reported_by pointer added. The protocol defect the round exposed -- 'fixed step budget' with no number -- is recorded in the finding and in the corrections ledger rather than repaired here, because repairing a frozen clause after measuring is the thing the freeze is for."
 }

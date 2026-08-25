@@ -1,0 +1,673 @@
+{
+ "300": {
+  "rows": [
+   {
+    "rung": "T2",
+    "seed": 7,
+    "steps": 300,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T2",
+    "seed": 13,
+    "steps": 300,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T2",
+    "seed": 29,
+    "steps": 300,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T4",
+    "seed": 7,
+    "steps": 300,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T4",
+    "seed": 13,
+    "steps": 300,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T4",
+    "seed": 29,
+    "steps": 300,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T16",
+    "seed": 7,
+    "steps": 300,
+    "entropy": 2.0,
+    "defect": 0.0,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T16",
+    "seed": 13,
+    "steps": 300,
+    "entropy": 3.0,
+    "defect": 0.25,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T16",
+    "seed": 29,
+    "steps": 300,
+    "entropy": 2.0,
+    "defect": 0.25,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M3",
+    "seed": 7,
+    "steps": 300,
+    "entropy": 2.76118839965079,
+    "defect": 0.06470879342045457,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.5588803617067863,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M3",
+    "seed": 13,
+    "steps": 300,
+    "entropy": 1.8804917588200227,
+    "defect": 0.1491710704413025,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.401305108048863,
+     0.9999999999999967,
+     0.9999999999999993
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M3",
+    "seed": 29,
+    "steps": 300,
+    "entropy": 1.9679146002541565,
+    "defect": 0.17156785762158375,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.21011681406243568,
+     0.9999999999999956,
+     0.9999999999999998
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M15",
+    "seed": 7,
+    "steps": 300,
+    "entropy": 2.000000000000318,
+    "defect": 0.25,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.0,
+     0.9999999999999869,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M15",
+    "seed": 13,
+    "steps": 300,
+    "entropy": 2.0,
+    "defect": 0.0,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M15",
+    "seed": 29,
+    "steps": 300,
+    "entropy": 1.00000000000121,
+    "defect": 0.249999999999987,
+    "weight": 0.75,
+    "atoms": [
+     0.0,
+     0.999999999999948,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "FROBENIUS",
+    "seed": 7,
+    "steps": 300,
+    "entropy": 4.118422219384568e-13,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     0.9999999999999829,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "FROBENIUS",
+    "seed": 13,
+    "steps": 300,
+    "entropy": 5.666613180721697e-13,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     0.9999999999999762,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "FROBENIUS",
+    "seed": 29,
+    "steps": 300,
+    "entropy": 5.358194820472676e-13,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     0.9999999999999776,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "AGL",
+    "seed": 7,
+    "steps": 300,
+    "entropy": 2.0,
+    "defect": 0.0,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "AGL",
+    "seed": 13,
+    "steps": 300,
+    "entropy": 3.0,
+    "defect": 0.25,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "AGL",
+    "seed": 29,
+    "steps": 300,
+    "entropy": 2.0,
+    "defect": 0.25,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   }
+  ],
+  "p3": {
+   "entropy_window": 0.05,
+   "defect_floor": 0.1,
+   "pairs_examined": 63,
+   "hits": [
+    {
+     "seed": 7,
+     "rungs": [
+      "M15",
+      "T16"
+     ],
+     "entropy_gap": 3.1796787425264483e-13,
+     "defect_gap": 0.25
+    },
+    {
+     "seed": 7,
+     "rungs": [
+      "AGL",
+      "M15"
+     ],
+     "entropy_gap": 3.1796787425264483e-13,
+     "defect_gap": 0.25
+    }
+   ],
+   "p3_holds": true
+  }
+ },
+ "900": {
+  "rows": [
+   {
+    "rung": "T2",
+    "seed": 7,
+    "steps": 900,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T2",
+    "seed": 13,
+    "steps": 900,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T2",
+    "seed": 29,
+    "steps": 900,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T4",
+    "seed": 7,
+    "steps": 900,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T4",
+    "seed": 13,
+    "steps": 900,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T4",
+    "seed": 29,
+    "steps": 900,
+    "entropy": 0.0,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T16",
+    "seed": 7,
+    "steps": 900,
+    "entropy": 3.0,
+    "defect": 0.0,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T16",
+    "seed": 13,
+    "steps": 900,
+    "entropy": 3.0,
+    "defect": 0.0,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "T16",
+    "seed": 29,
+    "steps": 900,
+    "entropy": 2.0,
+    "defect": 0.5,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M3",
+    "seed": 7,
+    "steps": 900,
+    "entropy": 2.023058366374634,
+    "defect": 0.1738622656296125,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.995494250543418,
+     0.9999999999999999
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M3",
+    "seed": 13,
+    "steps": 900,
+    "entropy": 2.7465487156881374,
+    "defect": 0.025951808102753396,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.5746671278824951,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M3",
+    "seed": 29,
+    "steps": 900,
+    "entropy": 2.2945077647781527,
+    "defect": 0.12073972124045992,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.8961551780809568,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M15",
+    "seed": 7,
+    "steps": 900,
+    "entropy": 2.0,
+    "defect": 0.25,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M15",
+    "seed": 13,
+    "steps": 900,
+    "entropy": 3.000000000000117,
+    "defect": 0.0,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.0,
+     0.9999999999999953
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "M15",
+    "seed": 29,
+    "steps": 900,
+    "entropy": 3.0,
+    "defect": 0.25,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "FROBENIUS",
+    "seed": 7,
+    "steps": 900,
+    "entropy": 4.118422219384568e-13,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     0.9999999999999829,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "FROBENIUS",
+    "seed": 13,
+    "steps": 900,
+    "entropy": 5.666613180721697e-13,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     0.9999999999999762,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "FROBENIUS",
+    "seed": 29,
+    "steps": 900,
+    "entropy": 5.358194820472676e-13,
+    "defect": 0.0,
+    "weight": 1.0,
+    "atoms": [
+     0.9999999999999776,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "AGL",
+    "seed": 7,
+    "steps": 900,
+    "entropy": 3.0,
+    "defect": 0.0,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "AGL",
+    "seed": 13,
+    "steps": 900,
+    "entropy": 3.0,
+    "defect": 0.0,
+    "weight": 0.25,
+    "atoms": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   },
+   {
+    "rung": "AGL",
+    "seed": 29,
+    "steps": 900,
+    "entropy": 2.0,
+    "defect": 0.5,
+    "weight": 0.5,
+    "atoms": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "agrees_with_supercable": true
+   }
+  ],
+  "p3": {
+   "entropy_window": 0.05,
+   "defect_floor": 0.1,
+   "pairs_examined": 63,
+   "hits": [],
+   "p3_holds": false
+  }
+ }
+}

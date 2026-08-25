@@ -1371,6 +1371,23 @@ CORRECTIONS = (
         "tests/test_leanmath_vendor.py::test_the_python_counter_still_agrees_with_the_pinned_lexer",
         True,
     ),
+    Correction(
+        "QSigma-R1x",
+        "the R1X preregistration froze the two thresholds that decide its one "
+        "falsifiable prediction -- 0.05 bits and 0.10 in W1 -- and then wrote "
+        "'fixed step budget' without fixing it. A free parameter inside a frozen "
+        "protocol is a threshold in disguise. P3 HOLDS at 300 steps, with two "
+        "hits out of sixty-three matched-seed pairs, and FAILS at 900 with "
+        "zero; either budget could have been reported alone as the round's "
+        "answer, in opposite directions, without breaking a single frozen "
+        "clause. Caught only because R1O had already recorded a budget artifact "
+        "in this line, so both budgets were run. Every other frozen quantity in "
+        "the manifest was checked for a free parameter after this one surfaced; "
+        "the split, the qubit count, the ladder and the seeds are all named "
+        "explicitly, and the budget was the only gap",
+        "tests/test_lebesgue.py::test_p3_does_not_survive_a_change_of_step_budget",
+        True,
+    ),
 )
 
 
