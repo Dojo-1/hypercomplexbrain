@@ -18,6 +18,7 @@ import subprocess
 import pytest
 
 from aionq.self_audit import (CORRECTIONS, corrections_are_bound,
+                              corrections_name_rounds_that_ran,
                               envelope_census, godelian_gap, independence_report,
                               iter_envelopes, manifest_pointers_resolve,
                               preregistration_ordering,
@@ -699,3 +700,44 @@ def test_supersession_is_recorded_in_both_directions():
             missing.append((target, back, superseders))
 
     assert missing == [], f"one-directional supersession: {missing}"
+
+
+def test_no_correction_is_attributed_to_a_round_that_has_never_run():
+    """A round that reports "not run" cannot have made a mistake here.
+
+    R1S's lean_census retraction was filed under `QSigma-R1t`, colliding with
+    R1T -- a frozen preregistration on another development line whose
+    `result.observed` is still "not run". An unexecuted round has produced no
+    artifact, so it has produced no defect, and attributing one to it puts a
+    false entry in the only ledger this repository uses to describe its own
+    reliability.
+    """
+    result = corrections_name_rounds_that_ran()
+
+    assert result["unrun_rounds"], "no frozen unexecuted manifest to test against"
+    assert result["offenders"] == [], (
+        f"corrections attributed to rounds that have never run: "
+        f"{result['offenders']}")
+
+
+def test_the_unrun_round_check_can_actually_fail(tmp_path):
+    """Against a manifest that has run, the same label is not an offence.
+
+    The check keys on `result.observed == "not run"` and on nothing else, so it
+    has to be shown discriminating rather than merely silent: one manifest that
+    has run and one that has not, both naming a round the ledger uses.
+    """
+    (tmp_path / "artifacts").mkdir()
+    (tmp_path / "manifests").mkdir()
+    (tmp_path / "manifests" / "ran.json").write_text(json.dumps(
+        {"round": "QSigma-R1s", "result": {"observed": "measured, 15 cells"}}),
+        encoding="utf-8")
+    (tmp_path / "manifests" / "frozen.json").write_text(json.dumps(
+        {"round": "QSigma-R1q", "result": {"observed": "not run"}}),
+        encoding="utf-8")
+
+    result = corrections_name_rounds_that_ran(tmp_path)
+
+    assert set(result["unrun_rounds"]) == {"QSIGMA-R1Q"}
+    assert not result["clean"]
+    assert {row["round"] for row in result["offenders"]} == {"QSigma-R1q"}

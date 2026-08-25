@@ -65,6 +65,7 @@ __all__ = [
     "witness_graph",
     "independence_report", "recognition_asymmetry", "typed_remainder_census",
     "corrections_are_bound", "manifest_pointers_resolve",
+    "corrections_name_rounds_that_ran",
     "preregistration_ordering", "godelian_gap",
     "self_audit",
 ]
@@ -1345,7 +1346,7 @@ CORRECTIONS = (
         False,
     ),
     Correction(
-        "QSigma-R1t",
+        "QSigma-R1s",
         "while auditing an external Lean review, this session claimed that "
         "lean_census.strip_noncode UNDER-counts placeholders and is 'broken in "
         "the flattering direction', citing TuringHalting_Master.lean:376,407 as "
@@ -1362,7 +1363,11 @@ CORRECTIONS = (
         "not code. Caught only by opening the module before editing it; one more "
         "step would have 'fixed' correct code into a defect on the strength of "
         "the error, which is exactly the hazard recorded against the "
-        "vacuum_covariance docstring two commits earlier",
+        "vacuum_covariance docstring two commits earlier. Filed at first under "
+        "the label QSigma-R1t, which is a DIFFERENT round -- R1T is a frozen, "
+        "never-executed preregistration on another development line -- so the "
+        "ledger briefly attributed an error to a round that has run nothing and "
+        "cannot have made one",
         "tests/test_leanmath_vendor.py::test_the_python_counter_still_agrees_with_the_pinned_lexer",
         True,
     ),
@@ -1684,6 +1689,45 @@ def manifest_pointers_resolve(root=None) -> dict:
         "all_resolve": not unresolved,
         "unresolved": unresolved,
         "rows": rows,
+    }
+
+
+def corrections_name_rounds_that_ran(root=None) -> dict:
+    """No correction may be attributed to a round whose manifest says "not run".
+
+    The ledger labels each error with the round that made it, and nothing checked
+    that the label named a round of this development line.  R1S's `lean_census`
+    retraction was filed under ``QSigma-R1t`` -- colliding with R1T, a frozen
+    preregistration on a *different* line whose ``result.observed`` is still "not
+    run".  A round that has executed nothing has produced no artifact, so it has
+    produced no defect, and attributing one to it puts a false entry in the only
+    ledger this repository uses to describe its own reliability.
+
+    Narrow on purpose.  Most labels have no manifest at all, because the older
+    rounds predate the manifest convention, so ABSENCE proves nothing and is not
+    reported.  The single contradiction available to a mechanical check is a
+    manifest that exists and states it has not run.
+    """
+    root = Path(root) if root is not None else repo_root()
+    unrun = {}
+    for path in sorted((root / "manifests").glob("*.json")):
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        name = document.get("round")
+        if isinstance(name, str) and (document.get("result") or {}).get(
+                "observed") == "not run":
+            unrun[name.upper()] = f"manifests/{path.name}"
+
+    offenders = [{"round": correction.round_id,
+                  "manifest": unrun[correction.round_id.upper()]}
+                 for correction in CORRECTIONS
+                 if correction.round_id.upper() in unrun]
+    return {
+        "unrun_rounds": unrun,
+        "offenders": offenders,
+        "clean": not offenders,
     }
 
 # --------------------------------------------------------------------------
