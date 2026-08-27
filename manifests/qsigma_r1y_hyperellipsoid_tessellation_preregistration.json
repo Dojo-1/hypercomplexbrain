@@ -1,0 +1,109 @@
+{
+  "task_id": "qsigma-r1y-hyperellipsoid-tessellation",
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R1Y",
+  "title": "The hyperellipsoid before the dynamics flattens it, and the tessellation it sits in",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-08-27",
+  "base_commit": "868bed77891586c29ac86e686c09cdd68deb3696",
+  "committed_before_any_implementation": true,
+  "supersedes": [
+    "manifests/qsigma_r1x_spectral_measure_finding.json"
+  ],
+  "files_expected_to_change": [
+    "src/aionq/hyperellipsoid.py",
+    "tests/test_hyperellipsoid.py",
+    "artifacts/r1y_hyperellipsoid/tessellated_ellipsoid.json"
+  ],
+  "why_this_round_exists": {
+    "the_object_was_named_wrong": "A Gaussian covariance restricted to a mode subset IS an ellipsoid -- Williamson's theorem brings Gamma_A to diag(nu_1, nu_1, ..., nu_m, nu_m) by a symplectic map, so the symplectic values ARE the semi-axes. R1X built the empirical measure of those semi-axes and never named the body they belong to. That omission is not cosmetic: a measure of axis LENGTHS is the pushforward of the ellipsoid under a map that forgets ORIENTATION, and orientation is the part that survives when the lengths degenerate.",
+    "R1X_measured_a_corpse": "Measured, not argued. The prepared state's semi-axes are (0.044, 0.513, 0.701, 0.983): a genuine non-degenerate four-dimensional hyperellipsoid. The herald storm destroys it. Intermediate-axis count against step, seed 7, every cell: 4 at step 0, 3 by step 1, and by step 25 only M3 and M15 retain one; by step 100 only M3. Across R1X's entire sweep, 81 of 84 semi-axes sit exactly at 0 or 1. R1X sampled at 300 and 900 steps.",
+    "why_P3_could_not_have_worked": "A measure supported on {0, 1} has exactly ONE degree of freedom, the weight w, and entropy is an affine function of it. So mu_A could not carry more information than the scalar it was built to beat, for six of the seven cells, at any budget. P3 was structurally unable to succeed and R1X did not check that before running. Its two 300-step hits were combinatorial -- how many pure axes the whole has against the parts -- not geometric. The budget defect R1X recorded is real but it was not the mechanism.",
+    "the_bipartition_was_never_intrinsic": "R1X read its ellipsoid on the left half of the register. That is a mode-index bipartition, the exact object R1Q found to be a labelling artifact, carried forward for four rounds because it was the default. A rung's ORBITS tile the label set intrinsically -- they are determined by the group, not by where the modes were written down."
+  },
+  "definitions": {
+    "hyperellipsoid": "For covariance Gamma and mode subset A with |A| = 2m, the Williamson semi-axes nu_1 <= ... <= nu_m in [0,1] together with the orthonormal frame of principal axes. R1X kept the lengths and discarded the frame; this round keeps both.",
+    "tessellation": "The orbit partition of the 16 GF(16) labels under a rung. Intrinsic to the subgroup. A tessellation is REGULAR when all tiles have equal size and IRREGULAR otherwise.",
+    "orientation_defect": "Principal angles between the span of the ellipsoid's k largest principal axes and the mode subspace of each tile, reported as the vector of cosines. Frame-invariant under relabelling INSIDE a tile, and NOT invariant under a relabelling that moves modes between tiles -- which is the correct sensitivity, because moving a mode between tiles changes the geometry rather than the description of it.",
+    "survival_time": "The largest step count at which A retains at least one semi-axis strictly inside (0, 1). The observable R1X should have had."
+  },
+  "gates_with_known_answers": {
+    "G1_williamson": "The reconstructed diag(nu, nu) form, conjugated back by the recovered frame, reproduces Gamma_A to 1e-10 on random Gaussian states at 4, 6 and 8 qubits. If the frame is wrong the orientation numbers are noise.",
+    "G2_lengths_agree_with_R1X": "The semi-axes equal aionq.lebesgue.spectral_measure to 1e-12 on every case. A third code path for a quantity two already compute; a new instrument reproduces the old ones before any new number is read.",
+    "G3_angles_are_invariant_inside_a_tile_and_not_across": "Principal angles are unchanged to 1e-12 under permutations within a tile, and CHANGE for at least one permutation that exchanges modes between tiles. Both halves are asserted: an invariant that is invariant under everything measures nothing, which is the failure mode R1X's G3 control had by construction."
+  },
+  "the_empirical_question": {
+    "text": "Does the tessellation predict how long the ellipsoid survives?",
+    "the_coincidence_that_prompted_it": "M3 is the only chartable rung with a regular tessellation (five congruent tiles of three) and the only rung retaining an intermediate semi-axis past step 100. FROBENIUS is irregular (1+2+4+4+4) and dies by step 25. M15 is transitive, tiles nothing, and dies by step 100.",
+    "why_the_ladder_cannot_settle_it": "Only three of the seven ladder rungs are chartable in the exponent coordinate at all -- the four translations move 0 out of GF(16)* -- so the named ladder offers a sample of THREE, of which one is the hypothesis and one is degenerate. Section 8.21 of the architecture recorded that four rules have been proposed for the collapse and three died out of sample, each fitted to the families that suggested it, and that generating the refuting case before recording the rule is not enforced by anything. This round enforces it."
+  },
+  "preregistered_predictions": {
+    "P1": "G1, G2 and G3 hold to their stated tolerances. If any fails nothing else is read.",
+    "P2": "Survival time is longer for regular tessellations than for irregular ones, tested NOT on the named ladder but on an enumerated family of subgroups of GammaL(1,16) generated independently of this hypothesis, classified as regular or irregular BEFORE any storm is run, with at least six of each class.",
+    "P3": "The orientation defect separates cells at matched seed AFTER all semi-axes have degenerated to {0,1} -- that is, at a step count where R1X's mu_A provably carries one degree of freedom. This is the direct test of whether orientation holds information the length spectrum cannot.",
+    "P4": "No prediction about WHICH tessellations survive longest beyond the regular/irregular split, and none about a mechanism. The coincidence that generated P2 is a sample of three and is not evidence for anything narrower."
+  },
+  "frozen_parameters": {
+    "note": "R1X froze its thresholds and left the step budget free, and the free parameter decided its result. Every parameter of this round is named here with a value.",
+    "qubits": 8,
+    "split_for_the_non_tessellated_control": 4,
+    "prepared_seed": 0,
+    "storm_seeds": [
+      7,
+      13,
+      29
+    ],
+    "step_grid": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      10,
+      25,
+      50,
+      100,
+      300,
+      900
+    ],
+    "degeneracy_tolerance": 1e-09,
+    "angle_tolerance": 1e-12,
+    "minimum_subgroups_per_class": 6,
+    "survival_time_is_read_off_the_step_grid_and_not_interpolated": true
+  },
+  "kill_conditions": [
+    "If G1 fails the recovered frame is wrong and every orientation number in the round is meaningless.",
+    "If the independently enumerated family does not contain at least six regular and six irregular subgroups, P2 is NOT TESTED and is reported as untested rather than evaluated on a smaller sample.",
+    "If P2 fails, the tessellation does not predict survival and the M3 coincidence joins the Pauli centre, the same-qubit count and rule C's weak direction as a fourth rule fitted to the families that suggested it.",
+    "If P3 fails, orientation carries nothing the length spectrum does not, and the ellipsoid framing buys the round nothing beyond a better name for mu_A.",
+    "No threshold, seed, step, or class boundary in frozen_parameters may be changed after any storm has run. Changing one voids the round."
+  ],
+  "forbidden_promotions": [
+    "no claim that a hyperellipsoid or its tessellation is physical, observable, or a spacetime geometry",
+    "no claim about infinite-dimensional Hilbert ellipsoids: the Feldman-Hajek dichotomy makes the absolutely-continuous versus singular question sharp only in infinite dimensions, and this testbed is finite, so that language stays out of the round entirely",
+    "no claim that GF(16) is intrinsically favoured; regularity of a tessellation is the property under test, not fieldness",
+    "no claim that this rescues R1S additivity or R1X P3",
+    "no claim of independent witnessing; producer and verifier are the same development line",
+    "no claim of cross-platform reproduction without an actually green job on that platform"
+  ],
+  "evidence_ceiling": "MEASURED at best, for the finite statement that on this 8-qubit Gaussian testbed tessellation regularity does or does not predict ellipsoid survival time, and that orientation does or does not separate degenerate states. G1 and G3 are SEMANTIC.",
+  "stop_condition": "Stop R1Y after the three gates, the survival table over the independently enumerated subgroup family, and the orientation comparison are reported with raw artifacts committed. Do not extend to 64 modes, do not introduce non-Gaussian dynamics to keep the ellipsoid alive, do not begin QTau-Germinal, and do not add a cognitive organ.",
+  "typed_remainders_declared_in_advance": [
+    "[R]_gaussian: the ellipsoid exists because the state is Gaussian. Measured to hold for the R1J-R1R line, not assumed.",
+    "[R]_projective: Majorana heralds are projective, which is WHY the semi-axes degenerate to {0,1}. A dynamics that preserved a non-degenerate ellipsoid would need weak measurement, thermal mixing or a quartic term, and introducing one is outside this round.",
+    "[R]_chart: the exponent coordinate is a chart on GF(16)*, fifteen points, and the four translation rungs leave it. Their tessellations are expressible only in the additive coordinate, and this round does not build that atlas.",
+    "[R]_finite: at finite m the absolutely-continuous versus singular decomposition is unavailable. It becomes a genuine dichotomy only in infinite dimensions and this round makes no statement there.",
+    "[R]_witness: no independent recomputation exists."
+  ],
+  "result": {
+    "observed": "not run",
+    "status_after": "H",
+    "active_remainder": [
+      "[R]_gaussian",
+      "[R]_projective",
+      "[R]_chart",
+      "[R]_finite",
+      "[R]_witness"
+    ]
+  }
+}

@@ -65,6 +65,7 @@ __all__ = [
     "preserves_lines",
     "invariant_under_agl42",
     "discrete_log",
+    "moves_zero",
     "exponent_orbits",
     "orbit_geometry_report",
 ]
@@ -342,12 +343,39 @@ def discrete_log(base: int = 4) -> dict:
             "log": {value: index for index, value in enumerate(powers)}}
 
 
+def moves_zero(name: str) -> bool:
+    """Does this rung move ``0``?  Decides whether the exponent chart covers it."""
+    return any(permutation[0] != 0 for permutation in subgroup(name))
+
+
 def exponent_orbits(name: str, base: int = 4) -> tuple:
     """A rung's orbits on ``GF(16)*``, written in the exponent coordinate ``Z/15``.
 
-    Zero is dropped: it is a fixed point of every rung in the ladder and carries
-    no information about the orbit geometry.
+    THE DOCSTRING HERE USED TO SAY "zero is a fixed point of every rung in the
+    ladder" AND THAT IS FALSE.  The multiplicative rungs fix it -- ``M3``,
+    ``M15`` and ``FROBENIUS`` -- but the translations ``x -> x + t`` move it, so
+    ``T2``, ``T4``, ``T16`` and ``AGL`` carry ``0`` inside an orbit.  Four of the
+    seven ladder cells.  The function then looked ``0`` up in a table that has no
+    entry for it, because ``log 0`` does not exist, and raised ``KeyError: 0``.
+
+    It was never seen because the only two callers in this repository pass
+    ``FROBENIUS`` and ``M3`` -- exactly the rungs the false premise happens to
+    hold for -- and the single test exercises those same two through
+    :func:`orbit_geometry_report`.  A guard whose witness cannot reach the case
+    it asserts, for the fifth time in this line, with the prose stating the
+    premise that licensed it.
+
+    This is NOT patched by inventing a value for ``log 0``.  The discrete
+    logarithm is a CHART on ``GF(16)*``, a set of fifteen points, and a
+    translation orbit leaves that chart.  The right report is that the chart does
+    not cover the rung, so the function refuses and says which coordinate would.
     """
+    if moves_zero(name):
+        raise ValueError(
+            f"the exponent coordinate is a chart on GF(16)*, and {name} moves 0 "
+            f"out of it: translations are elementary in the ADDITIVE coordinate, "
+            f"not in the multiplicative one. Chartable rungs: "
+            f"{tuple(r for r in SUBGROUP_LADDER if not moves_zero(r))}")
     table = discrete_log(base)["log"]
     permutations = subgroup(name)
     seen, out = set(), []

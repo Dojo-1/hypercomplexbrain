@@ -1084,3 +1084,57 @@ def test_the_middle_cut_was_never_an_innocent_default():
     assert counts["T4"] == [4, 0, 4, 0, 4, 0, 4]
     assert counts["FROBENIUS"] == [0, 0, 4, 0, 6, 8, 6]
     assert counts["M3"] == [2, 0, 4, 8, 8, 8, 4]
+
+
+def test_the_exponent_chart_refuses_the_rungs_it_does_not_cover():
+    """`exponent_orbits` used to crash on four of the seven ladder cells.
+
+    Its docstring asserted that zero is a fixed point of every rung. False: the
+    multiplicative rungs fix it, the translations move it, so T2, T4, T16 and
+    AGL carry 0 inside an orbit and the function looked it up in a table that
+    has no entry for log 0. `KeyError: 0`.
+
+    Never seen because the only two callers in this repository pass FROBENIUS
+    and M3 -- exactly the rungs the false premise holds for -- and the single
+    test went through `orbit_geometry_report`, which hardcodes those same two.
+    The witness could not reach the case the prose asserted.
+
+    Not repaired by inventing a value for log 0. The discrete logarithm is a
+    chart on GF(16)*, fifteen points, and a translation orbit leaves it. The
+    function now refuses and names the coordinate that would work.
+    """
+    from aionq.gf_frames import (SUBGROUP_LADDER, exponent_orbits, moves_zero,
+                                 subgroup)
+
+    moving = tuple(rung for rung in SUBGROUP_LADDER if moves_zero(rung))
+    fixing = tuple(rung for rung in SUBGROUP_LADDER if not moves_zero(rung))
+    assert moving == ("T2", "T4", "T16", "AGL")
+    assert fixing == ("M3", "M15", "FROBENIUS")
+
+    for rung in moving:
+        # measured, not assumed: these really do carry 0 in an orbit
+        assert any(permutation[0] != 0 for permutation in subgroup(rung))
+        with pytest.raises(ValueError, match="chart on GF"):
+            exponent_orbits(rung)
+
+    for rung in fixing:
+        orbits = exponent_orbits(rung)
+        assert sorted(index for orbit in orbits for index in orbit) == list(range(15))
+
+
+def test_the_orbit_tessellations_are_read_off_rather_than_asserted():
+    """What the chartable rungs actually tile GF(16)* into.
+
+    M3 is a REGULAR tessellation -- five congruent tiles of three -- and
+    FROBENIUS is irregular, 1 + 2 + 4 + 4 + 4. M15 is transitive and tiles
+    nothing. Recorded because the tile shapes are the input to any claim about
+    orbit geometry, and this repository has twice built a rule on a structure
+    it had not written down.
+    """
+    from aionq.gf_frames import exponent_orbits
+
+    shapes = {rung: sorted(len(orbit) for orbit in exponent_orbits(rung))
+              for rung in ("M3", "M15", "FROBENIUS")}
+    assert shapes["M3"] == [3, 3, 3, 3, 3]
+    assert shapes["M15"] == [15]
+    assert shapes["FROBENIUS"] == [1, 2, 4, 4, 4]

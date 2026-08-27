@@ -1388,6 +1388,43 @@ CORRECTIONS = (
         "tests/test_lebesgue.py::test_p3_does_not_survive_a_change_of_step_budget",
         True,
     ),
+    Correction(
+        "QSigma-R1y",
+        "gf_frames.exponent_orbits carried a docstring asserting that zero is a "
+        "fixed point of every rung in the ladder. It is not. The multiplicative "
+        "rungs fix it; the translations x -> x + t move it, so T2, T4, T16 and "
+        "AGL carry 0 inside an orbit and the function looked it up in a table "
+        "with no entry for log 0, raising KeyError. FOUR of the seven ladder "
+        "cells, crashing, for a whole round. Invisible because the only two "
+        "callers in this repository pass FROBENIUS and M3 -- exactly the rungs "
+        "the false premise holds for -- and the one test reaches them through "
+        "orbit_geometry_report, which hardcodes the same two. Not repaired by "
+        "inventing a value for log 0: the discrete logarithm is a CHART on "
+        "GF(16)*, fifteen points, and a translation orbit leaves it, so the "
+        "function now refuses and names the coordinate that would work",
+        "tests/test_pond.py::test_the_exponent_chart_refuses_the_rungs_it_does_not_cover",
+        False,
+    ),
+    Correction(
+        "QSigma-R1y",
+        "R1X reported that its one falsifiable prediction failed because the "
+        "protocol left the step budget free. The budget defect is real and the "
+        "flip between 300 and 900 is a fact, but the CAUSE was wrong and the "
+        "true one is worse. A Gaussian covariance restricted to a mode subset "
+        "IS an ellipsoid and the symplectic values ARE its semi-axes; the "
+        "prepared state's are (0.044, 0.513, 0.701, 0.983), a genuine "
+        "non-degenerate body. The projective herald storm destroys it -- "
+        "intermediate-axis count falls 4, 3, 2, 1, 0 and by step 100 only M3 "
+        "retains one -- and across R1X's whole sweep 81 of 84 semi-axes sit "
+        "exactly at 0 or 1. A measure on {0,1} has ONE degree of freedom, so "
+        "the measure could not out-inform the scalar for six of seven cells at "
+        "ANY budget. R1X sampled at 300 and 900, long after the object it was "
+        "measuring had been flattened, and never checked that the body it named "
+        "still had a shape. Found only when an outside reading asked why "
+        "ellipsoids had not been considered at all",
+        "tests/test_hyperellipsoid.py::test_the_storm_flattens_the_ellipsoid_before_R1X_ever_looked",
+        False,
+    ),
 )
 
 
