@@ -1,0 +1,72 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "qsigma-r1z-araki-dichotomy-finding",
+  "round": "QSigma-R1Z",
+  "subject": "manifests/qsigma_r1z_araki_dichotomy_preregistration.json",
+  "executable_form": "tests/test_araki.py::test_the_frozen_BOUNDED_verdict_was_unreachable_by_any_bounded_family",
+  "status": "measured. All three gates PASS. P3 holds. P2 and P4 are recorded as FAILED, and the reason they failed is a defect in this round's own frozen verdict function, not in the physics: the BOUNDED region was unreachable by any genuinely bounded family. The failed predictions stand as failed and the criterion is not patched.",
+
+  "gates": {
+    "G1_bridge_identity": "PASS. On constructed degenerate covariances at eight sizes from 4 to 16 pairs, occupation equals half the zero count and covariance_entropy equals the zero count to 1e-9.",
+    "G2_the_identity_has_a_boundary": "PASS. On a state with intermediate semi-axes the zero count is 0 while the entropy exceeds 0.5 bits, so the identity is shown to fail off the degenerate set. This is R1X's frame-invariance control in corrected form: that one was invariant under everything by construction and could not discriminate.",
+    "G3_purity": "PASS. Maximum Gaussian purity defect across all 105 rows is 6.8e-14. Heralds are projective, the global state stays pure, and the dichotomy lives entirely in the restriction."
+  },
+
+  "measured": {
+    "preregistered_observable": "zero_count, fitted against m over the frozen grid n = 4, 6, 8, 12, 16, 24, 32 at seeds 7, 13, 29 and 400 steps",
+    "rows": {
+      "ALL_PAIRS": {"median_counts": [2, 2, 2, 3, 6, 6, 8], "slope": 0.482, "verdict": "DIVERGENT"},
+      "NEIGHBOUR": {"median_counts": [0, 0, 1, 1, 0, 1, 1], "slope": 0.051, "verdict": "INDETERMINATE"},
+      "RANDOM_MATCHING": {"median_counts": [2, 2, 2, 5, 4, 6, 8], "slope": 0.436, "verdict": "DIVERGENT"},
+      "BLOCKED_M3": {"median_counts": [0, 0, 2, 1, 0, 1, 0], "slope": -0.032, "verdict": "INDETERMINATE"},
+      "BLOCKED_FROBENIUS": {"median_counts": [0, 0, 0, 1, 0, 0, 0], "slope": -0.020, "verdict": "INDETERMINATE"}
+    }
+  },
+
+  "predictions": {
+    "P1_gates": "HOLDS.",
+    "P2_NEIGHBOUR_bounded": "FAILED by the frozen criterion. Counts are 0,0,1,1,0,1,1 across an eightfold growth in register size, which is bounded in substance; the criterion refused it. Recorded as failed.",
+    "P3_ALL_PAIRS_divergent": "HOLDS. Slope 0.482 against a 0.25 threshold, counts rising 2 to 8.",
+    "P4_BLOCKED_bounded": "FAILED by the frozen criterion, both families, with NEGATIVE fitted slopes of -0.032 and -0.020. Refused anyway.",
+    "P5_RANDOM_MATCHING_unpredicted": "DIVERGENT, slope 0.436. Deliberately carried no prediction. A random perfect matching is as sparse as NEIGHBOUR -- one pair per two modes -- and diverges like the dense family, so on this testbed it is the LOCALITY of the herald family and not its density that tracks the growth. Stated as a reading of five families, not a law."
+  },
+
+  "the_round_is_about_its_own_criterion": {
+    "defect_1_BOUNDED_was_unreachable": "The frozen rule is `slope < 0.05 AND largest <= 2 * max(smallest, 1e-12)`. The second clause is a RATIO test on counts, and a genuinely bounded family sits at ZERO for small registers, so smallest is 0, the clause becomes `largest <= 2e-12`, and it is False for any family with a single nonzero count. The BOUNDED verdict could not be reached by the families it was written to certify. Three of five hit it.",
+    "defect_2_the_slope_threshold_is_below_the_resolution_of_the_data": "One unit of change in an integer count across the frozen grid is worth about 0.05 in the fitted slope. So 0.05 is exactly the resolution of the measurement, and the criterion certifies only an EXACTLY CONSTANT sequence. NEIGHBOUR's 0.051 against a 0.05 bound is a coin flip on one seed.",
+    "defect_3_the_wrong_observable_was_frozen": "Araki's criterion is about the expected particle number, and `occupation` computes it with no precondition whatsoever. The round froze the zero COUNT because the bridge identity connects it to the entropy, and thereby inherited a precondition the data does not meet: 32 of 105 rows are not fully degenerate, 15 of 21 for BLOCKED_M3, so on most of its own rows the preregistered observable does not apply.",
+    "the_pattern": "This is the fourth consecutive round in which a frozen decision procedure, rather than the physics, produced the reported outcome. R1S froze verdict regions that overlapped and eight of fifteen cells satisfied both. R1X froze two thresholds and left the step budget free, and the free parameter decided the result. R1Y amended R1X's diagnosis. R1Z froze a BOUNDED region no bounded family could enter. The rounds have gotten better at freezing things and no better at freezing the RIGHT things, and nothing in the protocol requires a frozen criterion to be exercised against a synthetic instance of each verdict before the round runs."
+  },
+
+  "post_hoc_and_not_counted": {
+    "occupation_slopes": {"ALL_PAIRS": 0.250, "RANDOM_MATCHING": 0.218, "BLOCKED_M3": 0.062, "NEIGHBOUR": 0.031, "BLOCKED_FROBENIUS": 0.025},
+    "status": "Occupation is recorded on every row and separates the families more cleanly than the preregistered count. It is NOT substituted for the frozen observable and moves no verdict. Reported so that a successor can preregister it, which is the only legitimate use of it."
+  },
+
+  "what_is_not_claimed": [
+    "not that any state is quasi-equivalent to or disjoint from the vacuum. Finite n cannot decide a dichotomy about a limit; every finite prefix is consistent with both sides.",
+    "not that an area law or a volume law is proved. A fitted slope over seven register sizes is not a theorem.",
+    "not that Feldman-Hajek applies. It governs Gaussian measures on a Hilbert space and there is no Gaussian measure behind a fermionic covariance.",
+    "not that a tessellation causes confinement. The BLOCKED families forbid boundary-crossing heralds BY CONSTRUCTION, so any confinement they show was put there by hand, and a test asserts that no BLOCKED pair crosses a block.",
+    "not independent witnessing: producer and verifier are the same development line.",
+    "not cross-platform reproduction: no job ran on another platform for this round."
+  ],
+
+  "evidence_tag": "MEASURED for the growth law on the measured range of n. SEMANTIC for the bridge identity, which is arithmetic. HYPOTHESIS for anything about the limit.",
+  "raw_artifact": "artifacts/r1z_araki/zero_count_growth.json",
+  "environment": "Python 3, NumPy, SciPy; local container; no CI job ran for this round and none is claimed.",
+
+  "typed_remainders": [
+    "[R]_limit: the dichotomy is about n -> infinity and every measurement is at finite n. Not closable by more n.",
+    "[R]_gauge: the reduction to trace-class occupation is for GAUGE-INVARIANT quasi-free states; parity-projected states need not be gauge invariant, and the general Powers-Stormer condition governs otherwise.",
+    "[R]_degenerate: the bridge identity holds only where every semi-axis is at 0 or 1, which is a property of this dynamics and not a theorem -- and which 32 of 105 rows do not satisfy.",
+    "[R]_criterion: a frozen verdict function has now decided four rounds. Nothing requires one to be exercised against a synthetic instance of each of its verdicts before the round runs.",
+    "[R]_witness: no independent recomputation exists."
+  ],
+
+  "result": {
+    "observed": "gates pass; P3 holds; P2 and P4 failed on a defective criterion; P5 divergent and unpredicted",
+    "status_after": "H",
+    "active_remainder": ["[R]_limit", "[R]_gauge", "[R]_degenerate", "[R]_criterion", "[R]_witness"]
+  }
+}

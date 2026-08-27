@@ -93,14 +93,19 @@
     "[R]_witness: no independent recomputation exists."
   ],
   "result": {
-    "observed": "not run",
+    "observed": "gates pass; P3 holds; P2 and P4 failed on a defective criterion; P5 divergent and unpredicted",
+    "effect_size": "ALL_PAIRS slope 0.482 and RANDOM_MATCHING 0.436 against a 0.25 divergence bound; NEIGHBOUR 0.051, BLOCKED_M3 -0.032, BLOCKED_FROBENIUS -0.020, all three refused BOUNDED by a clause no bounded family could satisfy.",
+    "uncertainty": "three seeds, seven register sizes, exact finite arithmetic up to floating point; no asymptotic inference",
     "status_after": "H",
+    "retired_claims": [],
     "active_remainder": [
       "[R]_limit",
       "[R]_gauge",
       "[R]_degenerate",
+      "[R]_criterion",
       "[R]_witness"
     ]
   },
-  "base_commit": "b91bd3bd56ccd83984669a7169b8dc458c0d190d"
+  "base_commit": "b91bd3bd56ccd83984669a7169b8dc458c0d190d",
+  "reported_by": "manifests/qsigma_r1z_araki_dichotomy_finding.json"
 }

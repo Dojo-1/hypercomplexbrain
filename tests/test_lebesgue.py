@@ -267,3 +267,40 @@ def test_T16_and_AGL_are_the_same_cell_and_the_sweep_shows_it():
         assert left["entropy"] == pytest.approx(right["entropy"], abs=1e-12)
         assert left["defect"] == pytest.approx(right["defect"], abs=1e-12)
         assert left["weight"] == right["weight"]
+
+
+def test_the_storm_flattens_the_ellipsoid_before_R1X_ever_looked():
+    """R1X measured a body the dynamics had already crushed flat.
+
+    A Gaussian covariance restricted to a mode subset IS an ellipsoid and the
+    symplectic values ARE its semi-axes. The prepared state's are
+    (0.044, 0.513, 0.701, 0.983) -- a genuine non-degenerate four-dimensional
+    hyperellipsoid. The projective herald storm destroys it: by step 100 only
+    M3 retains a single intermediate axis and every other cell is at 0 or 1
+    throughout.
+
+    R1X sampled at 300 and 900 steps. A measure supported on {0,1} has ONE
+    degree of freedom, so it could not out-inform the scalar it was built to
+    beat -- for six of seven cells, at any budget. Its P3 was structurally
+    unable to succeed and the round never checked that the body still had a
+    shape.
+    """
+    from aionq.gf_frames import SUBGROUP_LADDER
+    from aionq.pond import rung_pairs
+    from aionq.supercable import covariance_storm
+
+    gamma = random_gaussian(8, seed=0)
+    left = list(range(8))
+
+    prepared_axes = spectral_measure(gamma, left)
+    intermediate = lambda axes: int(((axes > 1e-9) & (axes < 1 - 1e-9)).sum())
+    assert intermediate(prepared_axes) == 4, "the prepared body must have shape"
+
+    survivors = set()
+    for rung in SUBGROUP_LADDER:
+        storm = covariance_storm(rung_pairs(rung), 8, steps=100, seed=7,
+                                 split=4, prepared=gamma)
+        if intermediate(spectral_measure(storm["covariance"], left)):
+            survivors.add(rung)
+    assert survivors == {"M3"}, (
+        f"by step 100 only M3 should retain an intermediate axis; got {survivors}")

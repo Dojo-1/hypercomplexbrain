@@ -2973,3 +2973,100 @@ family. If the sweep had separated them, the sweep would be wrong.
 Full record: `manifests/qsigma_r1x_spectral_measure_preregistration.json` and
 `manifests/qsigma_r1x_spectral_measure_finding.json`; raw rows at
 `artifacts/r1x_spectral_measure/spectral_measure.json`.
+
+## 8.23 R1Z — the dichotomy was in `n`, and the criterion was in the way
+
+### Feldman–Hájek is the wrong theorem, and naming that is half the round
+
+Two Gaussian **measures** on a Hilbert space are either equivalent or mutually
+singular, never in between. It is a real dichotomy and it is empty in finite
+dimensions, which is why it looked like what R1X was missing. It does not apply
+here: there is no Gaussian measure behind a fermionic covariance, because the
+Grassmann integral is not a measure. Reaching for it would have been the
+aggregation-layer move — a theorem's authority carried across a category it does
+not cover, which is the defect this line spent a morning auditing elsewhere.
+
+The right theorem is already in the right category. Fermionic Gaussian states
+**are** quasi-free states of the CAR algebra, where Powers–Størmer and Araki give
+quasi-equivalence exactly when `√A − √B` and `√(1−A) − √(1−B)` are
+Hilbert–Schmidt. Against the Fock vacuum that is `B` trace-class — finite
+expected particle number — and the only alternative is disjointness.
+
+### The bridge is arithmetic, and it explains something R1X left unexplained
+
+Occupation of mode `k` is `(1 − ν_k)/2`. Once the storm has degenerated every
+semi-axis to `{0,1}` — R1X measured 81 of 84 — the total occupation is half the
+zero count, and the entanglement entropy in bits **is** that count. Verified on
+R1X's committed rows without measuring anything new: 36 of 42 rows fully
+degenerate, zero violations. It is also why every entropy in the R1X table was
+`0, 1, 2` or `3`, which that round observed and did not explain.
+
+So **quasi-equivalent to vacuum ⟺ S bounded; disjoint ⟺ S → ∞.** The dichotomy is
+area law against volume law, and `covariance_entropy` has been computing its
+order parameter since R1J.
+
+That makes R1X's defect exact. Its Lebesgue weight is a **fraction**, and bounded
+against linear-in-`m` are the two sides of the dichotomy — which dividing by `m`
+maps to the same place. And R1X held `n` at 8 while varying the step budget: a
+dichotomy about a limit cannot appear in a family that takes no limit. **The
+missing axis was `n`.**
+
+### What was measured
+
+Five herald families defined at every `n`, register sizes 4→32 qubits, three
+seeds, 400 steps, every parameter frozen with a value.
+
+| family | zero counts, n = 4…32 | slope | verdict |
+|---|---|---|---|
+| ALL_PAIRS | 2 2 2 3 6 6 8 | 0.482 | DIVERGENT |
+| RANDOM_MATCHING | 2 2 2 5 4 6 8 | 0.436 | DIVERGENT |
+| NEIGHBOUR | 0 0 1 1 0 1 1 | 0.051 | INDETERMINATE |
+| BLOCKED_M3 | 0 0 2 1 0 1 0 | −0.032 | INDETERMINATE |
+| BLOCKED_FROBENIUS | 0 0 0 1 0 0 0 | −0.020 | INDETERMINATE |
+
+Gates pass; global purity defect never exceeds 6.8e-14. P3 holds. The
+unpredicted control, RANDOM_MATCHING, diverges — and it is as sparse as
+NEIGHBOUR, one pair per two modes, so on this testbed it is the **locality** of
+the herald family and not its density that tracks the growth.
+
+### And then the round turned out to be about its own criterion
+
+P2 and P4 are recorded as **failed**, and they failed on the rule, not the
+physics. The frozen criterion was `slope < 0.05 AND largest ≤ 2·max(smallest,
+1e-12)`. That second clause is a **ratio test on counts**, and a genuinely
+bounded family sits at zero for small registers — so `smallest = 0`, the clause
+becomes `largest ≤ 2e-12`, and it is False for any family with a single nonzero
+count. **BOUNDED was unreachable by exactly the families it was written to
+certify.** Two of the three refused had *negative* fitted slopes.
+
+The slope bound is no better: one unit of change in an integer count across the
+frozen grid is worth about 0.05, so the threshold sits at the resolution of the
+data and the rule certifies only an exactly constant sequence. NEIGHBOUR's 0.051
+against a 0.05 bound is a coin flip on one seed.
+
+And the observable was wrong. Araki's criterion is about expected particle
+number, which `occupation` computes with **no precondition at all**. The round
+froze the zero *count* because the bridge identity connects it to the entropy,
+and inherited a precondition 32 of its own 105 rows do not meet — 15 of 21 for
+BLOCKED_M3. Occupation separates the families more cleanly (0.250, 0.218, 0.062,
+0.031, 0.025) and is reported as post hoc, moving no verdict, so that a successor
+can preregister it.
+
+### The pattern, stated plainly
+
+This is the **fourth consecutive round decided by its own frozen decision
+procedure rather than by the physics.** R1S froze verdict regions that overlapped
+and eight of fifteen cells satisfied both. R1X froze two thresholds and left the
+step budget free, and the free parameter decided the result. R1Y amended R1X's
+diagnosis. R1Z froze a verdict no qualifying family could enter.
+
+§8.21 said what would change the *rule-fitting* pattern: generate the refuting
+case before recording the rule. The analogue here is exact and equally
+unenforced — **exercise a frozen criterion against a synthetic instance of each
+of its verdicts before the round runs.** Three lines of test would have caught
+all of it. Nothing requires them, and this round did not add the requirement
+either.
+
+Full record: `manifests/qsigma_r1z_araki_dichotomy_preregistration.json` and
+`manifests/qsigma_r1z_araki_dichotomy_finding.json`; raw rows at
+`artifacts/r1z_araki/zero_count_growth.json`.

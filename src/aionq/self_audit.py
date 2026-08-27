@@ -1389,7 +1389,7 @@ CORRECTIONS = (
         True,
     ),
     Correction(
-        "QSigma-R1y",
+        "QSigma-R1x",
         "gf_frames.exponent_orbits carried a docstring asserting that zero is a "
         "fixed point of every rung in the ladder. It is not. The multiplicative "
         "rungs fix it; the translations x -> x + t move it, so T2, T4, T16 and "
@@ -1406,7 +1406,7 @@ CORRECTIONS = (
         False,
     ),
     Correction(
-        "QSigma-R1y",
+        "QSigma-R1x",
         "R1X reported that its one falsifiable prediction failed because the "
         "protocol left the step budget free. The budget defect is real and the "
         "flip between 300 and 900 is a fact, but the CAUSE was wrong and the "
@@ -1422,8 +1422,32 @@ CORRECTIONS = (
         "measuring had been flattened, and never checked that the body it named "
         "still had a shape. Found only when an outside reading asked why "
         "ellipsoids had not been considered at all",
-        "tests/test_hyperellipsoid.py::test_the_storm_flattens_the_ellipsoid_before_R1X_ever_looked",
+        "tests/test_lebesgue.py::test_the_storm_flattens_the_ellipsoid_before_R1X_ever_looked",
         False,
+    ),
+    Correction(
+        "QSigma-R1z",
+        "R1Z froze a BOUNDED verdict that no bounded family could reach. The "
+        "rule was 'slope < 0.05 AND largest <= 2 * max(smallest, 1e-12)', and "
+        "that second clause is a RATIO test on counts: a genuinely bounded "
+        "family sits at ZERO for small registers, so smallest is 0, the clause "
+        "becomes 'largest <= 2e-12', and it is False for any family with one "
+        "nonzero count. Three of five families hit it, TWO OF THEM WITH "
+        "NEGATIVE FITTED SLOPES, and were refused. The slope bound is broken "
+        "too: one unit of change in an integer count across the frozen grid is "
+        "worth about 0.05, so 0.05 IS the resolution of the data and the rule "
+        "certifies only an exactly constant sequence. And the observable itself "
+        "was the wrong one -- Araki's criterion is about expected particle "
+        "number, which needs no precondition, while the frozen zero count needs "
+        "full degeneracy that 32 of 105 rows do not have. Fourth consecutive "
+        "round decided by its own frozen decision procedure rather than by the "
+        "physics: R1S's regions overlapped, R1X left a parameter free, R1Y "
+        "amended R1X, and this one made a verdict unreachable. Nothing requires "
+        "a frozen criterion to be exercised against a synthetic instance of "
+        "each of its verdicts before the round runs. The failed predictions "
+        "stand as failed and the criterion is not patched",
+        "tests/test_araki.py::test_the_frozen_BOUNDED_verdict_was_unreachable_by_any_bounded_family",
+        True,
     ),
 )
 
