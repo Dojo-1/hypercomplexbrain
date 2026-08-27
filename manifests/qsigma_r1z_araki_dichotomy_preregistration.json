@@ -1,0 +1,106 @@
+{
+  "task_id": "qsigma-r1z-araki-dichotomy",
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R1Z",
+  "title": "The dichotomy is in n, not in the body: Araki quasi-equivalence and the growth of the zero count",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-08-27",
+  "committed_before_any_implementation": true,
+  "files_expected_to_change": [
+    "src/aionq/araki.py",
+    "tests/test_araki.py",
+    "artifacts/r1z_araki/zero_count_growth.json"
+  ],
+  "the_theorem_and_why_it_is_not_an_analogy": {
+    "wrong_theorem_first": "Feldman-Hajek gives the equivalent-or-mutually-singular dichotomy for Gaussian MEASURES on a Hilbert space. It does not apply here: there is no Gaussian measure behind a fermionic covariance, because the Grassmann integral is not a measure. Reaching for it would have been the aggregation-layer move -- borrowing a theorem's authority across a category it does not cover.",
+    "right_theorem": "Fermionic Gaussian states ARE quasi-free states of the CAR algebra, which is the category Powers-Stormer and Araki work in. For gauge-invariant quasi-free states with one-particle density operators A and B, quasi-equivalence holds iff sqrt(A) - sqrt(B) and sqrt(1-A) - sqrt(1-B) are Hilbert-Schmidt. Against the Fock vacuum (A = 0) this reduces to: quasi-equivalent iff B is trace-class, that is iff the expected particle number is finite. The alternative is disjointness. It is a genuine dichotomy with nothing in between, and it is empty in finite dimensions -- which is why a fixed-n testbed could never exhibit it.",
+    "the_bridge_identity": "Occupation of mode k is (1 - nu_k)/2. Total occupation is sum_k (1 - nu_k)/2. When the storm has degenerated every semi-axis to {0, 1} -- which R1X measured for 81 of 84 axes -- total occupation is #{k : nu_k = 0} / 2, and the entanglement entropy in bits is EXACTLY that same count. Verified on R1X's committed rows: 36 of 42 rows carry a fully degenerate ellipsoid and S equals the zero count on every one of them, zero violations. It is also why every entropy in the R1X table was 0, 1, 2 or 3, which that round observed and did not explain.",
+    "consequence": "quasi-equivalent to the vacuum <=> S bounded; disjoint <=> S -> infinity. The dichotomy asked for is the area-law versus volume-law dichotomy, and covariance_entropy has been computing its order parameter since R1J."
+  },
+  "what_this_says_about_R1X": {
+    "the_normalisation_was_the_defect": "R1X's Lebesgue weight w = mu_A({nu >= 1 - eps}) is a FRACTION. Bounded and linear-in-m zero counts are the two sides of the dichotomy, and dividing by m maps them to the same place. The quantity with the dichotomy is the COUNT; R1X reported the fraction.",
+    "the_missing_axis_was_n": "R1X held the register at 8 qubits and varied the step budget. A dichotomy about a limit cannot appear in a family that takes no limit. This is why the finite testbed felt empty, and it is not repaired by a richer body -- it is repaired by varying n.",
+    "what_R1X_got_right_and_keeps": "that the symplectic values are semi-axes, that the entropy is an integral against their measure, and that D is bounded and sign-free. None of that is retracted."
+  },
+  "scope_and_the_hard_limit_on_what_can_be_concluded": {
+    "text": "FINITE DATA CANNOT DECIDE A DICHOTOMY ABOUT A LIMIT. No number of measured n establishes whether S is bounded or divergent, because any finite prefix is consistent with both. This round measures the GROWTH LAW of the zero count and reports which side of the dichotomy that growth is consistent with. It does not establish quasi-equivalence or disjointness for any state, and the manifest forbids saying it does.",
+    "evidence_tag_split": "MEASURED for the growth law on the measured range of n. HYPOTHESIS for the dichotomy the growth law would imply if it persisted. SEMANTIC for the bridge identity, which is arithmetic."
+  },
+  "frozen_parameters": {
+    "note": "R1X left the step budget free and the free parameter decided its result. Every parameter here carries a value.",
+    "qubit_counts": [
+      4,
+      6,
+      8,
+      12,
+      16,
+      24,
+      32
+    ],
+    "cut": "half the register, split = qubits // 2, for every n",
+    "steps": 400,
+    "storm_seeds": [
+      7,
+      13,
+      29
+    ],
+    "prepared_seed": 0,
+    "degeneracy_tolerance": 1e-09,
+    "growth_fit": "least squares of zero_count against m = qubits // 2 on the frozen qubit grid, reporting slope and intercept; no model selection, no dropping of points, no alternative fit tried afterwards",
+    "bounded_means": "slope < 0.05 with the largest zero count no greater than twice the smallest",
+    "divergent_means": "slope > 0.25",
+    "between_those_is_reported_as_INDETERMINATE_and_not_resolved": true
+  },
+  "herald_families_defined_at_every_n": {
+    "why_the_ladder_cannot_be_used": "SUBGROUP_LADDER is intrinsically a structure on 16 GF(16) labels and does not extend to 64 modes. Families that ARE defined at every n are required, and they are named here before anything runs.",
+    "ALL_PAIRS": "every unordered mode pair; the analogue of T16/AGL, which R1N recorded to be the same family",
+    "NEIGHBOUR": "pairs (j, j+1) only; strictly local",
+    "RANDOM_MATCHING": "a perfect matching drawn from prepared_seed, fixed across all seeds and step counts",
+    "BLOCKED_M3": "modes tiled into blocks of 16, the M3 rung applied inside each block, no herald crossing a block boundary -- a tessellation of the mode line by GF(16) tiles, which is R1Y's object at scale",
+    "BLOCKED_FROBENIUS": "the same tiling with FROBENIUS inside each block"
+  },
+  "gates_with_known_answers": {
+    "G1_bridge_identity": "On any state whose semi-axes are all within 1e-9 of 0 or 1, covariance_entropy equals the zero count to 1e-9. Asserted on constructed degenerate covariances at several n, not only on storm outputs.",
+    "G2_the_identity_fails_off_the_degenerate_set": "On a state with an intermediate semi-axis the identity must NOT hold. Both halves are asserted: an identity that held everywhere would mean the zero count carries nothing beyond the entropy, and the round would be measuring the same quantity twice under two names.",
+    "G3_purity_is_preserved": "gaussian_purity_defect stays below 1e-9 through every storm. Heralds are projective, so the GLOBAL state stays pure and all its own semi-axes stay at 1; the dichotomy lives entirely in the RESTRICTION. If the global state drifts impure the restriction's zero count is measuring numerical error."
+  },
+  "preregistered_predictions": {
+    "P1": "G1, G2 and G3 hold. If any fails nothing else is read.",
+    "P2": "NEIGHBOUR gives a bounded zero count by the frozen criterion -- slope < 0.05 -- consistent with quasi-equivalence to the vacuum.",
+    "P3": "ALL_PAIRS gives a divergent zero count by the frozen criterion -- slope > 0.25 -- consistent with disjointness.",
+    "P4": "The two BLOCKED families are bounded, because no herald crosses a block boundary and the cut is aligned to one, so entanglement across the cut cannot exceed a block. If a BLOCKED family is divergent, the tessellation does not confine what it was assumed to confine and that is the round's most interesting outcome.",
+    "P5": "No prediction is made about RANDOM_MATCHING. It is included as an unpredicted control precisely so the round contains a family whose result was not written down in advance."
+  },
+  "kill_conditions": [
+    "If P2 and P3 both land on the same side, the criterion does not discriminate at these n and the round reports that the growth law is unresolved at this scale rather than adjusting the thresholds.",
+    "If any family lands in the INDETERMINATE band it is reported as indeterminate. The band is not narrowed afterwards.",
+    "No parameter in frozen_parameters may change after any storm has run. Changing one voids the round.",
+    "If the fitted slope is used to claim a state IS quasi-equivalent or IS disjoint, the round has violated its own scope clause."
+  ],
+  "forbidden_promotions": [
+    "no claim that any state has been shown quasi-equivalent to or disjoint from the vacuum; finite n cannot decide a limit",
+    "no claim about Gaussian measures on Hilbert spaces or about Feldman-Hajek, which does not apply to this category",
+    "no claim that an area law or volume law has been PROVED; a fitted slope over seven values of n is not a theorem",
+    "no claim that GF(16) or a tessellation causes confinement; BLOCKED families forbid boundary-crossing heralds by construction, so any confinement they show is built in and not discovered",
+    "no claim of independent witnessing; producer and verifier are the same development line",
+    "no claim of cross-platform reproduction without an actually green job on that platform"
+  ],
+  "stop_condition": "Stop R1Z after the three gates and the growth table over five families, seven values of n and three seeds are reported with raw artifacts committed. Do not add non-Gaussian dynamics, do not extrapolate to a limit, do not begin QTau-Germinal, and do not add a cognitive organ.",
+  "typed_remainders_declared_in_advance": [
+    "[R]_limit: the dichotomy is a statement about n -> infinity and every measurement here is at finite n. The gap is not closable by more n.",
+    "[R]_gauge: the Araki criterion quoted is for GAUGE-INVARIANT quasi-free states. The storm's heralds are parity projections and the states reached need not be gauge invariant, so the reduction to trace-class occupation is stated for the gauge-invariant case and the general Powers-Stormer condition on sqrt(A) - sqrt(B) is what governs otherwise.",
+    "[R]_degenerate: the bridge identity holds only where every semi-axis is at 0 or 1. R1X measured that to be 81 of 84 axes but it is a property of this dynamics, not a theorem.",
+    "[R]_witness: no independent recomputation exists."
+  ],
+  "result": {
+    "observed": "not run",
+    "status_after": "H",
+    "active_remainder": [
+      "[R]_limit",
+      "[R]_gauge",
+      "[R]_degenerate",
+      "[R]_witness"
+    ]
+  },
+  "base_commit": "b91bd3bd56ccd83984669a7169b8dc458c0d190d"
+}
