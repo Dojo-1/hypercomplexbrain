@@ -1,14 +1,30 @@
 # Claude Code Project Instructions
 
-Read `docs/CLAUDE_CODE_CO_DEVELOPMENT.md` as the standing evidence and correction contract, then treat `manifests/qsigma_r5_witness_weave_preregistration.json` as the active round.
+Read `docs/CLAUDE_CODE_CO_DEVELOPMENT.md` as the standing evidence and correction contract.
+
+**Active round: none.** R1Z is reported, R1Y is reported, R2A's criterion
+instrument is in place. The next round must be preregistered before its
+implementation commit, and its frozen criterion must be exercised with
+`aionq.criterion.exercise` before the round runs -- see below.
+
+This line previously pointed at `manifests/qsigma_r5_witness_weave_preregistration.json`
+as the active round for twenty-plus rounds after R5 finished. A standing
+instruction that names a round which has closed is the same defect as a
+manifest pointer into a test that does not exist: it fails silently, because
+nothing executes it.
 
 Before editing:
 
 1. Inspect the live repository and current HEAD; do not trust summaries over artifacts.
 2. Load only the task-relevant installed skill entrypoints, validating each before use.
-3. Confirm that the QSigma-R5 preregistration predates the implementation commits.
+3. Confirm that the active round's preregistration predates its implementation commits (`self_audit.preregistration_ordering` measures this against git, not against the manifest's own flag).
 4. Preserve `P/A/M/H/S/R`, typed remainders, supersession history, and the stop rule.
-5. Work only on the asynchronous Godelian-1 batch, append-only journal, response-ingestion path, adversarial tests, and witness-nerve visualization.
+5. Before running any round, exercise its frozen criterion with
+   `aionq.criterion.exercise`: every verdict needs a witness that reaches it,
+   the regions must be disjoint, and every defaulted keyword of the entry point
+   must carry a value in the manifest. Four rounds -- R1S, R1X, R1Y, R1Z --
+   were decided by their own frozen rules rather than by what they measured,
+   and every one of those defects was visible with no measurement at all.
 6. Do not begin QTau-Germinal, add another cognitive organ, or claim independent witnessing in this round.
 7. Do not claim cross-platform success without actual green jobs on that platform.
 8. Never write `GODELIAN_AGENT_TOKEN`, `AGENT_ACCESS_TOKEN`, an OpenAI API key, a request Authorization header, or a prompt containing one into the repository, logs, envelopes, or command history.
@@ -16,22 +32,20 @@ Before editing:
 10. Do not invent a polling API. Use explicit response JSON ingestion until a supported connector exists.
 11. Do not open a pull request unless explicitly requested.
 
-Implementation surfaces:
-
-- `src/aionq/witness_batch.py`
-- `experiments/dispatch_review_batch.py`
-- `manifests/godelian_review_batch_v1.json`
-- `tests/test_witness_batch.py`
-- `docs/WITNESS_WEAVE.md`
+Implementation surfaces are set by the active round's manifest
+(`files_expected_to_change`), not by this file. The R5 witness-weave surfaces
+that used to be listed here are finished work; naming them as live sent every
+session to the wrong five files.
 
 Required verification before any success claim:
 
 ```bash
 python -m pip install -e .
-python -m pytest tests/test_witness_batch.py -q
-python -m pytest -q
-PYTHONPATH=src python3 experiments/dispatch_review_batch.py status
-PYTHONPATH=src python3 experiments/dispatch_review_batch.py render
+python -m pytest -q                      # currently 2619 passed, 2 skipped
 ```
+
+The full suite takes about twelve minutes. Run the active round's own test file
+first for a fast signal, then the whole suite before any success claim -- this
+line has twice had a change pass its own tests and break another module.
 
 Do not trigger the live batch merely to make a test pass. Trigger it only when the token is available in the shell environment and the user has authorized the live run. At completion, return exact commands, environments, raw artifact paths and hashes, test counts, journal state, conversation handles, envelope status, remaining typed remainders, and final commit SHA.

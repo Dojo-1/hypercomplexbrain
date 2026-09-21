@@ -96,14 +96,18 @@
     "[R]_witness: no independent recomputation exists."
   ],
   "result": {
-    "observed": "not run",
+    "observed": "G1 and G2 pass; P2 NOT TESTED (gate unsatisfiable when frozen); P3 ill-posed (top-k frame is not a function of the state on a degenerate spectrum)",
+    "effect_size": "GammaL(1,16) offers 4 regular tessellations against a frozen gate of 6; two states with identical spectra have top-2 subspaces differing by up to 1.24 radians",
+    "uncertainty": "not applicable: both failures are facts about the definitions and need no data",
     "status_after": "H",
+    "retired_claims": [],
     "active_remainder": [
       "[R]_gaussian",
       "[R]_projective",
       "[R]_chart",
-      "[R]_finite",
+      "[R]_eigenspace",
       "[R]_witness"
     ]
-  }
+  },
+  "reported_by": "manifests/qsigma_r1y_hyperellipsoid_tessellation_finding.json"
 }

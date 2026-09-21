@@ -1,0 +1,57 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "qsigma-r1y-hyperellipsoid-finding",
+  "round": "QSigma-R1Y",
+  "subject": "manifests/qsigma_r1y_hyperellipsoid_tessellation_preregistration.json",
+  "executable_form": "tests/test_hyperellipsoid.py::test_p3_is_ill_posed_because_degeneracy_destroys_the_frame",
+  "status": "measured. G1 and G2 PASS. P2 is NOT TESTED -- its gate was unsatisfiable when it was frozen. P3 is ILL-POSED -- its observable is not a function of the state in the regime it targets. Both were found WITHOUT running the experiment, which is the first time in this line that a frozen-clause defect was caught before rather than after.",
+
+  "gates": {
+    "G1_williamson": "PASS. The real Schur form of a real antisymmetric block IS Williamson's canonical form, and frame @ canonical @ frame.T reproduces the block to 1e-10 at 4, 6 and 8 qubits across every split.",
+    "G2_lengths_agree": "PASS. The Schur-read semi-axes equal lebesgue.spectral_measure to 1e-12 on every split at 4, 6 and 8 qubits -- a third code path for a quantity two already compute.",
+    "G3_invariance": "PASS, but only after the block was restricted to at most HALF the register. A pure global state restricted to |A| modes can entangle at most |complement|/2 pairs across the cut, so a larger A has surplus axes pinned to exactly 1 and the statistic is ill-posed there. That constraint was not in the manifest."
+  },
+
+  "P2_was_unsatisfiable_when_it_was_frozen": {
+    "what_was_required": "at least six regular and six irregular subgroups from a family enumerated independently of the hypothesis, classified before any storm ran",
+    "what_exists": "GammaL(1,16) has order 60 and exactly FORTY subgroups -- the enumeration is closed, three generators yield the same forty as two. Of those, FOUR give a regular non-transitive orbit partition, THREE excluding the trivial subgroup, in three distinct tile shapes: 15x1, 5x3 and 3x5. Thirty-three are irregular.",
+    "verdict": "P2 NOT TESTED, by R1Y's own kill condition. The gate demanded six regular tessellations from a group that contains four, and no measurement could have changed that.",
+    "defect_class": "identical to R1Z's unreachable BOUNDED -- a frozen condition no instance can satisfy -- and identical to R1S's overlapping regions in being visible with no experiment at all. Fifth instance in this line."
+  },
+
+  "P3_is_ill_posed_and_the_reason_is_a_theorem": {
+    "what_was_predicted": "that the orientation defect separates cells at matched seed AFTER all semi-axes have degenerated to {0,1}, on the premise that lengths die and orientation survives",
+    "why_it_cannot": "A repeated semi-axis means a higher-dimensional eigenspace, and every orthonormal basis of it is equally canonical, so 'the span of the top k principal axes' names no particular subspace. Demonstrated on two states with IDENTICAL spectra whose top-2 subspaces differ by principal angles up to 1.24 radians.",
+    "why_it_bites_exactly_here": "R1X measured 81 of 84 semi-axes sitting at exactly 0 or 1. A two-value spectrum is maximally degenerate, so P3's entire target regime is the regime in which its observable stops being a function of the state.",
+    "the_premise_was_backwards": "R1Y was built on the idea that orientation is what survives when lengths degenerate. It is the other way round: degeneracy of the SPECTRUM is precisely what destroys the FRAME. When the lengths go, the orientation goes with them, and there is nothing left for a richer body to carry.",
+    "what_is_well_posed": "the WHOLE eigenspace at a given semi-axis value -- the full nu=1 or nu=0 subspace -- is a function of the state. That is a different observable from a top-k slice and is not substituted here; a successor may preregister it.",
+    "implementation": "orientation_defect now REFUSES when the cut falls inside a tie, on the exponent_orbits precedent: a number that is not a function of the state is worse than none, because it looks like a measurement."
+  },
+
+  "what_was_measured_anyway": {
+    "survival_time": "Every ladder cell starts with four intermediate semi-axes on the frozen step grid and loses them. M3 alone still has one at step 900 and is the unique survivor. This is the observable R1X should have had, read off the grid and never interpolated.",
+    "status": "reported, and it is the coincidence that generated P2 -- a sample of one cell among three chartable ones, which is why P2 demanded an independent family in the first place"
+  },
+
+  "what_is_not_claimed": [
+    "not that tessellation regularity does or does not predict survival. P2 was not tested and no substitute test was run.",
+    "not that orientation carries no information. The top-k slice is ill-posed; the full eigenspace is not, and was not measured.",
+    "not that R1Y's premise is refuted empirically. It is refuted by the non-uniqueness of an eigenbasis on a degenerate eigenvalue, which needs no data.",
+    "not independent witnessing: producer and verifier are the same development line.",
+    "not cross-platform reproduction: no job ran on another platform for this round."
+  ],
+
+  "evidence_tag": "SEMANTIC for P2's unsatisfiability and P3's ill-posedness, both of which are facts about the definitions. MEASURED for the gates and the survival table.",
+  "typed_remainders": [
+    "[R]_gaussian: the ellipsoid exists because the state is Gaussian.",
+    "[R]_projective: Majorana heralds are projective, which is WHY the semi-axes degenerate, and hence why the frame degenerates too.",
+    "[R]_chart: the four translation rungs leave the exponent coordinate; their tessellations need the additive chart, not built here.",
+    "[R]_eigenspace: the well-posed orientation observable -- the whole eigenspace rather than a top-k slice -- is unmeasured.",
+    "[R]_witness: no independent recomputation exists."
+  ],
+  "result": {
+    "observed": "gates pass; P2 not tested, gate unsatisfiable; P3 ill-posed, premise backwards",
+    "status_after": "H",
+    "active_remainder": ["[R]_gaussian", "[R]_projective", "[R]_chart", "[R]_eigenspace", "[R]_witness"]
+  }
+}

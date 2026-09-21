@@ -1449,6 +1449,27 @@ CORRECTIONS = (
         "tests/test_araki.py::test_the_frozen_BOUNDED_verdict_was_unreachable_by_any_bounded_family",
         True,
     ),
+    Correction(
+        "QSigma-R2a",
+        "the recommendation that opened R2A said a criterion check is 'three "
+        "lines of test' and 'would have caught R1S, R1X, R1Y and R1Z'. FALSE, "
+        "and refuted by the ledger it was summarising. Those are THREE defect "
+        "classes: R1S froze verdict regions that OVERLAP, R1Z froze a verdict "
+        "that is UNREACHABLE, and R1X left a PARAMETER FREE -- which is not a "
+        "property of a verdict function at all, so no amount of exercising one "
+        "would surface it. R1Y is not in the class: it amended R1X's causal "
+        "diagnosis and froze nothing that failed. Three independent checks for "
+        "three independent failure modes, and R1Z demonstrates they are "
+        "independent by PASSING the parameter check while being decided by an "
+        "unreachable verdict. Bundling distinct defects under one remedy and "
+        "costing it at three lines is the aggregation-layer overclaim this "
+        "line had audited in an external repository ONE TURN EARLIER -- "
+        "attributing to a mechanism numbers it does not produce -- made in a "
+        "recommendation about rigour, which is where it is least likely to be "
+        "checked",
+        "tests/test_criterion.py::test_R1Z_froze_its_knobs_even_though_its_verdict_was_broken",
+        True,
+    ),
 )
 
 

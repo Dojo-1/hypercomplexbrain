@@ -1,0 +1,49 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "qsigma-r2a-criterion-exercise",
+  "round": "QSigma-R2A",
+  "title": "Exercise a frozen decision procedure before the round it decides",
+  "status": "instrument, validated against three defects already in the ledger",
+  "executable_form": "tests/test_criterion.py::test_it_finds_that_R1Z_s_BOUNDED_was_unreachable",
+
+  "why_this_is_not_preregistered": "A preregistration predicts an unknown outcome. These three outcomes are already known -- they are in CORRECTIONS and in the R1S, R1X and R1Z finding manifests -- so predicting them would be theatre. This is instead the repository's existing KNOWN-ANSWER category, the same shape as supercable.agrees_with_state_vector: an instrument shown to reproduce results established without it. Stating the choice rather than quietly skipping a manifest, because 'no preregistration was needed here' is exactly the sentence a round would write if it wanted to avoid one.",
+
+  "the_correction_that_produced_this_round": {
+    "what_was_claimed": "The recommendation that opened R2A said the check is 'three lines of test' and 'would have caught R1S, R1X, R1Y and R1Z'.",
+    "why_it_was_wrong": "Those are THREE defect classes, not one, and R1Y is not among them. R1S froze verdict regions that OVERLAP. R1Z froze a verdict that is UNREACHABLE. R1X left a PARAMETER FREE -- which is not a property of a verdict function at all and no amount of exercising one would surface it. R1Y amended R1X's causal diagnosis and froze nothing that failed.",
+    "the_honest_reach": "Two checks cover R1S and R1Z; a third, on the entry point's signature, covers R1X; R1Y is out of scope. Three independent checks for three independent failure modes.",
+    "why_it_matters_beyond_bookkeeping": "Bundling three distinct defects under one remedy and costing it at 'three lines' is the aggregation-layer overclaim this line audited in an external repository ONE TURN EARLIER -- attributing to a mechanism numbers it does not produce. Made in a recommendation about rigour, which is where it is least likely to be checked."
+  },
+
+  "the_three_checks": {
+    "verdict_regions_are_disjoint": "Takes the PREDICATES separately rather than the composed rule, because a rule returning one value cannot exhibit its own ambiguity. R1S's overlap is invisible from outside and visible the moment the branches are asked independently.",
+    "every_verdict_has_a_witness": "Each verdict must be produced by a synthetic input the author believes produces it. Witnesses are supplied, not searched for: a search finds whatever triggers the branch, which proves the branch is live and not that it is live for the intended reason.",
+    "frozen_parameters_cover_the_knobs": "A keyword argument with a default IS a knob -- a choice the author made and can silently remake. Checked on the signature, so it cannot be satisfied by prose, which is precisely how R1X's 'fixed step budget' passed."
+  },
+
+  "known_answer_results": {
+    "R1S_overlap": "CAUGHT. The frozen predicates collide on every sampled cell with N < 8.163 and on none above, which is the recorded mechanism. A correctly ordered pair passes and is also exhaustive.",
+    "R1Z_unreachable_BOUNDED": "CAUGHT. NEIGHBOUR's own measured counts (0,0,1,1,0,1,1) are the natural witness for BOUNDED and produce INDETERMINATE instead. Dropping the ratio clause makes all three verdicts reachable -- demonstrated, and NOT applied to R1Z, whose failed predictions stand as failed.",
+    "R1X_free_budget": "CAUGHT. lebesgue.ladder_spectral_sweep carries `steps` as a defaulted keyword and R1X's frozen block names only the two thresholds.",
+    "R1Z_parameters": "PASSES. R1Z froze every knob of its entry point and was still decided by a broken verdict. Passing one check says nothing about the others."
+  },
+
+  "what_is_not_claimed": [
+    "not that a criterion passing all three checks is correct. R1Z's zero count was reachable, disjoint and fully parameterised, and was still the wrong observable, because Araki's condition is about occupation and needs no degeneracy precondition.",
+    "not that these are the only ways a frozen rule can fail. They are the three that have actually occurred in this line.",
+    "not that the checks are enforced. Nothing in the protocol requires a round to run them, and this round does not add that requirement either -- adding it would be a rule change made by the party it governs.",
+    "not independent witnessing: producer and verifier are the same development line."
+  ],
+
+  "evidence_tag": "MEASURED for the three known-answer reproductions. SEMANTIC for the scope statement.",
+  "typed_remainders": [
+    "[R]_wrong_rule: a rule can pass every check here and still measure the wrong thing.",
+    "[R]_unenforced: running these checks remains voluntary.",
+    "[R]_witness: no independent recomputation exists."
+  ],
+  "result": {
+    "observed": "three historical defects reproduced; repaired forms pass",
+    "status_after": "M",
+    "active_remainder": ["[R]_wrong_rule", "[R]_unenforced", "[R]_witness"]
+  }
+}
