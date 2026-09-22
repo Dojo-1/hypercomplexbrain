@@ -7,9 +7,9 @@
   "status": "measured. G1 and G2 PASS. P2 is NOT TESTED -- its gate was unsatisfiable when it was frozen. P3 is ILL-POSED -- its observable is not a function of the state in the regime it targets. Both were found WITHOUT running the experiment, which is the first time in this line that a frozen-clause defect was caught before rather than after.",
 
   "gates": {
-    "G1_williamson": "PASS. The real Schur form of a real antisymmetric block IS Williamson's canonical form, and frame @ canonical @ frame.T reproduces the block to 1e-10 at 4, 6 and 8 qubits across every split.",
+    "G1_skew_normal": "PASS after terminology correction. The orthogonal real-Schur form is the skew-normal form of a real antisymmetric covariance; it is not Williamson's symplectic-congruence theorem. frame @ canonical @ frame.T reproduces the block to 1e-10 at 4, 6 and 8 qubits across every split.",
     "G2_lengths_agree": "PASS. The Schur-read semi-axes equal lebesgue.spectral_measure to 1e-12 on every split at 4, 6 and 8 qubits -- a third code path for a quantity two already compute.",
-    "G3_invariance": "PASS, but only after the block was restricted to at most HALF the register. A pure global state restricted to |A| modes can entangle at most |complement|/2 pairs across the cut, so a larger A has surplus axes pinned to exactly 1 and the statistic is ill-posed there. That constraint was not in the manifest."
+    "G3_invariance": "ORIGINAL FROZEN GATE ILL-POSED, not PASS. It becomes a valid post-freeze semantic control only after restricting the block to at most HALF the register. A larger block has surplus axes pinned to exactly 1, and the top-k frame is then non-unique. That constraint was absent from the preregistration, so the corrected control moves no preregistered verdict."
   },
 
   "P2_was_unsatisfiable_when_it_was_frozen": {
@@ -50,7 +50,7 @@
     "[R]_witness: no independent recomputation exists."
   ],
   "result": {
-    "observed": "gates pass; P2 not tested, gate unsatisfiable; P3 ill-posed, premise backwards",
+    "observed": "G1 and G2 pass after canonical-form terminology correction; original G3 ill-posed and only its post-freeze restricted control passes; P2 not tested, gate unsatisfiable; P3 ill-posed, premise backwards",
     "status_after": "H",
     "active_remainder": ["[R]_gaussian", "[R]_projective", "[R]_chart", "[R]_eigenspace", "[R]_witness"]
   }

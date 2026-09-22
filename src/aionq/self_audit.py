@@ -1470,6 +1470,36 @@ CORRECTIONS = (
         "tests/test_criterion.py::test_R1Z_froze_its_knobs_even_though_its_verdict_was_broken",
         True,
     ),
+    Correction(
+        "QSigma-R2a",
+        "criterion.exercise was fail-open: an empty invocation and omitted checks defaulted to clean, uncovered regions were ignored by the composite verdict, predicate exceptions were swallowed, and callers could omit a verdict from the witness map. It now requires an exact required-check declaration, an exact declared-verdict universe, exhaustive samples, and zero predicate errors",
+        "tests/test_criterion.py::test_exercise_fails_closed_when_no_checks_are_declared_or_run",
+        False,
+    ),
+    Correction(
+        "QSigma-R1y",
+        "the finding promoted G3 to PASS only after restricting its domain to blocks no larger than half the register, a constraint absent from the frozen preregistration. The original frozen gate is now preserved as ILL-POSED and the restricted calculation is only a post-freeze semantic control",
+        "tests/test_hyperellipsoid.py::test_r1y_finding_preserves_the_failed_frozen_gate_and_correct_theorem",
+        False,
+    ),
+    Correction(
+        "QSigma-R1y",
+        "the real-Schur skew-normal form of an antisymmetric fermionic covariance was called Williamson's canonical form. Williamson's theorem is a symplectic-congruence theorem for positive-definite symmetric matrices. The computation remains an orthogonal Schur reconstruction; the theorem attribution and geometric promotion were removed",
+        "tests/test_hyperellipsoid.py::test_r1y_finding_preserves_the_failed_frozen_gate_and_correct_theorem",
+        False,
+    ),
+    Correction(
+        "QSigma-R1z",
+        "the frozen preregistration equated bounded-versus-divergent entropy with an area-law-versus-volume-law dichotomy. Divergence may be logarithmic or otherwise sublinear. The historical bytes remain frozen and the finding now records the narrower bounded-versus-divergent statement",
+        "tests/test_araki.py::test_r1z_corrects_area_volume_language_without_rewriting_preregistration",
+        False,
+    ),
+    Correction(
+        "CI",
+        "the main CI workflow used a depth-one checkout even though package import verifies evidence against historical commits. All six jobs failed before tests because the bound commit could not resolve. CI now fetches full history and a regression test binds that requirement",
+        "tests/test_criterion.py::test_ci_fetches_the_history_required_by_evidence_bindings",
+        False,
+    ),
 )
 
 

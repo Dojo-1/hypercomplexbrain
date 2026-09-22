@@ -1,17 +1,17 @@
 """The body, its frame, and the orientation R1X threw away.
 
-R1X built the empirical measure of a restricted covariance's symplectic values.
-Williamson's theorem says those values ARE the semi-axes of an ellipsoid, so
+R1X built the empirical measure of a restricted covariance's singular values.
+The orthogonal skew-normal form packages those values into canonical pairs, so
 ``mu_A`` is the pushforward of that body under the map that keeps axis LENGTHS
 and forgets ORIENTATION -- and orientation is what survives when the lengths
 degenerate, which on this dynamics they do: R1X measured 81 of 84 axes at
 exactly 0 or 1.
 
-This module keeps both halves.  ``williamson_frame`` returns the semi-axes AND
-the orthonormal frame that carries them, via the real Schur form, which for a
-real antisymmetric block is exactly the canonical form Williamson's theorem
-names.  ``orientation_defect`` then asks the question lengths cannot: how does
-the body sit relative to a TESSELLATION of the mode set, rather than relative
+This module keeps both halves. ``williamson_frame`` (a retained compatibility
+name) returns the paired singular values AND an orthonormal Schur frame. This
+is the orthogonal skew-normal form of a real antisymmetric covariance, not
+Williamson's symplectic-congruence theorem. ``orientation_defect`` then asks how
+the body sits relative to a TESSELLATION of the mode set, rather than relative
 to the arbitrary left-half bipartition R1X inherited from R1Q and four rounds
 carried without re-examining.
 
@@ -45,9 +45,9 @@ __all__ = [
 def williamson_frame(gamma, modes):
     """Semi-axes and the orthonormal frame carrying them, for a restricted block.
 
-    A real antisymmetric matrix has a real Schur form that is block diagonal
+    A real antisymmetric matrix has an orthogonal real Schur form that is block diagonal
     with ``2 x 2`` blocks ``[[0, nu], [-nu, 0]]``.  That IS the canonical form,
-    so the Schur vectors are the principal axes and no separate diagonalisation
+    so the Schur vectors give a canonical-pair frame away from degeneracies
     is needed.  Returned together because R1X's whole defect was keeping one and
     discarding the other.
     """

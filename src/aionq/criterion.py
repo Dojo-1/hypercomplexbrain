@@ -52,7 +52,8 @@ __all__ = [
 ]
 
 
-def every_verdict_has_a_witness(verdict_fn, witnesses: dict) -> dict:
+def every_verdict_has_a_witness(verdict_fn, witnesses: dict,
+                                declared_verdicts=None) -> dict:
     """Each verdict the rule can return must be produced by some input.
 
     ``witnesses`` maps a verdict name to a synthetic input the round author
@@ -66,6 +67,10 @@ def every_verdict_has_a_witness(verdict_fn, witnesses: dict) -> dict:
     proves the branch is live and not that it is live for the reason the round
     intends.
     """
+    declared = None if declared_verdicts is None else {
+        str(name) for name in declared_verdicts}
+    supplied = {str(name) for name in witnesses}
+    declaration_matches = declared is not None and supplied == declared
     rows = []
     for name, witness in witnesses.items():
         try:
@@ -79,7 +84,11 @@ def every_verdict_has_a_witness(verdict_fn, witnesses: dict) -> dict:
 
     unreachable = [row for row in rows if not row["reached"]]
     return {"verdicts": len(rows), "unreachable": unreachable,
-            "all_reachable": not unreachable, "rows": rows}
+            "declared_verdicts": None if declared is None else sorted(declared),
+            "supplied_verdicts": sorted(supplied),
+            "declaration_matches": declaration_matches,
+            "all_reachable": declaration_matches and not unreachable,
+            "rows": rows}
 
 
 def verdict_regions_are_disjoint(predicates: dict, samples) -> dict:
@@ -97,14 +106,17 @@ def verdict_regions_are_disjoint(predicates: dict, samples) -> dict:
     independently.
     """
     collisions = []
+    errors = []
+    samples = list(samples)
     for sample in samples:
         satisfied = []
         for name, predicate in predicates.items():
             try:
                 if predicate(sample):
                     satisfied.append(name)
-            except Exception:
-                continue
+            except Exception as error:
+                errors.append({"sample": sample, "verdict": name,
+                               "reason": f"{type(error).__name__}: {error}"})
         if len(satisfied) > 1:
             collisions.append({"sample": sample, "verdicts": sorted(satisfied)})
 
@@ -113,9 +125,11 @@ def verdict_regions_are_disjoint(predicates: dict, samples) -> dict:
     return {
         "samples": len(samples),
         "collisions": collisions,
-        "disjoint": not collisions,
+        "disjoint": bool(samples) and bool(predicates) and not collisions,
         "uncovered": uncovered,
-        "exhaustive": not uncovered,
+        "errors": errors,
+        "exhaustive": bool(samples) and bool(predicates) and not uncovered
+                      and not errors,
     }
 
 
@@ -153,19 +167,25 @@ def frozen_parameters_cover_the_knobs(entrypoint, frozen) -> dict:
     }
 
 
-def exercise(verdict_fn=None, witnesses=None, predicates=None, samples=None,
-             entrypoint=None, frozen=None) -> dict:
+def exercise(verdict_fn=None, witnesses=None, declared_verdicts=None,
+             predicates=None, samples=None, entrypoint=None, frozen=None,
+             required_checks=None) -> dict:
     """Run whichever of the three checks the round supplies material for.
 
-    Deliberately not a single mandatory gate.  A round with no free parameters
-    has nothing for the third check and should not be made to invent one; a
-    round whose rule is a single predicate has no disjointness to test.  What
-    the round must not do is skip a check it HAS material for, and the returned
-    ``skipped`` list is what makes that visible to a reader.
+    Fail closed unless ``required_checks`` explicitly declares the exact checks
+    supplied by the caller. A non-applicable check is omitted deliberately, not
+    silently; an omitted declaration, an empty exercise, an uncovered sample,
+    a predicate exception, or a missing declared verdict prevents ``clean``.
     """
-    report: dict = {"skipped": []}
+    known_checks = {"coverage", "disjointness", "parameters"}
+    required = None if required_checks is None else {
+        str(name) for name in required_checks}
+    report: dict = {"skipped": [],
+                    "required_checks": None if required is None
+                    else sorted(required)}
     if verdict_fn is not None and witnesses:
-        report["coverage"] = every_verdict_has_a_witness(verdict_fn, witnesses)
+        report["coverage"] = every_verdict_has_a_witness(
+            verdict_fn, witnesses, declared_verdicts)
     else:
         report["skipped"].append("coverage")
     if predicates and samples is not None:
@@ -177,8 +197,18 @@ def exercise(verdict_fn=None, witnesses=None, predicates=None, samples=None,
     else:
         report["skipped"].append("parameters")
 
-    verdicts = [report.get("coverage", {}).get("all_reachable", True),
-                report.get("disjointness", {}).get("disjoint", True),
-                report.get("parameters", {}).get("all_frozen", True)]
-    report["clean"] = all(verdicts)
+    supplied = known_checks - set(report["skipped"])
+    declaration_valid = (required is not None and required <= known_checks
+                         and required == supplied)
+    verdicts = [
+        report.get("coverage", {}).get("all_reachable", False),
+        (report.get("disjointness", {}).get("disjoint", False)
+         and report.get("disjointness", {}).get("exhaustive", False)),
+        report.get("parameters", {}).get("all_frozen", False),
+    ]
+    evaluated = [verdict for name, verdict in zip(
+        ("coverage", "disjointness", "parameters"), verdicts)
+        if name in supplied]
+    report["declaration_valid"] = declaration_valid
+    report["clean"] = declaration_valid and bool(evaluated) and all(evaluated)
     return report

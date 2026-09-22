@@ -27,8 +27,8 @@ def random_gaussian(qubits, seed):
 def test_g1_the_recovered_frame_reconstructs_the_block(qubits):
     """If the frame is wrong every orientation number in the round is noise.
 
-    The real Schur form of a real antisymmetric block IS Williamson's canonical
-    form, so `frame @ canonical @ frame.T` must return the block exactly.
+    The orthogonal real-Schur form is the skew-normal form of the antisymmetric
+    covariance, so `frame @ canonical @ frame.T` returns the block exactly.
     """
     gamma = random_gaussian(qubits, seed=qubits)
     for split in range(1, qubits):
@@ -194,3 +194,15 @@ def test_p2_was_unsatisfiable_when_it_was_frozen():
     assert not available["gate_is_satisfiable"]
     assert available["regular_shapes"] == [
         (1,) * 15, (3, 3, 3, 3, 3), (5, 5, 5)]
+
+
+def test_r1y_finding_preserves_the_failed_frozen_gate_and_correct_theorem():
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).parents[1]
+    finding = json.loads((root / "manifests" /
+        "qsigma_r1y_hyperellipsoid_tessellation_finding.json").read_text())
+    assert "ILL-POSED, not PASS" in finding["gates"]["G3_invariance"]
+    assert "not Williamson" in finding["gates"]["G1_skew_normal"]
+    assert "G1_williamson" not in finding["gates"]

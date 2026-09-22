@@ -220,3 +220,15 @@ def test_the_preregistered_observable_does_not_apply_to_a_third_of_its_own_rows(
     assert len(non_degenerate) == 32
     assert all("occupation" in row for row in rows), (
         "occupation must be on every row, precondition or not")
+
+
+def test_r1z_corrects_area_volume_language_without_rewriting_preregistration():
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).parents[1]
+    finding = json.loads((root / "manifests" /
+        "qsigma_r1z_araki_dichotomy_finding.json").read_text())
+    correction = finding["terminology_correction"]
+    assert "too strong" in correction
+    assert "logarithmic" in correction

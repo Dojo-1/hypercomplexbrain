@@ -95,7 +95,8 @@ def test_it_finds_that_R1Z_s_BOUNDED_was_unreachable():
                           for m, c in zip(grid, (1, 1, 1, 1, 2, 2, 2))],
     }
 
-    result = every_verdict_has_a_witness(r1z_verdict, witnesses)
+    result = every_verdict_has_a_witness(
+        r1z_verdict, witnesses, {"BOUNDED", "DIVERGENT", "INDETERMINATE"})
 
     assert not result["all_reachable"]
     assert [row["verdict"] for row in result["unreachable"]] == ["BOUNDED"]
@@ -130,7 +131,9 @@ def test_the_repaired_rule_reaches_all_three_verdicts():
                           for m, c in zip(grid, (1, 1, 2, 2, 3, 3, 4))],
     }
 
-    assert every_verdict_has_a_witness(repaired, witnesses)["all_reachable"]
+    assert every_verdict_has_a_witness(
+        repaired, witnesses, {"BOUNDED", "DIVERGENT", "INDETERMINATE"}
+    )["all_reachable"]
 
 
 # -- R1X: a parameter was left free ----------------------------------------
@@ -180,17 +183,51 @@ def test_exercise_names_what_it_did_not_check():
     always names its own omissions. Silence about a skipped check is how a
     guard becomes decoration.
     """
-    report = exercise(verdict_fn=lambda x: "A", witnesses={"A": 1})
+    report = exercise(verdict_fn=lambda x: "A", witnesses={"A": 1},
+                      declared_verdicts={"A"}, required_checks={"coverage"})
 
     assert report["clean"]
     assert set(report["skipped"]) == {"disjointness", "parameters"}
     assert "coverage" in report
 
 
+def test_exercise_fails_closed_when_no_checks_are_declared_or_run():
+    report = exercise()
+    assert not report["clean"]
+    assert not report["declaration_valid"]
+
+
+def test_coverage_rejects_an_omitted_declared_verdict():
+    report = every_verdict_has_a_witness(
+        lambda _: "A", {"A": 1}, {"A", "B"})
+    assert not report["declaration_matches"]
+    assert not report["all_reachable"]
+
+
+def test_disjointness_is_not_clean_when_the_grid_has_gaps_or_errors():
+    gapped = exercise(
+        predicates={"LOW": lambda x: x < 0, "HIGH": lambda x: x > 0},
+        samples=[-1, 0, 1], required_checks={"disjointness"})
+    raising = exercise(
+        predicates={"A": lambda x: 1 / x > 0}, samples=[0],
+        required_checks={"disjointness"})
+    assert not gapped["clean"]
+    assert gapped["disjointness"]["uncovered"] == [0]
+    assert not raising["clean"]
+    assert raising["disjointness"]["errors"]
+
+
+def test_ci_fetches_the_history_required_by_evidence_bindings():
+    from pathlib import Path
+
+    workflow = (Path(__file__).parents[1] / ".github" / "workflows" / "ci.yml").read_text()
+    assert "fetch-depth: 0" in workflow
+
+
 def test_exercise_is_not_clean_when_any_supplied_check_fails():
     report = exercise(
         predicates={"LOW": lambda x: x < 2, "HIGH": lambda x: x > 1},
-        samples=[0.0, 1.5, 3.0])
+        samples=[0.0, 1.5, 3.0], required_checks={"disjointness"})
 
     assert not report["clean"]
     assert not report["disjointness"]["disjoint"]

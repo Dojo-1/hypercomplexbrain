@@ -64,6 +64,8 @@
     "[R]_witness: no independent recomputation exists."
   ],
 
+  "terminology_correction": "The frozen preregistration called bounded-versus-divergent entropy an area-law-versus-volume-law dichotomy. That is too strong: divergence may be logarithmic or otherwise sublinear. The measured claim is only bounded versus divergent growth on the frozen finite grid; the historical preregistration bytes remain unchanged.",
+
   "result": {
     "observed": "gates pass; P3 holds; P2 and P4 failed on a defective criterion; P5 divergent and unpredicted",
     "status_after": "H",
