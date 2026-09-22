@@ -1,0 +1,59 @@
+{
+  "task_id": "qsigma-r6m-parametric-receiver-equivalence",
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R6M",
+  "title": "License a parameterized common-receiver fork by exact equivalence on the sealed R6l grid",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-09-22",
+  "base_commit": "6254354529e290377d4e5721b9e4553913d0f4a8",
+  "committed_before_any_implementation": true,
+  "files_expected_to_change": [
+    "src/aionq/common_receiver_parametric.py",
+    "tests/test_common_receiver_parametric.py",
+    "experiments/run_r6m_parametric_equivalence.py",
+    "artifacts/r6m_parametric_equivalence/equivalence.json"
+  ],
+  "scope": {
+    "purpose": "Resolve the execution blocker recorded in manifests/qsigma_r6k_w1_partb_execution_blocker.json without changing any byte sealed by EXP-R6L-COMMON-RECEIVER.",
+    "sealed_reference_depths": ["0.1", "0.5", "1.0", "2.0", "4.0"],
+    "held_out_depths_not_executed_in_this_round": ["0.15", "0.20", "0.25", "0.30", "0.40"],
+    "reference_raw_commit": "1421ec2eb966eaaf9af78d9ffc1ea727429b9a18",
+    "reference_source_commit": "bedb574ef2540638add55e3d8e87b1b9159064e4",
+    "reference_envelope_commit": "09f4ca21375fe2d93cd85c6b2286bc75360feec0"
+  },
+  "frozen_equivalence_rule": {
+    "input": "Run the parameterized fork only on the five sealed R6l depths with the sealed map, task, noise, receiver, resource and ordering coordinates.",
+    "comparison": "Compare the fork output to all 384 committed R6l retrieval rows using the repository semantic comparator and exact discrete-field equality. Numerical fields use the comparator's already committed path-specific tolerances; no new tolerance may be introduced.",
+    "required": [
+      "all 384 protocol identities are present exactly once on each side",
+      "all discrete verdict, control, shape, rank, resource and ordering fields agree exactly",
+      "every declared numerical field is compared and within its pre-existing tolerance",
+      "the fork emits no undeclared row, field or output population",
+      "the criterion exercise receipt is clean under an explicit required-check declaration"
+    ],
+    "verdicts": {
+      "EQUIVALENT_ON_SEALED_GRID": "every required condition holds",
+      "NOT_EQUIVALENT": "any required condition fails",
+      "INVALID": "the sealed reference commits or artifacts cannot be resolved and byte-verified, or the comparison surface is incomplete"
+    }
+  },
+  "prediction": "EQUIVALENT_ON_SEALED_GRID. This is at risk: a copied or refactored recipe may expose an implicit dependency on DEPTH_COORDS and fail.",
+  "kill_conditions": [
+    "INVALID and NOT_EQUIVALENT both stop the line; Part B remains unexecuted.",
+    "No held-out Part B depth may be evaluated, even interactively, before this round is sealed and its equivalence verdict passes.",
+    "No mismatch may be repaired after inspecting the numerical comparison. A repair requires a new preregistration and a new equivalence run.",
+    "The sealed R6l module, raw artifacts and envelope are read-only reference objects and must remain byte-identical."
+  ],
+  "evidence_ceiling": "A pass licenses the fork as a stand-in only on R6l's five measured depths. It does not establish equivalence at held-out depths and does not itself support any Part B, architecture, hardware, advantage or cognition claim.",
+  "typed_remainders_declared_in_advance": [
+    "[R]_extrapolation: equality on five reference depths cannot prove equality where the sealed implementation is undefined.",
+    "[R]_shared_lineage: producer and verifier remain the same development line; no independent witnessing is claimed.",
+    "[R]_implementation: copying the recipe may preserve outputs while duplicating maintenance risk; delegation may preserve code while retaining hidden global-state dependence. The implementation must expose this choice explicitly."
+  ],
+  "stop_condition": "Stop after one equivalence artifact and its tests are committed. Do not run held-out depths or classify Part B in QSigma-R6M.",
+  "result": {
+    "observed": "not run",
+    "status_after": "H",
+    "active_remainder": ["[R]_extrapolation", "[R]_shared_lineage", "[R]_implementation"]
+  }
+}
