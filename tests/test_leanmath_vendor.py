@@ -33,6 +33,7 @@ from aionq import lean_census as census
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "manifests" / "leanmath_import_v1.json"
 PROVENANCE = ROOT / "formal" / "LEANMATH_PROVENANCE.md"
+GITATTRIBUTES = ROOT / ".gitattributes"
 
 #: The verdict the pinned toolchain gave, file by file, during the import.
 #: `lean --root=. <copy with import lines stripped>`, 240s budget each, no
@@ -62,6 +63,22 @@ def test_the_archive_is_present_and_pinned_by_digest(manifest):
         "the vendored file set and the manifest's digest table have diverged")
     differing = {name for name in recorded if recorded[name] != measured[name]}
     assert not differing, f"vendored bytes changed since import: {sorted(differing)}"
+
+
+def test_vendored_archive_is_checkout_opaque():
+    """A byte-pinned archive cannot inherit platform newline conversion."""
+    attributes = GITATTRIBUTES.read_text(encoding="utf-8")
+    assert "/formal/leanmath/** -text" in attributes
+
+
+def test_census_paths_are_canonical_posix_keys():
+    """Manifest keys are data, not host-native display paths."""
+    key_sets = (
+        set(census.digests()),
+        set(census.code_placeholders()),
+        set(census.comment_balance()),
+    )
+    assert all("\\" not in key for keys in key_sets for key in keys)
 
 
 def test_the_archive_cannot_be_built_here_and_the_manifest_says_so(manifest):

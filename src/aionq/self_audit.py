@@ -1500,6 +1500,30 @@ CORRECTIONS = (
         "tests/test_criterion.py::test_ci_fetches_the_history_required_by_evidence_bindings",
         False,
     ),
+    Correction(
+        "CI",
+        "the Lean archive census used str(Path) for manifest keys, so Windows emitted backslashes while the committed manifest used canonical forward slashes. Five evidence tests failed although the measured files were identical. Every persisted relative path now uses Path.as_posix and a regression test forbids host-native separators",
+        "tests/test_leanmath_vendor.py::test_census_paths_are_canonical_posix_keys",
+        False,
+    ),
+    Correction(
+        "CI",
+        "the byte-pinned vendored Lean archive inherited text normalization for its extensionless lean-toolchain file. A Windows checkout therefore contained one extra byte and no longer matched the provenance manifest. The entire external archive is now checkout-opaque and a test binds that attribute",
+        "tests/test_leanmath_vendor.py::test_vendored_archive_is_checkout_opaque",
+        False,
+    ),
+    Correction(
+        "CI",
+        "a commit-binding test wrote text through platform newline translation, hashed the working-tree CRLF bytes on Windows, then compared them with Git's normalized LF object. The fixture now writes the exact byte stream whose immutable binding it claims to test",
+        "tests/test_evidence.py::test_v2_exact_commit_binding_survives_a_later_head",
+        False,
+    ),
+    Correction(
+        "QSigma-R1y",
+        "the degenerate-frame witness encoded non-uniqueness as an arbitrary principal-angle threshold above one radian. LAPACK basis choice inside the repeated eigenspace is platform-dependent and macOS produced the same nonzero separation at 0.967 and 0.993 radians. The gate now tests a conservative substantial separation while the refusal on degeneracy remains the semantic invariant",
+        "tests/test_hyperellipsoid.py::test_p3_is_ill_posed_because_degeneracy_destroys_the_frame",
+        False,
+    ),
 )
 
 

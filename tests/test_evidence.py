@@ -193,7 +193,11 @@ def test_commit_bound_history_survives_a_later_worktree_edit(
 def test_v2_exact_commit_binding_survives_a_later_head(tmp_path):
     _init_git(tmp_path)
     artifact = tmp_path / "raw.json"
-    artifact.write_text('{"value":1}\n', encoding="utf-8")
+    # Hash the exact bytes that Git stores. Path.write_text translates `\n` to
+    # CRLF on Windows before Git's clean filter restores LF in the object, which
+    # made this commit-binding test compare two intentionally different byte
+    # streams. The production contract is byte-level, so the fixture is too.
+    artifact.write_bytes(b'{"value":1}\n')
     artifact_commit = _commit_all(tmp_path, "raw artifact")
     (tmp_path / "later.txt").write_text("later\n", encoding="utf-8")
     _commit_all(tmp_path, "later head")

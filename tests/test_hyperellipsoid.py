@@ -112,9 +112,10 @@ def test_p3_is_ill_posed_because_degeneracy_destroys_the_frame():
     canonical, so "the top k axes" names no particular subspace at all.
 
     Demonstrated on two states with IDENTICAL spectra: their top-2 subspaces
-    differ by angles up to 1.2 radians. R1X measured 81 of 84 axes sitting at
-    exactly 0 or 1, which is a two-value spectrum, so P3's entire target regime
-    is the regime where its observable stops being a function of the state.
+    differ by a substantial principal angle. R1X measured 81 of 84 axes sitting
+    at exactly 0 or 1, which is a two-value spectrum, so P3's entire target
+    regime is the regime where its observable stops being a function of the
+    state.
 
     The function refuses rather than returning a number, on the
     `exponent_orbits` precedent: a number that is not a function of the state
@@ -135,7 +136,11 @@ def test_p3_is_ill_posed_because_degeneracy_destroys_the_frame():
     nus_copy, frame_b, _, _ = williamson_frame(copy, list(range(8)))
 
     assert nus_copy == pytest.approx(nus, abs=1e-12), "same spectrum"
-    assert max(principal_angles(frame_a[:, -4:], frame_b[:, -4:])) > 1.0, (
+    # LAPACK is free to choose a different basis inside the fourfold degenerate
+    # eigenspace, so the exact angle is platform-dependent. The claim only
+    # needs a clearly nonzero separation; every supported backend is well above
+    # this bound (the failing macOS runs measured 0.967 and 0.993).
+    assert max(principal_angles(frame_a[:, -4:], frame_b[:, -4:])) > 0.5, (
         "same spectrum, different top-2 subspace: the frame is not determined")
 
     tiles = [(0, 1, 2, 3), (4, 5, 6, 7)]

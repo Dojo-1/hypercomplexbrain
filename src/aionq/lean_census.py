@@ -167,12 +167,12 @@ def resolve_imports(root: Path = LEANMATH_ROOT) -> tuple:
     exact = {module_name(relative): relative for relative in sources}
     by_stem: dict = {}
     for relative in sources:
-        by_stem.setdefault(relative.stem, []).append(str(relative))
+        by_stem.setdefault(relative.stem, []).append(relative.as_posix())
 
     importers: dict = {}
     for relative in sources:
         for module in imports(root / relative):
-            importers.setdefault(module, []).append(str(relative))
+            importers.setdefault(module, []).append(relative.as_posix())
 
     out = []
     for module in sorted(importers):
@@ -204,7 +204,7 @@ def code_placeholders(root: Path = LEANMATH_ROOT) -> dict:
             (code[:match.start()].count("\n") + 1, match.group(1))
             for match in pattern.finditer(code)))
         if hits:
-            out[str(relative)] = hits
+            out[relative.as_posix()] = hits
     return out
 
 
@@ -243,14 +243,17 @@ def comment_balance(root: Path = LEANMATH_ROOT) -> dict:
                 depth -= 1
                 opened.pop()
         if depth:
-            out[str(relative)] = {"unclosed": depth, "opened_at": tuple(opened)}
+            out[relative.as_posix()] = {
+                "unclosed": depth,
+                "opened_at": tuple(opened),
+            }
     return out
 
 
 def digests(root: Path = LEANMATH_ROOT) -> dict:
     """SHA-256 of every vendored file, `.lean` or not, keyed by relative path."""
     return {
-        str(path.relative_to(root)):
+        path.relative_to(root).as_posix():
             hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(root.rglob("*")) if path.is_file()
     }
@@ -262,7 +265,7 @@ def census(root: Path = LEANMATH_ROOT) -> dict:
     placeholders = code_placeholders(root)
     unbalanced = comment_balance(root)
     return {
-        "root": str(root.relative_to(root.parents[1])),
+        "root": root.relative_to(root.parents[1]).as_posix(),
         "files": len(digests(root)),
         "lean_files": len(lean_sources(root)),
         "bytes": sum(path.stat().st_size

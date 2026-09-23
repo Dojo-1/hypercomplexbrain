@@ -17,6 +17,11 @@
 # binds a .jsonl fails on that platform only -- measured on W1.
 *.jsonl text eol=lf
 
+# This directory is a byte-pinned external archive. Its manifest records the
+# received bytes, including the extensionless `lean-toolchain`; checkout must
+# never rewrite those bytes according to a runner's core.autocrlf setting.
+/formal/leanmath/** -text
+
 # The R6k event ledger is envelope-bound and was emitted as canonical LF JSONL.
 artifacts/r6k_equal_resource_reservoir/events.jsonl text eol=lf
 
