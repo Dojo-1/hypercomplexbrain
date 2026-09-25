@@ -1562,6 +1562,27 @@ CORRECTIONS = (
         "tests/test_common_receiver_parametric.py::test_building_a_fork_never_touches_the_sealed_modules",
         True,
     ),
+    Correction(
+        "R6k-W1-B",
+        "Part B's preregistration tag gate could never pass, for anyone, and "
+        "nothing reported it for seven weeks. The rule anchors C_pre to the "
+        "earliest commit carrying the live input-freeze bytes and requires it "
+        "to hold the current bytes of all five guard files. a6d8b99 edited "
+        "tests/test_part_b_preflight.py without touching the manifest, after "
+        "which no commit satisfied both -- and a6d8b99 is the commit that "
+        "recorded the tag-publication blocker, whose own binding_remainder "
+        "described exactly this hole. The failure was concealed because the "
+        "preflight test SKIPS when the tag is absent, and the C_pre check only "
+        "runs once a tag exists; the skip named the environment's HTTP 403 as "
+        "the only obstacle while claiming it 'cannot conceal a second failure "
+        "hiding behind the first'. It concealed one. Repaired before any Part "
+        "B result existed, by a manifest-only re-freeze at d0650f0, and now "
+        "guarded from a file that is not itself a C_pre path, so the guard "
+        "cannot move the anchor it protects. Shown to fire on the pre-repair "
+        "history",
+        "tests/test_part_b_anchor.py::test_a_valid_c_pre_exists_whether_or_not_the_tag_does",
+        True,
+    ),
 )
 
 
