@@ -1,0 +1,48 @@
+{
+  "schema": "hypercomplexbrain.preregistration.amendment.v1",
+  "round": "QSigma-R6M",
+  "status": "PRE-RUN NOTE, committed before src/aionq/common_receiver_parametric.py, its tests, its runner or any output artifact exists. No numerical comparison has been computed. Nothing here changes a frozen clause, a verdict, a threshold or a kill condition of manifests/qsigma_r6m_parametric_receiver_equivalence_preregistration.json.",
+  "amends": "manifests/qsigma_r6m_parametric_receiver_equivalence_preregistration.json, implementation only",
+  "finding_1_the_depth_dependency_is_threefold_not_one": {
+    "what_the_blocker_recorded": "manifests/qsigma_r6k_w1_partb_execution_blocker.json names DEPTH_COORDS in src/aionq/common_receiver_reservoir.py as THE obstacle, read at seven sites, and R6M's fork was framed as 'the identical recipe with a depth grid as an argument' on that basis.",
+    "what_is_measured": [
+      "DEPTH_COORDS (common_receiver_reservoir) carries the rho_decimal LABELS and feeds the identity validators -- _receiver_rows, protocol_store_id, plan_protocol, validate_protocol_plan, _validate_event_payload.",
+      "DEPTHS (equal_resource_reservoir, a DIFFERENT module, imported by name) is what the NUMERICS iterate: build_map_tasks loops `for rho in DEPTHS` and _ProtocolReservoir.store refuses any rho not in DEPTHS and indexes by DEPTHS.index(rho). The blocker does not mention it.",
+      "a literal `!= 320` in execute_protocol, the store count, which is 2 maps x len(grid) x 32 codewords and so silently assumes a five-depth grid."
+    ],
+    "why_the_preregistered_test_cannot_see_it": "At R6l's own five depths all three coincide with their sealed values, so a fork that parameterises DEPTH_COORDS alone reproduces the 384 rows exactly as well as a fork that parameterises all three. EQUIVALENT_ON_SEALED_GRID is structurally blind to the one wiring defect that would matter for Part B.",
+    "how_bad_it_would_be": "Bounded, and measured rather than assumed. The sealed validators fail CLOSED: _task_for_spec matches tasks by exact float depth and raises 'task sequence does not realize receiver' when none exists, so a DEPTH_COORDS-only fork run at 0.15 would crash rather than silently compute at 0.1 and label it 0.15. The blind spot's worst case is a Part B that does not run, not a Part B that is wrong.",
+    "consequence_for_the_implementation": "The fork injects the grid into BOTH modules and pins the literal: it refuses any grid whose length is not five, rather than editing the 320 out of the source. For R6M's five sealed depths and Part B's five held-out depths that refusal never fires, and the pinned assumption is stated instead of hidden."
+  },
+  "finding_2_the_implementation_choice_the_manifest_requires_exposed": {
+    "the_choice": "DELEGATION BY VERIFIED RE-EXECUTION. The fork reads the source bytes of equal_resource_reservoir.py and common_receiver_reservoir.py, refuses unless each sha256 equals its value at bedb574 (9978b8051d8b6afc... and 850bd22125b95c52...), executes each into a FRESH module namespace, and rebinds the depth grid -- and the equal_resource names the second module imports -- inside those namespaces only.",
+    "what_it_avoids": [
+      "duplication: no line of the recipe is copied, so there is nothing to drift. The code the fork runs is byte-identical to the sealed code, checked at load.",
+      "hidden global state: the imported sealed modules are never touched and sys.modules is never modified. The parameter is an explicit rebinding in namespaces the fork owns."
+    ],
+    "what_it_does_not_avoid": "anything bound at IMPORT time from a depth constant is fixed before the rebinding. Checked with the AST rather than by reading, and the first draft of this note got it wrong: it said every read was inside a function body. There is exactly ONE import-time read -- equal_resource_reservoir.py:688, the default argument `truncation_cost_report(depths=DEPTHS)`, bound at definition. In the fork it would keep the sealed grid. It is not on R6l's path: its only caller is equal_resource_reservoir.py:1391, inside R6k's own run, and a static name-based call graph from execute_protocol, plan_protocol and classify_protocol (90 functions) does not reach it. That graph is an approximation -- a function passed as a value or reached by getattr would be missed -- so a test asserts the unreachability instead of this note asserting it, and fails the day it stops being true. All other reads, nine in each module, are inside function bodies.",
+    "classes_are_not_shared": "dataclasses defined in the fork namespaces are distinct classes from the sealed ones. The comparison is on the JSON rows, so no isinstance check crosses the boundary."
+  },
+  "finding_3_the_tolerance_clause_names_something_that_does_not_exist": {
+    "what_is_frozen": "'Numerical fields use the comparator's already committed path-specific tolerances; no new tolerance may be introduced.'",
+    "what_exists": "aionq.semantic_reproduction.compare_results takes ONE scalar tolerance. There is no table of per-path tolerances anywhere in src, experiments or manifests. R6k-W1's method correction froze that scalar at 1e-10, 'above the 3.31e-11 already observed and never widened'.",
+    "the_only_coherent_reading": "path-specific TREATMENT: leaf_kind decides per path whether a leaf is scientific (compared at 1e-10), discrete (exact), identity (a digest, counted) or environment. That is what compare_results already does. So the comparison runs compare_results at 1e-10 and introduces nothing, which honours the clause's intent.",
+    "not_done": "no per-path tolerance table is constructed to make the wording literally true. Building one would itself be introducing new tolerances, which the same sentence forbids."
+  },
+  "finding_4_the_envelope_is_not_byte_identical_to_its_seal_commit_and_that_does_not_trigger_INVALID": {
+    "fact": "artifacts/r6l_common_receiver/common_receiver_reservoir.envelope.json differs from its bytes at 09f4ca2. Commit a677880 ('gpt sync', 2026-08-03) migrated many envelopes from evidence.v1 to evidence.v2: this one gained one leaf, artifact_commit_sha = 1421ec2, and changed schema_version. The other 462 leaves are untouched.",
+    "why_it_is_not_INVALID": "INVALID is 'the sealed reference commits or artifacts cannot be resolved and byte-verified'. All three reference commits resolve. All 27 artifacts the envelope binds verify byte-for-byte against their git blobs at 1421ec2; 22 also verify in the working tree, and the 5 that differ there (.gitattributes, evidence.py, the runner, one test, the R6k envelope) were changed by later commits and none is on R6M's comparison path. The sealed module, equal_resource_reservoir.py and every raw R6l artifact verify in both places.",
+    "the_reading_chosen_and_when": "Chosen now, before any number exists: the seal is verified THROUGH WHAT IT BINDS, which is its function. A stricter reader could require the envelope's own bytes to equal 09f4ca2 and would get INVALID from a schema migration that changed no bound digest, seven weeks before R6M was frozen, at a base commit that already carried it. Both readings are recorded so the choice can be disputed."
+  },
+  "post_freeze_controls_that_move_no_preregistered_verdict": {
+    "C_wiring": "The fork's injected grid must reach the NUMERICS. Checked without evaluating any held-out depth: build the fork with the five sealed depths in a PERMUTED order and require build_map_tasks to emit tasks in that order. A fork that rebinds only labels would emit them in the sealed order. Because the preregistered test is blind to this, it is the only evidence the fork is parametric at all.",
+    "C_no_mutation": "The imported sealed modules' DEPTHS and DEPTH_COORDS are identical, by value and by object identity, before and after the fork is built and run.",
+    "C_platform": "The SEALED module run fresh on this platform against its own 384 committed rows, with the same comparator and tolerance. Diagnostic only: if the fork comparison fails, this separates platform drift from a fork defect. Running the sealed module unmodified at its own grid evaluates no held-out depth and edits no sealed byte.",
+    "status": "All three are post-freeze semantic controls in the sense Copilot's R1Y correction defined: they can inform the reading of the verdict and can never change it."
+  },
+  "unchanged": [
+    "the verdicts EQUIVALENT_ON_SEALED_GRID, NOT_EQUIVALENT, INVALID and their conditions",
+    "the prediction, the kill conditions, the evidence ceiling, the stop condition",
+    "no held-out depth is evaluated in this round, interactively or otherwise"
+  ]
+}
