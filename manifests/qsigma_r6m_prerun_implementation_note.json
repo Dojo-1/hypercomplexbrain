@@ -44,5 +44,6 @@
     "the verdicts EQUIVALENT_ON_SEALED_GRID, NOT_EQUIVALENT, INVALID and their conditions",
     "the prediction, the kill conditions, the evidence ceiling, the stop condition",
     "no held-out depth is evaluated in this round, interactively or otherwise"
-  ]
+  ],
+  "correction_before_run": "finding_2 said 'sys.modules is never modified'. False, and found by the first load, before any number existed: Python 3.11's dataclass resolves string annotations through sys.modules[cls.__module__] and raises AttributeError in an unregistered namespace. Each fork is now registered under a private unique name (aionq._r6m_fork_<n>.<module>). What survives of the claim, and is what mattered: no EXISTING entry is replaced, the sealed modules' entries are never touched, and nothing importing a sealed module can receive the fork. The original sentence is left in place above so the error stays visible."
 }
