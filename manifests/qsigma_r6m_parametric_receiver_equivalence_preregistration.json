@@ -52,8 +52,12 @@
   ],
   "stop_condition": "Stop after one equivalence artifact and its tests are committed. Do not run held-out depths or classify Part B in QSigma-R6M.",
   "result": {
-    "observed": "not run",
-    "status_after": "H",
-    "active_remainder": ["[R]_extrapolation", "[R]_shared_lineage", "[R]_implementation"]
-  }
+    "observed": "EQUIVALENT_ON_SEALED_GRID",
+    "effect_size": "384/384 identities; 8,320 scientific leaves, worst |difference| 3.44e-15 against 1e-10; 0 discrete mismatches; fork bitwise identical to the sealed module run fresh on the same platform",
+    "uncertainty": "deterministic; one platform; the residual is attributed to platform difference by the fresh sealed run, not to the fork",
+    "status_after": "M",
+    "retired_claims": [],
+    "active_remainder": ["[R]_extrapolation", "[R]_shared_lineage", "[R]_implementation", "[R]_grid_length"]
+  },
+  "reported_by": "manifests/qsigma_r6m_parametric_receiver_equivalence_finding.json"
 }

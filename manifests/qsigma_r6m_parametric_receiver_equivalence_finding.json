@@ -1,0 +1,71 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "qsigma-r6m-parametric-receiver-equivalence-finding",
+  "round": "QSigma-R6M",
+  "subject": "manifests/qsigma_r6m_parametric_receiver_equivalence_preregistration.json",
+  "executable_form": "tests/test_common_receiver_parametric.py::test_the_fork_is_equivalent_on_the_sealed_grid_and_nowhere_else_was_evaluated",
+  "status": "measured. EQUIVALENT_ON_SEALED_GRID. The prediction held. The fork is licensed as a stand-in for the sealed R6l common receiver on R6l's five measured depths only. No held-out depth was evaluated.",
+
+  "verdict": "EQUIVALENT_ON_SEALED_GRID",
+  "raw_artifact": "artifacts/r6m_parametric_equivalence/equivalence.json",
+  "command": "PYTHONPATH=src python3 experiments/run_r6m_parametric_equivalence.py",
+  "implementation_commit": "78c8e5f",
+  "environment": "Python 3.11.15, NumPy 2.4.6, Linux x86_64; local container. No CI job ran for this round and no cross-platform claim is made.",
+
+  "the_five_frozen_conditions": {
+    "all_384_identities_present_exactly_once_each_side": true,
+    "all_discrete_fields_agree_exactly": "true -- 0 mismatches",
+    "every_declared_numerical_field_within_the_committed_tolerance": "true -- 8,320 scientific leaves compared at 1e-10; worst |difference| 3.44e-15, at retrieval_rows[117].metrics.mutual_information_bits; 0 exceed; 0 non-finite",
+    "no_undeclared_row_field_or_output_population": "true -- no leaf on one side only, in either direction",
+    "criterion_exercise_receipt_clean_under_explicit_declaration": "true -- coverage, disjointness over all 128 flag combinations, parameters"
+  },
+  "gate": {
+    "references_verified": "true. The three reference commits resolve; both sealed sources match their sha256 at bedb574 in the working tree and in git; all 27 artifacts the envelope binds verify byte-for-byte against their git blobs at 1421ec2; the reference rows are byte-identical to 1421ec2.",
+    "the_envelope_reading": "The envelope's own bytes are NOT identical to its seal commit 09f4ca2: a677880 migrated it from evidence.v1 to evidence.v2 seven weeks before R6M was frozen, adding one leaf (artifact_commit_sha = 1421ec2). The seal was verified through what it binds, as the pre-run note decided before any number existed. A stricter reading requiring the envelope's own bytes would have returned INVALID; both readings are recorded."
+  },
+
+  "where_the_residual_comes_from": {
+    "fork_vs_sealed_module_run_fresh_here": "BITWISE IDENTICAL. Tolerance 0.0, worst difference 0.0 over the same 8,320 scientific leaves, 0 digest mismatches, 0 discrete mismatches. The fork adds nothing.",
+    "sealed_module_run_fresh_here_vs_committed_rows": "EQUIVALENT with the same worst difference, 3.44e-15, and the same 3,072 digest mismatches as the fork shows against the committed rows.",
+    "reading": "The 3.44e-15 and the 3,072 differing sha256 digests of floating-point arrays are the difference between this platform and R6l's producing platform, not a property of the fork. A last-bit difference in an array changes its digest completely, which is exactly the case R6k-W1's comparator counts rather than fails. Without the fresh sealed run those 3,072 would have been unattributable."
+  },
+
+  "non_vacuity": {
+    "perturbation_control": "R6k-W1's C1 applied here: one scientific leaf moved by 1e-9 returns NOT_EQUIVALENT. The comparison is not one that agrees with everything.",
+    "leaf_accounting": "19,200 shared leaves: 8,320 scientific compared under tolerance, 5,120 discrete compared exactly, 5,760 identity (digest) leaves counted. Every non-digest leaf was compared. R6k-W1's scientific-fraction floor is that round's rule and is not imported here."
+  },
+
+  "post_freeze_controls": {
+    "C_wiring": "PASS. With the sealed depths injected in a PERMUTED order, build_map_tasks computes them in that order, so the grid reaches the numerics and not only the labels. A companion test rebinds DEPTH_COORDS alone -- the fork the execution blocker described -- and the numerics keep the sealed order: the check fails on the fork it exists to reject. The preregistered equivalence test cannot make this distinction at all, because at the sealed grid a labels-only fork and a correct one produce identical rows.",
+    "C_no_mutation": "PASS. The imported sealed modules keep DEPTHS and DEPTH_COORDS by value and by identity, and keep their own sys.modules entries.",
+    "C_platform": "EQUIVALENT_ON_SEALED_GRID, as above.",
+    "status": "These inform the reading of the verdict and cannot change it."
+  },
+
+  "what_the_round_found_that_it_was_not_asked": {
+    "the_blocker_was_incomplete": "The execution blocker named DEPTH_COORDS as the obstacle to parameterising R6l. It is one of three depth bindings: DEPTHS in equal_resource_reservoir is what the numerics iterate, and a literal store count of 320 assumes five depths. A fork built to the blocker's description would have passed this round's preregistered test and then crashed at the first held-out depth -- the sealed validators fail closed, so it would have failed loudly rather than silently, but Part B would not have run.",
+    "the_kill_condition_is_now_executable": "build_fork refuses held-out depths without a licence artifact whose verdict is EQUIVALENT_ON_SEALED_GRID. The first version matched the decimal spelling, so '0.2' passed where '0.20' was refused; it now keys on the binary64 value. Fixed before any commit.",
+    "the_tolerance_clause_named_nothing": "'path-specific tolerances' do not exist; the comparator takes one scalar. Run at R6k-W1's 1e-10, introducing nothing."
+  },
+
+  "evidence_ceiling_unchanged": "A pass licenses the fork as a stand-in ONLY on R6l's five measured depths. It does not establish equivalence at held-out depths -- where the sealed implementation is undefined, so there is nothing to be equivalent TO -- and does not itself support any Part B, architecture, hardware, advantage or cognition claim.",
+
+  "what_is_not_claimed": [
+    "not equivalence at any held-out depth; none was evaluated and equality at five points cannot prove equality at five others",
+    "not that Part B is licensed to conclude anything; only that its receiver can now be constructed by a code path shown bitwise identical to the sealed one where both are defined",
+    "not independent witnessing: producer and verifier are the same development line",
+    "not cross-platform reproduction: one platform, no CI job"
+  ],
+
+  "typed_remainders": [
+    "[R]_extrapolation: equality on five reference depths cannot prove equality where the sealed implementation is undefined.",
+    "[R]_shared_lineage: producer and verifier remain the same development line.",
+    "[R]_implementation: delegation by verified re-execution avoids duplication and leaves the sealed modules untouched, but executes the same bytes twice in two namespaces; exactly one import-time depth binding exists (truncation_cost_report's default argument) and is off R6l's path, asserted by a static call graph that would miss a function passed as a value.",
+    "[R]_grid_length: the fork runs five-depth grids only, because the sealed store count is a literal."
+  ],
+  "result": {
+    "observed": "EQUIVALENT_ON_SEALED_GRID",
+    "status_after": "M",
+    "active_remainder": ["[R]_extrapolation", "[R]_shared_lineage", "[R]_implementation", "[R]_grid_length"]
+  }
+}

@@ -1523,6 +1523,44 @@ CORRECTIONS = (
         "the degenerate-frame witness encoded non-uniqueness as an arbitrary principal-angle threshold above one radian. LAPACK basis choice inside the repeated eigenspace is platform-dependent and macOS produced the same nonzero separation at 0.967 and 0.993 radians. The gate now tests a conservative substantial separation while the refusal on degeneracy remains the semantic invariant",
         "tests/test_hyperellipsoid.py::test_p3_is_ill_posed_because_degeneracy_destroys_the_frame",
         False,
+    ),    Correction(
+        "R6k-W1-B",
+        "the Part B execution blocker named DEPTH_COORDS in common_receiver_"
+        "reservoir as THE obstacle to evaluating R6l at held-out depths, and "
+        "R6M's fork was framed as 'the identical recipe with a depth grid as "
+        "an argument' on that basis. It is one of three. The numerics iterate "
+        "DEPTHS in equal_resource_reservoir, a DIFFERENT module the blocker "
+        "never mentions, and execute_protocol checks a literal store count of "
+        "320 that assumes five depths. At R6l's own grid all three coincide "
+        "with their sealed values, so a fork built to the blocker's "
+        "description would have PASSED R6M's preregistered equivalence test "
+        "and then crashed at the first held-out depth. The preregistered test "
+        "is structurally blind to it; a separate wiring control, injecting the "
+        "sealed depths in a permuted order, is the only thing that sees it. "
+        "Written by this development line on 2026-08-03 and caught by it on "
+        "2026-09-25, by tracing where depth reaches the numerics instead of "
+        "where it is named",
+        "tests/test_common_receiver_parametric.py::test_the_wiring_test_can_fail_on_a_labels_only_fork",
+        True,
+    ),
+    Correction(
+        "QSigma-R6m",
+        "R6M's pre-run implementation note promised that the fork would "
+        "never modify sys.modules. False on the first load: Python 3.11's "
+        "dataclass resolves string annotations through "
+        "sys.modules[cls.__module__] and raises in an unregistered namespace. "
+        "Forks are now registered under private unique names; what survives, "
+        "and what mattered, is that no EXISTING entry is replaced and the "
+        "sealed modules are untouched by value, identity and registration. "
+        "Two more claims in the same round were wrong and never reached a "
+        "commit: the note's first draft said no depth constant was read at "
+        "import time (an AST check found a default argument that is), and "
+        "the kill-condition guard matched the decimal SPELLING, so '0.2' "
+        "passed where '0.20' was refused -- with a test comment asserting the "
+        "respelling was 'refused for a different reason below'. It was not "
+        "refused at all",
+        "tests/test_common_receiver_parametric.py::test_building_a_fork_never_touches_the_sealed_modules",
+        True,
     ),
 )
 

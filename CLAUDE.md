@@ -2,10 +2,13 @@
 
 Read `docs/CLAUDE_CODE_CO_DEVELOPMENT.md` as the standing evidence and correction contract.
 
-**Active round: none.** R1Z is reported, R1Y is reported, R2A's criterion
-instrument is in place. The next round must be preregistered before its
-implementation commit, and its frozen criterion must be exercised with
-`aionq.criterion.exercise` before the round runs -- see below.
+**Active round: none.** R6M is reported: `EQUIVALENT_ON_SEALED_GRID`, and its
+artifact `artifacts/r6m_parametric_equivalence/equivalence.json` is the licence
+`aionq.common_receiver_parametric.build_fork` requires before it will evaluate
+any held-out Part B depth. Part B itself remains unexecuted and unpreregistered
+as a run. The next round must be preregistered before its implementation
+commit, and its frozen criterion exercised with `aionq.criterion.exercise`
+before it runs -- see below.
 
 This line previously pointed at `manifests/qsigma_r5_witness_weave_preregistration.json`
 as the active round for twenty-plus rounds after R5 finished. A standing
@@ -41,7 +44,7 @@ Required verification before any success claim:
 
 ```bash
 python -m pip install -e .
-python -m pytest -q                      # currently 2619 passed, 2 skipped
+python -m pytest -q                      # see the last commit message for the current count
 ```
 
 The full suite takes about twelve minutes. Run the active round's own test file

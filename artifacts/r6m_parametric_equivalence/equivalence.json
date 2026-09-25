@@ -1,0 +1,129 @@
+{
+  "criterion_receipt": {
+    "clean": true,
+    "declaration_valid": true,
+    "disjointness_samples": 128,
+    "knobs": [
+      "grid",
+      "licence"
+    ],
+    "skipped": []
+  },
+  "environment": {
+    "numpy": "2.4.6",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.11.15"
+  },
+  "evidence": {
+    "committed_rows": 384,
+    "comparison": {
+      "discrete_mismatch_examples": [],
+      "discrete_mismatches": 0,
+      "identity_leaves": 5760,
+      "identity_mismatches": 3072,
+      "non_finite_leaves": [],
+      "only_in_committed": [],
+      "only_in_fork": [],
+      "scientific_leaves_compared": 8320,
+      "scientific_leaves_exceeding_tolerance": 0,
+      "shared_leaves": 19200,
+      "tolerance": 1e-10,
+      "worst_absolute_difference": 3.4416913763379853e-15,
+      "worst_difference_path": ".retrieval_rows[117].metrics.mutual_information_bits"
+    },
+    "comparison_surface_complete": true,
+    "criterion_receipt_clean": true,
+    "discrete_agree": true,
+    "fork_rows": 384,
+    "identities_exactly_once_each_side": true,
+    "no_undeclared_output": true,
+    "numerical_within_tolerance": true,
+    "references_verified": true
+  },
+  "grid": [
+    "0.1",
+    "0.5",
+    "1.0",
+    "2.0",
+    "4.0"
+  ],
+  "held_out_depths_evaluated": [],
+  "post_freeze_controls": {
+    "C_fork_vs_sealed_fresh_bitwise": {
+      "discrete_mismatches": 0,
+      "identity_mismatches": 0,
+      "scientific_leaves_compared": 8320,
+      "tolerance": 0.0,
+      "worst_absolute_difference": 0.0
+    },
+    "C_perturbation": {
+      "delta": 1e-09,
+      "detected": true,
+      "path": ".retrieval_rows[0].metrics.correct_probability",
+      "verdict": "NOT_EQUIVALENT"
+    },
+    "C_platform_sealed_fresh_vs_committed": {
+      "evidence": {
+        "committed_rows": 384,
+        "comparison": {
+          "discrete_mismatch_examples": [],
+          "discrete_mismatches": 0,
+          "identity_leaves": 5760,
+          "identity_mismatches": 3072,
+          "non_finite_leaves": [],
+          "only_in_committed": [],
+          "only_in_fork": [],
+          "scientific_leaves_compared": 8320,
+          "scientific_leaves_exceeding_tolerance": 0,
+          "shared_leaves": 19200,
+          "tolerance": 1e-10,
+          "worst_absolute_difference": 3.4416913763379853e-15,
+          "worst_difference_path": ".retrieval_rows[117].metrics.mutual_information_bits"
+        },
+        "comparison_surface_complete": true,
+        "criterion_receipt_clean": true,
+        "discrete_agree": true,
+        "fork_rows": 384,
+        "identities_exactly_once_each_side": true,
+        "no_undeclared_output": true,
+        "numerical_within_tolerance": true,
+        "references_verified": true
+      },
+      "verdict_it_would_get": "EQUIVALENT_ON_SEALED_GRID"
+    },
+    "note": "inform the reading of the verdict and can never change it"
+  },
+  "preregistration": "manifests/qsigma_r6m_parametric_receiver_equivalence_preregistration.json",
+  "references": {
+    "commits_resolve": {
+      "envelope": true,
+      "raw": true,
+      "source": true
+    },
+    "envelope_bound_artifacts": 27,
+    "envelope_bound_artifacts_verified_at_raw_commit": 27,
+    "envelope_bytes_identical_to_seal_commit": false,
+    "envelope_reading": "verified THROUGH WHAT IT BINDS, per the pre-run note; its own bytes carry the evidence.v1 -> v2 schema migration from a677880",
+    "reference_rows_byte_identical_to_raw_commit": true,
+    "sealed_sources": {
+      "src/aionq/common_receiver_reservoir.py": {
+        "at_source_commit": true,
+        "worktree": true
+      },
+      "src/aionq/equal_resource_reservoir.py": {
+        "at_source_commit": true,
+        "worktree": true
+      }
+    },
+    "verified": true
+  },
+  "round": "QSigma-R6M",
+  "schema": "hypercomplexbrain.r6m-equivalence.v1",
+  "seconds": {
+    "fork": 2.6,
+    "sealed_fresh": 2.5,
+    "total": 6.1
+  },
+  "tolerance": 1e-10,
+  "verdict": "EQUIVALENT_ON_SEALED_GRID"
+}

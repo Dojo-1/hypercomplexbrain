@@ -255,3 +255,42 @@ def test_the_verdict_function_on_its_own_three_witnesses():
     assert equivalence_verdict({**base, "references_verified": False}) == "INVALID"
     # a flag that is merely truthy is not True
     assert equivalence_verdict({**base, "discrete_agree": 1}) == "NOT_EQUIVALENT"
+
+
+# -- the result -------------------------------------------------------------
+
+def test_the_fork_is_equivalent_on_the_sealed_grid_and_nowhere_else_was_evaluated():
+    """EQUIVALENT_ON_SEALED_GRID, and the residual is not the fork's.
+
+    8,320 scientific leaves over 384/384 identities, worst difference 3.44e-15
+    against 1e-10. The fork is BITWISE identical to the sealed module run fresh
+    on the same platform, and that fresh run shows the same 3.44e-15 and the
+    same 3,072 digest mismatches against the committed rows -- so both belong to
+    the platform, not to the fork. A 1e-9 perturbation of one leaf flips the
+    verdict, so the comparison is not one that agrees with everything.
+    """
+    artifact = json.loads((repo_root() / "artifacts" / "r6m_parametric_equivalence"
+                           / "equivalence.json").read_text(encoding="utf-8"))
+    evidence = artifact["evidence"]
+    controls = artifact["post_freeze_controls"]
+
+    assert artifact["verdict"] == "EQUIVALENT_ON_SEALED_GRID"
+    assert artifact["held_out_depths_evaluated"] == []
+    assert artifact["grid"] == manifest()["scope"]["sealed_reference_depths"]
+
+    assert evidence["committed_rows"] == evidence["fork_rows"] == 384
+    assert evidence["comparison"]["scientific_leaves_compared"] == 8320
+    assert evidence["comparison"]["worst_absolute_difference"] < 1e-13
+    assert evidence["comparison"]["discrete_mismatches"] == 0
+
+    assert controls["C_perturbation"]["detected"]
+    bitwise = controls["C_fork_vs_sealed_fresh_bitwise"]
+    assert bitwise["worst_absolute_difference"] == 0.0
+    assert bitwise["identity_mismatches"] == 0
+    platform = controls["C_platform_sealed_fresh_vs_committed"]["evidence"]["comparison"]
+    assert platform["identity_mismatches"] == evidence["comparison"]["identity_mismatches"]
+    assert platform["worst_absolute_difference"] == evidence["comparison"]["worst_absolute_difference"]
+
+    assert artifact["references"]["envelope_bound_artifacts_verified_at_raw_commit"] == 27
+    assert artifact["references"]["envelope_bytes_identical_to_seal_commit"] is False, (
+        "the schema migration is recorded, not hidden; if this flips, re-read the reading")
