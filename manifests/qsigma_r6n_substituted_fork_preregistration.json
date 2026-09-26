@@ -87,6 +87,8 @@
 
   "stop_condition": "Stop after the licence artifact and its tests are committed. Part B attempt 2 is a separate step, permitted only by LICENSED.",
 
-  "result": {"observed": "not run", "status_after": "H",
-             "active_remainder": ["[R]_runtime_coupling", "[R]_substitution", "[R]_shared_lineage"]}
+  "result": {"observed": "LICENSED", "status_after": "M",
+             "effect_size": "C2: 384/384 rows, 8,320 scientific leaves, bitwise identical to the sealed module run fresh; C3: the unrepaired fork fails on the decoy grid and the substituted fork completes it with 384 correctly labelled rows and 320 stores",
+             "active_remainder": ["[R]_runtime_coupling", "[R]_substitution", "[R]_shared_lineage"]},
+  "reported_by": "manifests/qsigma_r6n_substituted_fork_finding.json"
 }

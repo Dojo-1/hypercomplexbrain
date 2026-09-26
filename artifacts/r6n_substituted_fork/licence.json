@@ -1,0 +1,108 @@
+{
+  "C2": {
+    "vs_committed_rows": {
+      "discrete_mismatches": 0,
+      "identity_mismatches": 3072,
+      "only_in_either": 0,
+      "rows": [
+        384,
+        384
+      ],
+      "scientific_leaves_compared": 8320,
+      "worst_absolute_difference": 3.4416913763379853e-15
+    },
+    "vs_sealed_fresh_bitwise": {
+      "discrete_mismatches": 0,
+      "identity_mismatches": 0,
+      "only_in_either": 0,
+      "rows": [
+        384,
+        384
+      ],
+      "scientific_leaves_compared": 8320,
+      "worst_absolute_difference": 0.0
+    }
+  },
+  "C3": {
+    "control_unrepaired_fork_on_decoy": {
+      "error": "reservoir key differs from the portable store identity",
+      "failed": true
+    },
+    "decoy_grid": [
+      "0.12",
+      "0.18",
+      "0.22",
+      "0.35",
+      "0.60"
+    ],
+    "rehearsal": {
+      "all_metrics_finite": true,
+      "completed": true,
+      "depth_indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "numbers_are_meaningless": true,
+      "rho_decimal_labels": [
+        "0.12",
+        "0.18",
+        "0.22",
+        "0.35",
+        "0.60"
+      ],
+      "rows": 384,
+      "rows_digest": "sha256:5365b8177aed9c42ae6ff39600249033093c454651be686e911d0213eec6b986",
+      "stores": 320
+    }
+  },
+  "criterion_receipt": {
+    "clean": true,
+    "declaration_valid": true,
+    "disjointness_samples": 64,
+    "knobs": [
+      "grid",
+      "licence"
+    ],
+    "skipped": []
+  },
+  "environment": {
+    "numpy": "2.4.6",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.11.15"
+  },
+  "evidence": {
+    "C1_substitution_exact": true,
+    "C2_equivalence_on_sealed_grid": true,
+    "C3_decoy_rehearsal": true,
+    "C4_criterion_receipt": true,
+    "references_verified": true,
+    "substitution_target_exactly_once": true
+  },
+  "held_out_depths_evaluated": [],
+  "preregistration": "manifests/qsigma_r6n_substituted_fork_preregistration.json",
+  "references": {
+    "r6l_rows_at_raw_commit": true,
+    "r6m_licence_as_committed_and_equivalent": true,
+    "sealed_sources": {
+      "common_receiver_reservoir": true,
+      "equal_resource_reservoir": true
+    },
+    "verified": true
+  },
+  "round": "QSigma-R6N",
+  "schema": "hypercomplexbrain.r6n-licence.v1",
+  "seconds": 15.1,
+  "substitution": {
+    "executed_sha256": "5bb1ae8d7e9dde43a282c2858e680f7d9a528b9667b35dcc23e5383f83787ede",
+    "line": 309,
+    "new": "rho={_R6N_DEPTH_DECIMAL[rho]}",
+    "occurrences_of_old": 1,
+    "old": "rho={rho:.1f}",
+    "only_difference": true,
+    "sealed_sha256": "9978b8051d8b6afc1b7fa454a214bd49b3263efeb83bb7da9222ae6b17c02691"
+  },
+  "verdict": "LICENSED"
+}

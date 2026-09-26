@@ -1,0 +1,27 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "qsigma-r6n-substituted-fork-finding",
+  "round": "QSigma-R6N",
+  "subject": "manifests/qsigma_r6n_substituted_fork_preregistration.json",
+  "executable_form": "tests/test_r6n_substituted_fork.py::test_the_licence_is_licensed_and_nothing_held_out_was_evaluated",
+  "status": "measured. LICENSED. The prediction held. No held-out depth was evaluated.",
+  "verdict": "LICENSED",
+  "raw_artifact": "artifacts/r6n_substituted_fork/licence.json",
+  "command": "PYTHONPATH=src python3 experiments/run_r6n_substituted_fork.py",
+  "implementation_commit": "63f8b34",
+  "environment": "Python 3.11.15, NumPy 2.4.6, Linux x86_64; one container; no CI job and no cross-platform claim.",
+  "conditions": {
+    "C1_substitution_exact": "one occurrence of rho={rho:.1f}, at equal_resource_reservoir.py:309, replaced; every byte outside that span identical; no file on disk changed",
+    "C2_equivalence_on_sealed_grid": "384/384 committed R6l rows reproduced, 8,320 scientific leaves, worst difference 3.44e-15 -- the same platform residual R6M measured -- and BITWISE identical to the sealed module run fresh: worst difference 0.0, zero digest mismatches. The substitution is the identity at the sealed grid.",
+    "C3_decoy_rehearsal": "the UNREPAIRED fork fails on the decoy grid with the store-key error, so the rehearsal reaches the defect; the substituted fork then completes the full protocol there, 384 rows labelled exactly 0.12, 0.18, 0.22, 0.35, 0.60, five depth indices, 320 stores, every metric finite. The decoy metrics are recorded by digest only and mean nothing.",
+    "C4_criterion_receipt": "clean before any comparison: three verdicts reached, 64 flag combinations covered with no overlap or gap, both knobs named"
+  },
+  "what_it_licenses": "Part B attempt 2, under the unchanged input freeze and the unchanged C_pre tag at d0650f0, constructing receivers through build_substituted_fork with this licence, and citing attempt 1.",
+  "what_is_not_claimed": [
+    "not equivalence at any held-out depth; the sealed implementation cannot run there, so there is nothing to be equivalent to",
+    "not the absence of further couplings: one that appears only at depths neither sealed nor decoy would still be missed",
+    "not independent witnessing; not cross-platform reproduction"
+  ],
+  "typed_remainders": ["[R]_runtime_coupling", "[R]_substitution", "[R]_shared_lineage"],
+  "result": {"observed": "LICENSED", "status_after": "M"}
+}

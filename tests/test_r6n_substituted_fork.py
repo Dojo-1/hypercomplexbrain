@@ -114,3 +114,20 @@ def test_the_verdict_function_on_its_witnesses():
     assert licence_verdict({**base, "C2_equivalence_on_sealed_grid": False}) == "NOT_LICENSED"
     assert licence_verdict({**base, "substitution_target_exactly_once": False}) == "INVALID"
     assert licence_verdict({**base, "C3_decoy_rehearsal": 1}) == "NOT_LICENSED"
+
+
+# -- the result --------------------------------------------------------------
+
+def test_the_licence_is_licensed_and_nothing_held_out_was_evaluated():
+    licence = json.loads((repo_root() / "artifacts" / "r6n_substituted_fork"
+                          / "licence.json").read_text(encoding="utf-8"))
+    assert licence["verdict"] == "LICENSED"
+    assert licence["held_out_depths_evaluated"] == []
+    assert all(licence["evidence"].values())
+    bitwise = licence["C2"]["vs_sealed_fresh_bitwise"]
+    assert bitwise["worst_absolute_difference"] == 0.0 and bitwise["identity_mismatches"] == 0
+    assert bitwise["scientific_leaves_compared"] == 8320
+    assert licence["C3"]["control_unrepaired_fork_on_decoy"]["failed"]
+    rehearsal = licence["C3"]["rehearsal"]
+    assert rehearsal["rho_decimal_labels"] == ["0.12", "0.18", "0.22", "0.35", "0.60"]
+    assert rehearsal["rows"] == 384 and rehearsal["stores"] == 320
