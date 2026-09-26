@@ -1,0 +1,52 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "qsigma-r6k-w1-partb-execution-attempt-1",
+  "round": "QSigma-R6k-W1",
+  "part": "B",
+  "status": "EXECUTION ATTEMPTED ONCE AND FAILED CLOSED BEFORE ANY METRIC. No retrieval metric, map row, differential cell, margin or outcome was computed. No output file was written. Part B has no result. Recorded because an execution attempt that is not recorded would let a later successful run present itself as the first.",
+  "executable_form": "tests/test_part_b_fork_store_key.py::test_the_fork_cannot_store_at_a_held_out_depth",
+
+  "what_ran": {
+    "command": "PYTHONPATH=src python3 experiments/run_part_b_crossing.py run",
+    "runner_commit_c_exec": "34abff5091ff931646633ee3dd206d1ac5b322c2",
+    "c_pre": "d0650f02c67ac82e846120d931e1b81b6fe8dde2",
+    "preflight": "12/12 -- passed in full, for the first time, immediately before this attempt",
+    "extraction_proof_on_sealed_data": "passed: the runner's extraction reproduced the frozen baseline delta_p and delta_i bit for bit on R6l's committed rows before any held-out depth was touched",
+    "exit": 1,
+    "failed_at": "execute_protocol -> build_map_tasks -> _signed_codebooks -> _ProtocolReservoir.store: 'reservoir key differs from the portable store identity', at the first held-out depth, 0.15, before any receiver was built",
+    "outputs_written": "none -- the runner renders every payload in memory before writing any file, so the preflight's 'no output exists' gate still passes and a corrected run is not blocked"
+  },
+
+  "the_fourth_depth_dependency": {
+    "where": "src/aionq/equal_resource_reservoir.py, _signed_codebooks: key = f\"{map_name}:rho={rho:.1f}:k={k:02d}\"",
+    "what_it_does": "formats the depth to ONE decimal place and hands it to the store, which checks it against the frozen decimal label from DEPTH_COORDS",
+    "why_the_sealed_grid_hides_it": "every sealed depth -- 0.1, 0.5, 1.0, 2.0, 4.0 -- has one decimal digit, so the lossy format is exact there. Every held-out depth breaks it: 0.15 formats to '0.1' (its binary64 value is 0.1499...), 0.20 and 0.25 both format to '0.2', 0.30 to '0.3', 0.40 to '0.4'. The format cannot even distinguish two held-out depths from each other.",
+    "fails_closed": "the store check refuses, so the sealed recipe never computed at a mislabelled depth. No wrong number exists.",
+    "the_count": "R6M's pre-run note corrected the execution blocker for naming one depth binding of three. There were four. The note traced where depth is NAMED -- DEPTH_COORDS, DEPTHS, a literal 320 -- and an AST check for reads of those names; this one formats the loop VALUE of rho and reads no depth constant at all."
+  },
+
+  "why_nothing_caught_it_before_the_run": {
+    "R6M_equivalence": "run at the sealed grid, where the format is exact. Structurally blind, as it was to the other three.",
+    "C_wiring": "used a PERMUTED order of the sealed depths -- all one-digit -- so the key format was exact throughout.",
+    "the_pre_run_input_check": "called build_map_tasks at the held-out grid, but with reservoir=None, and the store-key path runs only when a reservoir is supplied. It exercised the input construction and skipped exactly the code that fails. A check whose witness could not reach the case it vouched for.",
+    "what_would_have_caught_it": "the same call WITH a reservoir -- cheap, metric-free, and now the regression test named above"
+  },
+
+  "what_it_means_for_the_fork": {
+    "the_R6M_licence_is_not_wrong": "EQUIVALENT_ON_SEALED_GRID remains true, and its evidence ceiling already said nothing about held-out depths.",
+    "what_was_wrong_is_the_reading": "the fork was described as ready for Part B. It is not usable at any held-out depth: it executes the sealed bytes, and the sealed bytes carry the one-decimal key.",
+    "why_a_repair_is_not_made_here": "the key is a format string inside a function body, not a global name, so it cannot be rebound the way the other three were. Repairing it means executing bytes that are not the sealed bytes, which changes the calculation surface Part B's freeze binds and voids the premise of R6M's licence (byte-identical delegation). That requires a new preregistration, a new equivalence run, and a Part B amendment -- decisions for the programme, not for a runner that has just failed."
+  },
+
+  "state_after": {
+    "part_b": "UNEXECUTED in the sense that matters: no result exists and no outcome has been observed",
+    "c_pre_and_tag": "unchanged and still valid; the preflight still passes 12/12",
+    "outputs": "absent"
+  },
+
+  "typed_remainders": [
+    "[R]_fork_held_out: the R6M fork cannot evaluate any held-out depth until the one-decimal store key is repaired under a new preregistration.",
+    "[R]_attempt_count: this is attempt 1. Any later execution must cite it."
+  ],
+  "result": {"observed": "failed closed before any metric; no outcome", "status_after": "H"}
+}

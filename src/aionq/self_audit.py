@@ -1583,6 +1583,40 @@ CORRECTIONS = (
         "tests/test_part_b_anchor.py::test_a_valid_c_pre_exists_whether_or_not_the_tag_does",
         True,
     ),
+    Correction(
+        "QSigma-R6m",
+        "R6M's pre-run note corrected the Part B execution blocker for naming "
+        "one depth binding of three, and R6M's finding described the fork as "
+        "binding them all. There were FOUR. _signed_codebooks builds each "
+        "store key with f'{rho:.1f}' -- one decimal place -- and the store "
+        "checks it against the frozen decimal label. Every sealed depth has "
+        "one decimal digit, so the format is exact there and R6M's "
+        "equivalence test, its permuted-grid wiring control and its AST scan "
+        "for depth-constant reads were all blind to it; the last because this "
+        "one formats the loop VALUE and reads no depth name. Every held-out "
+        "depth breaks it, and 0.20 and 0.25 format identically. The criticism "
+        "levelled at the blocker -- tracing where depth is named instead of "
+        "where its value is used -- applied to the note that levelled it. "
+        "Found when Part B's first execution failed closed at 0.15 before any "
+        "metric",
+        "tests/test_part_b_fork_store_key.py::test_the_one_decimal_key_is_exact_on_every_sealed_depth_and_no_held_out_one",
+        True,
+    ),
+    Correction(
+        "R6k-W1-B",
+        "the pre-run integrity check for Part B built the fork at the "
+        "held-out grid and called build_map_tasks there to compare the source "
+        "inputs with their frozen digests -- with reservoir=None. The store "
+        "and its key check run only when a reservoir is supplied, so the check "
+        "exercised input construction and skipped exactly the code that then "
+        "failed the real run. It reported the fork's held-out inputs correct, "
+        "which they were, and said nothing about whether the fork could run "
+        "there, which it could not. The same call with a reservoir is cheap, "
+        "computes no metric, and would have stopped the attempt before it was "
+        "made",
+        "tests/test_part_b_fork_store_key.py::test_the_pre_run_check_took_the_path_that_does_not_store",
+        True,
+    ),
 )
 
 

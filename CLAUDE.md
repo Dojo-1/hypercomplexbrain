@@ -9,9 +9,14 @@ any held-out Part B depth. Part B is preregistered -- `manifests/qsigma_r6k_w1_p
 is its input freeze, with every field that once read PENDING now filled -- and
 remains UNEXECUTED. (This file said "unpreregistered as a run" for one commit;
 that was written without reading the freeze, and was wrong.) Its pre-execution
-gate needs `refs/tags/qsigma-r6k-w1-partb-prereg-v1` on origin at C_pre =
-`d0650f0`. This environment's git relay refuses tag pushes (HTTP 403), so the
-tag must be pushed from elsewhere; nothing in the repository needs to change. The next round must be preregistered before its implementation
+gate now passes 12/12: the C_pre tag is on origin at `d0650f0`. Execution was
+ATTEMPTED ONCE (`34abff5`) and failed closed before any metric -- see
+`manifests/qsigma_r6k_w1_partb_execution_attempt_1.json`. The R6M fork cannot
+store at any held-out depth, because the sealed recipe formats the store key
+with `rho:.1f`. No outcome exists. Repairing the key changes the calculation
+surface, so it needs a new preregistration, a new equivalence licence and a
+Part B amendment before any second attempt, and that attempt must cite the
+first. The next round must be preregistered before its implementation
 commit, and its frozen criterion exercised with `aionq.criterion.exercise`
 before it runs -- see below.
 
