@@ -1,0 +1,75 @@
+{
+  "artifact_commit_sha": "de60129f7520672f6391ddd69d9f68bb3082a7b0",
+  "claim_id": "EXP-R6K-W1-PART-B-CROSSING",
+  "command": "PYTHONPATH=src python3 experiments/run_part_b_crossing.py run",
+  "commit_sha": "de60129f7520672f6391ddd69d9f68bb3082a7b0",
+  "computed_artifacts": [],
+  "environment": {
+    "digest": "sha256:83a9fed83093c26933f46973d5eb1275232bc86e3b1692cd4bb0d2d867eacbcd",
+    "fields": {
+      "machine": "x86_64",
+      "numpy": "2.4.6",
+      "platform": "linux",
+      "python": "3.11.15"
+    }
+  },
+  "environment_dependent": [
+    "artifacts/r6k_w1_part_b/execution_receipt.json"
+  ],
+  "evidence_tag": "M",
+  "input_hashes": [],
+  "observed_result": {
+    "ledger_root": "sha256:56291935651cd44d192732264e0cfb278d17659c067dd08dfb3571c66f1f171d",
+    "outcome": "INVALID",
+    "reason": "K9: clean and noisy coordinates disagree about the crossing",
+    "smallest_absolute_margin": 0.00012345176259540014
+  },
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "preregistration_commit_sha": "d0650f02c67ac82e846120d931e1b81b6fe8dde2",
+  "producer": "experiments/run_part_b_crossing.py",
+  "raw_artifacts": {
+    "artifacts/r6k_w1_part_b/crossing.json": "sha256:f19dd764ea16a286d60897b9b81b12fb738b5a50168c6192ed305fe09da1d4d7",
+    "artifacts/r6k_w1_part_b/events.jsonl": "sha256:d10205e27e6f7d6023d059fa3521979546adb3354d9d2ce8ef7f51e360e79a9a",
+    "artifacts/r6k_w1_part_b/execution_receipt.json": "sha256:91af4eddeb372b86d00a3f640048583f89db35a1b2794f918fe59cd26c0a2c77",
+    "artifacts/r6k_w1_part_b/map_rows.json": "sha256:0a50c9403d40784e18f4242acec0f867b17b295bfb11369069f34b15a108fafe",
+    "artifacts/r6k_w1_part_b/receiver_resource_receipt.json": "sha256:31a6e3191c6596284d460022ef03a2aedeca36034ee0a33287485ed3735449b9"
+  },
+  "schema_version": "hypercomplexbrain.evidence.v2",
+  "seeds": [],
+  "signature_status": "unsigned",
+  "source_commit_sha": "e96fa243d3044aa2ef4c99377443c5524d150842",
+  "timestamp": "2026-09-26T07:47:09Z",
+  "typed_remainders": [
+    {
+      "kind": "platform_remainder",
+      "statement": "margins computed on this platform from source matrices that differ in the last ulp from the freezing platform's; see crossing.json platform_sensitivity"
+    },
+    {
+      "kind": "extrapolation_remainder",
+      "statement": "the fork is licensed by equivalence at R6l's five depths only; at held-out depths the sealed implementation is undefined"
+    },
+    {
+      "kind": "independence_remainder",
+      "statement": "producer and verifier are the same development line; independent=false until a separate recomputation passes"
+    },
+    {
+      "kind": "substitution_remainder",
+      "statement": "receivers were built by the R6N fork, which executes the sealed bytes with one declared span changed (the store key's depth format); licensed bitwise at the sealed grid"
+    },
+    {
+      "kind": "attempt_remainder",
+      "statement": "this is attempt 2; attempt 1 failed closed before any metric (manifests/qsigma_r6k_w1_partb_execution_attempt_1.json)"
+    }
+  ],
+  "uncertainty": {
+    "confidence_interval": null,
+    "independent_replication": false,
+    "kind": "deterministic one-shot producer run"
+  },
+  "verification_mode": "not_requested",
+  "verifier": "",
+  "witness_conversation_url": "",
+  "witness_environment": "",
+  "witness_notes": "",
+  "working_directory": "."
+}
