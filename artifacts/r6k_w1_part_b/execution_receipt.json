@@ -1,0 +1,96 @@
+{
+  "attempt": 2,
+  "c_pre": "d0650f02c67ac82e846120d931e1b81b6fe8dde2",
+  "command": "PYTHONPATH=src python3 experiments/run_part_b_crossing.py run",
+  "differential_cells": 80,
+  "environment": {
+    "numpy": "2.4.6",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.11.15"
+  },
+  "event_count": 716,
+  "extraction_proved_on_sealed_baseline": {
+    "delta_i": 0.17455937838498337,
+    "delta_p": 0.03263628220746781,
+    "reproduces_frozen_baseline_bitwise": true
+  },
+  "fork": {
+    "grid": [
+      "0.15",
+      "0.20",
+      "0.25",
+      "0.30",
+      "0.40"
+    ],
+    "sealed_sources": {
+      "common_receiver_reservoir": "850bd22125b95c52d01e7a456e40cc0a5a31f4141ac3c0c0d6d6107f920abff3",
+      "equal_resource_reservoir": "9978b8051d8b6afc1b7fa454a214bd49b3263efeb83bb7da9222ae6b17c02691"
+    }
+  },
+  "ledger_root": "sha256:56291935651cd44d192732264e0cfb278d17659c067dd08dfb3571c66f1f171d",
+  "licence": {
+    "digest": "sha256:ad355634422871d023c8eeca2e95f9692a74d35990f195853fbe9c833cd1afa2",
+    "path": "artifacts/r6n_substituted_fork/licence.json",
+    "verdict": "LICENSED"
+  },
+  "map_rows": 160,
+  "preflight": {
+    "effective_protocol_bound": true,
+    "held_out_source_inputs_bound": true,
+    "outcome_module_bound": true,
+    "outputs_absent": true,
+    "preregistration_tag_bound": true,
+    "r6l_all_raw_artifacts_bound": true,
+    "r6l_baseline_bound": true,
+    "r6l_c_env_on_origin_tracking_ref": true,
+    "r6l_commit_chain_exact": true,
+    "r6l_envelope_bound": true,
+    "r6l_result_bound": true,
+    "scientific_dependency_surface_bound": true
+  },
+  "prereg_tag": "refs/tags/qsigma-r6k-w1-partb-prereg-v1",
+  "previous_attempts": [
+    "manifests/qsigma_r6k_w1_partb_execution_attempt_1.json"
+  ],
+  "protocol_digest_label": {
+    "value": "sha256:c2c4ac86b55c06fc89369335c9ec695c2410259498d93883aaef620b7e58cd47",
+    "why": "plan_protocol only format-checks its digest and hashes it into cell ids; at R6l's sealed grid the metrics were shown bitwise identical under R6l's and Part B's digests. Part B's is used because R6l's protocol never covered these depths."
+  },
+  "retrieval_rows_computed": 384,
+  "runner_commit": "e96fa243d3044aa2ef4c99377443c5524d150842",
+  "schema": "hypercomplexbrain.part-b-execution-receipt.v1",
+  "seconds": {
+    "protocol": 4.7,
+    "total": 6.9
+  },
+  "source_inputs": {
+    "coordinate_payload": {
+      "fork": "sha256:d65b4f89b1832040cd281adb6ec8c1a91261711f04b2c77e499949a8a813b531",
+      "frozen": "sha256:d65b4f89b1832040cd281adb6ec8c1a91261711f04b2c77e499949a8a813b531"
+    },
+    "perturbed_coordinate_payload": {
+      "fork": "sha256:d97754eeb05ec96294dbc25aefd4474c2d9bd65cf2faea2d389f735e5466a907",
+      "frozen": "sha256:d97754eeb05ec96294dbc25aefd4474c2d9bd65cf2faea2d389f735e5466a907"
+    },
+    "source_matrix_payload": {
+      "fork": "sha256:2db6cf0817de7c84a14445df50fc7d1cf0dc75eef16970ed4884a3062fa6b980",
+      "frozen_construction_this_platform": "sha256:2db6cf0817de7c84a14445df50fc7d1cf0dc75eef16970ed4884a3062fa6b980",
+      "frozen_other_platform": "sha256:9df2a3ba0923b1aac3d4bc1a8d3d447bbb021f5b75d2187cb738d6e14580fe4d",
+      "status": "computed, compared and REPORTED, never used to refuse -- a digest of libm's last bit, per the preflight's portable gate"
+    }
+  },
+  "substitution": {
+    "executed_sha256": "5bb1ae8d7e9dde43a282c2858e680f7d9a528b9667b35dcc23e5383f83787ede",
+    "line": 309,
+    "new": "rho={_R6N_DEPTH_DECIMAL[rho]}",
+    "occurrences_of_old": 1,
+    "old": "rho={rho:.1f}",
+    "only_difference": true,
+    "sealed_sha256": "9978b8051d8b6afc1b7fa454a214bd49b3263efeb83bb7da9222ae6b17c02691"
+  },
+  "upstream_licence": {
+    "digest": "sha256:4830d173570dc6bb35d4c74971897bdae7e68437afabdd710ade0de9db8245a0",
+    "path": "artifacts/r6m_parametric_equivalence/equivalence.json",
+    "verdict": "EQUIVALENT_ON_SEALED_GRID"
+  }
+}

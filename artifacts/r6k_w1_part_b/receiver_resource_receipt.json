@@ -1,0 +1,280 @@
+{
+  "construction": "one map-blind pooled PGM rebuilt independently at each held-out depth",
+  "original_depth_receivers_reused": false,
+  "rebuilt_at": [
+    "0.15",
+    "0.20",
+    "0.25",
+    "0.30",
+    "0.40"
+  ],
+  "receivers": [
+    {
+      "classes": 16,
+      "clean_map_template_digests": {
+        "R6": "sha256:b7e6e52af0878565c5674dd3b3315bcadba0b24c6f128386ca2b9ca71ed16772",
+        "R6i": "sha256:de773c24590b018407799ef4f1b93d05b5ec08c1bdb152c23e47bef1b1a22ef0"
+      },
+      "common_receiver_digest": "sha256:be42bc5bcc0b01b8bf1019d6b6df4c7c184b7c26daedc28285837a7c981a5302",
+      "controls": {
+        "naimark_valid": true,
+        "pooled_weights_exact": true,
+        "receiver_valid": true
+      },
+      "depth_index": 0,
+      "effect_ranks": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        2
+      ],
+      "outcome_ancilla_qubits": 5,
+      "outcomes_including_reject": 17,
+      "padded_outcome_dimension": 32,
+      "pooled_template_digest": "sha256:e77785212ae3ec62446444b542734aa5ee3d8ab0ce968d92581276d93b2ac2fc",
+      "prior_and_perturbation_definition_digest": "sha256:669090be3d73cd811186b541a7a8b4dcb015cade45f6bfb082b79c00ec3ce76a",
+      "protocol_receiver_id": "sha256:2b0e905e56305260d4408a0dd91c4d91ed9c5cf99eed6bb8b8b89d78809774a6",
+      "receiver_index": 5,
+      "residuals": {
+        "completeness_spectral": 1.46033679971355e-14,
+        "isometry_spectral": 1.526539068165666e-14,
+        "maximum_effect_reconstruction_fro": 2.550184429546664e-15,
+        "support_projector_spectral": 1.5993667139398187e-15
+      },
+      "rho_decimal": "0.15",
+      "schema_version": "hypercomplexbrain.r6l-event-receiver.v1",
+      "signal_qubits": 4,
+      "structural_receiver_cost_digest": "sha256:4877535a475b33526265032b1a88ebf5f82df539081142e46070d0803f93b1a7",
+      "support_rank": 14,
+      "task": "projective_fixed_depth",
+      "total_qubits": 9
+    },
+    {
+      "classes": 16,
+      "clean_map_template_digests": {
+        "R6": "sha256:60b21bd31781b7e965c346c710e97699e55aed7d7ac1920ddd0507c285b9fdda",
+        "R6i": "sha256:4dd9e3f171067f0731d6923dc028d662a4ecf95a3aa13f1eab6047ea4b8d4739"
+      },
+      "common_receiver_digest": "sha256:6058e1c6b3ae497312e89e594b24cd8f0fea57c765501e28ce8a469565d46728",
+      "controls": {
+        "naimark_valid": true,
+        "pooled_weights_exact": true,
+        "receiver_valid": true
+      },
+      "depth_index": 1,
+      "effect_ranks": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        2
+      ],
+      "outcome_ancilla_qubits": 5,
+      "outcomes_including_reject": 17,
+      "padded_outcome_dimension": 32,
+      "pooled_template_digest": "sha256:79ffc76b9dbb00f39bd28893bd5e5185985b9b6b49d0a1fc20a795f83b628f72",
+      "prior_and_perturbation_definition_digest": "sha256:73af889ffdae3d5a495e1fcabfad942e103253c1cd84073e260a3b3f6689f7b5",
+      "protocol_receiver_id": "sha256:6fe92943fbd30fc6cbcb12e4e6739e0c94a720fbf7a8f29d49b16715b0fbbdac",
+      "receiver_index": 6,
+      "residuals": {
+        "completeness_spectral": 1.3477041466528883e-14,
+        "isometry_spectral": 1.3766231275284629e-14,
+        "maximum_effect_reconstruction_fro": 4.363081854071366e-15,
+        "support_projector_spectral": 3.662534433611782e-15
+      },
+      "rho_decimal": "0.20",
+      "schema_version": "hypercomplexbrain.r6l-event-receiver.v1",
+      "signal_qubits": 4,
+      "structural_receiver_cost_digest": "sha256:845e3ab6e6de70e5a36f5834d3f1948f22d07d38818b3000e3dfd20278759da5",
+      "support_rank": 14,
+      "task": "projective_fixed_depth",
+      "total_qubits": 9
+    },
+    {
+      "classes": 16,
+      "clean_map_template_digests": {
+        "R6": "sha256:372b6e5899cfa115636e23bbc3d00b1c8cd67becf46df00304bcf148d2b086d5",
+        "R6i": "sha256:15e21ff4f962953d7ed61445c5df0db2cbabd1bc6d2a6b199c27c87ba173d6f5"
+      },
+      "common_receiver_digest": "sha256:5f3d354a29e41fe6b67a8193b09355acde4f1fa2ddd71ab2a9aa9beb86dc8534",
+      "controls": {
+        "naimark_valid": true,
+        "pooled_weights_exact": true,
+        "receiver_valid": true
+      },
+      "depth_index": 2,
+      "effect_ranks": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        2
+      ],
+      "outcome_ancilla_qubits": 5,
+      "outcomes_including_reject": 17,
+      "padded_outcome_dimension": 32,
+      "pooled_template_digest": "sha256:2897e14f0339d0c911439e289dae3a60645b5a6a9abc3a2bf4b74a5572698c29",
+      "prior_and_perturbation_definition_digest": "sha256:a1683d7d6b497820cde30fb5cec37abf8f9336b761e02670fb6f5822af346c04",
+      "protocol_receiver_id": "sha256:349084bf78c7ab0f81803288d4ac00e4832bfa17d8a9e19cb87ec625fedc8d8c",
+      "receiver_index": 7,
+      "residuals": {
+        "completeness_spectral": 9.092393827181539e-15,
+        "isometry_spectral": 8.576073316750303e-15,
+        "maximum_effect_reconstruction_fro": 4.510184184458955e-15,
+        "support_projector_spectral": 2.366461509244677e-15
+      },
+      "rho_decimal": "0.25",
+      "schema_version": "hypercomplexbrain.r6l-event-receiver.v1",
+      "signal_qubits": 4,
+      "structural_receiver_cost_digest": "sha256:ce6b9eef088df4c2ea175b5dd45ffb1ae9dafde17b82b929057fd61c5df0e658",
+      "support_rank": 14,
+      "task": "projective_fixed_depth",
+      "total_qubits": 9
+    },
+    {
+      "classes": 16,
+      "clean_map_template_digests": {
+        "R6": "sha256:5acbec97ef5efbcaa0dfaf7bdc361567786d54c53ef2f3ec9c1d1c1271818272",
+        "R6i": "sha256:ea65cd3af24217aee656acdb75927caf4c3d41d6c72f9337506cda318250daf1"
+      },
+      "common_receiver_digest": "sha256:8b633a0ac9bb1030729caceba282a04fb329d8669a4d26c487ebd9709042545f",
+      "controls": {
+        "naimark_valid": true,
+        "pooled_weights_exact": true,
+        "receiver_valid": true
+      },
+      "depth_index": 3,
+      "effect_ranks": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        2
+      ],
+      "outcome_ancilla_qubits": 5,
+      "outcomes_including_reject": 17,
+      "padded_outcome_dimension": 32,
+      "pooled_template_digest": "sha256:7d9af58f4eb0622ebaa4ae50469b4c074f7a61d2df1d1b4dd40ebb64b373d357",
+      "prior_and_perturbation_definition_digest": "sha256:0225281cc3b876d62e7a500a51136b80293f0c6fd81f107469120663cd0f2d9c",
+      "protocol_receiver_id": "sha256:0b74560453bad088d964e83f406a383b7b34bac996a9d5c253ebfc71e2b1f467",
+      "receiver_index": 8,
+      "residuals": {
+        "completeness_spectral": 1.3558720853040347e-14,
+        "isometry_spectral": 1.3722470238433812e-14,
+        "maximum_effect_reconstruction_fro": 3.882728800242271e-15,
+        "support_projector_spectral": 2.5823499519474474e-15
+      },
+      "rho_decimal": "0.30",
+      "schema_version": "hypercomplexbrain.r6l-event-receiver.v1",
+      "signal_qubits": 4,
+      "structural_receiver_cost_digest": "sha256:3102234373ac79111ee6167d65472c6391d02fde00a4248589075dc12d9abf08",
+      "support_rank": 14,
+      "task": "projective_fixed_depth",
+      "total_qubits": 9
+    },
+    {
+      "classes": 16,
+      "clean_map_template_digests": {
+        "R6": "sha256:dd55ccdbf3ed02909ccb116e2344d56754140a391ab907579909e8a17fdbdd62",
+        "R6i": "sha256:9cc7152d3302612f5e9cbf6e6a45b077b6508835a5542a52ea9d4a1fa7442de8"
+      },
+      "common_receiver_digest": "sha256:30e582b3bb91e5ef818837fb5e49273e998b9e897ab6213ad1be0853269a0b8e",
+      "controls": {
+        "naimark_valid": true,
+        "pooled_weights_exact": true,
+        "receiver_valid": true
+      },
+      "depth_index": 4,
+      "effect_ranks": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        2
+      ],
+      "outcome_ancilla_qubits": 5,
+      "outcomes_including_reject": 17,
+      "padded_outcome_dimension": 32,
+      "pooled_template_digest": "sha256:5f280d1de9edeb1730795e7c8e43114cb585bcfd71efa7fd89a42b9388e94535",
+      "prior_and_perturbation_definition_digest": "sha256:3cd44d2229353966cb249cabc5e63801a79ec01f32cd312c886846e99a40a90e",
+      "protocol_receiver_id": "sha256:886e24d15cd8b96631be865b5420a87f718b05dc0f2e3220593bb32e6a8b42b4",
+      "receiver_index": 9,
+      "residuals": {
+        "completeness_spectral": 5.447837395880128e-15,
+        "isometry_spectral": 5.842990643245951e-15,
+        "maximum_effect_reconstruction_fro": 2.996464899975523e-15,
+        "support_projector_spectral": 1.5545358684424012e-15
+      },
+      "rho_decimal": "0.40",
+      "schema_version": "hypercomplexbrain.r6l-event-receiver.v1",
+      "signal_qubits": 4,
+      "structural_receiver_cost_digest": "sha256:ef40110365e0f51b71aa5a6962066ee70d5a0e321a036a34f35ca101d8c07dfb",
+      "support_rank": 14,
+      "task": "projective_fixed_depth",
+      "total_qubits": 9
+    }
+  ],
+  "schema": "hypercomplexbrain.part-b-receiver-receipt.v1",
+  "task": "projective_fixed_depth"
+}
