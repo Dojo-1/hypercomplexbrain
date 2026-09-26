@@ -37,13 +37,20 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from aionq import part_b_preflight as P  # noqa: E402
-from aionq.common_receiver_parametric import (  # noqa: E402
-    SEALED_SOURCES, build_fork)
+from aionq.common_receiver_parametric import SEALED_SOURCES  # noqa: E402
+from aionq.common_receiver_substituted import (  # noqa: E402
+    build_substituted_fork, substituted_source)
 from aionq.part_b_outcome import (  # noqa: E402
     information_margin, part_b_outcome, passes, probability_margin)
 
 OUT = ROOT / "artifacts" / "r6k_w1_part_b"
-LICENCE = ROOT / "artifacts" / "r6m_parametric_equivalence" / "equivalence.json"
+#: Attempt 2 builds receivers through the R6N substituted fork. R6M's fork failed
+#: closed here in attempt 1 on its one-decimal store key; R6N repaired that by
+#: one declared span and licensed the result bitwise at the sealed grid.
+LICENCE = ROOT / "artifacts" / "r6n_substituted_fork" / "licence.json"
+UPSTREAM_LICENCE = ROOT / "artifacts" / "r6m_parametric_equivalence" / "equivalence.json"
+ATTEMPT = 2
+PREVIOUS_ATTEMPTS = ["manifests/qsigma_r6k_w1_partb_execution_attempt_1.json"]
 R6L_RESULT = ROOT / "artifacts" / "r6l_common_receiver" / "common_receiver_reservoir.json"
 TASK = "projective_fixed_depth"
 RUN_COMMAND = "PYTHONPATH=src python3 experiments/run_part_b_crossing.py run"
@@ -137,7 +144,14 @@ def run() -> int:
     baseline_proof = prove_extraction_on_sealed_data()                      # step 2
 
     grid = tuple((decimal, value) for _, decimal, value in P.HELD_OUT_DEPTH_COORDS)
-    fork = build_fork(grid, licence=LICENCE)                                 # step 3
+    fork = build_substituted_fork(grid, licence=LICENCE)                     # step 3
+    # Attempt 1's lesson, made a gate: exercise the STORE path, with a reservoir,
+    # before anything is computed. reservoir=None skips it, which is how
+    # attempt 1's pre-run check passed while the run could not. Metric-free.
+    _probe = fork.common_receiver
+    fork.equal_resource.build_map_tasks("R6", _probe._ProtocolReservoir(
+        _probe.plan_protocol(P.EFFECTIVE_PROTOCOL_DIGEST), _probe.HashChainedEventLedger()))
+    fork = build_substituted_fork(grid, licence=LICENCE)                     # fresh, unprobed
     rebuilt = P.rebuild_source_input_digests()
     _, diagnostics = fork.equal_resource.build_map_tasks("R6")
     source_inputs = {
@@ -220,11 +234,17 @@ def run() -> int:
     staged["execution_receipt.json"] = _render({
         "schema": "hypercomplexbrain.part-b-execution-receipt.v1",
         "command": RUN_COMMAND,
+        "attempt": ATTEMPT,
+        "previous_attempts": PREVIOUS_ATTEMPTS,
         "preflight": preflight,
         "c_pre": c_pre, "prereg_tag": P.PREREG_TAG_REF, "runner_commit": runner_commit,
         "extraction_proved_on_sealed_baseline": baseline_proof,
         "licence": {"path": LICENCE.relative_to(ROOT).as_posix(), "digest": _sha(LICENCE),
                     "verdict": json.loads(LICENCE.read_text(encoding="utf-8"))["verdict"]},
+        "upstream_licence": {"path": UPSTREAM_LICENCE.relative_to(ROOT).as_posix(),
+                             "digest": _sha(UPSTREAM_LICENCE),
+                             "verdict": json.loads(UPSTREAM_LICENCE.read_text(encoding="utf-8"))["verdict"]},
+        "substitution": {k: v for k, v in substituted_source()[1].items()},
         "fork": {"grid": [d for d, _ in grid],
                  "sealed_sources": {n: s for n, (_, s) in SEALED_SOURCES.items()}},
         "source_inputs": source_inputs,
@@ -289,6 +309,8 @@ def envelope(source_commit: str, raw_commit: str) -> int:
             {"kind": "platform_remainder", "statement": "margins computed on this platform from source matrices that differ in the last ulp from the freezing platform's; see crossing.json platform_sensitivity"},
             {"kind": "extrapolation_remainder", "statement": "the fork is licensed by equivalence at R6l's five depths only; at held-out depths the sealed implementation is undefined"},
             {"kind": "independence_remainder", "statement": "producer and verifier are the same development line; independent=false until a separate recomputation passes"},
+            {"kind": "substitution_remainder", "statement": "receivers were built by the R6N fork, which executes the sealed bytes with one declared span changed (the store key's depth format); licensed bitwise at the sealed grid"},
+            {"kind": "attempt_remainder", "statement": "this is attempt 2; attempt 1 failed closed before any metric (manifests/qsigma_r6k_w1_partb_execution_attempt_1.json)"},
         ],
     )
     result = verify(env, repo_root=ROOT)
