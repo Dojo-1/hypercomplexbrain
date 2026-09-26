@@ -1,0 +1,92 @@
+{
+  "task_id": "qsigma-r6n-substituted-fork",
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R6N",
+  "title": "Repair the fork's one-decimal store key by one declared substitution, license it at the sealed grid, and rehearse it on a decoy grid before any second Part B attempt",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-09-26",
+  "base_commit": "26e139e",
+  "committed_before_any_implementation": true,
+  "files_expected_to_change": [
+    "src/aionq/common_receiver_substituted.py",
+    "tests/test_r6n_substituted_fork.py",
+    "experiments/run_r6n_substituted_fork.py",
+    "artifacts/r6n_substituted_fork/licence.json"
+  ],
+
+  "why": {
+    "the_failure": "manifests/qsigma_r6k_w1_partb_execution_attempt_1.json. Part B's first execution failed closed at the first held-out depth, before any metric: equal_resource_reservoir._signed_codebooks builds each store key with f'{rho:.1f}', one decimal place, and the store checks it against the frozen decimal label. Every sealed depth has one decimal digit; every held-out depth breaks it.",
+    "why_the_R6M_fork_cannot_absorb_it": "R6M's fork rebinds module-level NAMES in namespaces it owns. This is a format specification inside a function body. It can only be changed by executing bytes that differ from the sealed bytes, which R6M's licence -- byte-identical delegation -- does not cover.",
+    "why_a_new_licence_and_not_an_edit": "R6M's kill condition: a repair requires a new preregistration and a new equivalence run."
+  },
+
+  "the_substitution": {
+    "file": "src/aionq/equal_resource_reservoir.py, read and verified against its sealed sha256 9978b8051d8b6afc1b7fa454a214bd49b3263efeb83bb7da9222ae6b17c02691 before anything is changed",
+    "old": "rho={rho:.1f}",
+    "new": "rho={_R6N_DEPTH_DECIMAL[rho]}",
+    "occurrences_required": 1,
+    "injected_name": "_R6N_DEPTH_DECIMAL = {value: decimal for decimal, value in grid}, bound in the fork's own namespace after execution, as DEPTHS is",
+    "applied_to": "the in-memory source text only. No file on disk changes; the sealed sources and every digest Part B's input freeze binds stay byte-identical.",
+    "identity_on_the_sealed_grid": "for every sealed depth the frozen decimal equals f'{value:.1f}' -- '0.1', '0.5', '1.0', '2.0', '4.0' -- so on the sealed grid the substituted source must behave exactly as the sealed one. C2 tests that."
+  },
+
+  "static_scan_recorded_before_this_manifest": {
+    "method": "AST over both sealed modules for every value-to-string site (f-string FormattedValue, str, repr, format, .format, %-format, round) and every hardcoded collection of sealed-depth literals and every comparison of a depth-named value against a sealed literal",
+    "found": [
+      "equal_resource_reservoir.py:309 _signed_codebooks {rho:.1f} -- the defect, and the ONLY site that stringifies a depth VALUE",
+      "common_receiver_reservoir.py:1522 and :1640 use {spec.rho_decimal}, the frozen label, and are correct by construction",
+      "equal_resource_reservoir.py:72 DEPTHS -- already rebound by the fork",
+      "equal_resource_reservoir.py:370 (0.5, 0.5) -- mixture weights, not depths"
+    ],
+    "limit": "a static scan finds syntax, not behaviour. A coupling that exists only at runtime is invisible to it. That is what C3 is for."
+  },
+
+  "decoy_grid": {
+    "depths": ["0.12", "0.18", "0.22", "0.35", "0.60"],
+    "constraints_verified_before_freezing": "no value is sealed; no value is held-out (checked by binary64 value, the fork guard's own test); every decimal differs from its one-decimal format",
+    "why_these": "each held-out failure mode is reproduced without touching a held-out depth: 0.18 and 0.22 both format to '0.2' as 0.20 and 0.25 do; 0.35 rounds DOWN to '0.3' through its binary64 value as 0.15 does to '0.1'; '0.60' carries a trailing zero as '0.20', '0.30' and '0.40' do; and 0.12 and 0.18 sit inside the held-out magnitude range 0.1-0.4.",
+    "status_of_its_numbers": "MEANINGLESS as science. The decoy metrics are recorded by digest and by finiteness only, are never compared with anything, and support no claim about any depth."
+  },
+
+  "frozen_rule": {
+    "verdicts": {
+      "LICENSED": "C1, C2, C3 and C4 all hold",
+      "NOT_LICENSED": "the references verify but any of C1-C4 fails",
+      "INVALID": "the sealed sources, the R6l reference rows or the R6M licence cannot be byte-verified, or the substitution target does not occur exactly once"
+    },
+    "C1_substitution_exact": "the executed source equals the sealed source with exactly one occurrence of `old` replaced by `new`; the diff between them is that one span and nothing else",
+    "C2_equivalence_on_the_sealed_grid": "at R6l's five depths the substituted fork reproduces all 384 committed R6l retrieval rows under R6M's rule -- identities exactly once, discrete fields exact, numerical fields within the committed 1e-10, no undeclared output -- AND is BITWISE identical to the sealed module run fresh on the same platform (tolerance 0.0). The substitution is claimed to be the identity there; bitwise is the test of that claim.",
+    "C3_decoy_rehearsal": "at the decoy grid the full protocol completes without exception, emitting exactly 384 retrieval rows whose rho_decimal labels are exactly the five decoy decimals, five distinct depth indices, 320 stores, and only finite metrics",
+    "C3_control": "the UNREPAIRED R6M fork, on the same decoy grid, must fail with 'reservoir key differs from the portable store identity'. Without it, a completing rehearsal could mean the decoy grid never reached the defect.",
+    "C4_criterion_receipt": "aionq.criterion.exercise on this rule is clean under an explicit required-check declaration, BEFORE any real comparison"
+  },
+
+  "prediction": "LICENSED. At risk: a fifth coupling that exists only at runtime would surface in C3 as an exception or a mislabelled row.",
+
+  "kill_conditions": [
+    "No held-out depth is evaluated in R6N, interactively or otherwise. The decoy grid is not held-out and not sealed.",
+    "NOT_LICENSED or INVALID stops the line. Part B attempt 2 does not happen, and a repair needs a new preregistration.",
+    "No failure may be repaired after inspection within this round.",
+    "The decoy metrics may not be read as a result about any depth."
+  ],
+
+  "relation_to_part_b": {
+    "amends": "the REALISATION of manifests/qsigma_r6k_w1_partb_input_freeze.json receiver_construction ('the pooled map-blind PGM rebuilt at each held-out depth from R6l's recipe'), not the input freeze itself",
+    "why_the_freeze_is_not_edited": "editing it would move C_pre off d0650f0 and invalidate the tag now on origin. The precedent is the execution blocker, which amended v2's receiver_construction through a separate manifest and left the frozen file untouched. The freeze's scientific-dependency digests are of files on disk, which this round does not change.",
+    "what_a_LICENSED_verdict_permits": "Part B attempt 2, under the unchanged input freeze and the unchanged C_pre tag, with a new runner commit that constructs receivers through the substituted fork and cites attempt 1.",
+    "what_it_does_not_permit": "any change to Part B's thresholds, grid, outcome function, extraction or noise handling"
+  },
+
+  "evidence_ceiling": "A LICENSED verdict shows the substituted fork is the sealed recipe at the sealed grid, bitwise, and that it runs to completion with correct labels at five decoy depths. It does not show equivalence at any held-out depth, where the sealed implementation cannot run at all.",
+
+  "typed_remainders_declared_in_advance": [
+    "[R]_runtime_coupling: a coupling that appears only at depths neither sealed nor decoy would still be missed.",
+    "[R]_substitution: the fork now executes bytes that are not the sealed bytes, by one declared span.",
+    "[R]_shared_lineage: producer and verifier are the same development line."
+  ],
+
+  "stop_condition": "Stop after the licence artifact and its tests are committed. Part B attempt 2 is a separate step, permitted only by LICENSED.",
+
+  "result": {"observed": "not run", "status_after": "H",
+             "active_remainder": ["[R]_runtime_coupling", "[R]_substitution", "[R]_shared_lineage"]}
+}
