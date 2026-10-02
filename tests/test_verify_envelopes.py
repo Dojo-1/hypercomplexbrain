@@ -261,3 +261,18 @@ def test_cli_rejects_a_non_artifacts_scan_root(tmp_path, monkeypatch, capsys):
     output = capsys.readouterr().out
     assert "scan root must be the artifacts directory" in output
     assert "corpus/denominator failed" in output
+
+
+def test_live_corpus_catalogs_every_committed_envelope():
+    # Every test above runs on a synthetic tree. CI's envelope step was red
+    # from 140dbe8 to its repair because the Part B envelope was committed
+    # without a catalog row, and nothing in the suite looked at the live
+    # corpus -- so the suite was green while the step was not.
+    root = Path(__file__).resolve().parent.parent
+    artifacts = root / "artifacts"
+    envelopes = sorted(artifacts.rglob("*.envelope.json"))
+    assert envelopes
+    failures = verifier._catalog_failures(
+        envelopes, root / verifier.CATALOG, artifacts
+    )
+    assert failures == []

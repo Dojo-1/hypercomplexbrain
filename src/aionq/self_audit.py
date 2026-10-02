@@ -1693,6 +1693,20 @@ CORRECTIONS = (
         "tests/test_licence_and_publication_guards.py::test_a_rejected_envelope_writes_nothing_and_exits_nonzero",
         False,
     ),
+    Correction(
+        "R6k-W1-B",
+        "the Part B envelope was committed at 140dbe8 without a row in "
+        "manifests/evidence_envelope_catalog.json, so CI's envelope step "
+        "failed on every platform from 140dbe8 on and skipped the two steps "
+        "after it. 00c1d08's message said 'origin green again' on the "
+        "strength of the correctness suite alone -- the same error as "
+        "de60129, one step later: a claim about CI made without reading the "
+        "job that was red. Every envelope verified; only the denominator was "
+        "short. No test looked at the live corpus, which is why the suite "
+        "stayed green; one does now",
+        "tests/test_verify_envelopes.py::test_live_corpus_catalogs_every_committed_envelope",
+        True,
+    ),
 )
 
 

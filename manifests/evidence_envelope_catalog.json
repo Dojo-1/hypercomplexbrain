@@ -23,6 +23,7 @@
     {"path": "artifacts/r6f_capacity_ceiling/capacity_ceiling.envelope.json", "claim_id": "EXP-R6F-CAPACITY_CEILING"},
     {"path": "artifacts/r6h_translation_epsilon/translation_epsilon.envelope.json", "claim_id": "EXP-R6H-TRANSLATION_EPS"},
     {"path": "artifacts/r6k_equal_resource_reservoir/equal_resource_reservoir.envelope.json", "claim_id": "EXP-R6K-EQUAL_RESOURCE_RESERVOIR"},
+    {"path": "artifacts/r6k_w1_part_b/crossing.envelope.json", "claim_id": "EXP-R6K-W1-PART-B-CROSSING"},
     {"path": "artifacts/r6k_w1_semantic_reproduction/reproduction.envelope.json", "claim_id": "WITNESS-R6K-SEMANTIC_REPRODUCTION"},
     {"path": "artifacts/r6l_common_receiver/common_receiver_reservoir.envelope.json", "claim_id": "EXP-R6L-COMMON-RECEIVER"},
     {"path": "artifacts/r7_source_information/source_information.envelope.json", "claim_id": "QSIGMA-R7-SOURCE-INFORMATION"},
