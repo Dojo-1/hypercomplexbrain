@@ -272,8 +272,24 @@ def run() -> int:
     return 0
 
 
+def publish_envelope(env, path: Path, verify_fn):
+    """Verify, and write ONLY if verification passed.
+
+    The first version verified, then saved unconditionally and returned 0, so a
+    rejected envelope was published as if it had passed. Found by external
+    review. A failure now writes nothing and exits non-zero.
+    """
+    from aionq.evidence import save_envelope
+
+    result = verify_fn(env)
+    if getattr(result, "ok", False) is not True:
+        raise SystemExit(f"envelope verification FAILED; nothing written:\n{result}")
+    save_envelope(env, path)
+    return result
+
+
 def envelope(source_commit: str, raw_commit: str) -> int:
-    from aionq.evidence import EvidenceEnvelope, environment_digest, save_envelope, verify
+    from aionq.evidence import EvidenceEnvelope, environment_digest, verify
 
     def git(*args):
         return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout
@@ -313,8 +329,8 @@ def envelope(source_commit: str, raw_commit: str) -> int:
             {"kind": "attempt_remainder", "statement": "this is attempt 2; attempt 1 failed closed before any metric (manifests/qsigma_r6k_w1_partb_execution_attempt_1.json)"},
         ],
     )
-    result = verify(env, repo_root=ROOT)
-    save_envelope(env, OUT / "crossing.envelope.json")
+    result = publish_envelope(env, OUT / "crossing.envelope.json",
+                              lambda candidate: verify(candidate, repo_root=ROOT))
     print(json.dumps({"envelope": "written", "verify": getattr(result, "status", str(result))}, indent=1))
     return 0
 

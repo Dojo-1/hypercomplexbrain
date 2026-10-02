@@ -87,7 +87,8 @@ def test_the_substituted_fork_stores_on_the_decoy_and_sealed_grids():
 def test_held_out_depths_need_an_r6n_licence_not_an_r6m_one():
     with pytest.raises(PermissionError, match="R6N licence"):
         build_substituted_fork(HELD_OUT)
-    with pytest.raises(PermissionError, match="not an R6N LICENSED verdict"):
+    # refused by evidence now, not by label: an R6M licence is not the committed R6N one
+    with pytest.raises(PermissionError, match="not the committed R6N licence"):
         build_substituted_fork(HELD_OUT, licence=R6M_LICENCE)
 
 

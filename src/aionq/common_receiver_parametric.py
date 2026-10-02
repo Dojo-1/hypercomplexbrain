@@ -76,6 +76,9 @@ __all__ = [
     "equivalence_verdict",
     "VERDICTS",
     "exercise_the_frozen_rule",
+    "EXPECTED_ROWS",
+    "R6M_LICENCE_SHA256",
+    "verify_r6m_licence",
 ]
 
 _SRC = Path(__file__).resolve().parent
@@ -118,6 +121,41 @@ EQUAL_RESOURCE_IMPORTS = (
 _PINNED_GRID_LENGTH = 5
 
 VERDICTS = ("EQUIVALENT_ON_SEALED_GRID", "NOT_EQUIVALENT", "INVALID")
+
+#: The frozen R6M rule: "all 384 protocol identities are present exactly once
+#: on each side". The first version checked only that both sides were
+#: NON-EMPTY, so two matching one-row prefixes came back EQUIVALENT -- a
+#: full-grid verdict from 1/384 of the grid. Found by external review.
+EXPECTED_ROWS = 384
+
+#: The one artifact this guard accepts as an R6M licence: its sha256 as
+#: committed at 499b115. The first guard read the "verdict" field and nothing
+#: else, so a one-line JSON saying EQUIVALENT_ON_SEALED_GRID unlocked held-out
+#: depths. A licence is evidence; the guard now checks the evidence.
+R6M_LICENCE_SHA256 = "4830d173570dc6bb35d4c74971897bdae7e68437afabdd710ade0de9db8245a0"
+
+
+def verify_r6m_licence(path) -> dict:
+    """Accept exactly the committed R6M licence, and only if it says what it must."""
+    raw = Path(path).read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != R6M_LICENCE_SHA256:
+        raise PermissionError(
+            f"{path} is not the committed R6M licence (sha256 {digest[:16]}...); "
+            f"a licence is checked by its evidence, not by its label")
+    record = json.loads(raw)
+    evidence = record.get("evidence", {})
+    flags = {k: evidence.get(k) for k in (
+        "references_verified", "comparison_surface_complete",
+        "identities_exactly_once_each_side", "discrete_agree",
+        "numerical_within_tolerance", "no_undeclared_output", "criterion_receipt_clean")}
+    if not (record.get("verdict") == "EQUIVALENT_ON_SEALED_GRID"
+            and equivalence_verdict(flags) == "EQUIVALENT_ON_SEALED_GRID"
+            and evidence.get("committed_rows") == EXPECTED_ROWS
+            and evidence.get("fork_rows") == EXPECTED_ROWS
+            and record.get("held_out_depths_evaluated") == []):
+        raise PermissionError(f"{path}: its evidence does not support EQUIVALENT_ON_SEALED_GRID")
+    return record
 
 
 class SealViolation(RuntimeError):
@@ -175,11 +213,10 @@ def _validate_grid(grid, licence) -> tuple:
                 f"held-out depths {held_out} refused: QSigma-R6M's kill condition "
                 f"forbids evaluating them before an EQUIVALENT_ON_SEALED_GRID "
                 f"verdict exists. Pass the licence artifact.")
-        verdict = json.loads(Path(licence).read_text(encoding="utf-8")).get("verdict")
-        if verdict != "EQUIVALENT_ON_SEALED_GRID":
-            raise PermissionError(
-                f"licence at {licence} carries verdict {verdict!r}, not "
-                f"EQUIVALENT_ON_SEALED_GRID; held-out depths stay refused")
+        try:
+            verify_r6m_licence(licence)
+        except PermissionError as error:
+            raise PermissionError(f"{error}; held-out depths stay refused") from None
     return grid
 
 
@@ -251,12 +288,15 @@ def equivalence_evidence(committed_rows, fork_rows, *, tolerance: float,
     comparison = compare_results({"retrieval_rows": committed},
                                  {"retrieval_rows": forked}, tolerance)
 
+    complete = (len(committed_rows) == EXPECTED_ROWS and len(fork_rows) == EXPECTED_ROWS
+                and len(committed_counts) == EXPECTED_ROWS
+                and len(fork_counts) == EXPECTED_ROWS)
     exactly_once = (set(committed_counts) == set(fork_counts)
                     and all(n == 1 for n in committed_counts.values())
                     and all(n == 1 for n in fork_counts.values()))
     return {
         "references_verified": bool(references_verified),
-        "comparison_surface_complete": bool(committed_rows) and bool(fork_rows),
+        "comparison_surface_complete": complete,
         "committed_rows": len(committed_rows),
         "fork_rows": len(fork_rows),
         "identities_exactly_once_each_side": exactly_once,

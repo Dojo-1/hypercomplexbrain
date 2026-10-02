@@ -41,7 +41,7 @@ from .common_receiver_parametric import (
 __all__ = [
     "SUBSTITUTION_OLD", "SUBSTITUTION_NEW", "DECOY_GRID", "VERDICTS",
     "substituted_source", "build_substituted_fork", "licence_verdict",
-    "exercise_the_frozen_rule",
+    "exercise_the_frozen_rule", "R6N_LICENCE_SHA256", "verify_r6n_licence",
 ]
 
 SUBSTITUTION_OLD = "rho={rho:.1f}"
@@ -54,6 +54,41 @@ SUBSTITUTION_NEW = "rho={_R6N_DEPTH_DECIMAL[rho]}"
 DECOY_GRID = (("0.12", 0.12), ("0.18", 0.18), ("0.22", 0.22), ("0.35", 0.35), ("0.60", 0.6))
 
 VERDICTS = ("LICENSED", "NOT_LICENSED", "INVALID")
+
+#: The one artifact this guard accepts as an R6N licence: its sha256 as
+#: committed at 03070aa. The first guard read two label fields, so a
+#: two-field JSON {"round": "QSigma-R6N", "verdict": "LICENSED"} unlocked
+#: held-out depths. Found by external review.
+R6N_LICENCE_SHA256 = "ad355634422871d023c8eeca2e95f9692a74d35990f195853fbe9c833cd1afa2"
+
+
+def verify_r6n_licence(path) -> dict:
+    """Accept exactly the committed R6N licence, and only if its evidence holds AND it
+    licenses the bytes this process is about to execute."""
+    raw = Path(path).read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != R6N_LICENCE_SHA256:
+        raise PermissionError(
+            f"{path} is not the committed R6N licence (sha256 {digest[:16]}...); "
+            f"a licence is checked by its evidence, not by its label")
+    record = json.loads(raw)
+    _, executing = substituted_source()
+    licensed = record.get("substitution", {})
+    c2, c3 = record.get("C2", {}), record.get("C3", {})
+    ok = (record.get("round") == "QSigma-R6N"
+          and record.get("verdict") == "LICENSED"
+          and licence_verdict(record.get("evidence", {})) == "LICENSED"
+          and licensed.get("executed_sha256") == executing["executed_sha256"]
+          and licensed.get("sealed_sha256") == executing["sealed_sha256"]
+          and c2.get("vs_committed_rows", {}).get("rows") == [384, 384]
+          and c2.get("vs_sealed_fresh_bitwise", {}).get("rows") == [384, 384]
+          and c2.get("vs_sealed_fresh_bitwise", {}).get("worst_absolute_difference") == 0.0
+          and c3.get("control_unrepaired_fork_on_decoy", {}).get("failed") is True
+          and c3.get("rehearsal", {}).get("rho_decimal_labels") == [d for d, _ in DECOY_GRID]
+          and record.get("held_out_depths_evaluated") == [])
+    if not ok:
+        raise PermissionError(f"{path}: its evidence does not license the substituted fork being executed")
+    return record
 
 _SERIAL = itertools.count()
 
@@ -112,10 +147,10 @@ def _validate(grid, licence) -> tuple:
     if held_out:
         if licence is None:
             raise PermissionError(f"held-out depths {held_out} refused without an R6N licence")
-        record = json.loads(Path(licence).read_text(encoding="utf-8"))
-        if record.get("round") != "QSigma-R6N" or record.get("verdict") != "LICENSED":
-            raise PermissionError(
-                f"{licence} is not an R6N LICENSED verdict; held-out depths stay refused")
+        try:
+            verify_r6n_licence(licence)
+        except PermissionError as error:
+            raise PermissionError(f"{error}; held-out depths stay refused") from None
     return grid
 
 

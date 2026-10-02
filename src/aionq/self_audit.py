@@ -1651,6 +1651,48 @@ CORRECTIONS = (
         "tests/test_dependency_closure.py::test_the_code_graph_is_an_order_of_magnitude_denser_than_the_evidence_graph",
         True,
     ),
+    Correction(
+        "QSigma-R6n",
+        "the licence guards trusted labels. build_substituted_fork accepted "
+        "any file whose 'round' read QSigma-R6N and whose 'verdict' read "
+        "LICENSED, so a two-field JSON unlocked held-out depths; R6M's "
+        "build_fork had the same defect with ONE field, found while "
+        "reproducing the first. Both guards were written in this session as "
+        "the executable form of a kill condition -- the point being that a "
+        "refusal in a constructor is enforced and a manifest sentence is not "
+        "-- and both enforced a label instead of the evidence the label "
+        "summarises. Each now accepts exactly its committed licence, pinned "
+        "by sha256, and re-checks the evidence inside it; R6N's also requires "
+        "the licence to cover the exact bytes being executed. No committed "
+        "result depended on the defect: Part B ran under the committed R6N "
+        "licence. Found by external review",
+        "tests/test_licence_and_publication_guards.py::test_forged_label_only_licences_are_refused",
+        False,
+    ),
+    Correction(
+        "QSigma-R6m",
+        "equivalence_evidence decided comparison_surface_complete from "
+        "whether both sides were NON-EMPTY. Two matching one-row prefixes "
+        "therefore returned EQUIVALENT_ON_SEALED_GRID -- a full-grid verdict "
+        "from 1/384 of the grid -- although R6M's frozen rule demands all 384 "
+        "identities, and calls an incomplete surface INVALID. The function "
+        "had a non-vacuity guard for LEAVES (scientific leaves compared > 0) "
+        "and none for ROWS. R6M and R6N both in fact compared 384/384, so "
+        "neither verdict is affected. Found by external review",
+        "tests/test_licence_and_publication_guards.py::test_incomplete_comparisons_are_invalid_not_equivalent",
+        False,
+    ),
+    Correction(
+        "R6k-W1-B",
+        "the Part B envelope phase called verify() and then save_envelope() "
+        "unconditionally, returning 0, so a rejected envelope would have been "
+        "published as though it had passed -- the verification computed and "
+        "then ignored. The committed envelope does verify, so no result is "
+        "affected. Publication is now conditional on ok, and a rejection "
+        "writes nothing and exits non-zero. Found by external review",
+        "tests/test_licence_and_publication_guards.py::test_a_rejected_envelope_writes_nothing_and_exits_nonzero",
+        False,
+    ),
 )
 
 
