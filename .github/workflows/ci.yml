@@ -63,3 +63,41 @@ jobs:
             artifacts/r4/
             artifacts/test-results/
           if-no-files-found: warn
+
+  # QSigma-R6O. Part B recomputed on each platform, compared in two layers
+  # (decision exactly, numbers at 1e-10). Exits zero only on REPRODUCED; the
+  # full report is printed as an R6O_REPORT line and uploaded whatever happens.
+  # Separate from `test` so an OUTCOME_ONLY platform cannot redden correctness.
+  part-b-reproduction:
+    name: Part B reproduction · ${{ matrix.os }} · py${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install using the real src/ layout
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install -r requirements.txt
+
+      - name: Recompute Part B and compare
+        run: python experiments/run_part_b_reproduction.py artifacts/test-results/part_b_reproduction-${{ matrix.os }}-py${{ matrix.python }}.json
+
+      - name: Upload the reproduction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: part-b-reproduction-${{ matrix.os }}-py${{ matrix.python }}
+          path: artifacts/test-results/
+          if-no-files-found: warn
