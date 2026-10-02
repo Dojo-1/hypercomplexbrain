@@ -36,7 +36,23 @@ def test_the_code_graph_is_an_order_of_magnitude_denser_than_the_evidence_graph(
     # Strict path-form matching, envelopes included. The first version matched
     # bare directory names and counted "3-manifold" and "r40_complete" as
     # references, reporting 4 edges where there are 2.
-    assert evidence["edges"] == 2
+    #
+    # Pinned as the exact SET, not a count. This test once asserted
+    # `edges == 2`: a measurement taken at one moment and frozen as if it were
+    # an invariant. Part B's raw result (de60129) legitimately added two edges
+    # -- its execution receipt records the R6M and R6N licences it ran under --
+    # and the suite went red on origin, unnoticed for six days because that
+    # commit was pushed without a full-suite run. A count says only that
+    # something changed; the set says what.
+    edges = {(round_, ref) for round_, refs in evidence["by_round"].items() for ref in refs}
+    assert edges == {
+        ("r6l_common_receiver", "r6k_equal_resource_reservoir"),
+        ("r7_source_information", "r6_unitary_price"),
+        ("r6k_w1_part_b", "r6m_parametric_equivalence"),     # added by de60129
+        ("r6k_w1_part_b", "r6n_substituted_fork"),           # added by de60129
+    }
+    assert evidence["edges"] == len(edges)
+    # The finding itself, which the new edges do not touch.
     assert graph.edges >= 100
     assert graph.edges > 20 * evidence["edges"]
 

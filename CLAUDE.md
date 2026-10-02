@@ -5,18 +5,16 @@ Read `docs/CLAUDE_CODE_CO_DEVELOPMENT.md` as the standing evidence and correctio
 **Active round: none.** R6M is reported: `EQUIVALENT_ON_SEALED_GRID`, and its
 artifact `artifacts/r6m_parametric_equivalence/equivalence.json` is the licence
 `aionq.common_receiver_parametric.build_fork` requires before it will evaluate
-any held-out Part B depth. Part B is preregistered -- `manifests/qsigma_r6k_w1_partb_input_freeze.json`
-is its input freeze, with every field that once read PENDING now filled -- and
-remains UNEXECUTED. (This file said "unpreregistered as a run" for one commit;
-that was written without reading the freeze, and was wrong.) Its pre-execution
-gate now passes 12/12: the C_pre tag is on origin at `d0650f0`. Execution was
-ATTEMPTED ONCE (`34abff5`) and failed closed before any metric -- see
-`manifests/qsigma_r6k_w1_partb_execution_attempt_1.json`. The R6M fork cannot
-store at any held-out depth, because the sealed recipe formats the store key
-with `rho:.1f`. No outcome exists. Repairing the key changes the calculation
-surface, so it needs a new preregistration, a new equivalence licence and a
-Part B amendment before any second attempt, and that attempt must cite the
-first. The next round must be preregistered before its implementation
+any held-out Part B depth. Part B EXECUTED on attempt 2 and returned
+**INVALID under K9**: the clean coordinate first passes at 0.25 and all fifteen
+noisy coordinates first pass later, at 0.30 or 0.40. Chain C_exec `e96fa24` ->
+C_raw `de60129` -> C_env `140dbe8`; result in
+`manifests/qsigma_r6k_w1_partb_crossing_finding.json`. Attempt 1 failed closed
+before any metric (`manifests/qsigma_r6k_w1_partb_execution_attempt_1.json`);
+attempt 2 built receivers through the R6N substituted fork under R6N's LICENSED
+verdict. The pre-execution preflight now correctly refuses because its outputs
+exist; its frozen test is a strict expected failure from `tests/conftest.py`,
+never edited, because it is a C_pre path. The next round must be preregistered before its implementation
 commit, and its frozen criterion exercised with `aionq.criterion.exercise`
 before it runs -- see below.
 

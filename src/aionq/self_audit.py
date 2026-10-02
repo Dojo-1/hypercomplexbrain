@@ -1617,6 +1617,40 @@ CORRECTIONS = (
         "tests/test_part_b_fork_store_key.py::test_the_pre_run_check_took_the_path_that_does_not_store",
         True,
     ),
+    Correction(
+        "R6k-W1-B",
+        "Part B's frozen preflight test asserted that the pre-execution gate "
+        "PASSES and had no branch for the state after execution, so it began "
+        "failing the moment Part B succeeded -- a guard with no account of the "
+        "state its own success produces. It could not be repaired in place: "
+        "it is one of the five C_pre paths, and editing it would have moved "
+        "the preregistration anchor off d0650f0, which is exactly the defect "
+        "a6d8b99 introduced. Marked a strict expected failure from "
+        "tests/conftest.py, outside the anchored surface, with a companion "
+        "test asserting that the refusal has exactly one cause and that every "
+        "other preregistration gate still holds, so the marker cannot conceal "
+        "a second failure the way the same test's skip once concealed an "
+        "unsatisfiable anchor",
+        "tests/test_part_b_result.py::test_every_other_preregistration_gate_still_holds_after_execution",
+        True,
+    ),
+    Correction(
+        "R6k-W1-B",
+        "Part B's raw result de60129 was pushed without a full-suite run and "
+        "turned origin red for six days. Its execution receipt records the "
+        "R6M and R6N licences it ran under -- two genuine cross-round "
+        "dependency edges -- and tests/test_dependency_closure.py had frozen "
+        "the evidence graph at `edges == 2`, a measurement from one moment "
+        "pinned as if it were an invariant. Two defects, then: a count where "
+        "the set was meant, so a legitimate change and a regression read the "
+        "same; and the run that would have shown it skipped, after CLAUDE.md "
+        "had recorded twice that a change passing its own tests can break "
+        "another module. Now pinned as the exact edge set, each new edge "
+        "named with the commit that added it. The finding the test exists for "
+        "is untouched: 143 code-graph edges against 4 evidence edges",
+        "tests/test_dependency_closure.py::test_the_code_graph_is_an_order_of_magnitude_denser_than_the_evidence_graph",
+        True,
+    ),
 )
 
 

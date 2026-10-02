@@ -1,0 +1,65 @@
+{
+  "schema": "hypercomplexbrain.finding.v1",
+  "id": "qsigma-r6k-w1-partb-crossing-finding",
+  "round": "QSigma-R6k-W1",
+  "part": "B",
+  "subject": "manifests/qsigma_r6k_w1_partb_input_freeze.json",
+  "executable_form": "tests/test_part_b_result.py::test_the_outcome_rederives_from_the_committed_map_rows_by_the_frozen_function",
+  "status": "EXECUTED. INVALID under K9. The measurement does not denote one crossing, so Part B's hypothesis is neither supported nor refuted by it.",
+
+  "verdict": "INVALID",
+  "reason": "K9: clean and noisy coordinates disagree about the crossing",
+  "decided_by": "aionq.part_b_outcome.part_b_outcome, sealed by digest in the input freeze, applied to the 160 committed map rows; a test re-derives the verdict from those rows",
+
+  "execution": {
+    "attempt": 2,
+    "previous_attempts": ["manifests/qsigma_r6k_w1_partb_execution_attempt_1.json -- failed closed before any metric on the fork's one-decimal store key"],
+    "c_pre": "d0650f02c67ac82e846120d931e1b81b6fe8dde2 (refs/tags/qsigma-r6k-w1-partb-prereg-v1, on origin)",
+    "c_exec": "e96fa243d3044aa2ef4c99377443c5524d150842",
+    "c_raw": "de60129f7520672f6391ddd69d9f68bb3082a7b0",
+    "c_env": "140dbe8f870f47aac1734e89770f741f0a588b4e",
+    "chain": "each the direct child of the last; the envelope binds the five raw outputs by digest at C_raw and verifies; independent=false",
+    "preflight_before_execution": "12/12",
+    "receivers": "the pooled map-blind projective PGM, rebuilt independently at each held-out depth through the R6N substituted fork under R6N's LICENSED verdict",
+    "command": "PYTHONPATH=src python3 experiments/run_part_b_crossing.py run",
+    "environment": "Python 3.11.15, NumPy 2.4.6, Linux x86_64; one container; no CI job and no cross-platform claim"
+  },
+
+  "what_was_measured": {
+    "clean_coordinate": {
+      "first_passing_depth": 0.25,
+      "probability_margins": {"0.15": -0.017715, "0.20": -0.007758, "0.25": 0.000400, "0.30": 0.007082, "0.40": 0.017035},
+      "information_margins": "positive at every held-out depth, +0.233 to +0.501",
+      "monotone": true
+    },
+    "noisy_coordinates": "all fifteen first pass LATER than the clean coordinate: at 0.30 or at 0.40. None agrees with 0.25; none passes earlier.",
+    "platform_sensitivity": "no cell's margin lies within 1e-12 of a sign change; the smallest absolute margin is 1.2e-4. The verdict does not depend on the last-ulp difference between this platform and the one the source matrices were frozen on."
+  },
+
+  "reading_that_does_not_change_the_verdict": {
+    "the_clean_coordinate_alone": "would place the first pass at 0.25, the bracket (0.20, 0.25), which the frozen table classifies SUPPORTING. Stated because it is a fact about the data, and because K9 was frozen precisely so that the clean coordinate could not decide alone. It did not.",
+    "the_disagreement_is_systematic": "every noisy coordinate shifts the crossing in the same direction -- later -- which is what noise that degrades discriminability predicts. It is a displacement, not scatter.",
+    "a_structural_observation_for_future_rounds": "K9 requires each noisy coordinate to agree EXACTLY with the clean first-passing grid depth. The clean margin at its first pass is +0.0004; noise at the frozen strengths moves the crossing by one or two grid steps. With an exact-agreement falsifier, a clean crossing whose first-pass margin is small relative to the noise-induced shift makes INVALID the expected outcome. Whether that is the right falsifier is a question a future round may preregister. It cannot be answered from this result, and nothing about this result may be re-read under a different K9."
+  },
+
+  "the_gate_after_execution": {
+    "fact": "the preflight now correctly refuses, because its outputs exist; refusing a second execution is the gate working.",
+    "the_frozen_test": "tests/test_part_b_preflight.py asserted the preflight PASSES and had no post-execution branch, so it began failing the moment Part B succeeded. It is a C_pre path; editing it would move the anchor off d0650f0. It is marked a STRICT expected failure from tests/conftest.py, outside the C_pre surface, and tests/test_part_b_result.py asserts the refusal has exactly one cause and that the tag, manifest, scientific-dependency and source-input gates all still hold.",
+    "why_the_freeze_has_no_result_block": "the input freeze is a C_pre path too. It carries no result and no back-pointer, deliberately; this finding is where the result lives."
+  },
+
+  "what_is_not_claimed": [
+    "not that Part B's hypothesis is supported: the clean coordinate's SUPPORTING-shaped crossing is overridden by K9 as frozen",
+    "not that it is refuted: INVALID means the measurement does not denote one crossing",
+    "not independent witnessing; not cross-platform reproduction",
+    "not that any different K9 would have given a different verdict -- no such rule was preregistered, and one derived from this data would be tuned to it"
+  ],
+
+  "typed_remainders": [
+    "[R]_k9_design: the exact-agreement falsifier's sensitivity to small clean margins is recorded, not resolved.",
+    "[R]_substitution: receivers were built by a fork executing the sealed bytes with one declared span changed.",
+    "[R]_platform: one platform; margins computed from source matrices that differ in the last ulp from the freezing platform's, with no verdict-relevant margin near zero.",
+    "[R]_witness: producer and verifier are the same development line."
+  ],
+  "result": {"observed": "INVALID (K9)", "status_after": "M"}
+}
