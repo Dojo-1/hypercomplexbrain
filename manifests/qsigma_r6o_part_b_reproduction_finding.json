@@ -1,0 +1,41 @@
+{
+ "schema": "hypercomplexbrain.finding.v1",
+ "id": "qsigma-r6o-part-b-reproduction-finding",
+ "round": "QSigma-R6O",
+ "subject": "manifests/qsigma_r6o_part_b_reproduction_preregistration.json",
+ "executable_form": "tests/test_part_b_reproduction.py::test_the_recorded_ci_run_reproduced_part_b_on_all_six_pairs",
+ "status": "measured. REPRODUCED on all six platform/Python pairs in one CI run, every job green. The prediction held, including at the named risk.",
+ "verdict": "REPRODUCED",
+ "raw_artifact": "artifacts/r6o_part_b_reproduction/reproduction.json",
+ "command": "python experiments/run_part_b_reproduction.py artifacts/test-results/part_b_reproduction-<os>-py<python>.json  (CI job part-b-reproduction, .github/workflows/ci.yml)",
+ "implementation_commit": "1c47da4",
+ "environment": "GitHub Actions run 36978480921 (run 214, attempt 1, push of 1c47da4): ubuntu-latest Linux x86_64 (Python 3.11.16, 3.12.14), windows-latest Windows Server 2025 AMD64 (Python 3.11.9, 3.12.10), macos-latest macOS 26.6.2 arm64 (Python 3.11.9, 3.12.10); NumPy 2.4.6 on Python 3.11 and 2.5.3 on Python 3.12 everywhere.",
+ "conditions": {
+  "references": "on every job: map_rows.json and crossing.json byte-identical to their blobs at C_raw de60129; the R6N licence passed verify_r6n_licence; extract_map_rows identical in source to the runner at C_exec e96fa24",
+  "decision": "on every job: the outcome dictionary equal to the committed one -- INVALID under K9, clean first pass 0.25, the same fifteen noisy first passes at 0.30 and 0.40 -- and 0 of 160 pass flags (80 cells x probability, information) differing",
+  "numbers": "on every job: 800 scientific leaves compared over 160 map rows, 0 beyond 1e-10, 0 discrete mismatches. Worst absolute difference per job between 1.69e-15 and 1.94e-15, always in a mutual_information_bits leaf; the largest, 1.94e-15, is more than four orders of magnitude inside the tolerance. The producing container reproduced bitwise (0.0); no CI runner did, which is the expected last-ulp residual and not a finding",
+  "margin": "smallest verdict-relevant margin 1.2345e-4 on every job, identical to the committed run to the digits reported -- about 6e10 times the worst numerical difference",
+  "named_risk": "the preregistration named macOS BLAS/LAPACK as the risk. The macOS runners were Apple-silicon arm64, a different architecture as well as a different library; both reproduced, with the smallest worst-differences of the six (1.69e-15)",
+  "custody": "each report was obtained by downloading the job's uploaded artifact; every zip's sha256 equals the digest GitHub recorded for that artifact; the same report is in each job log as an R6O_REPORT line"
+ },
+ "what_it_licenses": "citing Part B's INVALID-under-K9 outcome, and its 160 map rows to 1e-10, as portable across Linux x86_64, Windows AMD64 and macOS arm64 on Python 3.11 and 3.12 with NumPy 2.4.6 and 2.5.3.",
+ "what_is_not_claimed": [
+  "not independent witnessing: the producer, the workflow, the comparison and the runner selection are all this development line's",
+  "not a claim about any platform, Python, NumPy, or BLAS outside the six recorded environments",
+  "not a re-reading of Part B: the outcome is the committed INVALID under K9 and nothing here changes it",
+  "not a claim that the moving runner images will reproduce in future; each job's actual platform string is recorded"
+ ],
+ "typed_remainders": [
+  "[R]_same_lineage",
+  "[R]_runner_images",
+  "[R]_matrix_only"
+ ],
+ "remainder_notes": {
+  "[R]_matrix_only": "narrower than declared: the matrix covered two CPU architectures (x86_64 and arm64), not one family each as the preregistration assumed. It remains three operating systems, two Pythons, two NumPy versions, one run."
+ },
+ "reruns": "none. One run, six reproduction jobs, all green on attempt 1.",
+ "result": {
+  "observed": "REPRODUCED",
+  "status_after": "M"
+ }
+}

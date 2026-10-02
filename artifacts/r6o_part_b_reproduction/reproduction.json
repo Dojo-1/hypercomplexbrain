@@ -1,0 +1,559 @@
+{
+  "round": "QSigma-R6O",
+  "schema": "hypercomplexbrain.r6o_reproduction.v1",
+  "preregistration": "manifests/qsigma_r6o_part_b_reproduction_preregistration.json",
+  "preregistration_commit": "367bdedb89869500edf9689eccc10a0bd3d4ff55",
+  "implementation_commit": "1c47da433c213c2bd337c6dd27c0875c587d07ea",
+  "ci": {
+    "repository": "jesusvilela/hypercomplexbrain",
+    "workflow": ".github/workflows/ci.yml",
+    "run_id": 36978480921,
+    "run_number": 214,
+    "run_attempt": 1,
+    "event": "push",
+    "head_sha": "1c47da433c213c2bd337c6dd27c0875c587d07ea",
+    "url": "https://github.com/jesusvilela/hypercomplexbrain/actions/runs/36978480921"
+  },
+  "how_reports_were_obtained": "each job's uploaded artifact was downloaded through the GitHub Actions API; the zip's sha256 equals the digest GitHub recorded for that artifact, and the report inside is reproduced here verbatim as parsed JSON with the sha256 of its bytes. Each job log also carries the same report as an R6O_REPORT line.",
+  "jobs_expected": 6,
+  "jobs_ran": 6,
+  "jobs_green": 6,
+  "reruns": 0,
+  "verdicts": {
+    "ubuntu-latest py3.11": "REPRODUCED",
+    "ubuntu-latest py3.12": "REPRODUCED",
+    "windows-latest py3.11": "REPRODUCED",
+    "windows-latest py3.12": "REPRODUCED",
+    "macos-latest py3.11": "REPRODUCED",
+    "macos-latest py3.12": "REPRODUCED"
+  },
+  "all_reproduced": true,
+  "worst_absolute_difference_over_all_jobs": 1.942890293094024e-15,
+  "tolerance": 1e-10,
+  "local_pre_ci_run": {
+    "platform": "Linux-6.18.44-fc-v51-x86_64-with-glibc2.39",
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "verdict": "REPRODUCED",
+    "worst_absolute_difference": 0.0,
+    "note": "the producing container; not one of the six and not counted"
+  },
+  "jobs": [
+    {
+      "os": "ubuntu-latest",
+      "python": "3.11",
+      "job_name": "Part B reproduction \u00b7 ubuntu-latest \u00b7 py3.11",
+      "job_id": 110747426407,
+      "job_conclusion": "success",
+      "artifact_id": 11214646235,
+      "artifact_zip_sha256_recorded_by_github": "62de21ac96a23638582b465af12cc87ab58f4f604b98bc9daba8645a08dc4690",
+      "artifact_zip_sha256_downloaded": "62de21ac96a23638582b465af12cc87ab58f4f604b98bc9daba8645a08dc4690",
+      "report_file": "part_b_reproduction-ubuntu-latest-py3.11.json",
+      "report_sha256": "80751257a64e1e91c47f8f7a8b10e1e18c1c8e9066ba0a788a623d71e92b24ab",
+      "verdict": "REPRODUCED",
+      "report": {
+        "evidence": {
+          "computed": true,
+          "decision_identical": true,
+          "numbers_within_tolerance": true,
+          "references_verified": true
+        },
+        "flags_differing": 0,
+        "numbers": {
+          "discrete_mismatches": 0,
+          "exceeding_tolerance": 0,
+          "scientific_leaves_compared": 800,
+          "tolerance": 1e-10,
+          "worst_absolute_difference": 1.915134717478395e-15,
+          "worst_difference_path": ".map_rows[66].mutual_information_bits"
+        },
+        "outcome": {
+          "clean_first_pass": 0.25,
+          "disagreements": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "noisy_first_passes": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "outcome": "INVALID",
+          "reason": "K9: clean and noisy coordinates disagree about the crossing"
+        },
+        "platform": {
+          "machine": "x86_64",
+          "numpy": "2.4.6",
+          "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+          "python": "3.11.16",
+          "system": "Linux"
+        },
+        "references": {
+          "crossing_at_c_raw": true,
+          "extraction_is_the_one_that_ran": true,
+          "map_rows_at_c_raw": true,
+          "r6n_licence_verified": true,
+          "verified": true
+        },
+        "round": "QSigma-R6O",
+        "smallest_absolute_margin": 0.0001234517625952336,
+        "verdict": "REPRODUCED"
+      }
+    },
+    {
+      "os": "ubuntu-latest",
+      "python": "3.12",
+      "job_name": "Part B reproduction \u00b7 ubuntu-latest \u00b7 py3.12",
+      "job_id": 110747426563,
+      "job_conclusion": "success",
+      "artifact_id": 11214905529,
+      "artifact_zip_sha256_recorded_by_github": "9ff563a8ba2330a779e8ca3ceae0df71b5ba04e2d6bb16f93b651afcac524cd0",
+      "artifact_zip_sha256_downloaded": "9ff563a8ba2330a779e8ca3ceae0df71b5ba04e2d6bb16f93b651afcac524cd0",
+      "report_file": "part_b_reproduction-ubuntu-latest-py3.12.json",
+      "report_sha256": "cfa430a6363c7fb4ec66ae18582e11702615656b338c4dacc737b26233d294ea",
+      "verdict": "REPRODUCED",
+      "report": {
+        "evidence": {
+          "computed": true,
+          "decision_identical": true,
+          "numbers_within_tolerance": true,
+          "references_verified": true
+        },
+        "flags_differing": 0,
+        "numbers": {
+          "discrete_mismatches": 0,
+          "exceeding_tolerance": 0,
+          "scientific_leaves_compared": 800,
+          "tolerance": 1e-10,
+          "worst_absolute_difference": 1.887379141862766e-15,
+          "worst_difference_path": ".map_rows[66].mutual_information_bits"
+        },
+        "outcome": {
+          "clean_first_pass": 0.25,
+          "disagreements": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "noisy_first_passes": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "outcome": "INVALID",
+          "reason": "K9: clean and noisy coordinates disagree about the crossing"
+        },
+        "platform": {
+          "machine": "x86_64",
+          "numpy": "2.5.3",
+          "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+          "python": "3.12.14",
+          "system": "Linux"
+        },
+        "references": {
+          "crossing_at_c_raw": true,
+          "extraction_is_the_one_that_ran": true,
+          "map_rows_at_c_raw": true,
+          "r6n_licence_verified": true,
+          "verified": true
+        },
+        "round": "QSigma-R6O",
+        "smallest_absolute_margin": 0.00012345176259515034,
+        "verdict": "REPRODUCED"
+      }
+    },
+    {
+      "os": "windows-latest",
+      "python": "3.11",
+      "job_name": "Part B reproduction \u00b7 windows-latest \u00b7 py3.11",
+      "job_id": 110747426508,
+      "job_conclusion": "success",
+      "artifact_id": 11214895935,
+      "artifact_zip_sha256_recorded_by_github": "993c431f0c8f7db169e0c46dbf5410ef7f411aa9e5126a10289a88469041b8fa",
+      "artifact_zip_sha256_downloaded": "993c431f0c8f7db169e0c46dbf5410ef7f411aa9e5126a10289a88469041b8fa",
+      "report_file": "part_b_reproduction-windows-latest-py3.11.json",
+      "report_sha256": "635ea7eb53a4fa135fbbf8c7271a5396902d6aa676145e484f7382b9bbdeb0ef",
+      "verdict": "REPRODUCED",
+      "report": {
+        "evidence": {
+          "computed": true,
+          "decision_identical": true,
+          "numbers_within_tolerance": true,
+          "references_verified": true
+        },
+        "flags_differing": 0,
+        "numbers": {
+          "discrete_mismatches": 0,
+          "exceeding_tolerance": 0,
+          "scientific_leaves_compared": 800,
+          "tolerance": 1e-10,
+          "worst_absolute_difference": 1.8318679906315083e-15,
+          "worst_difference_path": ".map_rows[21].mutual_information_bits"
+        },
+        "outcome": {
+          "clean_first_pass": 0.25,
+          "disagreements": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "noisy_first_passes": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "outcome": "INVALID",
+          "reason": "K9: clean and noisy coordinates disagree about the crossing"
+        },
+        "platform": {
+          "machine": "AMD64",
+          "numpy": "2.4.6",
+          "platform": "Windows-10-10.0.26100-SP0",
+          "python": "3.11.9",
+          "system": "Windows"
+        },
+        "references": {
+          "crossing_at_c_raw": true,
+          "extraction_is_the_one_that_ran": true,
+          "map_rows_at_c_raw": true,
+          "r6n_licence_verified": true,
+          "verified": true
+        },
+        "round": "QSigma-R6O",
+        "smallest_absolute_margin": 0.00012345176259503932,
+        "verdict": "REPRODUCED"
+      }
+    },
+    {
+      "os": "windows-latest",
+      "python": "3.12",
+      "job_name": "Part B reproduction \u00b7 windows-latest \u00b7 py3.12",
+      "job_id": 110747426418,
+      "job_conclusion": "success",
+      "artifact_id": 11214875671,
+      "artifact_zip_sha256_recorded_by_github": "b000b60e5db167c9e7b602fec0b6c575f03e2cf55021eb6bafc393415120c4ea",
+      "artifact_zip_sha256_downloaded": "b000b60e5db167c9e7b602fec0b6c575f03e2cf55021eb6bafc393415120c4ea",
+      "report_file": "part_b_reproduction-windows-latest-py3.12.json",
+      "report_sha256": "5d25518db3448cec8939f4cb9d3c2db4ac12bde213b9b2425b2faef46310dd6c",
+      "verdict": "REPRODUCED",
+      "report": {
+        "evidence": {
+          "computed": true,
+          "decision_identical": true,
+          "numbers_within_tolerance": true,
+          "references_verified": true
+        },
+        "flags_differing": 0,
+        "numbers": {
+          "discrete_mismatches": 0,
+          "exceeding_tolerance": 0,
+          "scientific_leaves_compared": 800,
+          "tolerance": 1e-10,
+          "worst_absolute_difference": 1.942890293094024e-15,
+          "worst_difference_path": ".map_rows[66].mutual_information_bits"
+        },
+        "outcome": {
+          "clean_first_pass": 0.25,
+          "disagreements": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "noisy_first_passes": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "outcome": "INVALID",
+          "reason": "K9: clean and noisy coordinates disagree about the crossing"
+        },
+        "platform": {
+          "machine": "AMD64",
+          "numpy": "2.5.3",
+          "platform": "Windows-2025Server-10.0.26100-SP0",
+          "python": "3.12.10",
+          "system": "Windows"
+        },
+        "references": {
+          "crossing_at_c_raw": true,
+          "extraction_is_the_one_that_ran": true,
+          "map_rows_at_c_raw": true,
+          "r6n_licence_verified": true,
+          "verified": true
+        },
+        "round": "QSigma-R6O",
+        "smallest_absolute_margin": 0.0001234517625950532,
+        "verdict": "REPRODUCED"
+      }
+    },
+    {
+      "os": "macos-latest",
+      "python": "3.11",
+      "job_name": "Part B reproduction \u00b7 macos-latest \u00b7 py3.11",
+      "job_id": 110747426422,
+      "job_conclusion": "success",
+      "artifact_id": 11214216738,
+      "artifact_zip_sha256_recorded_by_github": "ccb29d3f86d979a6a8aea1a3c453e65501efd90817897fbd78f035b121d245e7",
+      "artifact_zip_sha256_downloaded": "ccb29d3f86d979a6a8aea1a3c453e65501efd90817897fbd78f035b121d245e7",
+      "report_file": "part_b_reproduction-macos-latest-py3.11.json",
+      "report_sha256": "98680af3d5195e29c3b0675f50ae52c7c35c7787e5dba8ed44f4d9abe60b3c90",
+      "verdict": "REPRODUCED",
+      "report": {
+        "evidence": {
+          "computed": true,
+          "decision_identical": true,
+          "numbers_within_tolerance": true,
+          "references_verified": true
+        },
+        "flags_differing": 0,
+        "numbers": {
+          "discrete_mismatches": 0,
+          "exceeding_tolerance": 0,
+          "scientific_leaves_compared": 800,
+          "tolerance": 1e-10,
+          "worst_absolute_difference": 1.6930901125533637e-15,
+          "worst_difference_path": ".map_rows[53].mutual_information_bits"
+        },
+        "outcome": {
+          "clean_first_pass": 0.25,
+          "disagreements": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "noisy_first_passes": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "outcome": "INVALID",
+          "reason": "K9: clean and noisy coordinates disagree about the crossing"
+        },
+        "platform": {
+          "machine": "arm64",
+          "numpy": "2.4.6",
+          "platform": "macOS-26.6.2-arm64-arm-64bit",
+          "python": "3.11.9",
+          "system": "Darwin"
+        },
+        "references": {
+          "crossing_at_c_raw": true,
+          "extraction_is_the_one_that_ran": true,
+          "map_rows_at_c_raw": true,
+          "r6n_licence_verified": true,
+          "verified": true
+        },
+        "round": "QSigma-R6O",
+        "smallest_absolute_margin": 0.00012345176259503932,
+        "verdict": "REPRODUCED"
+      }
+    },
+    {
+      "os": "macos-latest",
+      "python": "3.12",
+      "job_name": "Part B reproduction \u00b7 macos-latest \u00b7 py3.12",
+      "job_id": 110747426351,
+      "job_conclusion": "success",
+      "artifact_id": 11214237847,
+      "artifact_zip_sha256_recorded_by_github": "06cd338873ee1de8bf31cc7be3b312b14c4d6314aab9cce7f3bac118631ef37a",
+      "artifact_zip_sha256_downloaded": "06cd338873ee1de8bf31cc7be3b312b14c4d6314aab9cce7f3bac118631ef37a",
+      "report_file": "part_b_reproduction-macos-latest-py3.12.json",
+      "report_sha256": "a720ae63aa54441d50500242c413bb504f9e26b51395a215e308138c5d067bc6",
+      "verdict": "REPRODUCED",
+      "report": {
+        "evidence": {
+          "computed": true,
+          "decision_identical": true,
+          "numbers_within_tolerance": true,
+          "references_verified": true
+        },
+        "flags_differing": 0,
+        "numbers": {
+          "discrete_mismatches": 0,
+          "exceeding_tolerance": 0,
+          "scientific_leaves_compared": 800,
+          "tolerance": 1e-10,
+          "worst_absolute_difference": 1.6930901125533637e-15,
+          "worst_difference_path": ".map_rows[53].mutual_information_bits"
+        },
+        "outcome": {
+          "clean_first_pass": 0.25,
+          "disagreements": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "noisy_first_passes": {
+            "eta=0,epsilon=0.01": 0.3,
+            "eta=0,epsilon=0.03": 0.3,
+            "eta=0,epsilon=0.1": 0.4,
+            "eta=0.01,epsilon=0": 0.3,
+            "eta=0.01,epsilon=0.01": 0.3,
+            "eta=0.01,epsilon=0.03": 0.3,
+            "eta=0.01,epsilon=0.1": 0.4,
+            "eta=0.03,epsilon=0": 0.3,
+            "eta=0.03,epsilon=0.01": 0.3,
+            "eta=0.03,epsilon=0.03": 0.3,
+            "eta=0.03,epsilon=0.1": 0.4,
+            "eta=0.1,epsilon=0": 0.3,
+            "eta=0.1,epsilon=0.01": 0.4,
+            "eta=0.1,epsilon=0.03": 0.4,
+            "eta=0.1,epsilon=0.1": 0.4
+          },
+          "outcome": "INVALID",
+          "reason": "K9: clean and noisy coordinates disagree about the crossing"
+        },
+        "platform": {
+          "machine": "arm64",
+          "numpy": "2.5.3",
+          "platform": "macOS-26.6.2-arm64-arm-64bit",
+          "python": "3.12.10",
+          "system": "Darwin"
+        },
+        "references": {
+          "crossing_at_c_raw": true,
+          "extraction_is_the_one_that_ran": true,
+          "map_rows_at_c_raw": true,
+          "r6n_licence_verified": true,
+          "verified": true
+        },
+        "round": "QSigma-R6O",
+        "smallest_absolute_margin": 0.00012345176259503932,
+        "verdict": "REPRODUCED"
+      }
+    }
+  ]
+}

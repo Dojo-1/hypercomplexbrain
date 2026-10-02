@@ -64,6 +64,8 @@
 
   "stop_condition": "Stop after one CI run's six reproduction jobs have finished and their reports are recorded in artifacts/r6o_part_b_reproduction/reproduction.json.",
 
-  "result": {"observed": "not run", "status_after": "H",
-             "active_remainder": ["[R]_same_lineage", "[R]_runner_images", "[R]_matrix_only"]}
+  "result": {"observed": "REPRODUCED on all six pairs (ubuntu, windows, macos x py3.11, py3.12), CI run 36978480921, every reproduction job green on attempt 1", "status_after": "M",
+             "effect_size": "decision identical on all six (INVALID under K9, 0/160 pass flags differing); worst numerical difference 1.94e-15 over 800 scientific leaves per job against a 1e-10 tolerance; smallest verdict-relevant margin 1.2345e-4 everywhere",
+             "active_remainder": ["[R]_same_lineage", "[R]_runner_images", "[R]_matrix_only"]},
+  "reported_by": "manifests/qsigma_r6o_part_b_reproduction_finding.json"
 }

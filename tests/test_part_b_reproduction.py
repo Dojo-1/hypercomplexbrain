@@ -67,3 +67,33 @@ def test_reproduce_takes_no_knobs():
     params = inspect.signature(R.reproduce).parameters
     assert list(params) == ["root"]
     assert params["root"].default is inspect.Parameter.empty
+
+
+def test_the_recorded_ci_run_reproduced_part_b_on_all_six_pairs():
+    # The record is not the CI's word: every verdict is re-derived from its own
+    # evidence flags, every outcome is compared with the committed one, and
+    # every number is re-checked against the tolerance that was frozen.
+    import json
+
+    record = json.loads((ROOT / "artifacts/r6o_part_b_reproduction/reproduction.json")
+                        .read_text(encoding="utf-8"))
+    committed = json.loads((ROOT / "artifacts/r6k_w1_part_b/crossing.json")
+                           .read_text(encoding="utf-8"))["outcome"]
+    assert record["tolerance"] == R.TOLERANCE
+    assert record["jobs_expected"] == record["jobs_ran"] == record["jobs_green"] == 6
+    pairs = {(j["os"], j["python"]) for j in record["jobs"]}
+    assert pairs == {(o, p) for o in ("ubuntu-latest", "windows-latest", "macos-latest")
+                     for p in ("3.11", "3.12")}
+    for job in record["jobs"]:
+        report = job["report"]
+        assert job["job_conclusion"] == "success"
+        assert job["artifact_zip_sha256_downloaded"] == job["artifact_zip_sha256_recorded_by_github"]
+        assert report["references"]["verified"] is True
+        assert R.reproduction_verdict(report["evidence"]) == report["verdict"] == job["verdict"] == "REPRODUCED"
+        assert report["outcome"] == committed
+        assert report["flags_differing"] == 0
+        numbers = report["numbers"]
+        assert numbers["scientific_leaves_compared"] == 800
+        assert numbers["exceeding_tolerance"] == numbers["discrete_mismatches"] == 0
+        assert numbers["worst_absolute_difference"] <= R.TOLERANCE
+    assert record["all_reproduced"] is True

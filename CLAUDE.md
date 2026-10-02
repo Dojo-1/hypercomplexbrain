@@ -14,7 +14,11 @@ before any metric (`manifests/qsigma_r6k_w1_partb_execution_attempt_1.json`);
 attempt 2 built receivers through the R6N substituted fork under R6N's LICENSED
 verdict. The pre-execution preflight now correctly refuses because its outputs
 exist; its frozen test is a strict expected failure from `tests/conftest.py`,
-never edited, because it is a C_pre path. The next round must be preregistered before its implementation
+never edited, because it is a C_pre path. R6O is reported: Part B
+**REPRODUCED** on all six CI pairs (ubuntu/windows/macos-arm64 x py3.11/3.12),
+run 36978480921, worst difference 1.94e-15 against 1e-10; record in
+`artifacts/r6o_part_b_reproduction/reproduction.json`. The `part-b-reproduction`
+CI job re-runs it on every push. The next round must be preregistered before its implementation
 commit, and its frozen criterion exercised with `aionq.criterion.exercise`
 before it runs -- see below.
 
