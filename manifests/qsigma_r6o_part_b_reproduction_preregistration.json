@@ -1,0 +1,69 @@
+{
+  "task_id": "qsigma-r6o-part-b-reproduction",
+  "schema": "hypercomplexbrain.preregistration.v1",
+  "round": "QSigma-R6O",
+  "title": "Recompute Part B on three operating systems and two Pythons, and compare decisions and numbers separately",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_EXECUTION",
+  "date": "2026-10-02",
+  "base_commit": "8b6a0c3",
+  "committed_before_any_implementation": true,
+  "files_expected_to_change": [
+    "src/aionq/part_b_reproduction.py",
+    "tests/test_part_b_reproduction.py",
+    "experiments/run_part_b_reproduction.py",
+    ".github/workflows/ci.yml",
+    "artifacts/r6o_part_b_reproduction/reproduction.json"
+  ],
+
+  "why": {
+    "the_remainder_it_addresses": "Part B's finding carries [R]_platform: computed on one Linux container from source matrices that differ in the last ulp from the platform they were frozen on. A result on one platform is not evidence about another; CLAUDE.md rule 7 says so, and the CI file's own comment records that a Windows defect was once found by a reviewer and not by anything here.",
+    "what_existing_ci_does_not_do": "tests/test_part_b_result.py re-applies the frozen outcome function to the COMMITTED map rows. That shows the function is portable. It does not recompute anything, so it says nothing about whether the computation reproduces."
+  },
+
+  "procedure_per_platform": {
+    "references": "artifacts/r6k_w1_part_b/map_rows.json and crossing.json must be byte-identical to their blobs at C_raw de60129f7520672f6391ddd69d9f68bb3082a7b0; the R6N licence must pass verify_r6n_licence (committed digest, evidence, and the bytes being executed).",
+    "recompute": "build_substituted_fork(held-out grid, licence=R6N licence) -> plan_protocol(Part B effective protocol digest) -> execute_protocol -> the runner's extract_map_rows -> validate_map_rows -> part_b_outcome. Nothing is written under artifacts/r6k_w1_part_b/.",
+    "extraction_binding": "extract_map_rows must be the function that ran at C_exec e96fa24: its source segment is compared with the same function's source in the runner blob at that commit",
+    "compare_decision": "the outcome dictionary EXACTLY equal to the committed one (outcome, reason, clean_first_pass, noisy_first_passes, disagreements), and every one of the 80 differential cells' probability and information pass flags identical",
+    "compare_numbers": "aionq.semantic_reproduction.compare_results over the 160 map rows at 1e-10 -- R6k-W1's committed tolerance, never widened -- with discrete fields exact and no row or field on one side only"
+  },
+
+  "frozen_rule": {
+    "verdicts": {
+      "REPRODUCED": "decision identical AND numbers within tolerance",
+      "OUTCOME_ONLY": "decision identical, numbers NOT within tolerance",
+      "NOT_REPRODUCED": "the decision differs",
+      "INVALID": "a reference fails byte verification, the licence is refused, or the computation raises"
+    },
+    "why_two_layers": "a platform's linear algebra can move a number past 1e-10 without moving any pass/fail flag, or move a flag without moving many numbers. Reporting one verdict would hide which happened.",
+    "ci_gate": "a dedicated job per platform exits zero only on REPRODUCED. Its full report is printed to the job log and uploaded whatever the outcome."
+  },
+
+  "platforms": {
+    "matrix": ["ubuntu-latest", "windows-latest", "macos-latest"],
+    "pythons": ["3.11", "3.12"],
+    "claim_rule": "a platform/Python pair is claimed reproduced ONLY if its dedicated job ran and finished green. A job that did not run, was cancelled, or ran on a runner that refused to start is a gap, not a pass."
+  },
+
+  "prediction": "REPRODUCED on all six. At risk: macOS uses a different BLAS/LAPACK, and numbers may move past 1e-10 there; that would read OUTCOME_ONLY and is a result, not a defect to be tuned away.",
+
+  "kill_conditions": [
+    "the tolerance is 1e-10 and may not be widened after any job has run",
+    "no platform's verdict is re-derived, re-run selectively, or reclassified after its report is seen; a re-run of an entire run is permitted only for an infrastructure failure that never reached the reproduction step, and is recorded",
+    "nothing is written under artifacts/r6k_w1_part_b/, and Part B's committed result is not altered",
+    "OUTCOME_ONLY and NOT_REPRODUCED are reported as such"
+  ],
+
+  "evidence_ceiling": "PORTABILITY of a deterministic computation across the CI matrix. Not independent witnessing: the producer, the workflow and the comparison are all this development line's. Not a claim about any platform outside the matrix.",
+
+  "typed_remainders_declared_in_advance": [
+    "[R]_same_lineage: CI runs code this line wrote; a second party recomputing is still absent.",
+    "[R]_runner_images: 'ubuntu-latest', 'windows-latest' and 'macos-latest' are moving images; the report records each job's actual platform string and library versions.",
+    "[R]_matrix_only: three operating systems and two Pythons on one architecture family each."
+  ],
+
+  "stop_condition": "Stop after one CI run's six reproduction jobs have finished and their reports are recorded in artifacts/r6o_part_b_reproduction/reproduction.json.",
+
+  "result": {"observed": "not run", "status_after": "H",
+             "active_remainder": ["[R]_same_lineage", "[R]_runner_images", "[R]_matrix_only"]}
+}
