@@ -5,6 +5,7 @@ import R6Dilation
 import R6Frames
 import R6Remainder
 import R6MetricDefect
+import R6MetricCompatibility
 
 /-!
 The native, CI-gated AION theorem collection.

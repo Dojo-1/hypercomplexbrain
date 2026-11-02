@@ -18,4 +18,4 @@ require mathlib from git
 lean_lib AionFormal where
   -- Native sources are top-level siblings, not AionFormal.* submodules.
   -- List every root explicitly so Lake compiles them before the aggregator.
-  roots := #[`OhniumObservatory, `RecognitionChamber, `R6Compact, `R6Dilation, `R6Frames, `R6Remainder, `R6MetricDefect, `AionFormal]
+  roots := #[`OhniumObservatory, `RecognitionChamber, `R6Compact, `R6Dilation, `R6Frames, `R6Remainder, `R6MetricDefect, `R6MetricCompatibility, `AionFormal]

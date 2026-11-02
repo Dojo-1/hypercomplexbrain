@@ -76,3 +76,19 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.R6.anisotropic_zero_on_one_nonzero_input
 #print axioms AionFormal.R6.anisotropic_defect_nonzero
 #print axioms AionFormal.R6.anisotropic_opposite_axis_defects
+
+#print axioms AionFormal.R6.formPullback_add
+#print axioms AionFormal.R6.formPullback_sub
+#print axioms AionFormal.R6.formPullback_identity
+#print axioms AionFormal.R6.formPullback_zero
+#print axioms AionFormal.R6.metricDefect_commuting_square
+#print axioms AionFormal.R6.metricDefect_commuting_square_eval
+#print axioms AionFormal.R6.metricDefect_zero_of_matched_forms
+#print axioms AionFormal.R6.metricDefect_zero_iff_matched_forms
+#print axioms AionFormal.R6.pullback_zero_reflect_of_right_inverse
+#print axioms AionFormal.R6.metricDefect_zero_covariant_iff
+#print axioms AionFormal.R6.realMap_eq_of_coordinates
+#print axioms AionFormal.R6.anisotropic_inverse_certified
+#print axioms AionFormal.R6.anisotropic_reparametrized_metric
+#print axioms AionFormal.R6.anisotropic_matched_vs_unmatched_metrics
+#print axioms AionFormal.R6.singular_projection_hides_nonzero_form
