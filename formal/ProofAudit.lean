@@ -92,3 +92,19 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.R6.anisotropic_reparametrized_metric
 #print axioms AionFormal.R6.anisotropic_matched_vs_unmatched_metrics
 #print axioms AionFormal.R6.singular_projection_hides_nonzero_form
+
+#print axioms AionFormal.Heterogeneous.defect_eval
+#print axioms AionFormal.Heterogeneous.defect_symmetric
+#print axioms AionFormal.Heterogeneous.pullback_add
+#print axioms AionFormal.Heterogeneous.pullback_sub
+#print axioms AionFormal.Heterogeneous.pullback_comp
+#print axioms AionFormal.Heterogeneous.pullback_zero
+#print axioms AionFormal.Heterogeneous.zero_tendril_hides_form
+#print axioms AionFormal.Heterogeneous.rechart_defect_zero
+#print axioms AionFormal.Heterogeneous.defect_zero_iff_compatible
+#print axioms AionFormal.Heterogeneous.defect_comp
+#print axioms AionFormal.Heterogeneous.defect_middle_mismatch
+#print axioms AionFormal.Heterogeneous.defect_commuting_square
+#print axioms AionFormal.Heterogeneous.pullback_injective_of_surjective
+#print axioms AionFormal.Heterogeneous.defect_zero_under_faithful_chart_iff
+#print axioms AionFormal.Heterogeneous.two_three_four_defect_comp
