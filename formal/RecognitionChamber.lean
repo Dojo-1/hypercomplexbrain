@@ -1,12 +1,10 @@
 /-
   S4-G100 — Reversible Recognition Chamber: theorem targets.
 
-  ***THIS FILE HAS NEVER BEEN COMPILED.***
-
-  No Lean, `lake` or `elan` exists on PATH in the environment where it was
-  written, and this repository carries no toolchain pin.  Every statement below
-  is a *target*.  None is a verification, and nothing elsewhere in the repository
-  claims Lean verification for any S4 result.  See formal/README.md.
+  Native formalization, now included in the pinned AION Lake build.
+  Previously this file had no successful build and its P4 target contained
+  an admitted proof. This revision closes that obligation but makes no
+  claim of kernel verification until the dedicated Lean CI succeeds.
 
   Five targets.  P1 and P2 are definitional and are included because a
   formalisation surface that omits its trivial obligations is not a surface.  P3
@@ -15,8 +13,7 @@
   that the deposit gate already enforces before any numeric threshold is read.
 -/
 
-import Mathlib.Topology.MetricSpace.Pseudo.Defs
-import Mathlib.Order.Basic
+import Mathlib
 
 namespace RecognitionChamber
 
@@ -28,7 +25,7 @@ structure TransportPair (X Y : Type*) where
   forward  : X → Y
   backward : Y → X
 
-variable {X Y : Type*} [PseudoMetricSpace X]
+variable {X Y : Type*}
 
 /-- `[R]_loop (x; T, D) = D_X (x, T.backward (T.forward x))`.
 
@@ -36,14 +33,14 @@ variable {X Y : Type*} [PseudoMetricSpace X]
     semantic incompleteness remainder, and not a scalar obstruction constant.
     The Python side carries this distinction in the type system
     (`aionq.recognition.types.TypedRemainder`); here it is carried by the name. -/
-def loopDefect (T : TransportPair X Y) (x : X) : ℝ :=
+def loopDefect [PseudoMetricSpace X] (T : TransportPair X Y) (x : X) : ℝ :=
   dist x (T.backward (T.forward x))
 
 /-! ## P1 — nonnegativity -/
 
 /-- The defect is nonnegative for any pseudo-metric.  Immediate, and stated so
     that no implementation can return a negative "distance" unchallenged. -/
-theorem loopDefect_nonneg (T : TransportPair X Y) (x : X) :
+theorem loopDefect_nonneg [PseudoMetricSpace X] (T : TransportPair X Y) (x : X) :
     0 ≤ loopDefect T x :=
   dist_nonneg
 
@@ -52,7 +49,7 @@ theorem loopDefect_nonneg (T : TransportPair X Y) (x : X) :
 /-- Zero, not merely small.  The numerical counterpart returns `0.0` at machine
     precision for identity transport, an exact permutation inverse, and an
     orthogonal gauge round trip. -/
-theorem loopDefect_eq_zero_of_leftInverse
+theorem loopDefect_eq_zero_of_leftInverse [PseudoMetricSpace X]
     (T : TransportPair X Y) (x : X) (h : T.backward (T.forward x) = x) :
     loopDefect T x = 0 := by
   unfold loopDefect
@@ -89,7 +86,7 @@ def conjugate (T : TransportPair X Y) (g : X → X) (g_inv : X → X) :
     pair.  The measured instability under relabelling is therefore not a
     counterexample to this theorem — and no theorem in this file covers basis
     change.  That is the smallest open bridge S4-G100 leaves behind. -/
-theorem loopDefect_conjugate_of_isometry
+theorem loopDefect_conjugate_of_isometry [PseudoMetricSpace X]
     (T : TransportPair X Y) (g g_inv : X → X)
     (hg : ∀ a b : X, dist (g a) (g b) = dist a b)
     (hinv : ∀ a : X, g_inv (g a) = a) (x : X) :
@@ -121,9 +118,15 @@ theorem level_eq (cap ρ d : ℝ) (n : ℕ) :
     physical brain.  Its architectural content is only this: an invariant carrier
     must be funded out of steady income, never out of buffer. -/
 theorem finite_depletion_of_draw_gt_refill
-    (cap ρ d : ℝ) (hcap : 0 ≤ cap) (h : ρ < d) :
+    (cap ρ d : ℝ) (_hcap : 0 ≤ cap) (h : ρ < d) :
     ∃ n : ℕ, level cap ρ d n ≤ 0 := by
-  sorry -- Archimedean: choose n ≥ cap / (d - ρ); see formal/README.md
+  have hpos : 0 < d - ρ := sub_pos.mpr h
+  obtain ⟨n, hn⟩ := exists_nat_gt (cap / (d - ρ))
+  refine ⟨n, ?_⟩
+  rw [level_eq]
+  have hbudget : cap < (n : ℝ) * (d - ρ) := by
+    exact (div_lt_iff₀ hpos).mp hn
+  nlinarith
 
 /-! ## P5 — no self-promotion -/
 

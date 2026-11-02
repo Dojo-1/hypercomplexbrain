@@ -1,0 +1,49 @@
+name: Lean native proof gate
+
+on:
+  push:
+    paths:
+      - "formal/**"
+      - ".github/workflows/lean.yml"
+  pull_request:
+    paths:
+      - "formal/**"
+      - ".github/workflows/lean.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-lean:
+    name: Pinned Lean · native AION only
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the exact native theorem collection
+        uses: leanprover/lean-action@fe408643ea7367d8c0404a8be3975bb145f5fb64 # v1
+        with:
+          lake-package-directory: formal
+          auto-config: false
+          build: true
+          use-mathlib-cache: true
+
+      - name: Inspect exported proof axioms and refuse admits
+        working-directory: formal
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean ProofAudit.lean 2>&1 | tee "$RUNNER_TEMP/aion-lean-axioms.log"
+          if grep -E '(sorryAx|Lean\.ofReduceBool)' "$RUNNER_TEMP/aion-lean-axioms.log"; then
+            echo "::error::Native Lean proof depends on an admitted or opaque shortcut."
+            exit 1
+          fi
+
+      - name: Verify no vendored Lean file entered the native imports
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -E '^import (VDIS|LambdaSatSolver|leanmath|LeanMath)' formal/AionFormal.lean; then
+            echo "::error::Native theorem library imported unverified historical material."
+            exit 1
+          fi

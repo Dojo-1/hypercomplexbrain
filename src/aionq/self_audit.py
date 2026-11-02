@@ -963,7 +963,7 @@ CORRECTIONS = (
         "the claim was carried forward across sessions unchecked; in this "
         "container only elan was present and no lean binary existed on PATH at "
         "all. An environment claim written on one machine does not travel",
-        "tests/test_leanmath_vendor.py::test_the_formal_readme_no_longer_claims_a_toolchain_on_path",
+        "tests/test_leanmath_vendor.py::test_native_lean_project_is_pinned_and_vendor_is_separate",
         True,
     ),
     Correction(

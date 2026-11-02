@@ -1,72 +1,64 @@
-# Formalisation surfaces
+# Formalization: what is actually checked
 
-## Status at 2026-07-30: **MIXED**
+The public AION repository has two **distinct** formalization surfaces. Do not
+merge their evidence levels.
 
-This checkout tracks two Lean files of its own, plus a vendored archive that is
-not evidence and is documented separately in
-[`LEANMATH_PROVENANCE.md`](LEANMATH_PROVENANCE.md):
+## Native AION proof target
 
-| file | dependency surface | observed command | current result |
-|---|---|---|---|
-| `OhniumObservatory.lean` | Lean core/prelude only | `lean formal/OhniumObservatory.lean` | **accepted**, exit `0`, under local unpinned Lean `4.32.2` |
-| `RecognitionChamber.lean` | Mathlib | `lean formal/RecognitionChamber.lean` | **not compiled**, exit `1`: `unknown module prefix 'Mathlib'` |
-| `leanmath/` (11 files, imported) | Mathlib **and** 13 modules that are not in the archive | see `LEANMATH_PROVENANCE.md` | **not built and not buildable**; 9 of 11 lex, 2 do not parse at all |
+`formal/` now has its own Lake project; the **pinned toolchain** is Lean
+`v4.27.0`, with Mathlib specified by Git commit
+`a3a10db0e9d66acbebf76c5e6a135066525ac900` (Mathlib `v4.27.0`).
+The [dedicated workflow](../.github/workflows/lean.yml) builds the import
+closure, prints the exported proofs' axioms, and fails on admitted proofs. This
+workflow, **not** Python's green CI, determines the formal build status.
+Its most recent run must be checked before claiming kernel verification.
+Until that run is green, treat this as an *attempted hardening patch*, not a
+proof certificate.
 
-**Correction, 2026-08-05.** The sentence above this table used to read "`lean`,
-`lake` and `elan` are present on `PATH`". In this container only `elan` was
-present, with an empty `toolchains/` directory, so nothing could run at all —
-the claim described a different machine and had been carried forward unchecked.
-The pinned toolchain `leanprover/lean4:v4.32.0-rc1` has since been installed
-here (commit `b4812ae`) and used to lex the vendored archive; it is *not* on
-`PATH` by default and lives at `~/.elan/bin/lean`. The repository still has no
-`lean-toolchain`, `lakefile.lean`, `lakefile.toml` or `lake-manifest.json` **of
-its own**, so the successful Ohnium check is a direct local kernel check, not a
-pinned reproducible project build. (`formal/leanmath/lakefile.toml` and
-`formal/leanmath/lean-toolchain` belong to the imported archive and configure a
-package named `leanmath` that is not this repository's.)
-
-`RecognitionChamber.lean` has not been checked successfully. It also contains
-a `sorry` in the finite-depletion target, so merely resolving Mathlib would not
-make it a closed proof artifact. The three P-tagged S4 claims
-(`MATH-S4-LOOP_ZERO`, `MATH-S4-GAUGE_INVARIANCE`, `MODEL-S4-BORDON_CEILING`)
-continue to rest on exact numerical checks in `tests/test_s4_g100.py` and their
-stated mathematical assumptions; they must not be cited as Lean-verified.
-
-To make the Recognition surface reproducible, add a pinned Lean/Mathlib project,
-close all admitted obligations, run `lake build`, and bind the result to a
-`ProofEnvelope`.
-
-## Ohnium scope
-
-The accepted Ohnium file proves only a three-step A/U/M cadence, the exact
-cardinalities `40` and `7 + 21 = 28`, and a conjunction whose return/accounting
-properties are explicit hypotheses. It does not formalize the Hopf map, QFI,
-adiabatic or quantum dynamics, cognition, or a physical observatory.
-
-## RecognitionChamber theorem targets
-
-| target | statement | status |
+| Native file | Claimed scope, conditional on successful Lean build | Excluded interpretation |
 |---|---|---|
-| **P1** | `0 ≤ loopDefect T x` for any pseudo-metric | trivial from `dist_nonneg`; exercised by 200 seeded random transports |
-| **P2** | `T.backward (T.forward x) = x → loopDefect T x = 0` | trivial from `dist_self`; exercised by identity, exact permutation inverse, orthogonal gauge round trip — all return `0.0` exactly, not approximately |
-| **P3** | `loopDefect (conj G T) (G x) = loopDefect T x` for isometric `G` | the one with content; verified numerically to `1e-12` on a *deliberately lossy* probe, and the chamber's output is bit-identical under an orthogonal gauge change |
-| **P4** | `d > ρ → ∃ t, level t ≤ 0` for constant refill and draw | model target; the current source contains `sorry`, so this obligation is open |
-| **P5** | authorising nodes inside the generating dependency closure cannot promote | enforced in `nest.py` *before* any numeric gate is consulted |
+| [`OhniumObservatory.lean`](OhniumObservatory.lean) | 3-cycle A/U/M, exact list counts, conditional round-trip/accounting conjunction | Quantum observatory, quantum hardware, QFI, cognition |
+| [`RecognitionChamber.lean`](RecognitionChamber.lean) | Round-trip metric defect under an isometry, discrete reservoir depletion in the constant-rate model, formal authorization restriction | Worldlet-cycle basis invariance, neurobiological respiration, independent review |
+| [`R6Compact.lean`](R6Compact.lean) | Nonzero real Cartan radial stretch does not preserve squared Euclidean norm on every pair | Full `SL(2,R)`/quantum-gate representation theory, postselection cost, quantum advantage |
 
-### What is deliberately not attempted
+To reproduce on a machine with Git, `elan`, and Lean's required build tools:
 
-No target here asserts intelligence, usefulness of a nonzero order defect,
-optimality of an aperture, consciousness, or general cognitive superiority. P4 is
-a statement **inside the constant-rate reservoir model** and is not a claim about
-respiration, cognition or any physical brain. P3 is the only target whose failure
-would change a reported number; P1 and P2 are definitional and are listed because
-a formalisation surface that omits its trivial obligations is not a surface.
+```bash
+cd formal
+lake exe cache get
+lake build
+lake env lean ProofAudit.lean
+```
 
-### The gap this leaves
+Do not cite formal declarations solely because their names sound like the
+architectural claim. Each is limited by its *actual type*, hypotheses and
+carrier. The [audit entry point](ProofAudit.lean) makes those exact declarations
+reviewable. Imported axioms and trusted kernel primitives must be distinguished
+from new postulates. A Lean kernel proof does not certify its interpretation.
 
-P3 as stated quantifies over isometries of the *carrier*. The chamber's measured
-instability under worldlet relabelling (0.285 worst-case AUROC shift) is **not** a
-counterexample to P3: relabelling is not an isometry of the carrier, it is a
-change of the fundamental cycle basis, which changes the transport pair itself
-rather than conjugating it. Stating P3 does not close that gap, and no theorem
-here covers basis change. That is the smallest open bridge left by this round.
+## Imported historical LeanMath material (quarantined)
+
+[`leanmath/`](leanmath/) contains 11 imported Lean files, not imported by the
+native `AionFormal` library. Its dependencies were incomplete at import time:
+13 modules absent, two files with unterminated comments, and one live `sorry`.
+A `lakefile.toml` inside `leanmath/` is **not** a build definition for AION's
+native proof target.
+
+See [`LEANMATH_PROVENANCE.md`](LEANMATH_PROVENANCE.md) for the byte-based census
+and [`leanmath/README.md`](leanmath/README.md) for the original, *unverified*
+historical claims. The original import remains preserved; making native Lean
+green does not promote any LeanMath declaration.
+
+Before promoting historical material: reconstruct its original dependency tree,
+fix parse failures *upstream*, pin an exact toolchain and complete Mathlib
+closure, remove all admits, build the entire intended module, and check the
+formal statements for fidelity to the intended mathematical claims.
+
+## Remaining substantive open bridge
+
+R6Compact addresses only the **diagonal real source obstruction**.
+A future separately preregistered formalization should define a bona fide
+matrix/operator representation, prove the full compact-vs-noncompact statement
+under explicit hypotheses, and connect any dilation/postselection bound to the
+precise implemented map. Hardware and cognitive advantage require additional
+empirical controls and cannot be promoted by these theorems alone.
