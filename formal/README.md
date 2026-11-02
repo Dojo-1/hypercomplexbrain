@@ -23,6 +23,7 @@ proof certificate.
 | [`R6Dilation.lean`](R6Dilation.lean) | Explicit finite real norm-preserving dilation of the operator-norm-normalized boost; sharp state-dependent `e^(-4ρ)` block-selection weight | Universal quantum lower bounds, QPU deployment, multi-step costs, cognitive advantage |
 | [`R6Frames.lean`](R6Frames.lean) | Covariance and sharp success bounds under linear norm-preserving input/output frame changes, with a noncompact-boost exclusion | Arbitrary non-orthogonal transports, an adiabatic theorem, universal resource necessity |
 | [`R6Remainder.lean`](R6Remainder.lean) | Signed real squared-norm transport remainder, cocycle with intermediate state, frame covariance, closed-boost-loop counterexample | Physical energy, semantic loss, universal quantum cost, or Worldlet gluing |
+| [`R6MetricDefect.lean`](R6MetricDefect.lean) | Symmetric 2D quadratic-form pullback defects, tensor-level composition/mismatch accounting, and a zero-scalar/nonzero-form counterexample | Positive definiteness in arbitrary cases, heterogeneous Worldlet metrics, universal quantum or cognitive cost |
 
 To reproduce on a machine with Git, `elan`, and Lean's required build tools:
 
@@ -47,6 +48,9 @@ condition, exact endpoints, and the non-isometric negative control.
 
 The [signed-remainder guide](R6_REMAINDER_GUIDE.md) explains why a closed
 route does not certify that each intermediate transport was isometric.
+
+The [metric-pullback guide](R6_METRIC_DEFECT_GUIDE.md) distinguishes an
+anisotropic geometric observation from a one-state scalar remainder.
 
 ## Imported historical LeanMath material (quarantined)
 

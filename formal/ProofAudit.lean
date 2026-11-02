@@ -61,3 +61,18 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.R6.boost_contracting_axis_negative
 #print axioms AionFormal.R6.boost_reverse_roundtrip
 #print axioms AionFormal.R6.closed_boost_loop_hides_local_expansion
+
+#print axioms AionFormal.R6.symForm_eq_of_coordinates
+#print axioms AionFormal.R6.formAdd_eval
+#print axioms AionFormal.R6.formSub_eval
+#print axioms AionFormal.R6.formPullback_eval
+#print axioms AionFormal.R6.metricPullbackDefect_eval
+#print axioms AionFormal.R6.mapApply_comp
+#print axioms AionFormal.R6.formPullback_comp
+#print axioms AionFormal.R6.metricPullbackDefect_comp
+#print axioms AionFormal.R6.metricPullbackDefect_middle_mismatch
+#print axioms AionFormal.R6.metricPullbackDefect_identity
+#print axioms AionFormal.R6.euclideanDefect_agrees_normChange
+#print axioms AionFormal.R6.anisotropic_zero_on_one_nonzero_input
+#print axioms AionFormal.R6.anisotropic_defect_nonzero
+#print axioms AionFormal.R6.anisotropic_opposite_axis_defects
