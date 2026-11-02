@@ -20,3 +20,13 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.R6.radial_stretch_sq_eq_one_iff_zero
 #print axioms AionFormal.R6.boost_preserves_sqNorm_iff_zero
 #print axioms AionFormal.R6.boost_nonzero_not_isometric
+
+#print axioms AionFormal.R6.filter_eq_scaled_boost
+#print axioms AionFormal.R6.dilation_preserves_combined_sqNorm
+#print axioms AionFormal.R6.dilation_zero_ancilla_block
+#print axioms AionFormal.R6.filter_weight_bounds
+#print axioms AionFormal.R6.filter_contracting_axis_weight
+#print axioms AionFormal.R6.filter_uncontracted_axis_weight
+#print axioms AionFormal.R6.contraction_sq_eq_exp
+#print axioms AionFormal.R6.filter_weight_bounds_exp
+#print axioms AionFormal.R6.filter_zero_depth

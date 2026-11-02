@@ -20,6 +20,7 @@ proof certificate.
 | [`OhniumObservatory.lean`](OhniumObservatory.lean) | 3-cycle A/U/M, exact list counts, conditional round-trip/accounting conjunction | Quantum observatory, quantum hardware, QFI, cognition |
 | [`RecognitionChamber.lean`](RecognitionChamber.lean) | Round-trip metric defect under an isometry, discrete reservoir depletion in the constant-rate model, formal authorization restriction | Worldlet-cycle basis invariance, neurobiological respiration, independent review |
 | [`R6Compact.lean`](R6Compact.lean) | Nonzero real Cartan radial stretch does not preserve squared Euclidean norm on every pair | Full `SL(2,R)`/quantum-gate representation theory, postselection cost, quantum advantage |
+| [`R6Dilation.lean`](R6Dilation.lean) | Explicit finite real norm-preserving dilation of the operator-norm-normalized boost; sharp state-dependent `e^(-4ρ)` block-selection weight | Universal quantum lower bounds, QPU deployment, multi-step costs, cognitive advantage |
 
 To reproduce on a machine with Git, `elan`, and Lean's required build tools:
 
@@ -35,6 +36,9 @@ architectural claim. Each is limited by its *actual type*, hypotheses and
 carrier. The [audit entry point](ProofAudit.lean) makes those exact declarations
 reviewable. Imported axioms and trusted kernel primitives must be distinguished
 from new postulates. A Lean kernel proof does not certify its interpretation.
+
+For an illustrated conceptual explanation and explicit exclusions, see the
+[human guide to the R6 dilation](R6_DILATION_GUIDE.md).
 
 ## Imported historical LeanMath material (quarantined)
 
@@ -56,7 +60,9 @@ formal statements for fidelity to the intended mathematical claims.
 
 ## Remaining substantive open bridge
 
-R6Compact addresses only the **diagonal real source obstruction**.
+R6Compact addresses the **diagonal real source obstruction**; R6Dilation
+constructs one exact, state-dependent normalized encoding. Neither proves
+a universal lower bound across all encodings.
 A future separately preregistered formalization should define a bona fide
 matrix/operator representation, prove the full compact-vs-noncompact statement
 under explicit hypotheses, and connect any dilation/postselection bound to the
