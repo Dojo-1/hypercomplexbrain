@@ -129,7 +129,11 @@ theorem defect_zero_iff_compatible {ι κ : Type*}
     defect X Y T = 0 ↔ pullback T Y.form = X.form := by
   change pullback T Y.form - X.form = (0 : LocalForm ι) ↔
     pullback T Y.form = X.form
-  exact sub_eq_zero
+  constructor
+  · intro h
+    exact sub_eq_zero.mp h
+  · intro h
+    exact sub_eq_zero.mpr h
 
 /-- Three Worldlets can have distinct carrier types and dimensions.
 The second defect must be pulled back through the first tendril. -/
@@ -140,7 +144,7 @@ theorem defect_comp {ι κ ξ : Type*}
       defect X Y T + pullback T (defect Y Z S) := by
   apply LinearMap.BilinForm.ext
   intro u v
-  simp [defect, pullback] <;> ring
+  simp [defect, pullback]
 
 /-- A disagreement about the intermediate Worldlet metric produces
 an explicit form-valued remainder in the original source carrier. -/
@@ -152,7 +156,7 @@ theorem defect_middle_mismatch {ι κ ξ : Type*}
         pullback T (Yin.form - Yout.form) := by
   apply LinearMap.BilinForm.ext
   intro u v
-  simp [defect, pullback] <;> ring
+  simp [defect, pullback]; ring
 
 /-- A commuting square with transported source and target forms preserves
 the *entire* typed defect, not merely one scalar evaluation. -/
