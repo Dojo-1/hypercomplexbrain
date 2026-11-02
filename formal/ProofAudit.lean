@@ -21,6 +21,10 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.R6.boost_preserves_sqNorm_iff_zero
 #print axioms AionFormal.R6.boost_nonzero_not_isometric
 
+#print axioms AionFormal.R6.contraction_pos
+#print axioms AionFormal.R6.contraction_le_one
+#print axioms AionFormal.R6.contraction_sq_le_one
+#print axioms AionFormal.R6.leakage_sq_add_contraction_sq
 #print axioms AionFormal.R6.filter_eq_scaled_boost
 #print axioms AionFormal.R6.dilation_preserves_combined_sqNorm
 #print axioms AionFormal.R6.dilation_zero_ancilla_block

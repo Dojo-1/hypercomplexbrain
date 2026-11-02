@@ -1,7 +1,10 @@
 name: Lean native proof gate
 
 on:
+  # Feature branches are checked through their PR, not again on push.
+  # The default branch still runs this pinned proof gate after merging.
   push:
+    branches: ["claude/aion-brain-architecture-27f8ji"]
     paths:
       - "formal/**"
       - ".github/workflows/lean.yml"
