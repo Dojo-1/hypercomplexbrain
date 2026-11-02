@@ -1,17 +1,10 @@
 <div align="center">
-
-# HypercomplexBrain
-
-**AION-Ω^Q · QΣ**
-
-### What survives when the representation changes?
-
-*A research workshop for geometry, quantum information, artificial intelligence, and the things that do not fit neatly into one representation.*
-
-**Research conception & direction: [Jesús Vilela Jato](https://github.com/jesusvilela) · [Dojo-1](https://github.com/Dojo-1)**
-
-[Explore the mathematics](formal/README.md) · [Read the field guide](docs/HB0_POLYCOSMIC_KERNEL.md) · [See the evidence](docs/ARCHITECTURE.md) · [License: CC BY 4.0](LICENSE)
-
+  <h1>HypercomplexBrain</h1>
+  <p><strong>AION-Ω<sup>Q</sup> · QΣ</strong></p>
+  <p><strong>What survives when the representation changes?</strong></p>
+  <p><em>A research workshop for geometry, quantum information, artificial intelligence, and the things that do not fit neatly into one representation.</em></p>
+  <p><strong>Research conception and direction:</strong> <a href="https://github.com/jesusvilela">Jesús Vilela Jato</a> · <a href="https://github.com/Dojo-1">Dojo-1</a></p>
+  <p><a href="formal/README.md">Mathematics</a> · <a href="docs/HB0_POLYCOSMIC_KERNEL.md">Field guide</a> · <a href="docs/ARCHITECTURE.md">Evidence</a> · <a href="LICENSE">CC BY 4.0</a></p>
 </div>
 
 > **A laboratory, not a finished artificial brain.** Here, “brain”, “identity”, “memory” and “recognition” describe mathematical and software models. They do not establish consciousness, human-like cognition, AGI, biological fidelity, quantum hardware use, or quantum advantage.
@@ -30,9 +23,9 @@ We do not assume that a prettier geometry supplies a more capable intelligence. 
 
 Consider a two-dimensional map that **doubles the first coordinate and halves the second**:
 
-\[
+$$
 T=\begin{pmatrix}2&0\\0&1/2\end{pmatrix}.
-\]
+$$
 
 Start from \(v=(1,2)\). Its squared length is \(1^2+2^2=5\). After transport, \(Tv=(2,1)\), whose squared length is *also* \(5\).
 
@@ -40,10 +33,10 @@ One measurement declares a perfect return: **no change detected**. And yet one d
 
 The fuller geometric record is
 
-\[
+$$
 D_T=T^\mathsf{T}T-I
 =\begin{pmatrix}3&0\\0&-3/4\end{pmatrix}\ne0.
-\]
+$$
 
 There is no contradiction. The scalar was true of *that one input*; it was simply not the whole story.
 
