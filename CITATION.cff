@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this research, please cite the repository and the exact theorem, experiment, or commit on which your claim relies."
+type: software
+title: "HypercomplexBrain — AION-Ω^Q · QΣ"
+authors:
+  - family-names: "Vilela Jato"
+    given-names: "Jesús"
+    affiliation: "Dojo-1"
+    website: "https://github.com/jesusvilela"
+abstract: >-
+  An open, AI-assisted research laboratory for typed geometric transport,
+  quantum-information simulations, hypercomplex architectures, and
+  provenance-preserving formal and experimental evidence.
+repository-code: "https://github.com/Dojo-1/hypercomplexbrain"
+url: "https://github.com/Dojo-1/hypercomplexbrain"
+license: "CC-BY-4.0"
