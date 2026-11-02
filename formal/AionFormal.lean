@@ -2,6 +2,7 @@ import OhniumObservatory
 import RecognitionChamber
 import R6Compact
 import R6Dilation
+import R6Frames
 
 /-!
 The native, CI-gated AION theorem collection.
