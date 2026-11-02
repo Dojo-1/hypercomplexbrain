@@ -45,3 +45,19 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.R6.frameFilter_joint_change_sqNorm
 #print axioms AionFormal.R6.frameFilter_identity
 #print axioms AionFormal.R6.nonzero_boost_is_not_an_orthogonal_frame
+
+#print axioms AionFormal.R6.normChange_split
+#print axioms AionFormal.R6.expansionPart_nonneg
+#print axioms AionFormal.R6.contractionPart_nonneg
+#print axioms AionFormal.R6.one_signed_part_is_zero
+#print axioms AionFormal.R6.normChange_comp
+#print axioms AionFormal.R6.normChange_zero_of_roundtrip
+#print axioms AionFormal.R6.normChange_orthogonalFrame
+#print axioms AionFormal.R6.normChange_reframeTransport
+#print axioms AionFormal.R6.signed_parts_reframeTransport
+#print axioms AionFormal.R6.normChange_filter_nonpos
+#print axioms AionFormal.R6.expansionPart_filter_zero
+#print axioms AionFormal.R6.boost_expanding_axis_positive
+#print axioms AionFormal.R6.boost_contracting_axis_negative
+#print axioms AionFormal.R6.boost_reverse_roundtrip
+#print axioms AionFormal.R6.closed_boost_loop_hides_local_expansion
