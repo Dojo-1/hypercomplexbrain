@@ -25,7 +25,7 @@ structure TransportPair (X Y : Type*) where
   forward  : X → Y
   backward : Y → X
 
-variable {X Y : Type*} [PseudoMetricSpace X]
+variable {X Y : Type*}
 
 /-- `[R]_loop (x; T, D) = D_X (x, T.backward (T.forward x))`.
 
@@ -33,14 +33,14 @@ variable {X Y : Type*} [PseudoMetricSpace X]
     semantic incompleteness remainder, and not a scalar obstruction constant.
     The Python side carries this distinction in the type system
     (`aionq.recognition.types.TypedRemainder`); here it is carried by the name. -/
-def loopDefect (T : TransportPair X Y) (x : X) : ℝ :=
+def loopDefect [PseudoMetricSpace X] (T : TransportPair X Y) (x : X) : ℝ :=
   dist x (T.backward (T.forward x))
 
 /-! ## P1 — nonnegativity -/
 
 /-- The defect is nonnegative for any pseudo-metric.  Immediate, and stated so
     that no implementation can return a negative "distance" unchallenged. -/
-theorem loopDefect_nonneg (T : TransportPair X Y) (x : X) :
+theorem loopDefect_nonneg [PseudoMetricSpace X] (T : TransportPair X Y) (x : X) :
     0 ≤ loopDefect T x :=
   dist_nonneg
 
@@ -49,7 +49,7 @@ theorem loopDefect_nonneg (T : TransportPair X Y) (x : X) :
 /-- Zero, not merely small.  The numerical counterpart returns `0.0` at machine
     precision for identity transport, an exact permutation inverse, and an
     orthogonal gauge round trip. -/
-theorem loopDefect_eq_zero_of_leftInverse
+theorem loopDefect_eq_zero_of_leftInverse [PseudoMetricSpace X]
     (T : TransportPair X Y) (x : X) (h : T.backward (T.forward x) = x) :
     loopDefect T x = 0 := by
   unfold loopDefect
@@ -86,7 +86,7 @@ def conjugate (T : TransportPair X Y) (g : X → X) (g_inv : X → X) :
     pair.  The measured instability under relabelling is therefore not a
     counterexample to this theorem — and no theorem in this file covers basis
     change.  That is the smallest open bridge S4-G100 leaves behind. -/
-theorem loopDefect_conjugate_of_isometry
+theorem loopDefect_conjugate_of_isometry [PseudoMetricSpace X]
     (T : TransportPair X Y) (g g_inv : X → X)
     (hg : ∀ a b : X, dist (g a) (g b) = dist a b)
     (hinv : ∀ a : X, g_inv (g a) = a) (x : X) :
@@ -126,7 +126,7 @@ theorem finite_depletion_of_draw_gt_refill
   rw [level_eq]
   have hbudget : cap < (n : ℝ) * (d - ρ) := by
     exact (div_lt_iff₀ hpos).mp hn
-  nlinarith
+  nlinarith [hcap]
 
 /-! ## P5 — no self-promotion -/
 

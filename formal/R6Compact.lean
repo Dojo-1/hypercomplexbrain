@@ -19,7 +19,7 @@ def sqNorm (v : ℝ × ℝ) : ℝ := v.1 ^ 2 + v.2 ^ 2
 
 /-- The diagonal, determinant-one Cartan boost
     `diag(exp ρ, exp (-ρ))`, as its action on a pair. -/
-def boost (ρ : ℝ) (v : ℝ × ℝ) : ℝ × ℝ :=
+noncomputable def boost (ρ : ℝ) (v : ℝ × ℝ) : ℝ × ℝ :=
   (Real.exp ρ * v.1, Real.exp (-ρ) * v.2)
 
 /-- A positive stretch with squared stretch factor one has zero radial depth. -/
