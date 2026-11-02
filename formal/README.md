@@ -22,6 +22,7 @@ proof certificate.
 | [`R6Compact.lean`](R6Compact.lean) | Nonzero real Cartan radial stretch does not preserve squared Euclidean norm on every pair | Full `SL(2,R)`/quantum-gate representation theory, postselection cost, quantum advantage |
 | [`R6Dilation.lean`](R6Dilation.lean) | Explicit finite real norm-preserving dilation of the operator-norm-normalized boost; sharp state-dependent `e^(-4ρ)` block-selection weight | Universal quantum lower bounds, QPU deployment, multi-step costs, cognitive advantage |
 | [`R6Frames.lean`](R6Frames.lean) | Covariance and sharp success bounds under linear norm-preserving input/output frame changes, with a noncompact-boost exclusion | Arbitrary non-orthogonal transports, an adiabatic theorem, universal resource necessity |
+| [`R6Remainder.lean`](R6Remainder.lean) | Signed real squared-norm transport remainder, cocycle with intermediate state, frame covariance, closed-boost-loop counterexample | Physical energy, semantic loss, universal quantum cost, or Worldlet gluing |
 
 To reproduce on a machine with Git, `elan`, and Lean's required build tools:
 
@@ -43,6 +44,9 @@ For an illustrated conceptual explanation and explicit exclusions, see the
 
 The [moving-frame companion](R6_FRAMES_GUIDE.md) explains the joint-change
 condition, exact endpoints, and the non-isometric negative control.
+
+The [signed-remainder guide](R6_REMAINDER_GUIDE.md) explains why a closed
+route does not certify that each intermediate transport was isometric.
 
 ## Imported historical LeanMath material (quarantined)
 
