@@ -1,8 +1,10 @@
 name: CI
 
 on:
+  # Run for a PR once, and on the default branch after merging. Branch pushes
+  # with an open PR otherwise launch the same 12-job matrix twice.
   push:
-    branches: ["**"]
+    branches: ["claude/aion-brain-architecture-27f8ji"]
   pull_request:
   workflow_dispatch:
 
