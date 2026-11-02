@@ -1,3 +1,7 @@
+import OhniumObservatory
+import RecognitionChamber
+import R6Compact
+
 /-!
 The native, CI-gated AION theorem collection.
 
@@ -8,6 +12,3 @@ quantum advantage, a cognition theorem, or an independently witnessed result.
 No modules under `formal/leanmath/` are imported; that historical material
 remains quarantined, as explained in `formal/LEANMATH_PROVENANCE.md`.
 -/
-import OhniumObservatory
-import RecognitionChamber
-import R6Compact
