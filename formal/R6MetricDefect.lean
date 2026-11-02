@@ -200,7 +200,7 @@ theorem euclideanDefect_agrees_normChange (T : RealMap2)
 
 /-- A map with determinant one, nonzero anisotropic strain,
 and a direction whose norm is accidentally preserved. -/
-def anisotropicMap : RealMap2 := ⟨2, 0, 0, (1 / 2 : ℝ)⟩
+noncomputable def anisotropicMap : RealMap2 := ⟨2, 0, 0, (1 / 2 : ℝ)⟩
 
 /-- The vector (1,2) has norm 5 both before and after this anisotropic map. -/
 theorem anisotropic_zero_on_one_nonzero_input :
