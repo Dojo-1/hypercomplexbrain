@@ -1,12 +1,10 @@
 /-
   S4-G100 — Reversible Recognition Chamber: theorem targets.
 
-  ***THIS FILE HAS NEVER BEEN COMPILED.***
-
-  No Lean, `lake` or `elan` exists on PATH in the environment where it was
-  written, and this repository carries no toolchain pin.  Every statement below
-  is a *target*.  None is a verification, and nothing elsewhere in the repository
-  claims Lean verification for any S4 result.  See formal/README.md.
+  Native formalization, now included in the pinned AION Lake build.
+  Previously this file had no successful build and its P4 target contained
+  an admitted proof. This revision closes that obligation but makes no
+  claim of kernel verification until the dedicated Lean CI succeeds.
 
   Five targets.  P1 and P2 are definitional and are included because a
   formalisation surface that omits its trivial obligations is not a surface.  P3
@@ -15,8 +13,7 @@
   that the deposit gate already enforces before any numeric threshold is read.
 -/
 
-import Mathlib.Topology.MetricSpace.Pseudo.Defs
-import Mathlib.Order.Basic
+import Mathlib
 
 namespace RecognitionChamber
 
@@ -123,7 +120,13 @@ theorem level_eq (cap ρ d : ℝ) (n : ℕ) :
 theorem finite_depletion_of_draw_gt_refill
     (cap ρ d : ℝ) (hcap : 0 ≤ cap) (h : ρ < d) :
     ∃ n : ℕ, level cap ρ d n ≤ 0 := by
-  sorry -- Archimedean: choose n ≥ cap / (d - ρ); see formal/README.md
+  have hpos : 0 < d - ρ := sub_pos.mpr h
+  obtain ⟨n, hn⟩ := exists_nat_gt (cap / (d - ρ))
+  refine ⟨n, ?_⟩
+  rw [level_eq]
+  have hbudget : cap < (n : ℝ) * (d - ρ) := by
+    exact (div_lt_iff₀ hpos).mp hn
+  nlinarith
 
 /-! ## P5 — no self-promotion -/
 
