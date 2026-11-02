@@ -258,25 +258,43 @@ def test_the_archive_is_inert_with_respect_to_the_library():
         f"the unverified archive has acquired dependents: {importing}")
 
 
-def test_the_formal_readme_no_longer_claims_a_toolchain_on_path():
-    """An environment claim written on one machine does not travel to another.
+def test_native_lean_project_is_pinned_and_vendor_is_separate():
+    """Test the current reproducibility contract, not a past runner's PATH.
 
-    `formal/README.md` asserted "`lean`, `lake` and `elan` are present on
-    `PATH`" and that sentence was carried across sessions unchecked.  In this
-    container only `elan` was present, with an empty `toolchains/` directory,
-    so no `lean` binary existed on `PATH` at all -- and believing the sentence
-    is not what cost anything; not testing it is.  The pinned toolchain
-    installed in minutes once someone looked.
-
-    What is asserted is the shape of the replacement: the claim is dated, says
-    where the binary actually is, and does not put it on `PATH`.
+    The archived LeanMath toolchain (v4.32.0-rc1) remains an inert historical
+    input. Native AION proofs now build in their own pinned Lean/Mathlib project,
+    with an independent workflow. An obsolete assertion about where one prior
+    machine installed Lean must not be allowed to override that contract.
     """
-    text = (ROOT / "formal" / "README.md").read_text(encoding="utf-8")
+    formal = ROOT / "formal"
+    readme = (formal / "README.md").read_text(encoding="utf-8")
+    native_toolchain = (formal / "lean-toolchain").read_text(encoding="utf-8").strip()
+    lakefile = (formal / "lakefile.lean").read_text(encoding="utf-8")
+    lock = json.loads((formal / "lake-manifest.json").read_text(encoding="utf-8"))
+    workflow = (ROOT / ".github" / "workflows" / "lean.yml").read_text(encoding="utf-8")
+    vendor_toolchain = (formal / "leanmath" / "lean-toolchain").read_text(
+        encoding="utf-8"
+    ).strip()
 
-    assert "`lean`, `lake` and `elan` are present on `PATH`" not in text
-    assert "~/.elan/bin/lean" in text
-    assert "v4.32.0-rc1" in text
+    assert native_toolchain.startswith("leanprover/lean4:v")
+    assert native_toolchain.split(":")[-1] in readme
+    assert lock["name"] == "aionformal"
+    mathlib = next(pkg for pkg in lock["packages"] if pkg["name"] == "mathlib")
+    assert mathlib["type"] == "git"
+    assert len(mathlib["rev"]) == 40
+    assert mathlib["rev"] == mathlib["inputRev"]
+    assert mathlib["rev"] in lakefile
+    assert mathlib["rev"] in readme
+    assert "lake build" in readme
+    assert "ProofAudit.lean" in readme
+    assert "lake-package-directory: formal" in workflow
 
+    assert vendor_toolchain == "leanprover/lean4:v4.32.0-rc1"
+    assert vendor_toolchain != native_toolchain
+    assert "leanmath/" in readme
+    assert "unverified" in readme.lower()
+    assert "UNVERIFIED IMPORTED MATERIAL" in PROVENANCE.read_text(encoding="utf-8")
+    assert "`lean`, `lake` and `elan` are present on `PATH`" not in readme
 
 def test_the_provenance_note_reports_what_the_census_measures():
     """The prose and the instrument must not drift apart -- the whole point."""
