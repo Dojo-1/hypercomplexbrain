@@ -81,9 +81,9 @@ theorem pullback_sub {ι κ : Type*} (T : Tendril ι κ)
   simp [pullback]
 
 /-- Different-dimensional pullback is contravariantly compositional. -/
-theorem pullback_comp {ι κ λ : Type*}
-    (T : Tendril ι κ) (S : Tendril κ λ)
-    (g : LocalForm λ) :
+theorem pullback_comp {ι κ ξ : Type*}
+    (T : Tendril ι κ) (S : Tendril κ ξ)
+    (g : LocalForm ξ) :
     pullback (S.comp T) g = pullback T (pullback S g) := by
   apply LinearMap.BilinForm.ext
   intro u v
@@ -120,20 +120,22 @@ theorem rechart_defect_zero {ι κ : Type*} (Y : Worldlet κ)
     (T : Tendril ι κ) :
     defect (rechart Y T) Y T = 0 := by
   change pullback T Y.form - pullback T Y.form = 0
-  exact sub_self _
+  exact sub_self (pullback T Y.form)
 
 /-- Zero form-valued defect is precisely equality of the compared forms. -/
 theorem defect_zero_iff_compatible {ι κ : Type*}
     (X : Worldlet ι) (Y : Worldlet κ)
     (T : Tendril ι κ) :
     defect X Y T = 0 ↔ pullback T Y.form = X.form := by
-  simp [defect]
+  change pullback T Y.form - X.form = (0 : LocalForm ι) ↔
+    pullback T Y.form = X.form
+  exact sub_eq_zero
 
 /-- Three Worldlets can have distinct carrier types and dimensions.
 The second defect must be pulled back through the first tendril. -/
-theorem defect_comp {ι κ λ : Type*}
-    (X : Worldlet ι) (Y : Worldlet κ) (Z : Worldlet λ)
-    (T : Tendril ι κ) (S : Tendril κ λ) :
+theorem defect_comp {ι κ ξ : Type*}
+    (X : Worldlet ι) (Y : Worldlet κ) (Z : Worldlet ξ)
+    (T : Tendril ι κ) (S : Tendril κ ξ) :
     defect X Z (S.comp T) =
       defect X Y T + pullback T (defect Y Z S) := by
   apply LinearMap.BilinForm.ext
@@ -142,9 +144,9 @@ theorem defect_comp {ι κ λ : Type*}
 
 /-- A disagreement about the intermediate Worldlet metric produces
 an explicit form-valued remainder in the original source carrier. -/
-theorem defect_middle_mismatch {ι κ λ : Type*}
-    (X : Worldlet ι) (Yout Yin : Worldlet κ) (Z : Worldlet λ)
-    (T : Tendril ι κ) (S : Tendril κ λ) :
+theorem defect_middle_mismatch {ι κ ξ : Type*}
+    (X : Worldlet ι) (Yout Yin : Worldlet κ) (Z : Worldlet ξ)
+    (T : Tendril ι κ) (S : Tendril κ ξ) :
     defect X Z (S.comp T) =
       (defect X Yout T + pullback T (defect Yin Z S)) +
         pullback T (Yin.form - Yout.form) := by
