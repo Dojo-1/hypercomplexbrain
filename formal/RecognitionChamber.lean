@@ -118,7 +118,7 @@ theorem level_eq (cap ρ d : ℝ) (n : ℕ) :
     physical brain.  Its architectural content is only this: an invariant carrier
     must be funded out of steady income, never out of buffer. -/
 theorem finite_depletion_of_draw_gt_refill
-    (cap ρ d : ℝ) (hcap : 0 ≤ cap) (h : ρ < d) :
+    (cap ρ d : ℝ) (_hcap : 0 ≤ cap) (h : ρ < d) :
     ∃ n : ℕ, level cap ρ d n ≤ 0 := by
   have hpos : 0 < d - ρ := sub_pos.mpr h
   obtain ⟨n, hn⟩ := exists_nat_gt (cap / (d - ρ))
@@ -126,7 +126,7 @@ theorem finite_depletion_of_draw_gt_refill
   rw [level_eq]
   have hbudget : cap < (n : ℝ) * (d - ρ) := by
     exact (div_lt_iff₀ hpos).mp hn
-  nlinarith [hcap]
+  nlinarith
 
 /-! ## P5 — no self-promotion -/
 
