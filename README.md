@@ -29,7 +29,7 @@ $$
 
 Start from \(v=(1,2)\). Its squared length is \(1^2+2^2=5\). After transport, \(Tv=(2,1)\), whose squared length is *also* \(5\).
 
-One measurement declares a perfect return: **no change detected**. And yet one direction was stretched while another was compressed.
+The scalar reports **no change in squared length**. It does *not* report a return to the same state: \( (1,2) \) and \( (2,1) \) are different, and one direction was stretched while the other was compressed.
 
 The fuller geometric record is
 
