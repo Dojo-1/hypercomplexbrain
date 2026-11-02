@@ -34,3 +34,14 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.R6.contraction_sq_eq_exp
 #print axioms AionFormal.R6.filter_weight_bounds_exp
 #print axioms AionFormal.R6.filter_zero_depth
+
+#print axioms AionFormal.R6.OrthogonalFrame.inverse_preserves_sqNorm
+#print axioms AionFormal.R6.frameFilter_sqNorm
+#print axioms AionFormal.R6.frameFilter_pullback
+#print axioms AionFormal.R6.frameFilter_weight_bounds_exp
+#print axioms AionFormal.R6.frameFilter_contracting_axis_weight
+#print axioms AionFormal.R6.frameFilter_uncontracted_axis_weight
+#print axioms AionFormal.R6.frameFilter_joint_change
+#print axioms AionFormal.R6.frameFilter_joint_change_sqNorm
+#print axioms AionFormal.R6.frameFilter_identity
+#print axioms AionFormal.R6.nonzero_boost_is_not_an_orthogonal_frame
