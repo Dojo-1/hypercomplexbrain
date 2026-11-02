@@ -51,7 +51,7 @@ That distinction is now an exact, scoped Lean formalization in [R6MetricDefect](
 
 ## A map of the workshop
 
-\`\`\`mermaid
+```mermaid
 flowchart LR
     A["Local world A"] --> T["Declared transport"]
     T --> B["Local world B"]
@@ -59,7 +59,7 @@ flowchart LR
     Q --> G{"Proofs · controls · counterexamples"}
     G -->|"Supported within scope"| E["Retained result"]
     G -->|"Failed or unresolved"| R["Correction / typed remainder"]
-\`\`\`
+```
 
 | Where to look | What you will find | What it does **not** establish |
 |---|---|---|
@@ -95,42 +95,42 @@ AION does not have a useful single “percentage quantum”. The answer depends 
 
 ## Run a small part of the workshop
 
-The Python package is called \`aionq\` and supports Python 3.10+. It uses NumPy, SciPy, and Qiskit.
+The Python package is called `aionq` and supports Python 3.10+. It uses NumPy, SciPy, and Qiskit.
 
-\`\`\`bash
+```bash
 git clone https://github.com/Dojo-1/hypercomplexbrain.git
 cd hypercomplexbrain
 python -m venv .venv
-\`\`\`
+```
 
 For macOS and Linux:
 
-\`\`\`bash
+```bash
 .venv/bin/python -m pip install -e ".[dev]"
 .venv/bin/python -m pytest -q
 .venv/bin/python experiments/run_audit.py
-\`\`\`
+```
 
 For Windows PowerShell:
 
-\`\`\`powershell
+```powershell
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
 .\.venv\Scripts\python.exe -m pytest -q
 .\.venv\Scripts\python.exe experiments/run_audit.py
-\`\`\`
+```
 
 To inspect the native Lean proofs, install the pinned Lean toolchain and build tools, then run:
 
-\`\`\`bash
+```bash
 cd formal
 lake exe cache get
 lake build
 lake env lean ProofAudit.lean
-\`\`\`
+```
 
 The native project pins Lean 4.27.0 and a specific Mathlib commit. The imported historical LeanMath tree is intentionally **not** in that build. The [Lean CI workflow](.github/workflows/lean.yml) reports the compiler and axiom checks.
 
-**Before running experiment producers:** Some artifacts are append-once and tied to frozen manifests. Read the experiment contract before regenerating anything. To check existing first-party evidence envelopes, use \`python -m aionq.verify_envelopes artifacts\`. A passing test is not an independent scientific reproduction.
+**Before running experiment producers:** Some artifacts are append-once and tied to frozen manifests. Read the experiment contract before regenerating anything. To check existing first-party evidence envelopes, use `python -m aionq.verify_envelopes artifacts`. A passing test is not an independent scientific reproduction.
 
 ## Evidence without ornament
 
