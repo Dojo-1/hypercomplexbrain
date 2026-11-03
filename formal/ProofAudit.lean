@@ -124,3 +124,10 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.Heterogeneous.identity_zero_target_not_strictlyPositive
 #print axioms AionFormal.Heterogeneous.two_three_positive_pullback_iff_injective
 #print axioms AionFormal.Heterogeneous.composition_positive_pullback
+
+#print axioms AionFormal.Instrumented.observationRemainder_zero_iff_commutes
+#print axioms AionFormal.Instrumented.clockRemainder_zero_iff_commutes
+#print axioms AionFormal.Instrumented.metricRemainder_comp
+#print axioms AionFormal.Instrumented.observationRemainder_comp
+#print axioms AionFormal.Instrumented.clockRemainder_comp
+#print axioms AionFormal.Instrumented.jointlyCompatible_comp

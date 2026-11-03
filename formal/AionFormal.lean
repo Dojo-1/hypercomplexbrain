@@ -8,6 +8,7 @@ import R6MetricDefect
 import R6MetricCompatibility
 import HeterogeneousWorldlet
 import PositiveWorldletMetric
+import InstrumentedWorldlet
 
 /-!
 The native, CI-gated AION theorem collection.
