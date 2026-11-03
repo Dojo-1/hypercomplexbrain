@@ -134,6 +134,7 @@ def natClock (Tag : Type*) : LocalClock Tag where
   read := fun n => (n : ℝ)
   increasing := by
     intro i j hij
+    change (i : ℝ) < (j : ℝ)
     exact_mod_cast hij
 
 def identityTicks (Tag : Type*) : TickBridge Tag Tag where
