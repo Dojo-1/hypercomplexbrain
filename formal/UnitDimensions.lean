@@ -42,6 +42,7 @@ theorem length_not_time : lengthDim ≠ timeDim := by
   intro h
   have h0 := congrArg (fun d : Dimension => d (0 : Fin 7)) h
   norm_num [lengthDim, timeDim, basisDim] at h0
+  omega
 
 theorem dimProduct_comm (a b : Dimension) :
     dimProduct a b = dimProduct b a := by
