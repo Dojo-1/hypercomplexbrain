@@ -108,3 +108,19 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.Heterogeneous.pullback_injective_of_surjective
 #print axioms AionFormal.Heterogeneous.defect_zero_under_faithful_chart_iff
 #print axioms AionFormal.Heterogeneous.two_three_four_defect_comp
+
+#print axioms AionFormal.Heterogeneous.nonnegative_pullback
+#print axioms AionFormal.Heterogeneous.pullback_zero_on_kernel
+#print axioms AionFormal.Heterogeneous.strictlyPositive_pullback_of_injective
+#print axioms AionFormal.Heterogeneous.injective_of_strictlyPositive_pullback
+#print axioms AionFormal.Heterogeneous.strictlyPositive_pullback_iff_injective
+#print axioms AionFormal.Heterogeneous.noninjective_pullback_not_strictlyPositive
+#print axioms AionFormal.Heterogeneous.positive_rechart_iff_injective
+#print axioms AionFormal.Heterogeneous.positiveRechart_defect_zero
+#print axioms AionFormal.Heterogeneous.compatible_positive_source_implies_injective
+#print axioms AionFormal.Heterogeneous.compatible_positive_source_iff_injective
+#print axioms AionFormal.Heterogeneous.oneAxis_nonzero
+#print axioms AionFormal.Heterogeneous.zero_tendril_not_strictlyPositive
+#print axioms AionFormal.Heterogeneous.identity_zero_target_not_strictlyPositive
+#print axioms AionFormal.Heterogeneous.two_three_positive_pullback_iff_injective
+#print axioms AionFormal.Heterogeneous.composition_positive_pullback
