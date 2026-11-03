@@ -25,6 +25,7 @@ proof certificate.
 | [`R6Remainder.lean`](R6Remainder.lean) | Signed real squared-norm transport remainder, cocycle with intermediate state, frame covariance, closed-boost-loop counterexample | Physical energy, semantic loss, universal quantum cost, or Worldlet gluing |
 | [`R6MetricDefect.lean`](R6MetricDefect.lean) | Symmetric 2D quadratic-form pullback defects, tensor-level composition/mismatch accounting, and a zero-scalar/nonzero-form counterexample | Positive definiteness in arbitrary cases, heterogeneous Worldlet metrics, universal quantum or cognitive cost |
 | [`R6MetricCompatibility.lean`](R6MetricCompatibility.lean) | Exact form-valued covariance under commuting coordinate squares, zero-defect reflection with a verified inverse, and a singular-map counterexample | Physical energy, arbitrary singular charts as equivalences, or full heterogeneous bundle geometry |
+| [`HeterogeneousWorldlet.lean`](HeterogeneousWorldlet.lean) | Symmetric bilinear metrics on distinct type-indexed state carriers, typed linear tendrils, full-form composition, intermediate mismatch, and faithful-chart conditions (including 2→3→4) | Smooth manifold bundles, proof of positive definiteness, unit/clock compatibility, quantum or cognitive resource bounds |
 
 To reproduce on a machine with Git, `elan`, and Lean's required build tools:
 
@@ -55,6 +56,9 @@ anisotropic geometric observation from a one-state scalar remainder.
 
 The [coordinate-compatibility guide](R6_METRIC_COMPATIBILITY_GUIDE.md) explains why
 non-orthogonal coordinate changes need not be physical distortion.
+
+The [heterogeneous Worldlet guide](HETEROGENEOUS_WORLDLET_GUIDE.md) shows
+why dimensions can differ without forcing incomparable local metrics together.
 
 ## Imported historical LeanMath material (quarantined)
 
