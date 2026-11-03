@@ -26,6 +26,7 @@ proof certificate.
 | [`R6MetricDefect.lean`](R6MetricDefect.lean) | Symmetric 2D quadratic-form pullback defects, tensor-level composition/mismatch accounting, and a zero-scalar/nonzero-form counterexample | Positive definiteness in arbitrary cases, heterogeneous Worldlet metrics, universal quantum or cognitive cost |
 | [`R6MetricCompatibility.lean`](R6MetricCompatibility.lean) | Exact form-valued covariance under commuting coordinate squares, zero-defect reflection with a verified inverse, and a singular-map counterexample | Physical energy, arbitrary singular charts as equivalences, or full heterogeneous bundle geometry |
 | [`HeterogeneousWorldlet.lean`](HeterogeneousWorldlet.lean) | Symmetric bilinear metrics on distinct type-indexed state carriers, typed linear tendrils, full-form composition, intermediate mismatch, and faithful-chart conditions (including 2→3→4) | Smooth manifold bundles, proof of positive definiteness, unit/clock compatibility, quantum or cognitive resource bounds |
+| [`PositiveWorldletMetric.lean`](PositiveWorldletMetric.lean) | Strictly positive or semidefinite metric contracts, the injective-tendril threshold for positive pullbacks, proof-carrying positive Worldlets and kernel-loss counterexamples | Physical units, global manifold equivalence, quantum cost, cognition or semantic fidelity |
 
 To reproduce on a machine with Git, `elan`, and Lean's required build tools:
 
@@ -59,6 +60,9 @@ non-orthogonal coordinate changes need not be physical distortion.
 
 The [heterogeneous Worldlet guide](HETEROGENEOUS_WORLDLET_GUIDE.md) shows
 why dimensions can differ without forcing incomparable local metrics together.
+
+The [positive Worldlet guide](POSITIVE_WORLDLET_GUIDE.md) explains why
+zero pullback defect need not preserve all geometric directions.
 
 ## Imported historical LeanMath material (quarantined)
 
