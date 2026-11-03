@@ -24,7 +24,7 @@ open AionFormal.Heterogeneous
 
 /-- Independent state, observation, and clock-readout carriers. -/
 structure ObservedWorldlet (S O C : Type*) where
-  local : Worldlet S
+  world : Worldlet S
   observe : Tendril S O
   clockReadout : Tendril S C
 
@@ -49,7 +49,7 @@ identified with observation or clock-readout differences. -/
 def metricRemainder {S T O P C D : Type*}
     (A : ObservedWorldlet S O C) (B : ObservedWorldlet T P D)
     (e : ReadoutBridge S T O P C D) : LocalForm S :=
-  defect A.local B.local e.state
+  defect A.world B.world e.state
 
 /-- A typed linear remainder in the target observation carrier. -/
 def observationRemainder {S T O P C D : Type*}
@@ -90,7 +90,7 @@ theorem metricRemainder_comp {A B C OA OB OC TA TB TC : Type*}
     (f : ReadoutBridge B C OB OC TB TC) :
     metricRemainder X Z (bridgeComp f e) =
       metricRemainder X Y e + pullback e.state (metricRemainder Y Z f) :=
-  defect_comp X.local Y.local Z.local e.state f.state
+  defect_comp X.world Y.world Z.world e.state f.state
 
 /-- When readout bridges compose, the observer remainder follows a typed
 two-term law rather than being conflated with the metric defect. -/
