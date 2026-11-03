@@ -28,6 +28,9 @@ proof certificate.
 | [`HeterogeneousWorldlet.lean`](HeterogeneousWorldlet.lean) | Symmetric bilinear metrics on distinct type-indexed state carriers, typed linear tendrils, full-form composition, intermediate mismatch, and faithful-chart conditions (including 2→3→4) | Smooth manifold bundles, proof of positive definiteness, unit/clock compatibility, quantum or cognitive resource bounds |
 | [`PositiveWorldletMetric.lean`](PositiveWorldletMetric.lean) | Strictly positive or semidefinite metric contracts, the injective-tendril threshold for positive pullbacks, proof-carrying positive Worldlets and kernel-loss counterexamples | Physical units, global manifold equivalence, quantum cost, cognition or semantic fidelity |
 | [`InstrumentedWorldlet.lean`](InstrumentedWorldlet.lean) | Three separately typed metric, observation, and clock-readout remainders; exact typed composition; explicit joint compatibility gate | Physical SI unit correctness, real time synchronization, cognition, semantic equivalence or quantum fidelity |
+| [UnitDimensions.lean](UnitDimensions.lean) | Seven-base SI exponent types, dimension-preserving quantity conversion and positive scaling; explicit length≠time witness | Laboratory scale calibration, nonlinear units or semantic meaning |
+| [MonotoneClocks.lean](MonotoneClocks.lean) | Tagged ordered clocks, strictly monotone tick maps, positive affine rate+epoch conversion, exact time residual composition and an epoch-shift negative control | Clock hardware, drift uncertainty, relativity or verified sync protocols |
+| [CalibratedWorldlet.lean](CalibratedWorldlet.lean) | Certified positive geometry, same-dimension scalar observer, local clocks, three independently composable residuals and joint compatibility | Full physical dimensional covariance, correctness of calibration factors, quantum or cognitive equivalence |
 
 To reproduce on a machine with Git, `elan`, and Lean's required build tools:
 
@@ -67,6 +70,9 @@ zero pullback defect need not preserve all geometric directions.
 
 The [observable and clock-readout guide](INSTRUMENTED_WORLDLET_GUIDE.md) shows
 why geometric fidelity does not certify preservation of a Worldlet's observers.
+
+The [human bridge to dimensions, observers and clocks](TYPED_UNITS_CLOCKS_GUIDE.md)
+explains the three instruments, their Lean contracts, and their counterexamples.
 
 ## Imported historical LeanMath material (quarantined)
 
