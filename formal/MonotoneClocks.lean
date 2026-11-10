@@ -111,7 +111,7 @@ theorem residual_zero_iff {A B : Type*}
 The source error is scaled by the outer calibration rate. -/
 theorem residual_comp {A B C : Type*}
     (X : LocalClock A) (Y : LocalClock B) (Z : LocalClock C)
-    (e : ClockBridge A B) (f : ClockBridge B C) (n : ℕ) :
+    (e : ClockBridge A B) (f : ClockBridge B C) (n : LocalTick A) :
     residual X Z (composeBridge f e) n =
       f.calibration.rate * residual X Y e n +
         residual Y Z f (e.ticks.forward n) := by
@@ -134,7 +134,7 @@ theorem exact_comp {A B C : Type*}
 regardless of whether the calibration residual vanishes. -/
 theorem target_readout_ordered {A B : Type*}
     (Y : LocalClock B) (e : ClockBridge A B) :
-    StrictMono (fun n : ℕ => Y.read (e.ticks.forward n)) := by
+    StrictMono (fun n : LocalTick A => Y.read (e.ticks.forward n)) := by
   intro i j hij
   exact Y.increasing (e.ticks.increasing hij)
 
@@ -143,7 +143,7 @@ def natClock (Tag : Type*) : LocalClock Tag where
   read := fun n => (n.value : ℝ)
   increasing := by
     intro i j hij
-    change (i : ℝ) < (j : ℝ)
+    change (i.value : ℝ) < (j.value : ℝ)
     exact_mod_cast hij
 
 def identityTicks (Tag : Type*) : TickBridge Tag Tag where
