@@ -16,15 +16,24 @@ oscillators, relativity, drift uncertainty, or an SI-traceable clock.
 
 namespace AionFormal.Clocks
 
-/-- A clock with its own identity-tag and ordered real local readings. -/
+/-- A local tick carries its clock identity in the type. There is no
+implicit coercion to an untagged Nat, so readings from distinct clocks
+cannot be accidentally interchanged. -/
+structure LocalTick (Tag : Type*) where
+  value : ℕ
+deriving DecidableEq, Repr
+
+instance {Tag : Type*} : LT (LocalTick Tag) :=
+  ⟨fun a b => a.value < b.value⟩
+
+/-- A clock with its own identity-tag and ordered local tick readings. -/
 structure LocalClock (Tag : Type*) where
-  read : ℕ → ℝ
+  read : LocalTick Tag → ℝ
   increasing : StrictMono read
 
-/-- A strictly increasing correspondence between tick indices.
-The tags prevent accidental identification of unrelated clocks. -/
+/-- A strictly increasing correspondence between differently tagged ticks. -/
 structure TickBridge (A B : Type*) where
-  forward : ℕ → ℕ
+  forward : LocalTick A → LocalTick B
   increasing : StrictMono forward
 
 /-- A positive-rate affine change of units and epoch of a clock reading. -/
@@ -79,7 +88,7 @@ def composeBridge {A B C : Type*}
 at the declared corresponding tick. The sign convention is explicit. -/
 def residual {A B : Type*}
     (X : LocalClock A) (Y : LocalClock B)
-    (e : ClockBridge A B) (n : ℕ) : ℝ :=
+    (e : ClockBridge A B) (n : LocalTick A) : ℝ :=
   applyCalibration e.calibration (X.read n) -
     Y.read (e.ticks.forward n)
 
@@ -87,11 +96,11 @@ def residual {A B : Type*}
 def Exact {A B : Type*}
     (X : LocalClock A) (Y : LocalClock B)
     (e : ClockBridge A B) : Prop :=
-  ∀ n : ℕ, residual X Y e n = 0
+  ∀ n : LocalTick A, residual X Y e n = 0
 
 theorem residual_zero_iff {A B : Type*}
     (X : LocalClock A) (Y : LocalClock B)
-    (e : ClockBridge A B) (n : ℕ) :
+    (e : ClockBridge A B) (n : LocalTick A) :
     residual X Y e n = 0 ↔
       applyCalibration e.calibration (X.read n) =
         Y.read (e.ticks.forward n) := by
@@ -131,7 +140,7 @@ theorem target_readout_ordered {A B : Type*}
 
 /-- An explicit monotone clock, using its own local Nat tick coordinate. -/
 def natClock (Tag : Type*) : LocalClock Tag where
-  read := fun n => (n : ℝ)
+  read := fun n => (n.value : ℝ)
   increasing := by
     intro i j hij
     change (i : ℝ) < (j : ℝ)
@@ -157,7 +166,7 @@ shift is a verified counterexample even though both clocks increase. -/
 theorem epoch_shift_not_exact (Tag : Type*) :
     ¬ Exact (natClock Tag) (natClock Tag) (shiftedBridge Tag) := by
   intro h
-  have hzero := h 0
+  have hzero := h ⟨0⟩
   norm_num [residual, natClock, shiftedBridge, identityTicks,
     applyCalibration] at hzero
 
