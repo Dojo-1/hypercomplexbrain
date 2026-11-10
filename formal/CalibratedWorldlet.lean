@@ -63,7 +63,7 @@ def observableRemainder {S T TA TB : Type*} {d : Dimension}
 def clockRemainder {S T TA TB : Type*} {d : Dimension}
     (X : MeasuredWorldlet S TA d)
     (Y : MeasuredWorldlet T TB d)
-    (e : Bridge S T TA TB d) (n : ℕ) : ℝ :=
+    (e : Bridge S T TA TB d) (n : Clocks.LocalTick TA) : ℝ :=
   Clocks.residual X.clock Y.clock e.clocks n
 
 /-- A complete bridge compatibility certificate has three parts.
@@ -110,7 +110,7 @@ theorem clockRemainder_comp {A B C TA TB TC : Type*} {d : Dimension}
     (Y : MeasuredWorldlet B TB d)
     (Z : MeasuredWorldlet C TC d)
     (e : Bridge A B TA TB d)
-    (f : Bridge B C TB TC d) (n : ℕ) :
+    (f : Bridge B C TB TC d) (n : Clocks.LocalTick TA) :
     clockRemainder X Z (compose f e) n =
       f.clocks.calibration.rate * clockRemainder X Y e n +
         clockRemainder Y Z f (e.clocks.ticks.forward n) :=
