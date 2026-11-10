@@ -23,8 +23,12 @@ structure LocalTick (Tag : Type*) where
   value : ℕ
 deriving DecidableEq, Repr
 
-instance {Tag : Type*} : LT (LocalTick Tag) :=
-  ⟨fun a b => a.value < b.value⟩
+instance {Tag : Type*} : LinearOrder (LocalTick Tag) :=
+  LinearOrder.lift' (fun tick : LocalTick Tag => tick.value) (by
+    intro a b h
+    cases a
+    cases b
+    simp_all)
 
 /-- A clock with its own identity-tag and ordered local tick readings. -/
 structure LocalClock (Tag : Type*) where
