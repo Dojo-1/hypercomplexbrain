@@ -76,6 +76,14 @@ Not every useful result is a success story.
 
 AION does not have a useful single “percentage quantum”. The answer depends on the operation, state, simulation model, and hardware. Its quantum-information experiments are presently **classical computations and simulations**, not a demonstrated physical quantum cognitive system.
 
+## A further question: did we preserve what was measured?
+
+Matching a geometric form is only the beginning. A **metre** is not a **second**; two increasing clocks need not agree about the epoch; and matching lengths does not imply that two observers report the same phenomenon.
+
+The [typed units and clocks guide](formal/TYPED_UNITS_CLOCKS_GUIDE.md) walks through three independent proof obligations: **metric**, **observer conversion**, and **clock correspondence**. It includes one metre versus one hundred centimetres and two increasing but unsynchronized clocks.
+
+Their Lean modules are [UnitDimensions](formal/UnitDimensions.lean), [MonotoneClocks](formal/MonotoneClocks.lean) and [CalibratedWorldlet](formal/CalibratedWorldlet.lean). Status is determined by the pinned proof gate at the exact commit. Symbolic unit tags and increasing readouts do not establish laboratory calibration or physical synchronization.
+
 ## Choose your path
 
 **Curious reader:** Start with the [HB-0 field guide](docs/HB0_POLYCOSMIC_KERNEL.md), then return to the example above. The [mathematical reference](docs/MANIFOLD_REFERENCE.md) offers familiar analogies and identifies where they break.

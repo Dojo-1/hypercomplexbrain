@@ -131,3 +131,29 @@ This file is NOT a replacement for a successful Lake build or semantic review.
 #print axioms AionFormal.Instrumented.observationRemainder_comp
 #print axioms AionFormal.Instrumented.clockRemainder_comp
 #print axioms AionFormal.Instrumented.jointlyCompatible_comp
+
+#print axioms AionFormal.Units.length_not_time
+#print axioms AionFormal.Units.dimProduct_comm
+#print axioms AionFormal.Units.dimProduct_assoc
+#print axioms AionFormal.Units.dimProduct_dimensionless
+#print axioms AionFormal.Units.dimQuotient_self
+#print axioms AionFormal.Units.compose_factor_positive
+#print axioms AionFormal.Units.convert_comp
+#print axioms AionFormal.Units.convert_identity
+#print axioms AionFormal.Units.convert_preserves_positive
+#print axioms AionFormal.Units.one_metre_is_one_hundred_centimetres
+
+#print axioms AionFormal.Clocks.applyCalibration_comp
+#print axioms AionFormal.Clocks.calibrated_order
+#print axioms AionFormal.Clocks.residual_zero_iff
+#print axioms AionFormal.Clocks.residual_comp
+#print axioms AionFormal.Clocks.exact_comp
+#print axioms AionFormal.Clocks.target_readout_ordered
+#print axioms AionFormal.Clocks.epoch_shift_not_exact
+
+#print axioms AionFormal.Calibrated.geometricRemainder_comp
+#print axioms AionFormal.Calibrated.observableRemainder_comp
+#print axioms AionFormal.Calibrated.clockRemainder_comp
+#print axioms AionFormal.Calibrated.jointlyCompatible_comp
+#print axioms AionFormal.Calibrated.jointlyCompatible_requires_injective
+#print axioms AionFormal.Calibrated.incompatible_length_time_observation_types
